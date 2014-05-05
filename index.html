@@ -19,23 +19,50 @@
                     
                     
                 })();*/
-
             })();
+
+            function astToHtml(ast, d) {
+                if (typeof ast === 'string')
+                    return ast;
+                var res = '';
+                for (key in ast) {
+                    if (ast.hasOwnProperty(key)) {
+                        res += '<li><strong>' + key + '</strong>: ' + astToHtml(ast[key], d+1) + '</li>';
+                    }
+                }
+                return (ast.type ? ast.type : '') +  (res ? ('<ul>' + res + '</ul>') : '');
+            }
 
             function compile() {
                 var src = document.getElementById('code').value;
                 var parser = new Parser(src);
-                try {
-                    parser.parse();
-                } catch (e) {
-                    alert(e);
-                    throw e;
-                }
+                //try {
+                var ast = parser.parse();
+
+                //alert(astToHtml(ast));
+                document.getElementById('tree').innerHTML = astToHtml(ast);
+                //} catch (e) {
+                //    alert(e);
+                //    throw e;
+                //}
             }
         </script>
     </head>
     <body>
-        <textarea id="code"></textarea>
+        <textarea id="code">
+' Just a short example code for testing purposes
+' with a multiline comment at the start of the file
+FOR i = 0 TO (10*2)
+  IF a = b THEN             ' A comment at the end of a line?
+    ' LINE a, b, 10, 10     ' A commented comment?
+  ELSEIF b = c THEN
+    ' RECT b, c, 20, 10
+  ELSE
+    ' ELLIPSE a, c, 10, 10
+  ENDIF
+NEXT i
+        </textarea>
         <button onclick="compile()">Compile</button>
+        <div id="tree"></div>
     </body>
 </html>

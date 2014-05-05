@@ -27,17 +27,32 @@ Parser.prototype = {
     expect: function expect(type) {
         if (this.peek().type === type)
             return this.advance();
-        throw new Error('Expected "' + type + '" but got "' + this.peek().type + '"');
+        throw new Error('Expected "' + type + '" but got "' + this.peek().type + '" at line ' + this.peek().line);
     },
 
     /*
      * Parses the whole input
      */
     parse: function parse() {
+        var block = new Nodes.Block();
         while (this.peek().type !== 'eos') {
             var next = this.peek();
-            var expr = this.parseBaselevelStatement();
+            if (next.type === 'newline') {
+                this.advance();
+                continue;
+            }
+            block.nodes.push(this.parseBaselevelStatement());
+
+            // Comment can be at the end of a line
+            if (this.peek().type === 'comment') {
+                block.nodes.push(this.parseComment());
+            }
+            if (this.peek().type === 'eos')
+                break;
+            this.expect('newline');     // Expect newline after every statement
         }
+
+        return block;
     },
 
     /*
@@ -47,10 +62,14 @@ Parser.prototype = {
      */
     parseBaselevelStatement: function parseBaselevelStatement() {
         switch (this.peek().type) {
+            case "if":
+                return this.parseIf();
             case "for":
                 return this.parseFor();
+            case 'comment':
+                return this.parseComment();
             default:
-                throw new Error('Unexpected token "' + this.peek().type + '"');
+                throw new Error('Unexpected token "' + this.peek().type + '" at line ' + this.peek().line);
         }
     },
 
@@ -61,31 +80,15 @@ Parser.prototype = {
      */
     parseStatement: function parseStatement() {
         switch (this.peek().type) {
+            case "if":
+                return this.parseIf();
             case "for":
                 return this.parseFor();
+            case 'comment':
+                return this.parseComment();
             default:
-                throw new Error('Unexpected token "' + this.peek().type + '"');
+                throw new Error('Unexpected token "' + this.peek().type + '" at line ' + this.peek().line);
         }
-    },
-
-    /*
-     * Parses a for statement
-     */
-    parseFor: function parseFor() {
-        var tok = this.expect('for');
-
-        var variable = this.expect('identifier');
-        //if (this.peek().type !== 'binop' || this.peek().val !== '=')
-        //    throw new Error('For statement must have an equal siqn before range');
-        this.expect('eq');
-        var range = this.parseRange();
-        var block = this.parseBlock();
-        
-        this.expect('next');
-        if (variable.val !== this.expect('identifier').val)
-            throw new Error('Next statement must have same variable as the original for statement');
-
-        return new Nodes.For(variable, range, block);
     },
 
     /*
@@ -103,21 +106,88 @@ Parser.prototype = {
      * Parse block
      */
     parseBlock: function parseBlock() {
-        do {
-            this.expect('newline');
-        } while (this.peek().type === 'newline')
         var block = new Nodes.Block();
+
+        // Comment can be at the end of the last
+        if (this.peek().type === 'comment') {
+            block.nodes.push(this.parseComment());
+        }
+        this.expect('newline');
+
         while (1) {
+            if (this.peek().type === 'newline') {
+                this.advance();
+                continue;
+            }
             switch(this.peek().type) {
                 case 'next':
+                case 'else':
+                case 'elseif':
                 case 'endif':
                     return block;
             }
             block.nodes.push(this.parseStatement());
-            do {
-                this.expect('newline');
-            } while (this.peek().type === 'newline')
+            
+            // Comment can be at the end of a line
+            if (this.peek().type === 'comment') {
+                block.nodes.push(this.parseComment());
+            }
+            this.expect('newline');     // Expect newline after every statement
+            //do {
+            //    this.expect('newline');
+            //} while (this.peek().type === 'newline')
         }
+    },
+
+    /*
+     * Parses a for statement
+     */
+    parseFor: function parseFor() {
+        this.expect('for');
+
+        var variable = this.expect('identifier');
+        //if (this.peek().type !== 'binop' || this.peek().val !== '=')
+        //    throw new Error('For statement must have an equal siqn before range');
+        this.expect('eq');
+        var range = this.parseRange();
+        var block = this.parseBlock();
+
+        this.expect('next');
+        if (variable.val !== this.expect('identifier').val)
+            throw new Error('Next statement must have same variable as the original for statement');
+
+        return new Nodes.For(variable, range, block);
+    },
+    /*
+     * Parses an if statement
+     */
+    parseIf: function parseIf() {
+        this.expect('if');
+
+        var expr = this.parseExpr()
+        this.expect('then');
+        var trueStatement = this.parseBlock();
+        var res = new Nodes.If(expr, trueStatement);
+        var cur = res;
+       
+        while (this.peek().type !== 'endif') {
+            if (this.peek().type === 'else') {
+                this.advance();
+                cur.falseStatement = this.parseBlock();
+                break;
+            } else if (this.peek().type === 'elseif') {
+                this.advance();
+                expr = this.parseExpr();
+                this.expect('then');
+                trueStatement = this.parseBlock();
+                cur = cur.falseStatement = new Nodes.If(expr, trueStatement);
+            } else {
+                this.expect('else/elseif/endif');           // Throws an error with appropriate error message
+            }
+        }
+        this.expect('endif');
+
+        return res;
     },
 
     /*
@@ -133,7 +203,7 @@ Parser.prototype = {
             case 'gte':
                 var op = this.advance();
                 var right = this.parseMathExpr();
-                return new Nodes.BinaryOp(left, op.val, rigth);
+                return new Nodes.BinaryOp(left, op.val, right);
         }
         return left;
     },
@@ -145,7 +215,7 @@ Parser.prototype = {
                 case 'minus':
                     var op = this.advance();
                     var right = this.parseTerm();
-                    left = new Nodes.BinrayOp(left, op.val, right);
+                    left = new Nodes.BinaryOp(left, op.val, right);
                     break;
                 default:
                     return left;
@@ -161,7 +231,7 @@ Parser.prototype = {
                 case 'mod':
                     var op = this.advance();
                     var right = this.parseFactor();
-                    left = new Nodes.BinrayOp(left, op.val, right);
+                    left = new Nodes.BinaryOp(left, op.val, right);
                     break;
                 default:
                     return left;
@@ -170,7 +240,7 @@ Parser.prototype = {
     },
     parseFactor: function parseFactor() {
         var t = this.advance();
-        if (t === 'lparen') {
+        if (t.type === 'lparen') {
             var e = this.parseExpr();
             this.expect('rparen');
             return e;
@@ -181,8 +251,23 @@ Parser.prototype = {
                 return new Nodes.UnaryOp('-', this.parseFactor());
             case 'number':
                 return new Nodes.Number(t.val);
+            case 'identifier':
+                if (this.peek().type === 'lparen') {
+                    // A function call
+                    throw new Error('Function calls not yet supported')
+                }
+                return new Nodes.Variable(t.val);
+                break;
             default:
-                throw new Error('Number or variable expected instead of "' + t.type + '"');
+                throw new Error('Number or variable expected instead of "' + t.type + '" at line ' + t.line);
         }
+    },
+
+    /*
+     * Parses a comment
+     */
+    parseComment: function parseComment() {
+        var tok = this.expect('comment');
+        return new Nodes.Comment(tok.val);
     }
 };
