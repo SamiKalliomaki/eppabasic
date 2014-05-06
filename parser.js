@@ -62,9 +62,13 @@ Parser.prototype = {
      */
     parseBaselevelStatement: function parseBaselevelStatement() {
         switch (this.peek().type) {
-            case "if":
+            case 'dim':
+                return this.parseDefinition();
+            case 'identifier':
+                return this.parseIdentifier();
+            case 'if':
                 return this.parseIf();
-            case "for":
+            case 'for':
                 return this.parseFor();
             case 'comment':
                 return this.parseComment();
@@ -80,9 +84,13 @@ Parser.prototype = {
      */
     parseStatement: function parseStatement() {
         switch (this.peek().type) {
-            case "if":
+            case 'dim':
+                return this.parseDefinition();
+            case 'identifier':
+                return this.parseIdentifier();
+            case 'if':
                 return this.parseIf();
-            case "for":
+            case 'for':
                 return this.parseFor();
             case 'comment':
                 return this.parseComment();
@@ -191,6 +199,66 @@ Parser.prototype = {
     },
 
     /*
+     * Parses an identifier from the statement
+     * Can be either function call or assignment
+     */
+    parseIdentifier: function parseIdentifier() {
+        var tok = this.expect('identifier');
+
+        if (this.peek(2).type === 'eq') {
+            throw new Error('Variable assignments not yet supported');
+        } else {
+            var params = this.parseParams();
+            return new Nodes.FunctionCall(tok.val, params);
+            //throw new Error('Function calls not yet supported');
+            throw new Error('Unexpected token "identifier" at line ' + this.peek().line);
+        }
+    },
+    /*
+     * Parses function/sub call parameters
+     */
+    parseParams: function parseParams() {
+        var params = [];
+        var hasParens = false;
+        if (this.peek().type === 'lparen') {
+            this.advance();
+            hasParens = true;
+        }
+
+        while (this.peek().type !== 'newline' && this.peek().type !== 'rparen') {
+
+            params.push(this.parseExpr());
+
+            if (this.peek().type !== 'comma')
+                break;
+            this.expect('comma');
+        }
+
+        if (hasParens)
+            this.expect('rparen');
+
+        return params;
+    },
+    /*
+     * Parses a variable definition
+     */
+    parseDefinition: function parseDefinition() {
+        this.expect('dim');
+        var name = this.expect('identifier').val;
+        var type;
+        var initial;
+        if (this.peek().type === 'as') {
+            this.advance();
+            type = this.expect('identifier').val;
+        }
+        if (this.peek().type === 'eq') {
+            this.advance();
+            initial = this.parseExpr();
+        }
+        return new Nodes.Definition(name, type, initial);
+    },
+
+    /*
      * Parses an expression (ie. 1+2, x*3, 2<1 AND 2<3)
      */
     parseExpr: function parseExpr() {
@@ -254,7 +322,8 @@ Parser.prototype = {
             case 'identifier':
                 if (this.peek().type === 'lparen') {
                     // A function call
-                    throw new Error('Function calls not yet supported')
+                    var params = this.parseParams();
+                    return new Nodes.FunctionCall(t.val, params);
                 }
                 return new Nodes.Variable(t.val);
                 break;

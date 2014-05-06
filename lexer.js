@@ -62,6 +62,7 @@ Lexer.prototype = {
             || this.eosToken()
             || this.commentToken()
             || this.opToken()
+            || this.commaToken()
             || this.parenthesisToken()
             || this.toToken()
 
@@ -73,6 +74,9 @@ Lexer.prototype = {
             || this.elseIfToken()
             || this.elseToken()
             || this.endIfToken()
+
+            || this.dimToken()
+            || this.asToken()
 
             || this.identifierToken()
             || this.numberToken()
@@ -186,6 +190,12 @@ Lexer.prototype = {
         //    return this.tok('newline');
         //}
     },
+    /*
+     * Parses a comma from the input
+     */
+    commaToken: function commaToken() {
+        return this.scan(/^ *(,)/, 'comma');
+    },
 
     /*
      * Parses for token
@@ -244,6 +254,19 @@ Lexer.prototype = {
      */
     endIfToken: function endIfToken() {
         return this.scan(/^ *(ENDIF)\b/i, 'endif');
+    },
+
+    /*
+     * Parses a "DIM" token from the input
+     */
+    dimToken: function dimToken() {
+        return this.scan(/^ *(DIM)\b/i, 'dim');
+    },
+    /*
+     * Parses a "AS" token from the input
+     */
+    asToken: function asToken() {
+        return this.scan(/^ *(AS)\b/i, 'as');
     },
 
     /*

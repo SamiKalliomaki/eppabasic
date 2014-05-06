@@ -86,3 +86,27 @@ Nodes.Comment = function Comment(val) {
 Nodes.Comment.prototype = {
     type: 'comment'
 };
+
+/*
+ * Creates a new ast function call node
+ */
+Nodes.FunctionCall = function FunctionCall(name, params) {
+    this.name = name;
+    this.params = params;
+};
+Nodes.FunctionCall.prototype = {
+    type: 'functioncall'
+};
+
+/*
+ * Creates a new ast definition node 
+ */
+Nodes.Definition = function Definition(name, def, initial) {
+    this.name = name;
+    this.def = def;
+    this.initial = initial;
+}
+Nodes.Definition.prototype = {
+    type:'definition'
+};
+

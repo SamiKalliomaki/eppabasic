@@ -2,32 +2,72 @@
 <html>
     <head>
         <title>Eppabasic</title>
+        <style>
+           #code {
+               width: 100%;
+               height: 30em;
+           }
+        </style>
         <script src="nodes.js"></script>
         <script src="lexer.js"></script>
         <script src="parser.js"></script>
+        <script src="compiler.js"></script>
         <script>
-            (function () {
-                var MB = 1024 * 1024;
-                var SIZE = 256 * MB;
-                var STACK_SIZE = 2 * MB;
-                var HEAP_SIZE = SIZE - STACK_SIZE;
-                var buffer = new ArrayBuffer(SIZE);
+            //(function () {
+            //    var MB = 1024 * 1024;
+            //    var SIZE = 256 * MB;
+            //    var STACK_SIZE = 2 * MB;
+            //    var HEAP_SIZE = SIZE - STACK_SIZE;
+            //    var buffer = new ArrayBuffer(SIZE);
 
-                /*var asm = (function (global, env, buffer) {
-                    "use asm";
+            //    var asm = (function (stdlib, env, heap) {
+            //        "use asm";
 
+            //        var log = env.log;
+
+            //        function recursion(x, y) {
+            //            x = x | 0;
+            //            y = y | 0;
+            //            var res = 0
+
+            //            //log((((x | 0) < 0) + ((y | 0) < 0) + ((x | 0) > 3) + ((y | 0) > 3)) | 0);
+            //            //log(((((x | 0) == 3) | 0) & (((y | 0) == 3) | 0)) | 0);
+
+                        
+            //            if ((((x | 0) < 0) + ((y | 0) < 0) + ((x | 0) > 3) + ((y | 0) > 3)) | 0)
+            //                return 0;
+            //            if (((((x | 0) == 3) | 0) & (((y | 0) == 3) | 0)) | 0)
+            //                return 1;
+            //            log(x | 0);
+
+            //            res = (res | 0 + (recursion((x + 1) | 0, y | 0) | 0)) | 0;
+            //            res = (res | 0 + (recursion(x | 0, (y + 1) | 0) | 0)) | 0;
+            //            return (recursion((x + 1) | 0, y | 0) | 0) + (recursion(x | 0, (y + 1) | 0) | 0);
+            //        }
                     
-                    
-                })();*/
-            })();
+            //        return {
+            //            f: recursion
+            //        };
+            //    })(
+            //    window,
+            //    {
+            //        log: console.log
+            //    }
+            //    );
 
-            function astToHtml(ast, d) {
+            //    //asm.f(3, 3);
+            //    console.log(asm.f(2, 2));
+            //})();
+
+            function astToHtml(ast) {
                 if (typeof ast === 'string')
                     return ast;
+                if (!ast)
+                    return '';
                 var res = '';
                 for (key in ast) {
                     if (ast.hasOwnProperty(key)) {
-                        res += '<li><strong>' + key + '</strong>: ' + astToHtml(ast[key], d+1) + '</li>';
+                        res += '<li><strong>' + key + '</strong>: ' + astToHtml(ast[key]) + '</li>';
                     }
                 }
                 return (ast.type ? ast.type : '') +  (res ? ('<ul>' + res + '</ul>') : '');
@@ -35,16 +75,15 @@
 
             function compile() {
                 var src = document.getElementById('code').value;
+
                 var parser = new Parser(src);
-                //try {
                 var ast = parser.parse();
 
-                //alert(astToHtml(ast));
+                var compiler = new Compiler(ast);
+                var compiled = compiler.compile();
+
+                // Show ast as html
                 document.getElementById('tree').innerHTML = astToHtml(ast);
-                //} catch (e) {
-                //    alert(e);
-                //    throw e;
-                //}
             }
         </script>
     </head>
@@ -52,13 +91,19 @@
         <textarea id="code">
 ' Just a short example code for testing purposes
 ' with a multiline comment at the start of the file
+
+' Define some variables needed
+DIM a AS INTEGER = 10
+DIM b = 20
+DIM c = a + b
+
 FOR i = 0 TO (10*2)
   IF a = b THEN             ' A comment at the end of a line?
-    ' LINE a, b, 10, 10     ' A commented comment?
+    LINE a, b, 10, 10       ' A commented comment?
   ELSEIF b = c THEN
-    ' RECT b, c, 20, 10
+    RECT b, c, 20, 10
   ELSE
-    ' ELLIPSE a, c, 10, 10
+    ELLIPSE a, c, 10, 10
   ENDIF
 NEXT i
         </textarea>
