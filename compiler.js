@@ -10,7 +10,7 @@ function Compiler(ast) {
     this.nextFreeVariableLocation = 0;
 
     // For functions
-    this.createdFunctions = {};
+    this.createdFunctions = [];
     this.nextFreeFunction = 0;
 }
 
@@ -69,7 +69,7 @@ Compiler.prototype = {
                 + 'var imul = stdlib.Math.imul;\n'
                 + 'var SP = ' + this.nextFreeVariableLocation + ';\n'       // Stack pointer
                 + this.buf.join('\n') + '\n'
-                + this.createFTable()
+                + this.createFTable() + '\n'
                 + '}'
             )
 
@@ -187,6 +187,9 @@ Compiler.prototype = {
     },
 
     getFreeVariableLocation: function getFreeVariableLocation(name, size) {
+        // Find next location that is multiple of the size
+        while (this.nextFreeVariableLocation & (size - 1))
+            this.nextFreeVariableLocation++;
         var res = this.nextFreeVariableLocation;
         this.nextFreeVariableLocation += size;
         this.variableLocations[name] = res;
@@ -230,6 +233,6 @@ Compiler.prototype = {
     },
 
     createFTable: function createFTable() {
-        return '';
+        return 'var ' + this.ftableName + ' = [' + this.createdFunctions.join(', ') + '];';
     }
 }
