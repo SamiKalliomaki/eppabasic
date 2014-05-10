@@ -7,10 +7,24 @@
                width: 100%;
                height: 30em;
            }
+           .hidden > * > * {
+               display: none;
+           }
+           #errBox {
+               color: #f00;
+           }
+           #tree, #compiled {
+               width: 50%;
+               float: left;
+           }
+           #compiled {
+               font-family: monospace;
+           }
         </style>
         <script src="nodes.js"></script>
         <script src="lexer.js"></script>
         <script src="parser.js"></script>
+        <script src="typechecker.js"></script>
         <script src="compiler.js"></script>
         <script>
             //(function () {
@@ -25,24 +39,10 @@
 
             //        var log = env.log;
 
-            //        function recursion(x, y) {
-            //            x = x | 0;
-            //            y = y | 0;
-            //            var res = 0
-
-            //            //log((((x | 0) < 0) + ((y | 0) < 0) + ((x | 0) > 3) + ((y | 0) > 3)) | 0);
-            //            //log(((((x | 0) == 3) | 0) & (((y | 0) == 3) | 0)) | 0);
-
-                        
-            //            if ((((x | 0) < 0) + ((y | 0) < 0) + ((x | 0) > 3) + ((y | 0) > 3)) | 0)
-            //                return 0;
-            //            if (((((x | 0) == 3) | 0) & (((y | 0) == 3) | 0)) | 0)
-            //                return 1;
-            //            log(x | 0);
-
-            //            res = (res | 0 + (recursion((x + 1) | 0, y | 0) | 0)) | 0;
-            //            res = (res | 0 + (recursion(x | 0, (y + 1) | 0) | 0)) | 0;
-            //            return (recursion((x + 1) | 0, y | 0) | 0) + (recursion(x | 0, (y + 1) | 0) | 0);
+            //        function recursion() {
+            //            var a = 0;
+            //            if (1) {
+            //            }
             //        }
                     
             //        return {
@@ -60,30 +60,81 @@
             //})();
 
             function astToHtml(ast) {
-                if (typeof ast === 'string')
+                if (typeof ast === 'string'
+                    || typeof ast === 'number'
+                    || typeof ast === 'boolean')
                     return ast;
                 if (!ast)
                     return '';
                 var res = '';
                 for (key in ast) {
-                    if (ast.hasOwnProperty(key)) {
+                    if (ast.hasOwnProperty(key)
+                        && typeof ast[key] !== 'function') {
                         res += '<li><strong>' + key + '</strong>: ' + astToHtml(ast[key]) + '</li>';
                     }
                 }
-                return (ast.type ? ast.type : '') +  (res ? ('<ul>' + res + '</ul>') : '');
+                return (ast.nodeType ? ast.nodeType : '') + (res ? ('<ul>' + res + '</ul>') : '');
+            }
+
+            function hideTree(node) {
+                if (node.tagName === 'LI') {
+                    node.classList.add('hidden');
+                    node.addEventListener('dblclick', function (e) {
+                        e.stopPropagation();
+                        e.preventDefault();
+
+                        if (node.classList.contains('hidden'))
+                            node.classList.remove('hidden');
+                        else
+                            node.classList.add('hidden');
+
+                        return false;
+                    }, false);
+                }
+
+                for (var i = 0; i < node.children.length; i++) {
+                    hideTree(node.children[i]);
+                }
+            }
+
+            function beautifyJs(code) {
+                return code.replace(/\n/g, '<br>');
             }
 
             function compile() {
                 var src = document.getElementById('code').value;
 
-                var parser = new Parser(src);
-                var ast = parser.parse();
+                try {
+                    // No errors, yer
+                    document.getElementById('errBox').innerHTML = '';
 
-                var compiler = new Compiler(ast);
-                var compiled = compiler.compile();
 
-                // Show ast as html
-                document.getElementById('tree').innerHTML = astToHtml(ast);
+                    var parser = new Parser(src);
+                    var ast = parser.parse();
+
+                    // Show incomplete ast as html
+                    document.getElementById('tree').innerHTML = astToHtml(ast);
+
+                    var compiler = new Compiler(ast);
+
+                    // Define 'native' functions
+                    compiler.defineJsFunction('LINE', ['INTEGER', 'INTEGER', 'INTEGER', 'INTEGER'], '_drawLine');
+                    compiler.defineJsFunction('RECT', ['INTEGER', 'INTEGER', 'INTEGER', 'INTEGER'], '_dradRect');
+                    compiler.defineJsFunction('ELLIPSE', ['INTEGER', 'INTEGER', 'INTEGER', 'INTEGER'], '_drawEllipse');
+                    compiler.defineJsFunction('ADD', ['INTEGER', 'INTEGER'], '_add', 'INTEGER');
+                    compiler.defineJsFunction('DRAWSCREEN', [], '_drawScreen', undefined, true);
+
+                    var compiled = compiler.compile();
+
+                    document.getElementById('compiled').innerHTML = beautifyJs(compiled);
+
+                    // Show ast as html
+                    document.getElementById('tree').innerHTML = astToHtml(ast);
+                    hideTree(document.getElementById('tree').children[0]);
+                } catch (e) {
+                    document.getElementById('errBox').innerHTML = e.message;
+                    throw e;
+                }
             }
         </script>
     </head>
@@ -107,7 +158,12 @@ FOR i = 0 TO (10*2)
   ENDIF
 NEXT i
         </textarea>
+        <div id="errBox"></div>
         <button onclick="compile()">Compile</button>
-        <div id="tree"></div>
+
+        <div>
+            <div id="tree"></div>
+            <div id="compiled"></div>
+         </div>
     </body>
 </html>

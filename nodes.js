@@ -9,7 +9,7 @@ Nodes.For = function For(variable, range, block) {
     this.block = block;
 };
 Nodes.For.prototype = {
-    type: 'for'
+    nodeType: 'For'
 };
 
 /*
@@ -21,7 +21,7 @@ Nodes.If = function If(expr, trueStatement, falseStatement) {
     this.falseStatement = falseStatement;
 };
 Nodes.If.prototype = {
-    type: 'if'
+    nodeType: 'If'
 };
 
 /*
@@ -32,7 +32,7 @@ Nodes.Range = function Range(start, end) {
     this.end = end;
 };
 Nodes.Range.prototype = {
-    type: 'range'
+    nodeType: 'Range'
 };
 
 /*
@@ -42,7 +42,7 @@ Nodes.Number = function Number(val) {
     this.val = val;
 };
 Nodes.Number.prototype = {
-    type: 'number'
+    nodeType: 'Number'
 };
 
 /*
@@ -52,7 +52,7 @@ Nodes.Variable = function Variable(val) {
     this.val = val;
 };
 Nodes.Variable.prototype = {
-    type: 'variable'
+    nodeType: 'Variable'
 };
 
 /*
@@ -62,7 +62,7 @@ Nodes.Block = function Block() {
     this.nodes = [];
 };
 Nodes.Block.prototype = {
-    type: 'block'
+    nodeType: 'Block'
 };
 
 /*
@@ -74,7 +74,7 @@ Nodes.BinaryOp = function BinaryOp(left, op, right) {
     this.right = right;
 };
 Nodes.BinaryOp.prototype = {
-    type: 'binaryop'
+    nodeType: 'BinaryOp'
 };
 
 /*
@@ -84,7 +84,7 @@ Nodes.Comment = function Comment(val) {
     this.val = val;
 };
 Nodes.Comment.prototype = {
-    type: 'comment'
+    nodeType: 'Comment'
 };
 
 /*
@@ -95,18 +95,18 @@ Nodes.FunctionCall = function FunctionCall(name, params) {
     this.params = params;
 };
 Nodes.FunctionCall.prototype = {
-    type: 'functioncall'
+    nodeType: 'FunctionCall'
 };
 
 /*
  * Creates a new ast definition node 
  */
-Nodes.Definition = function Definition(name, def, initial) {
+Nodes.Definition = function Definition(name, type, initial) {
     this.name = name;
-    this.def = def;
+    this.type = type;
     this.initial = initial;
 }
 Nodes.Definition.prototype = {
-    type:'definition'
+    nodeType: 'Definition'
 };
 

@@ -201,7 +201,7 @@ Lexer.prototype = {
      * Parses for token
      */
     forToken: function forToken() {
-        return this.scan(/^FOR\b/i, 'for');
+        return this.scan(/^ *(FOR)\b/i, 'for');
         //var captures;
         //if (captures = /^FOR\b/i.exec(this.input)) {
         //    this.consume(captures[0].length);

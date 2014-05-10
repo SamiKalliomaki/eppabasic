@@ -153,7 +153,7 @@ Parser.prototype = {
     parseFor: function parseFor() {
         this.expect('for');
 
-        var variable = this.expect('identifier');
+        var variable = new Nodes.Definition(this.expect('identifier').val);
         //if (this.peek().type !== 'binop' || this.peek().val !== '=')
         //    throw new Error('For statement must have an equal siqn before range');
         this.expect('eq');
@@ -161,7 +161,7 @@ Parser.prototype = {
         var block = this.parseBlock();
 
         this.expect('next');
-        if (variable.val !== this.expect('identifier').val)
+        if (variable.name !== this.expect('identifier').val)
             throw new Error('Next statement must have same variable as the original for statement');
 
         return new Nodes.For(variable, range, block);
@@ -225,7 +225,9 @@ Parser.prototype = {
             hasParens = true;
         }
 
-        while (this.peek().type !== 'newline' && this.peek().type !== 'rparen') {
+        while (this.peek().type !== 'newline'
+            && this.peek().type !== 'rparen'
+            && this.peek().type !== 'eos') {
 
             params.push(this.parseExpr());
 
