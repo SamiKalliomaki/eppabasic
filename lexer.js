@@ -78,6 +78,9 @@ Lexer.prototype = {
             || this.dimToken()
             || this.asToken()
 
+            || this.functionToken()
+            || this.endFunctionToken()
+
             || this.identifierToken()
             || this.numberToken()
             || this.newlineToken()
@@ -267,6 +270,19 @@ Lexer.prototype = {
      */
     asToken: function asToken() {
         return this.scan(/^ *(AS)\b/i, 'as');
+    },
+
+    /*
+     * Parses a "FUNCTION" token from the input
+     */
+    functionToken: function functionToken() {
+        return this.scan(/^ *(FUNCTION)\b/i, 'function');
+    },
+    /*
+     * Parses a "END FUNCTION" token from the input
+     */
+    endFunctionToken: function endFunctionToken() {
+        return this.scan(/^ *(END +FUNCTION)\b/i, 'endfunction');
     },
 
     /*

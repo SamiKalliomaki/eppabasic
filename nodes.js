@@ -99,14 +99,27 @@ Nodes.FunctionCall.prototype = {
 };
 
 /*
- * Creates a new ast definition node 
+ * Creates a new ast variable definition node 
  */
-Nodes.Definition = function Definition(name, type, initial) {
+Nodes.VariableDefinition = function VariableDefinition(name, type, initial) {
     this.name = name;
     this.type = type;
     this.initial = initial;
 }
-Nodes.Definition.prototype = {
-    nodeType: 'Definition'
+Nodes.VariableDefinition.prototype = {
+    nodeType: 'VariableDefinition'
+};
+
+/*
+ * Creates a new ast definition node 
+ */
+Nodes.FunctionDefinition = function FunctionDefinition(name, params, type, block) {
+    this.name = name;
+    this.params = params;
+    this.type = type;
+    this.block = block;
+}
+Nodes.FunctionDefinition.prototype = {
+    nodeType: 'FunctionDefinition'
 };
 

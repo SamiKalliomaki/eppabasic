@@ -63,13 +63,15 @@ Parser.prototype = {
     parseBaselevelStatement: function parseBaselevelStatement() {
         switch (this.peek().type) {
             case 'dim':
-                return this.parseDefinition();
+                return this.parseVariableDefinition();
             case 'identifier':
                 return this.parseIdentifier();
             case 'if':
                 return this.parseIf();
             case 'for':
                 return this.parseFor();
+            case 'function':
+                return this.parseFunctionDefinition();
             case 'comment':
                 return this.parseComment();
             default:
@@ -85,7 +87,7 @@ Parser.prototype = {
     parseStatement: function parseStatement() {
         switch (this.peek().type) {
             case 'dim':
-                return this.parseDefinition();
+                return this.parseVariableDefinition();
             case 'identifier':
                 return this.parseIdentifier();
             case 'if':
@@ -132,6 +134,7 @@ Parser.prototype = {
                 case 'else':
                 case 'elseif':
                 case 'endif':
+                case 'endfunction':
                     return block;
             }
             block.nodes.push(this.parseStatement());
@@ -153,7 +156,7 @@ Parser.prototype = {
     parseFor: function parseFor() {
         this.expect('for');
 
-        var variable = new Nodes.Definition(this.expect('identifier').val);
+        var variable = new Nodes.VariableDefinition(this.expect('identifier').val);
         //if (this.peek().type !== 'binop' || this.peek().val !== '=')
         //    throw new Error('For statement must have an equal siqn before range');
         this.expect('eq');
@@ -244,7 +247,7 @@ Parser.prototype = {
     /*
      * Parses a variable definition
      */
-    parseDefinition: function parseDefinition() {
+    parseVariableDefinition: function parseVariableDefinition() {
         this.expect('dim');
         var name = this.expect('identifier').val;
         var type;
@@ -257,7 +260,48 @@ Parser.prototype = {
             this.advance();
             initial = this.parseExpr();
         }
-        return new Nodes.Definition(name, type, initial);
+        return new Nodes.VariableDefinition(name, type, initial);
+    },
+
+    /*
+     * Parses a function definition
+     */
+    parseFunctionDefinition: function parseFunctionDefinition() {
+        this.expect('function');
+        var name = this.expect('identifier').val;
+        var params = [];
+
+        // Parse parameter list
+        this.expect('lparen');
+        paramloop: while (1) {
+            var paramname = this.expect('identifier').val;
+            this.expect('as');
+            var paramtype = this.expect('identifier').val;
+
+            params.push({
+                name: paramname,
+                type: paramtype
+            });
+
+            switch (this.peek().type) {
+                case 'comma':
+                    this.advance();
+                    break;
+                case 'rparen':
+                    break paramloop;
+                default:
+                    this.expect('comma');
+            }
+        }
+        this.expect('rparen');
+        this.expect('as');
+        var type = this.expect('identifier');
+
+        var block = this.parseBlock();
+
+        this.expect('endfunction');
+
+        return new Nodes.FunctionDefinition(name, params, type, block);
     },
 
     /*
