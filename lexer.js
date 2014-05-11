@@ -79,6 +79,7 @@ Lexer.prototype = {
             || this.asToken()
 
             || this.functionToken()
+            || this.returnToken()
             || this.endFunctionToken()
 
             || this.identifierToken()
@@ -277,6 +278,12 @@ Lexer.prototype = {
      */
     functionToken: function functionToken() {
         return this.scan(/^ *(FUNCTION)\b/i, 'function');
+    },
+    /*
+     * Parses a "RETURN" token from the input
+     */
+    returnToken: function returnToken() {
+        return this.scan(/^ *(RETURN)\b/i, 'return');
     },
     /*
      * Parses a "END FUNCTION" token from the input

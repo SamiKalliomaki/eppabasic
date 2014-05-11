@@ -98,7 +98,7 @@
             }
 
             function beautifyJs(code) {
-                return code.replace(/\n/g, '<br>');
+                return code; //code.replace(/\n/g, '<br>');
             }
 
             function compile() {
@@ -118,11 +118,12 @@
                     var compiler = new Compiler(ast);
 
                     // Define 'native' functions
-                    compiler.defineJsFunction('LINE', ['INTEGER', 'INTEGER', 'INTEGER', 'INTEGER'], '_drawLine');
-                    compiler.defineJsFunction('RECT', ['INTEGER', 'INTEGER', 'INTEGER', 'INTEGER'], '_dradRect');
-                    compiler.defineJsFunction('ELLIPSE', ['INTEGER', 'INTEGER', 'INTEGER', 'INTEGER'], '_drawEllipse');
-                    compiler.defineJsFunction('ADD', ['INTEGER', 'INTEGER'], '_add', 'INTEGER');
-                    compiler.defineJsFunction('DRAWSCREEN', [], '_drawScreen', undefined, true);
+                    //compiler.defineJsFunction('LINE', ['INTEGER', 'INTEGER', 'INTEGER', 'INTEGER'], '_drawLine');
+                    //compiler.defineJsFunction('RECT', ['INTEGER', 'INTEGER', 'INTEGER', 'INTEGER'], '_dradRect');
+                    //compiler.defineJsFunction('ELLIPSE', ['INTEGER', 'INTEGER', 'INTEGER', 'INTEGER'], '_drawEllipse');
+                    //compiler.defineJsFunction('log', ['INTEGER'], 'log');
+                    //compiler.defineJsFunction('DRAWSCREEN', [], '_drawScreen', undefined, true);
+                    compiler.defineJsFunction('LINE', ['INTEGER', 'INTEGER', 'INTEGER', 'INTEGER'], 'line');
 
                     var compiled = compiler.compile();
 
@@ -169,7 +170,7 @@ END FUNCTION</textarea>
 
         <div>
             <div id="tree"></div>
-            <div id="compiled"></div>
+            <pre id="compiled"></pre>
          </div>
     </body>
 </html>

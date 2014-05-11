@@ -96,6 +96,8 @@ Parser.prototype = {
                 return this.parseFor();
             case 'comment':
                 return this.parseComment();
+            case 'return':
+                return this.parseReturn();
             default:
                 throw new Error('Unexpected token "' + this.peek().type + '" at line ' + this.peek().line);
         }
@@ -129,7 +131,7 @@ Parser.prototype = {
                 this.advance();
                 continue;
             }
-            switch(this.peek().type) {
+            switch (this.peek().type) {
                 case 'next':
                 case 'else':
                 case 'elseif':
@@ -138,7 +140,7 @@ Parser.prototype = {
                     return block;
             }
             block.nodes.push(this.parseStatement());
-            
+
             // Comment can be at the end of a line
             if (this.peek().type === 'comment') {
                 block.nodes.push(this.parseComment());
@@ -180,7 +182,7 @@ Parser.prototype = {
         var trueStatement = this.parseBlock();
         var res = new Nodes.If(expr, trueStatement);
         var cur = res;
-       
+
         while (this.peek().type !== 'endif') {
             if (this.peek().type === 'else') {
                 this.advance();
@@ -273,7 +275,7 @@ Parser.prototype = {
 
         // Parse parameter list
         this.expect('lparen');
-        paramloop: while (1) {
+        paramloop: while (this.peek().type !== 'rparen') {
             var paramname = this.expect('identifier').val;
             this.expect('as');
             var paramtype = this.expect('identifier').val;
@@ -295,13 +297,20 @@ Parser.prototype = {
         }
         this.expect('rparen');
         this.expect('as');
-        var type = this.expect('identifier');
+        var type = this.expect('identifier').val;
 
         var block = this.parseBlock();
 
         this.expect('endfunction');
 
         return new Nodes.FunctionDefinition(name, params, type, block);
+    },
+    /*
+     * Parses a return statement
+     */
+    parseReturn: function parseReturn(ret, parent) {
+        this.expect('return');
+        return new Nodes.Return(this.parseExpr());
     },
 
     /*

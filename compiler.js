@@ -28,15 +28,30 @@ Compiler.prototype = {
     /*
      * Defines a native function
      */
-    defineJsFunction: function defineJsFunction(name, paramTypes, jsname, returnType, breaking) {
+    defineJsFunction: function defineJsFunction(name, paramTypes, jsname, returnType, breaking, entry) {
         if (breaking !== true)
             breaking = false;
+        if (!entry) {
+            // Define an entry point
+            entry = this.createFunction();
+
+            var paramSize = 0;
+            paramTypes.forEach(function each(param) {
+                paramSize += this.getTypeSize(param);
+            }.bind(this));
+
+            entry.nodes.push(jsname + '(SP|0);');
+
+            entry.nodes.push('SP = (SP - ' + paramSize + ')|0;');
+            entry.nodes.push('CS = (CS - ' + this.getTypeSize('INTEGER') + ')|0;');
+        }
         this.functions.push({
             name: name,
             paramTypes: paramTypes,
             jsname: jsname,
             returnType: returnType,
-            breaking: breaking
+            breaking: breaking,
+            entry: entry
         });
     },
 
@@ -44,32 +59,53 @@ Compiler.prototype = {
      * Compiles ast tree into asm.js
      */
     compile: function compile() {
-        // TODO: Find user defined functions
+        var start = this.functions.length;
+        // Find user defined functions
+        this.ast.nodes.forEach(function each(val) {
+            if (val.nodeType === 'FunctionDefinition') {
+                var paramTypes = val.params.map(function map(val) {
+                    return val.type;
+                })
+                this.defineJsFunction(val.name, paramTypes, undefined, val.type, val.breaking, val.entry = this.createFunction());
+            }
+        }.bind(this));
+
+        // Do typechecking
         this.typecheck();
 
-        //this.buffer('function(stdlib, env, heap) {');
-        //this.buffer('"use asm";');
-        this.compileFunctions();
+        // And compiling...
+        this.ast.nodes.forEach(function each(val) {
+            if (val.nodeType === 'FunctionDefinition')
+                this.compileFunctionDefinition(val);
+        }.bind(this));
 
-        // Heap access
-        //this.buffer('var MEMS32 = new stdlib.Int32Array(heap);');
-        //this.buffer('var MEMU32 = new stdlib.Uint32Array(heap);');
-
-        //this.buffer('function init() {');
-        this.visit(this.ast);
-        //this.buffer('}');
-
-        //this.buffer('}');
 
         return ('function Program(stdlib, env, heap) {\n'
                 + '"use asm";\n'
                 + 'var MEMS32 = new stdlib.Int32Array(heap);\n'
                 + 'var MEMU32 = new stdlib.Uint32Array(heap);\n'
-                + 'var MEMD64 = new stdlib.Float64Array(heap);\n'
+                + 'var MEMF32 = new stdlib.Float32Array(heap);\n'
+                + 'var MEMF64 = new stdlib.Float64Array(heap);\n'
                 + 'var imul = stdlib.Math.imul;\n'
-                + 'var SP = ' + this.nextFreeVariableLocation + ';\n'       // Stack pointer
-                + this.buf.join('\n') + '\n'
+                //+ 'var log = env.log;\n'                                            // Logger function TODO Revove
+                + 'var SP = ' + this.nextFreeVariableLocation + ';\n'               // Stack pointer
+                + 'var CS = ' + (this.nextFreeVariableLocation + 1024) + ';\n'      // Call stack pointer
+                + this.compileSystemFunctionDefinitions() + '\n'
+
+                + 'function next() {\n'
+                + '\t' + this.ftableName + '[MEMU32[CS >> ' + this.getTypeShift('INTEGER') + '] & ' + this.getFTableMask() + ']();\n'
+                + '}\n'
+
+                + 'function init() {\n'
+                + '\tMEMU32[CS >> ' + this.getTypeShift('INTEGER') + '] = ' + start + ';\n'
+                + '}\n'
+
+                + this.createFunctionsCode() + '\n'
                 + this.createFTable() + '\n'
+                + 'return {\n'
+                + '\tinit: init,\n'
+                + '\tnext: next\n'
+                + '};\n'
                 + '}'
             )
 
@@ -77,94 +113,87 @@ Compiler.prototype = {
     },
 
     /*
-     * Compiles functiondefinitions
+     * Compiles an user defined function
      */
-    compileFunctions: function compileFunctions() {
-        var i = this.functions.length;
+    compileFunctionDefinition: function compileFunctionDefinition(def) {
+        var context = {
+            curFunc: def.entry
+        };
+
+        // Find out parameter offsets
+        var offset = 0;
+        var i = def.params.length;
         while (i--) {
-            var func = this.functions[i];
-            if (func.jsname) {
-                this.buffer('var ' + func.name + ' = env.' + func.jsname + ';');
-            } else {
-                throw new Error('User defined functions not supported yet');
-            }
+            var param = def.params[i];
+            var size = this.getTypeSize(param.type);
+            offset -= size;
+            param.location = offset;
         }
+
+        this.compileBlock(def.block, context);
+
+        // Clear the reserved stack
+        context.curFunc.nodes.push('SP = (SP - ' + -offset + ')|0;');
+        context.curFunc.nodes.push('CS = (CS - ' + this.getTypeSize('INTEGER') + ')|0;');
+        console.log(offset);
     },
 
-    /*
-     * Visits an arbitrary node
-     */
-    visit: function visit(node, func) {
-        if (!this['visit' + node.nodeType])
-            throw new Error('Compiler can not compile "' + node.nodeType + '" nodes');
-        this['visit' + node.nodeType](node, func);
-    },
-
-    /*
-     * Visits a block. Basically just visits all children node.s
-     */
-    visitBlock: function visitBlock(block, func) {
-        block.nodes.forEach(function each(val) {
-            this.visit(val, func);
+    compileBlock: function compileBlock(block, context) {
+        block.nodes.forEach(function each(node) {
+            switch (node.nodeType) {
+                case 'FunctionCall':
+                    this.callFunction(node, context);
+                    // Skip the result
+                    if (node.type)
+                        context.curFunc.nodes.push('SP = (SP - ' + this.getTypeSize(node.type) + ')|0;');
+                    break;
+                case 'Return':
+                    break;
+                default:
+                    throw new Error('Unsupported node type "' + node.nodeType + '"');
+            }
         }.bind(this));
     },
 
     /*
-     * A dummy visit for comment node
+     * Calls a function
      */
-    visitComment: function visitComment(comment, func) { },
+    callFunction: function callFunction(func, context) {
+        // Parameters
+        func.params.forEach(function each(param) {
+            this.expr(param, context);
+        }.bind(this));
 
-    /*
-     * Visits a variable definition node
-     */
-    visitDefinition: function visitDefinition(definition, func) {
-        var location = this.getFreeVariableLocation(definition.name, this.getTypeSize(definition.type));
-        this.writeToTypedMemory(location,
-            definition.initial ? definition.initial : 0,
-            definition.type);
+        // Set return function
+        var retFunc = this.createFunction();
 
-        // Save for later use
-        definition.location = location;
+        context.curFunc.nodes.push('MEMU32[CS >> ' + this.getTypeShift('INTEGER') + '] = ' + retFunc.index + ';');
+        context.curFunc.nodes.push('CS = (CS + ' + this.getTypeSize('INTEGER') + ')|0;');
+        context.curFunc.nodes.push('MEMU32[CS >> ' + this.getTypeShift('INTEGER') + '] = ' + func.definition.entry.index + ';');
+
+        console.log(func);
+
+        context.curFunc = retFunc;
     },
 
-    /*
-     * Visits a function call node
-     */
-    visitFunctionCall: function visitFunctionCall(call, func) {
-
-    },
-
-    visitFor:function visitFor() {
-
-    },
-    visitIf:function visitIf(){
-
-    },
-
-    /*
-     * Returns evaluated expression as string
-     */
-    expr: function expr(expr) {
-        if (typeof expr === 'number')
-            return expr;                // A plain number
-
+    expr: function expr(expr, context) {
         switch (expr.nodeType) {
             case 'Number':
-                return this.castTo(expr.val, expr.type);
+                context.curFunc.nodes.push(this.getMemoryType(expr.type) + '[SP >> ' + this.getTypeShift(expr.type) + '] = ' + expr.val + ';');
+                context.curFunc.nodes.push('SP = (SP + ' + this.getTypeSize(expr.type) + ')|0;');
+                return;
             case 'BinaryOp':
-                var left = this.expr(expr.left);
-                var right = this.expr(expr.right);
-                return this.castTo(left + ' ' + expr.op + ' ' + right, expr.type);
-            case 'Variable':
-                return this.castTo(this.readFromTypedMemory(
-                        expr.definition.location,
-                        expr.definition.type),
-                    expr.type
-                    );
-        }
 
-        throw new Error('Unsupported expression type "' + expr.nodeType + '"');
+            case 'Range':
+
+            case 'Variable':
+
+            case 'FunctionCall':
+
+        }
+        throw new Error('Unsupported expression to be compiled "' + expr.nodeType + '"');
     },
+
 
     /*
      * Checks types of all variables and parameters
@@ -182,8 +211,9 @@ Compiler.prototype = {
             case 'INTEGER':
                 return 2;
             case 'DOUBLE':
-                return 3;
+                return 2;           // Really just a regular float: TODO: Change to real doubles!!!
         }
+        throw new Error('Unsupported type "' + type + '"');
     },
 
     getFreeVariableLocation: function getFreeVariableLocation(name, size) {
@@ -206,7 +236,7 @@ Compiler.prototype = {
             case 'INTEGER':
                 return 'MEMS32';
             case 'DOUBLE':
-                return 'MEMD64';
+                return 'MEMF32';
         }
         throw new Error('Unsupported type "' + type + '"');
     },
@@ -216,9 +246,13 @@ Compiler.prototype = {
 
         this.buffer(mem + '[' + location + ' >> ' + shift + '] = ' + this.castTo(this.expr(expr), type) + ';');
     },
-    readFromTypedMemory: function readFromTypedMemor(location,type) {
+    readFromTypedMemory: function readFromTypedMemor(location, type) {
         var shift = this.getTypeShift(type);
         var mem = this.getMemoryType(type);
+
+        if (location < 0)
+            location = 'SP - ' + -location;
+
         return mem + '[' + location + ' >> ' + shift + ']';
     },
 
@@ -232,7 +266,54 @@ Compiler.prototype = {
         throw new Error('Unsupported type to cast into "' + type + '"');
     },
 
+    createFunction: function createFunction() {
+        var name = this.fprefix + this.nextFreeFunction;
+        var ret = {
+            name: name,
+            index: this.nextFreeFunction,
+            nodes: [],
+            stackDepth: 0
+        };
+        this.nextFreeFunction++;
+
+        this.createdFunctions.push(ret);
+
+        return ret;
+    },
+    createFunctionsCode: function createFunctionsCode() {
+        var buf = [];
+        this.createdFunctions.forEach(function each(func, i) {
+            buf.push('function ' + func.name + '() {');
+            //buf.push('\tlog(' + i + ');');
+            buf.push('\t' + func.nodes.join('\n\t'));
+            buf.push('}');
+        });
+        return buf.join('\n');
+    },
     createFTable: function createFTable() {
-        return 'var ' + this.ftableName + ' = [' + this.createdFunctions.join(', ') + '];';
+        var fnames = this.createdFunctions.map(function map(val) {
+            return val.name;
+        });
+
+        while (fnames.length !== (fnames.length & -fnames.length))
+            fnames.push(this.fprefix + '0');                        // TODO: Fill with errors, not working functions
+
+        return 'var ' + this.ftableName + ' = [' + fnames.join(', ') + '];';
+    },
+    getFTableMask: function getFTableMask() {
+        var mask = this.createdFunctions.length;
+        // TODO Faster mask finder
+        while (mask !== (mask & -mask))
+            mask++;
+        return mask - 1;
+    },
+    compileSystemFunctionDefinitions: function compileSystemFunctionDefinitions() {
+        var buf = [];
+        this.functions.forEach(function each(val) {
+            if (val.jsname) {
+                buf.push('var ' + val.jsname + ' = env.' + val.jsname + ';');
+            }
+        });
+        return buf.join('\n');
     }
 }

@@ -111,7 +111,7 @@ Nodes.VariableDefinition.prototype = {
 };
 
 /*
- * Creates a new ast definition node 
+ * Creates a new ast function definition node 
  */
 Nodes.FunctionDefinition = function FunctionDefinition(name, params, type, block) {
     this.name = name;
@@ -121,5 +121,15 @@ Nodes.FunctionDefinition = function FunctionDefinition(name, params, type, block
 }
 Nodes.FunctionDefinition.prototype = {
     nodeType: 'FunctionDefinition'
+};
+
+/*
+ * Creates a new ast retyrb node 
+ */
+Nodes.Return = function Return(expr) {
+    this.expr = expr;
+}
+Nodes.Return.prototype = {
+    nodeType: 'Return'
 };
 
