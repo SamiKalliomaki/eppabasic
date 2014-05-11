@@ -326,7 +326,7 @@ Parser.prototype = {
             case 'gte':
                 var op = this.advance();
                 var right = this.parseMathExpr();
-                return new Nodes.BinaryOp(left, op.val, right);
+                return new Nodes.BinaryOp(left, op.type, right);
         }
         return left;
     },
@@ -338,7 +338,7 @@ Parser.prototype = {
                 case 'minus':
                     var op = this.advance();
                     var right = this.parseTerm();
-                    left = new Nodes.BinaryOp(left, op.val, right);
+                    left = new Nodes.BinaryOp(left, op.type, right);
                     break;
                 default:
                     return left;
@@ -354,7 +354,7 @@ Parser.prototype = {
                 case 'mod':
                     var op = this.advance();
                     var right = this.parseFactor();
-                    left = new Nodes.BinaryOp(left, op.val, right);
+                    left = new Nodes.BinaryOp(left, op.type, right);
                     break;
                 default:
                     return left;
@@ -371,7 +371,7 @@ Parser.prototype = {
 
         switch (t.type) {
             case 'minus':
-                return new Nodes.UnaryOp('-', this.parseFactor());
+                return new Nodes.UnaryOp('neg', this.parseFactor());
             case 'number':
                 return new Nodes.Number(t.val);
             case 'identifier':

@@ -117,7 +117,8 @@ Compiler.prototype = {
      */
     compileFunctionDefinition: function compileFunctionDefinition(def) {
         var context = {
-            curFunc: def.entry
+            curFunc: def.entry,
+            spOffset: 0
         };
 
         // Find out parameter offsets
@@ -135,7 +136,6 @@ Compiler.prototype = {
         // Clear the reserved stack
         context.curFunc.nodes.push('SP = (SP - ' + -offset + ')|0;');
         context.curFunc.nodes.push('CS = (CS - ' + this.getTypeSize('INTEGER') + ')|0;');
-        console.log(offset);
     },
 
     compileBlock: function compileBlock(block, context) {
@@ -144,10 +144,14 @@ Compiler.prototype = {
                 case 'FunctionCall':
                     this.callFunction(node, context);
                     // Skip the result
-                    if (node.type)
+                    if (node.type) {
                         context.curFunc.nodes.push('SP = (SP - ' + this.getTypeSize(node.type) + ')|0;');
+                        context.spOffset -= this.getTypeSize(node.type);
+                    }
                     break;
                 case 'Return':
+                    break;
+                case 'Comment':
                     break;
                 default:
                     throw new Error('Unsupported node type "' + node.nodeType + '"');
@@ -171,23 +175,65 @@ Compiler.prototype = {
         context.curFunc.nodes.push('CS = (CS + ' + this.getTypeSize('INTEGER') + ')|0;');
         context.curFunc.nodes.push('MEMU32[CS >> ' + this.getTypeShift('INTEGER') + '] = ' + func.definition.entry.index + ';');
 
-        console.log(func);
-
         context.curFunc = retFunc;
     },
 
     expr: function expr(expr, context) {
         switch (expr.nodeType) {
             case 'Number':
+                context.curFunc.nodes.push('//Number');
                 context.curFunc.nodes.push(this.getMemoryType(expr.type) + '[SP >> ' + this.getTypeShift(expr.type) + '] = ' + expr.val + ';');
                 context.curFunc.nodes.push('SP = (SP + ' + this.getTypeSize(expr.type) + ')|0;');
+                context.spOffset += this.getTypeSize(expr.type);
+                context.curFunc.nodes.push('//!Number');
+                return;
+            case 'Variable':
+                context.curFunc.nodes.push('//Variable');
+                context.curFunc.nodes.push(this.getMemoryType(expr.type) + '[SP >> ' + this.getTypeShift(expr.type) + '] = '
+                    + this.getMemoryType(expr.type) + '[((SP - ' + (context.spOffset - expr.definition.location) + ')|0) >> ' + this.getTypeShift(expr.type) + '];');
+                context.curFunc.nodes.push('SP = (SP + ' + this.getTypeSize(expr.type) + ')|0;');
+                context.spOffset += this.getTypeSize(expr.type);
+                context.curFunc.nodes.push('//!Variable');
                 return;
             case 'BinaryOp':
+                context.curFunc.nodes.push('//Binop');
+                this.expr(expr.left, context);
+                this.expr(expr.right, context);
 
+                var dest = this.getMemoryType(expr.type) + '[((SP - ' + (this.getTypeSize(expr.left.type) + this.getTypeSize(expr.right.type)) + ')|0) >> ' + this.getTypeShift(expr.type) + ']';
+                var left = this.castTo(this.getMemoryType(expr.left.type) + '[((SP - ' + (this.getTypeSize(expr.left.type) + this.getTypeSize(expr.right.type)) + ')|0) >> ' + this.getTypeShift(expr.left.type) + ']', expr.left.type);
+                var right = this.castTo(this.getMemoryType(expr.right.type) + '[((SP - ' + (this.getTypeSize(expr.right.type)) + ')|0) >> ' + this.getTypeShift(expr.right.type) + ']', expr.right.type);
+                var map = {
+                    plus: '+',
+                    minus: '-'
+                };
+                var op = map[expr.op];
+                var src;
+                if (!op) {
+                    if (expr.op === 'mul') {
+                        src = 'imul(' + left + ', ' + right + ')';
+                    } else
+                        throw new Error('Compiler doesn\'t suuport "' + expr.op + '" operator');
+                } else {
+                    src = left + ' ' + op + ' ' + right;
+                }
+
+                context.curFunc.nodes.push(dest + ' = ' + this.castTo(src, expr.type) + ';');
+                //context.curFunc.nodes.push(
+                //    this.getMemoryType(expr.type) + '[((SP - ' + (this.getTypeSize(expr.left.type) + this.getTypeSize(expr.right.type)) + ')|0) >> ' + this.getTypeShift(expr.type) + '] = '
+                //    + this.castTo(
+                //        this.castTo(this.getMemoryType(expr.left.type) + '[((SP - ' + (this.getTypeSize(expr.left.type) + this.getTypeSize(expr.right.type)) + ')|0) >> ' + this.getTypeShift(expr.left.type) + ']', expr.left.type)
+                //        + op
+                //        + this.castTo(this.getMemoryType(expr.right.type) + '[((SP - ' + (this.getTypeSize(expr.right.type)) + ')|0) >> ' + this.getTypeShift(expr.right.type) + ']', expr.right.type),
+                //        expr.type
+                //    )
+                //    + ';'
+                //    );
+                context.curFunc.nodes.push('SP = (SP - ' + (this.getTypeSize(expr.left.type) + this.getTypeSize(expr.right.type)) + ' + ' + this.getTypeSize(expr.type) + ')|0;');
+                context.spOffset = context.spOffset - (this.getTypeSize(expr.left.type) + this.getTypeSize(expr.right.type)) + this.getTypeSize(expr.type);
+                context.curFunc.nodes.push('//!Binop');
+                return;
             case 'Range':
-
-            case 'Variable':
-
             case 'FunctionCall':
 
         }
