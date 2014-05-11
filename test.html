@@ -1,0 +1,159 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <script>
+        if (!window.Math.imul) {
+            window.Math.imul = function (a, b) {
+                return a * b;           // TODO Fix
+            }
+        }
+        function Program(stdlib, env, heap) {
+            "use asm";
+            var MEMS32 = new stdlib.Int32Array(heap);
+            var MEMU32 = new stdlib.Uint32Array(heap);
+            var MEMF32 = new stdlib.Float32Array(heap);
+            var MEMF64 = new stdlib.Float64Array(heap);
+            var imul = stdlib.Math.imul;
+            var __log = env.__log;
+            var SP = 0;
+            var CS = 1024;
+            var line = env.line;
+            var log = env.log;
+            function next() {
+                $fTable[MEMU32[CS >> 2] & 7]();
+            }
+            function init() {
+                MEMU32[CS >> 2] = 2;
+            }
+            function $f0() {
+                __log(0);
+                line(SP | 0);
+                SP = (SP - 16) | 0;
+                CS = (CS - 4) | 0;
+            }
+            function $f1() {
+                __log(1);
+                log(SP | 0);
+                SP = (SP - 4) | 0;
+                CS = (CS - 4) | 0;
+            }
+            function $f2() {
+                __log(2);
+                //Number
+                MEMS32[SP >> 2] = 0;
+                SP = (SP + 4) | 0;
+                //!Number
+                MEMU32[CS >> 2] = 4;
+                CS = (CS + 4) | 0;
+                MEMU32[CS >> 2] = 3;
+            }
+            function $f3() {
+                __log(3);
+                //Number
+                MEMS32[SP >> 2] = 0;
+                SP = (SP + 4) | 0;
+                //!Number
+                //Number
+                MEMS32[SP >> 2] = 0;
+                SP = (SP + 4) | 0;
+                //!Number
+                //Number
+                MEMS32[SP >> 2] = 100;
+                SP = (SP + 4) | 0;
+                //!Number
+                //Binop
+                //Number
+                MEMS32[SP >> 2] = 10;
+                SP = (SP + 4) | 0;
+                //!Number
+                //Variable
+                MEMS32[SP >> 2] = MEMS32[((SP - 20) | 0) >> 2];
+                SP = (SP + 4) | 0;
+                //!Variable
+                MEMS32[((SP - 8) | 0) >> 2] = ((imul(((MEMS32[((SP - 8) | 0) >> 2]) | 0), ((MEMS32[((SP - 4) | 0) >> 2]) | 0))) | 0);
+                SP = (SP - 8 + 4) | 0;
+                //!Binop
+                MEMU32[CS >> 2] = 5;
+                CS = (CS + 4) | 0;
+                MEMU32[CS >> 2] = 0;
+            }
+            function $f4() {
+                __log(4);
+                SP = (SP - 4) | 0;
+                SP = (SP - 0) | 0;
+                CS = (CS - 4) | 0;
+            }
+            function $f5() {
+                __log(5);
+                //Binop
+                //Variable
+                MEMS32[SP >> 2] = MEMS32[((SP - 20) | 0) >> 2];
+                SP = (SP + 4) | 0;
+                //!Variable
+                //Number
+                MEMS32[SP >> 2] = 1;
+                SP = (SP + 4) | 0;
+                //!Number
+                MEMS32[((SP - 8) | 0) >> 2] = ((((MEMS32[((SP - 8) | 0) >> 2]) | 0) + ((MEMS32[((SP - 4) | 0) >> 2]) | 0)) | 0);
+                SP = (SP - 8 + 4) | 0;
+                //!Binop
+                MEMU32[CS >> 2] = 6;
+                CS = (CS + 4) | 0;
+                MEMU32[CS >> 2] = 3;
+            }
+            function $f6() {
+                __log(6);
+                SP = (SP - 4) | 0;
+                SP = (SP - 4) | 0;
+                CS = (CS - 4) | 0;
+            }
+            var $fTable = [$f0, $f1, $f2, $f3, $f4, $f5, $f6, $f0];
+            return {
+                init: init,
+                next: next
+            };
+        }
+
+        function onload() {
+            var heap = new ArrayBuffer(1024 * 1024);
+            var canvas = document.getElementById('canv');
+            var ctx = canvas.getContext('2d');
+            var MEMS32 = new Int32Array(heap);
+            var game = Program(
+                window,
+                {
+                    line: function line(sp) {
+                        var x1 = MEMS32[(sp - 16) >> 2];
+                        var y1 = MEMS32[(sp - 12) >> 2];
+                        var x2 = MEMS32[(sp - 8) >> 2];
+                        var y2 = MEMS32[(sp - 4) >> 2];
+
+                        ctx.beginPath();
+                        ctx.moveTo(x1, y1);
+                        ctx.lineTo(x2, y2);
+                        ctx.stroke();
+                    },
+                    log: function log(sp) {
+                        var x = MEMS32[(sp - 4) >> 2];
+                        console.log(x);
+                    },
+                    __log: function __log(i) {
+                        console.log(i);
+                    }
+                },
+                heap);
+
+            game.init();
+            function next() {
+                game.next();
+                window.requestAnimationFrame(next);
+            }
+            next();
+        }
+    </script>
+</head>
+<body onload="onload()">
+    <canvas id="canv"></canvas>
+</body>
+</html>

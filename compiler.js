@@ -87,7 +87,7 @@ Compiler.prototype = {
                 + 'var MEMF32 = new stdlib.Float32Array(heap);\n'
                 + 'var MEMF64 = new stdlib.Float64Array(heap);\n'
                 + 'var imul = stdlib.Math.imul;\n'
-                //+ 'var log = env.log;\n'                                            // Logger function TODO Revove
+                + 'var __log = env.__log;\n'                                        // Logger function TODO Revove
                 + 'var SP = ' + this.nextFreeVariableLocation + ';\n'               // Stack pointer
                 + 'var CS = ' + (this.nextFreeVariableLocation + 1024) + ';\n'      // Call stack pointer
                 + this.compileSystemFunctionDefinitions() + '\n'
@@ -330,7 +330,7 @@ Compiler.prototype = {
         var buf = [];
         this.createdFunctions.forEach(function each(func, i) {
             buf.push('function ' + func.name + '() {');
-            //buf.push('\tlog(' + i + ');');
+            buf.push('\t__log(' + i + ');');
             buf.push('\t' + func.nodes.join('\n\t'));
             buf.push('}');
         });
