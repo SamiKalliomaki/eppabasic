@@ -100,11 +100,20 @@ Compiler.prototype = {
                 + '\tMEMU32[CS >> ' + this.getTypeShift('INTEGER') + '] = ' + start + ';\n'
                 + '}\n'
 
+                + 'function sp() {\n'
+                + '\treturn SP|0;\n'
+                + '}\n'
+                + 'function cs() {\n'
+                + '\treturn CS|0;\n'
+                + '}\n'
+
                 + this.createFunctionsCode() + '\n'
                 + this.createFTable() + '\n'
                 + 'return {\n'
                 + '\tinit: init,\n'
-                + '\tnext: next\n'
+                + '\tnext: next,\n'
+                + '\tsp: sp,\n'
+                + '\tcs: cs\n'
                 + '};\n'
                 + '}'
             )
@@ -163,6 +172,7 @@ Compiler.prototype = {
      * Calls a function
      */
     callFunction: function callFunction(func, context) {
+        var origSpOffset = context.spOffset;
         // Parameters
         func.params.forEach(function each(param) {
             this.expr(param, context);
@@ -176,6 +186,10 @@ Compiler.prototype = {
         context.curFunc.nodes.push('MEMU32[CS >> ' + this.getTypeShift('INTEGER') + '] = ' + func.definition.entry.index + ';');
 
         context.curFunc = retFunc;
+        // Return stack
+        context.spOffset = origSpOffset;
+        if (func.type)
+            context.soOffset += this.getTypeSize(func.type);
     },
 
     expr: function expr(expr, context) {
