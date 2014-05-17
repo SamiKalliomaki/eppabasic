@@ -29,9 +29,9 @@ Compiler.prototype = {
     /*
      * Defines a native function
      */
-    defineJsFunction: function defineJsFunction(name, paramTypes, jsname, returnType, breaking, entry) {
-        if (breaking !== true)
-            breaking = false;
+    defineJsFunction: function defineJsFunction(name, paramTypes, jsname, returnType, atomic, entry) {
+        if (atomic !== false)
+            atomic = true;
         if (!entry) {
             // Define an entry point
             entry = this.createFunction();
@@ -51,7 +51,7 @@ Compiler.prototype = {
             paramTypes: paramTypes,
             jsname: jsname,
             returnType: returnType,
-            breaking: breaking,
+            atomic: atomic,
             entry: entry
         });
     },
@@ -76,7 +76,7 @@ Compiler.prototype = {
         checker.check();
         checker = new Atomicchecker(this.ast, this.functions);
         checker.check();
-        
+
 
         // And compiling...
         this.ast.nodes.forEach(function each(val) {
@@ -328,7 +328,7 @@ Compiler.prototype = {
             name: name,
             index: this.nextFreeFunction,
             nodes: [],
-            stackDepth: 0
+            //stackDepth: 0
         };
         this.nextFreeFunction++;
 

@@ -129,6 +129,7 @@
                 //compiler.defineJsFunction('log', ['INTEGER'], 'log');
                 //compiler.defineJsFunction('DRAWSCREEN', [], '_drawScreen', undefined, true);
                 compiler.defineJsFunction('LINE', ['INTEGER', 'INTEGER', 'INTEGER', 'INTEGER'], 'line');
+                compiler.defineJsFunction('DRAWSCREEN', [], 'drawScreen', undefined, false);
                 compiler.defineJsFunction('LOG', ['INTEGER'], 'log');
 
                 var compiled = compiler.compile();
