@@ -46,6 +46,8 @@ Compiler.prototype = {
             entry.nodes.push('SP = (SP - ' + paramSize + ')|0;');
             entry.nodes.push('CS = (CS - ' + this.getTypeSize('INTEGER') + ')|0;');
         }
+        if (!atomic)
+            entry.nativeBreaking = true;
         this.functions.push({
             name: name,
             paramTypes: paramTypes,
@@ -67,7 +69,7 @@ Compiler.prototype = {
                 var paramTypes = val.params.map(function map(val) {
                     return val.type;
                 })
-                this.defineJsFunction(val.name, paramTypes, undefined, val.type, val.breaking, val.entry = this.createFunction(val.name));
+                this.defineJsFunction(val.name, paramTypes, undefined, val.type, undefined, val.entry = this.createFunction(val.name));
             }
         }.bind(this));
 
@@ -98,7 +100,7 @@ Compiler.prototype = {
                 + this.compileSystemFunctionDefinitions() + '\n'
 
                 + 'function next() {\n'
-                + '\t' + this.ftableName + '[MEMU32[CS >> ' + this.getTypeShift('INTEGER') + '] & ' + this.getFTableMask() + ']();\n'
+                + '\twhile(' + this.ftableName + '[MEMU32[CS >> ' + this.getTypeShift('INTEGER') + '] & ' + this.getFTableMask() + ']()|0);\n'
                 + '}\n'
 
                 + 'function init() {\n'
@@ -191,7 +193,7 @@ Compiler.prototype = {
             // Select function to be called
             context.curFunc.nodes.push('MEMU32[CS >> ' + this.getTypeShift('INTEGER') + '] = ' + func.definition.entry.index + ';');
             // Call the function
-            context.curFunc.nodes.push(this.fprefix + func.definition.entry.index + '();');
+            context.curFunc.nodes.push(this.fprefix + func.definition.entry.index + '()|0;');
             //throw new Error('Compiler doesn\'t support atomic calls (call to "' + func.name + '")');
         } else {
             // Set return function
@@ -361,6 +363,7 @@ Compiler.prototype = {
             buf.push('function ' + func.name + '() {');
             buf.push('\t__log(' + i + ');');
             buf.push('\t' + func.nodes.join('\n\t'));
+            buf.push('\treturn ' + (func.nativeBreaking ? '0' : '1') + ';');
             buf.push('}');
         });
         return buf.join('\n');

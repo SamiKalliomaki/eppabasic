@@ -22,7 +22,7 @@
             var drawScreen = env.drawScreen;
             var log = env.log;
             function next() {
-                $fTable[MEMU32[CS >> 2] & 15]();
+                while ($fTable[MEMU32[CS >> 2] & 15]() | 0);
             }
             function init() {
                 MEMU32[CS >> 2] = 3;
@@ -39,6 +39,7 @@
                 line(SP | 0);
                 SP = (SP - 16) | 0;
                 CS = (CS - 4) | 0;
+                return 1;
             }
             // DRAWSCREEN
             function $f1() {
@@ -46,6 +47,7 @@
                 drawScreen(SP | 0);
                 SP = (SP - 0) | 0;
                 CS = (CS - 4) | 0;
+                return 0;
             }
             // LOG
             function $f2() {
@@ -53,6 +55,7 @@
                 log(SP | 0);
                 SP = (SP - 4) | 0;
                 CS = (CS - 4) | 0;
+                return 1;
             }
             // entry
             function $f3() {
@@ -62,6 +65,7 @@
                 MEMU32[CS >> 2] = 6;
                 CS = (CS + 4) | 0;
                 MEMU32[CS >> 2] = 4;
+                return 1;
             }
             // rek
             function $f4() {
@@ -84,13 +88,14 @@
                 SP = (SP - 8 + 4) | 0;
                 CS = (CS + 4) | 0;
                 MEMU32[CS >> 2] = 0;
-                $f0();
+                $f0() | 0;
                 CS = (CS + 4) | 0;
                 MEMU32[CS >> 2] = 5;
-                $f5();
+                $f5() | 0;
                 MEMU32[CS >> 2] = 7;
                 CS = (CS + 4) | 0;
                 MEMU32[CS >> 2] = 1;
+                return 1;
             }
             // aodfm
             function $f5() {
@@ -105,9 +110,10 @@
                 SP = (SP + 4) | 0;
                 CS = (CS + 4) | 0;
                 MEMU32[CS >> 2] = 0;
-                $f0();
+                $f0() | 0;
                 SP = (SP - 0) | 0;
                 CS = (CS - 4) | 0;
+                return 1;
             }
             // entry
             function $f6() {
@@ -115,6 +121,7 @@
                 SP = (SP - 4) | 0;
                 SP = (SP - 0) | 0;
                 CS = (CS - 4) | 0;
+                return 1;
             }
             // rek
             function $f7() {
@@ -128,6 +135,7 @@
                 MEMU32[CS >> 2] = 8;
                 CS = (CS + 4) | 0;
                 MEMU32[CS >> 2] = 4;
+                return 1;
             }
             // rek
             function $f8() {
@@ -135,6 +143,7 @@
                 SP = (SP - 4) | 0;
                 SP = (SP - 4) | 0;
                 CS = (CS - 4) | 0;
+                return 1;
             }
             var $fTable = [$f0, $f1, $f2, $f3, $f4, $f5, $f6, $f7, $f8, $f0, $f0, $f0, $f0, $f0, $f0, $f0];
             return {
