@@ -34,7 +34,7 @@ Compiler.prototype = {
             atomic = true;
         if (!entry) {
             // Define an entry point
-            entry = this.createFunction();
+            entry = this.createFunction(name);
 
             var paramSize = 0;
             paramTypes.forEach(function each(param) {
@@ -67,7 +67,7 @@ Compiler.prototype = {
                 var paramTypes = val.params.map(function map(val) {
                     return val.type;
                 })
-                this.defineJsFunction(val.name, paramTypes, undefined, val.type, val.breaking, val.entry = this.createFunction());
+                this.defineJsFunction(val.name, paramTypes, undefined, val.type, val.breaking, val.entry = this.createFunction(val.name));
             }
         }.bind(this));
 
@@ -131,6 +131,7 @@ Compiler.prototype = {
      */
     compileFunctionDefinition: function compileFunctionDefinition(def) {
         var context = {
+            name: def.name,
             curFunc: def.entry,
             spOffset: 0
         };
@@ -178,44 +179,59 @@ Compiler.prototype = {
      */
     callFunction: function callFunction(func, context) {
         var origSpOffset = context.spOffset;
-        // Parameters
+        // Push parameters to the stack
         func.params.forEach(function each(param) {
             this.expr(param, context);
         }.bind(this));
 
-        // Set return function
-        var retFunc = this.createFunction();
+        // Now call the function
+        if (func.atomic) {
+            // Move call stack pointer
+            context.curFunc.nodes.push('CS = (CS + ' + this.getTypeSize('INTEGER') + ')|0;');
+            // Select function to be called
+            context.curFunc.nodes.push('MEMU32[CS >> ' + this.getTypeShift('INTEGER') + '] = ' + func.definition.entry.index + ';');
+            // Call the function
+            context.curFunc.nodes.push(this.fprefix + func.definition.entry.index + '();');
+            //throw new Error('Compiler doesn\'t support atomic calls (call to "' + func.name + '")');
+        } else {
+            // Set return function
+            var retFunc = this.createFunction(context.name);
 
-        context.curFunc.nodes.push('MEMU32[CS >> ' + this.getTypeShift('INTEGER') + '] = ' + retFunc.index + ';');
-        context.curFunc.nodes.push('CS = (CS + ' + this.getTypeSize('INTEGER') + ')|0;');
-        context.curFunc.nodes.push('MEMU32[CS >> ' + this.getTypeShift('INTEGER') + '] = ' + func.definition.entry.index + ';');
+            // Set return function
+            context.curFunc.nodes.push('MEMU32[CS >> ' + this.getTypeShift('INTEGER') + '] = ' + retFunc.index + ';');
+            // Move call stack pointer
+            context.curFunc.nodes.push('CS = (CS + ' + this.getTypeSize('INTEGER') + ')|0;');
+            // Select function to be called
+            context.curFunc.nodes.push('MEMU32[CS >> ' + this.getTypeShift('INTEGER') + '] = ' + func.definition.entry.index + ';');
 
-        context.curFunc = retFunc;
+            context.curFunc = retFunc;
+        }
+
         // Return stack
         context.spOffset = origSpOffset;
         if (func.type)
-            context.soOffset += this.getTypeSize(func.type);
+            context.spOffset += this.getTypeSize(func.type);
     },
 
     expr: function expr(expr, context) {
         switch (expr.nodeType) {
             case 'Number':
-                context.curFunc.nodes.push('//Number');
+                //context.curFunc.nodes.push('//Number');
                 context.curFunc.nodes.push(this.getMemoryType(expr.type) + '[SP >> ' + this.getTypeShift(expr.type) + '] = ' + expr.val + ';');
                 context.curFunc.nodes.push('SP = (SP + ' + this.getTypeSize(expr.type) + ')|0;');
                 context.spOffset += this.getTypeSize(expr.type);
-                context.curFunc.nodes.push('//!Number');
+                //context.curFunc.nodes.push('//!Number');
                 return;
             case 'Variable':
-                context.curFunc.nodes.push('//Variable');
+                //context.curFunc.nodes.push('//Variable');
                 context.curFunc.nodes.push(this.getMemoryType(expr.type) + '[SP >> ' + this.getTypeShift(expr.type) + '] = '
                     + this.getMemoryType(expr.type) + '[((SP - ' + (context.spOffset - expr.definition.location) + ')|0) >> ' + this.getTypeShift(expr.type) + '];');
                 context.curFunc.nodes.push('SP = (SP + ' + this.getTypeSize(expr.type) + ')|0;');
                 context.spOffset += this.getTypeSize(expr.type);
-                context.curFunc.nodes.push('//!Variable');
+                //context.curFunc.nodes.push('//!Variable');
                 return;
             case 'BinaryOp':
-                context.curFunc.nodes.push('//Binop');
+                //context.curFunc.nodes.push('//Binop');
                 this.expr(expr.left, context);
                 this.expr(expr.right, context);
 
@@ -250,7 +266,7 @@ Compiler.prototype = {
                 //    );
                 context.curFunc.nodes.push('SP = (SP - ' + (this.getTypeSize(expr.left.type) + this.getTypeSize(expr.right.type)) + ' + ' + this.getTypeSize(expr.type) + ')|0;');
                 context.spOffset = context.spOffset - (this.getTypeSize(expr.left.type) + this.getTypeSize(expr.right.type)) + this.getTypeSize(expr.type);
-                context.curFunc.nodes.push('//!Binop');
+                //context.curFunc.nodes.push('//!Binop');
                 return;
             case 'Range':
             case 'FunctionCall':
@@ -322,10 +338,11 @@ Compiler.prototype = {
         throw new Error('Unsupported type to cast into "' + type + '"');
     },
 
-    createFunction: function createFunction() {
+    createFunction: function createFunction(originalName) {
         var name = this.fprefix + this.nextFreeFunction;
         var ret = {
             name: name,
+            origName: originalName,
             index: this.nextFreeFunction,
             nodes: [],
             //stackDepth: 0
@@ -339,6 +356,8 @@ Compiler.prototype = {
     createFunctionsCode: function createFunctionsCode() {
         var buf = [];
         this.createdFunctions.forEach(function each(func, i) {
+            if (func.origName)
+                buf.push('// ' + func.origName);
             buf.push('function ' + func.name + '() {');
             buf.push('\t__log(' + i + ');');
             buf.push('\t' + func.nodes.join('\n\t'));

@@ -82,6 +82,9 @@ Lexer.prototype = {
             || this.returnToken()
             || this.endFunctionToken()
 
+            || this.subToken()
+            || this.endSubToken()
+
             || this.identifierToken()
             || this.numberToken()
             || this.newlineToken()
@@ -290,6 +293,19 @@ Lexer.prototype = {
      */
     endFunctionToken: function endFunctionToken() {
         return this.scan(/^ *(END +FUNCTION)\b/i, 'endfunction');
+    },
+
+    /*
+     * Parses a "SUB" token from the input
+     */
+    subToken: function subToken() {
+        return this.scan(/^ *(SUB)\b/i, 'sub');
+    },
+    /*
+     * Parses a "END SUB" token from the input
+     */
+    endSubToken: function endSubToken() {
+        return this.scan(/^ *(END +SUB)\b/i, 'endsub');
     },
 
     /*

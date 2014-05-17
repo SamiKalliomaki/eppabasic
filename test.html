@@ -19,12 +19,13 @@
             var SP = 0;
             var CS = 1024;
             var line = env.line;
+            var drawScreen = env.drawScreen;
             var log = env.log;
             function next() {
-                $fTable[MEMU32[CS >> 2] & 7]();
+                $fTable[MEMU32[CS >> 2] & 15]();
             }
             function init() {
-                MEMU32[CS >> 2] = 2;
+                MEMU32[CS >> 2] = 3;
             }
             function sp() {
                 return SP | 0;
@@ -32,97 +33,110 @@
             function cs() {
                 return CS | 0;
             }
+            // LINE
             function $f0() {
                 __log(0);
                 line(SP | 0);
                 SP = (SP - 16) | 0;
                 CS = (CS - 4) | 0;
             }
+            // DRAWSCREEN
             function $f1() {
                 __log(1);
+                drawScreen(SP | 0);
+                SP = (SP - 0) | 0;
+                CS = (CS - 4) | 0;
+            }
+            // LOG
+            function $f2() {
+                __log(2);
                 log(SP | 0);
                 SP = (SP - 4) | 0;
                 CS = (CS - 4) | 0;
             }
-            function $f2() {
-                __log(2);
-                //Number
-                MEMS32[SP >> 2] = 0;
-                SP = (SP + 4) | 0;
-                //!Number
-                MEMU32[CS >> 2] = 4;
-                CS = (CS + 4) | 0;
-                MEMU32[CS >> 2] = 3;
-            }
+            // entry
             function $f3() {
                 __log(3);
-                //Number
                 MEMS32[SP >> 2] = 0;
                 SP = (SP + 4) | 0;
-                //!Number
-                //Number
-                MEMS32[SP >> 2] = 0;
-                SP = (SP + 4) | 0;
-                //!Number
-                //Number
-                MEMS32[SP >> 2] = 100;
-                SP = (SP + 4) | 0;
-                //!Number
-                //Binop
-                //Binop
-                //Number
-                MEMS32[SP >> 2] = 10;
-                SP = (SP + 4) | 0;
-                //!Number
-                //Variable
-                MEMS32[SP >> 2] = MEMS32[((SP - 20) | 0) >> 2];
-                SP = (SP + 4) | 0;
-                //!Variable
-                MEMS32[((SP - 8) | 0) >> 2] = ((imul(((MEMS32[((SP - 8) | 0) >> 2]) | 0), ((MEMS32[((SP - 4) | 0) >> 2]) | 0))) | 0);
-                SP = (SP - 8 + 4) | 0;
-                //!Binop
-                //Number
-                MEMS32[SP >> 2] = 17;
-                SP = (SP + 4) | 0;
-                //!Number
-                MEMS32[((SP - 8) | 0) >> 2] = ((((MEMS32[((SP - 8) | 0) >> 2]) | 0) + ((MEMS32[((SP - 4) | 0) >> 2]) | 0)) | 0);
-                SP = (SP - 8 + 4) | 0;
-                //!Binop
-                MEMU32[CS >> 2] = 5;
+                MEMU32[CS >> 2] = 6;
                 CS = (CS + 4) | 0;
-                MEMU32[CS >> 2] = 0;
+                MEMU32[CS >> 2] = 4;
             }
+            // rek
             function $f4() {
                 __log(4);
+                MEMS32[SP >> 2] = 0;
+                SP = (SP + 4) | 0;
+                MEMS32[SP >> 2] = 0;
+                SP = (SP + 4) | 0;
+                MEMS32[SP >> 2] = 100;
+                SP = (SP + 4) | 0;
+                MEMS32[SP >> 2] = 10;
+                SP = (SP + 4) | 0;
+                MEMS32[SP >> 2] = MEMS32[((SP - 20) | 0) >> 2];
+                SP = (SP + 4) | 0;
+                MEMS32[((SP - 8) | 0) >> 2] = ((imul(((MEMS32[((SP - 8) | 0) >> 2]) | 0), ((MEMS32[((SP - 4) | 0) >> 2]) | 0))) | 0);
+                SP = (SP - 8 + 4) | 0;
+                MEMS32[SP >> 2] = 17;
+                SP = (SP + 4) | 0;
+                MEMS32[((SP - 8) | 0) >> 2] = ((((MEMS32[((SP - 8) | 0) >> 2]) | 0) + ((MEMS32[((SP - 4) | 0) >> 2]) | 0)) | 0);
+                SP = (SP - 8 + 4) | 0;
+                CS = (CS + 4) | 0;
+                MEMU32[CS >> 2] = 0;
+                $f0();
+                CS = (CS + 4) | 0;
+                MEMU32[CS >> 2] = 5;
+                $f5();
+                MEMU32[CS >> 2] = 7;
+                CS = (CS + 4) | 0;
+                MEMU32[CS >> 2] = 1;
+            }
+            // aodfm
+            function $f5() {
+                __log(5);
+                MEMS32[SP >> 2] = 10;
+                SP = (SP + 4) | 0;
+                MEMS32[SP >> 2] = 20;
+                SP = (SP + 4) | 0;
+                MEMS32[SP >> 2] = 30;
+                SP = (SP + 4) | 0;
+                MEMS32[SP >> 2] = 40;
+                SP = (SP + 4) | 0;
+                CS = (CS + 4) | 0;
+                MEMU32[CS >> 2] = 0;
+                $f0();
+                SP = (SP - 0) | 0;
+                CS = (CS - 4) | 0;
+            }
+            // entry
+            function $f6() {
+                __log(6);
                 SP = (SP - 4) | 0;
                 SP = (SP - 0) | 0;
                 CS = (CS - 4) | 0;
             }
-            function $f5() {
-                __log(5);
-                //Binop
-                //Variable
+            // rek
+            function $f7() {
+                __log(7);
                 MEMS32[SP >> 2] = MEMS32[((SP - 4) | 0) >> 2];
                 SP = (SP + 4) | 0;
-                //!Variable
-                //Number
                 MEMS32[SP >> 2] = 1;
                 SP = (SP + 4) | 0;
-                //!Number
                 MEMS32[((SP - 8) | 0) >> 2] = ((((MEMS32[((SP - 8) | 0) >> 2]) | 0) + ((MEMS32[((SP - 4) | 0) >> 2]) | 0)) | 0);
                 SP = (SP - 8 + 4) | 0;
-                //!Binop
-                MEMU32[CS >> 2] = 6;
+                MEMU32[CS >> 2] = 8;
                 CS = (CS + 4) | 0;
-                MEMU32[CS >> 2] = 3;
+                MEMU32[CS >> 2] = 4;
             }
-            function $f6() {
-                __log(6);
+            // rek
+            function $f8() {
+                __log(8);
                 SP = (SP - 4) | 0;
                 SP = (SP - 4) | 0;
                 CS = (CS - 4) | 0;
             }
-            var $fTable = [$f0, $f1, $f2, $f3, $f4, $f5, $f6, $f0];
+            var $fTable = [$f0, $f1, $f2, $f3, $f4, $f5, $f6, $f7, $f8, $f0, $f0, $f0, $f0, $f0, $f0, $f0];
             return {
                 init: init,
                 next: next,
@@ -149,6 +163,9 @@
                         ctx.moveTo(x1, y1);
                         ctx.lineTo(x2, y2);
                         ctx.stroke();
+                    },
+                    drawScreen: function drawScreen(sp) {
+
                     },
                     log: function log(sp) {
                         var x = MEMS32[(sp - 4) >> 2];

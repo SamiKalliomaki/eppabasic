@@ -62,18 +62,20 @@ Parser.prototype = {
      */
     parseBaselevelStatement: function parseBaselevelStatement() {
         switch (this.peek().type) {
+            case 'comment':
+                return this.parseComment();
             case 'dim':
                 return this.parseVariableDefinition();
-            case 'identifier':
-                return this.parseIdentifier();
-            case 'if':
-                return this.parseIf();
             case 'for':
                 return this.parseFor();
             case 'function':
                 return this.parseFunctionDefinition();
-            case 'comment':
-                return this.parseComment();
+            case 'identifier':
+                return this.parseIdentifier();
+            case 'if':
+                return this.parseIf();
+            case 'sub':
+                return this.parseSubDefinition();
             default:
                 throw new Error('Unexpected token "' + this.peek().type + '" at line ' + this.peek().line);
         }
@@ -86,16 +88,16 @@ Parser.prototype = {
      */
     parseStatement: function parseStatement() {
         switch (this.peek().type) {
+            case 'comment':
+                return this.parseComment();
             case 'dim':
                 return this.parseVariableDefinition();
+            case 'for':
+                return this.parseFor();
             case 'identifier':
                 return this.parseIdentifier();
             case 'if':
                 return this.parseIf();
-            case 'for':
-                return this.parseFor();
-            case 'comment':
-                return this.parseComment();
             case 'return':
                 return this.parseReturn();
             default:
@@ -137,6 +139,7 @@ Parser.prototype = {
                 case 'elseif':
                 case 'endif':
                 case 'endfunction':
+                case 'endsub':
                     return block;
             }
             block.nodes.push(this.parseStatement());
@@ -311,6 +314,45 @@ Parser.prototype = {
     parseReturn: function parseReturn(ret, parent) {
         this.expect('return');
         return new Nodes.Return(this.parseExpr());
+    },
+
+    /*
+     * Parses a subprogram definition
+     */
+    parseSubDefinition: function parseSubDefinition() {
+        this.expect('sub');
+        var name = this.expect('identifier').val;
+        var params = [];
+
+        // Parse parameter list
+        this.expect('lparen');
+        paramloop: while (this.peek().type !== 'rparen') {
+            var paramname = this.expect('identifier').val;
+            this.expect('as');
+            var paramtype = this.expect('identifier').val;
+
+            params.push({
+                name: paramname,
+                type: paramtype
+            });
+
+            switch (this.peek().type) {
+                case 'comma':
+                    this.advance();
+                    break;
+                case 'rparen':
+                    break paramloop;
+                default:
+                    this.expect('comma');
+            }
+        }
+        this.expect('rparen');
+
+        var block = this.parseBlock();
+
+        this.expect('endsub');
+
+        return new Nodes.FunctionDefinition(name, params, undefined, block);
     },
 
     /*
