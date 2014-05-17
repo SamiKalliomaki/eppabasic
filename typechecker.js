@@ -9,7 +9,7 @@ Typechecker.prototype = {
     /*
      * Checks types of the ast
      */
-    typecheck: function typecheck() {
+    check: function typecheck() {
         this.visit(this.ast);
     },
 
@@ -39,10 +39,8 @@ Typechecker.prototype = {
                 return parent.getVariable(name);
         }
 
-        block.breaking = false;
         block.nodes.forEach(function each(val) {
             this.visit(val, block);
-            block.breaking = block.breaking || val.breaking;
         }.bind(this));
     },
 
@@ -56,7 +54,6 @@ Typechecker.prototype = {
      * Visits a variable definition
      */
     visitVariableDefinition: function visitVariableDefinition(definition, parent) {
-        definition.breaking = false;
         if (!definition.type) {
             if (!definition.initial)
                 throw new Error('Variable "' + definition.name + '" definition must have either type or initializer');
@@ -65,7 +62,6 @@ Typechecker.prototype = {
         if (definition.initial) {
             if (definition.type !== this.resolveExprType(definition.initial, parent))
                 throw new Error('Can not cast type "' + this.resolveExprType(definition.initial, parent) + '" to "' + definition.type + '"');
-            definition.breaking = definition.breaking || definition.initial.breaking;
         }
         parent.defineVariable(definition);
     },
@@ -85,22 +81,16 @@ Typechecker.prototype = {
         }
 
         this.visit(loop.block, loop);
-        loop.breaking = loop.range.breaking || loop.block.breaking;
     },
 
     /*
      * Visits an if statement
      */
     visitIf: function visitIf(statement, parent) {
-        statement.breaking = false;
-
         this.resolveExprType(statement.expr, parent);
-        statement.breaking = statement.breaking || statement.expr.breaking;
         this.visit(statement.trueStatement, parent);
-        statement.breaking = statement.breaking || statement.trueStatement.breaking;
         if (statement.falseStatement) {
             this.visit(statement.falseStatement, parent);
-            statement.breaking = statement.breaking || statement.falseStatement.breaking;
         }
     },
 
@@ -120,7 +110,6 @@ Typechecker.prototype = {
 
         call.definition = definition;
         call.type = definition.returnType;
-        call.breaking = definition.breaking;
     },
 
     /*
@@ -144,7 +133,6 @@ Typechecker.prototype = {
      * Visits a return statement
      */
     visitReturn: function visitReturn(ret, parent) {
-        ret.breaking = false;
         ret.type = this.resolveExprType(ret.expr, parent);
     },
 
@@ -159,7 +147,6 @@ Typechecker.prototype = {
 
         switch (expr.nodeType) {
             case 'Number':
-                expr.breaking = false;
                 if (+expr.val === (expr.val | 0)) {
                     return expr.type = 'INTEGER';
                 } else {
@@ -169,7 +156,6 @@ Typechecker.prototype = {
             case 'BinaryOp':
                 var leftType = this.resolveExprType(expr.left, context);
                 var rightType = this.resolveExprType(expr.right, context);
-                expr.breaking = expr.left.breaking || expr.right.breaking;
                 if (leftType === rightType)
                     return expr.type = leftType;
                 throw new Error('Unresolvable return type of a binary operator');
@@ -177,7 +163,6 @@ Typechecker.prototype = {
             case 'Range':
                 var startType = this.resolveExprType(expr.start, context);
                 var endType = this.resolveExprType(expr.end, context);
-                expr.breaking = expr.start.breaking || expr.end.breaking;
                 if (startType === endType)
                     return expr.type = startType;
                 throw new Error('Unsolvable return type of a range operator');
@@ -187,7 +172,6 @@ Typechecker.prototype = {
                 if (!variable)
                     throw new Error('No variable called "' + expr.val + '" exists in scope');
                 expr.definition = variable;
-                expr.breaking = false;
                 return expr.type = variable.type;
 
             case 'FunctionCall':

@@ -29,6 +29,7 @@
     <script src="lexer.js"></script>
     <script src="parser.js"></script>
     <script src="typechecker.js"></script>
+    <script src="atomicchecker.js"></script>
     <script src="compiler.js"></script>
     <script>
         //(function () {
@@ -146,30 +147,30 @@
 </head>
 <body>
     <textarea id="code">
-        ' Just a short example code for testing purposes
-        ' with a multiline comment at the start of the file
+' Just a short example code for testing purposes
+' with a multiline comment at the start of the file
 
-        ' Define some variables needed
-        DIM a AS INTEGER = 10
-        DIM b = 20
-        DIM c = a + b
+' Define some variables needed
+DIM a AS INTEGER = 10
+DIM b = 20
+DIM c = a + b
 
-        FOR i = 0 TO (10*2)
-        DIM d = a - b
-        IF a = b THEN             ' A comment at the end of a line?
-        DIM e = a * a
-        LINE a, b, 10, 10       ' A commented comment?
-        ELSEIF b = c THEN
-        RECT b, c, 20, 10
-        ELSE
-        ELLIPSE a, c, 10, 10
-        ENDIF
-        NEXT i
+FOR i = 0 TO (10*2)
+  DIM d = a - b
+  IF a = b THEN             ' A comment at the end of a line?
+    DIM e = a * a
+    LINE a, b, 10, 10       ' A commented comment?
+  ELSEIF b = c THEN
+    RECT b, c, 20, 10
+  ELSE
+    ELLIPSE a, c, 10, 10
+  ENDIF
+NEXT i
 
-        ' Define earlier used function in the end
-        FUNCTION ADD(a AS INTEGER, b AS INTEGER) AS INTEGER
-        RETURN a + b
-        END FUNCTION
+' Define earlier used function in the end
+FUNCTION ADD(a AS INTEGER, b AS INTEGER) AS INTEGER
+RETURN a + b
+END FUNCTION
     </textarea>
     <div id="errBox"></div>
     <button onclick="compile()">Compile</button>

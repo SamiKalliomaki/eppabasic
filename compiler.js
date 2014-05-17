@@ -1,4 +1,5 @@
 ﻿/// <reference path="typechecker.js" />
+/// <reference path="atomicchecker.js" />
 
 function Compiler(ast) {
     this.ast = ast;
@@ -71,7 +72,11 @@ Compiler.prototype = {
         }.bind(this));
 
         // Do typechecking
-        this.typecheck();
+        var checker = new Typechecker(this.ast, this.functions);
+        checker.check();
+        checker = new Atomicchecker(this.ast, this.functions);
+        checker.check();
+        
 
         // And compiling...
         this.ast.nodes.forEach(function each(val) {
@@ -252,15 +257,6 @@ Compiler.prototype = {
 
         }
         throw new Error('Unsupported expression to be compiled "' + expr.nodeType + '"');
-    },
-
-
-    /*
-     * Checks types of all variables and parameters
-     */
-    typecheck: function typecheck() {
-        var checker = new Typechecker(this.ast, this.functions);
-        checker.typecheck();
     },
 
     getTypeSize: function getTypeSize(type) {
