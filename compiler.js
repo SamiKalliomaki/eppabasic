@@ -161,11 +161,11 @@ Compiler.prototype = {
         var varSize = 0;
         block.variables.forEach(function each(variable) {
             variable.location = context.spOffset;
-            context.spOffset += this.getTypeSize(variable.type);
             varSize += this.getTypeSize(variable.type);
         }.bind(this));
         if (varSize)
             context.curFunc.nodes.push('SP = (SP + ' + varSize + ')|0;');
+        context.spOffset += varSize;
 
         // Compile all the nodes
         block.nodes.forEach(function each(node) {
@@ -207,7 +207,6 @@ Compiler.prototype = {
                         context.spOffset -= this.getTypeSize(node.initial.type);
                         //throw new Error('Compiler doesn\'t support variable definitions with initial values');
                     }
-                    console.log(node);
                     break;
                 case 'VariableAssignment':
                     // Get the value to the top of the stack
@@ -218,9 +217,12 @@ Compiler.prototype = {
                     // Pop the original expression result from the stack
                     context.curFunc.nodes.push('SP = (SP - ' + this.getTypeSize(node.expr.type) + ')|0;');
                     context.spOffset -= this.getTypeSize(node.expr.type);
-                    console.log(node);
+                    break;
+                case 'For':
+                    this.forLoop(node, context);
                     break;
                 default:
+                    console.log(node);
                     throw new Error('Unsupported node type "' + node.nodeType + '"');
             }
         }.bind(this));
@@ -228,6 +230,7 @@ Compiler.prototype = {
         // Remove variables
         if (varSize)
             context.curFunc.nodes.push('SP = (SP - ' + varSize + ')|0;');
+        context.spOffset -= varSize;
     },
 
     /*
@@ -267,6 +270,65 @@ Compiler.prototype = {
         context.spOffset = origSpOffset;
         if (func.type)
             context.spOffset += this.getTypeSize(func.type);
+    },
+
+    /*
+     * Compiles a for loop
+     */
+    forLoop: function forLoop(loop, context) {
+        console.log(loop);
+        var blockFunc = this.createFunction(context.name);
+        var retFunc = this.createFunction(context.name);
+
+        // Set return function
+        context.curFunc.nodes.push('MEMU32[CS >> ' + this.getTypeShift('INTEGER') + '] = ' + retFunc.index + ';');
+        // Move call stack pointer
+        context.curFunc.nodes.push('CS = (CS + ' + this.getTypeSize('INTEGER') + ')|0;');
+        // Select loop function
+        context.curFunc.nodes.push('MEMU32[CS >> ' + this.getTypeShift('INTEGER') + '] = ' + blockFunc.index + ';');
+
+        // Add loop index to the stack
+        loop.variable.location = context.spOffset;
+        //context.spOffset += this.getTypeSize(loop.variable.type);
+        this.expr(loop.range.start, context);
+
+        // Compile the block
+        context.curFunc = blockFunc;
+        this.compileBlock(loop.block, context);
+
+        // In the end increase the loop variable
+        context.curFunc.nodes.push(
+            this.getMemoryType(loop.variable.type) + '[((SP - ' + (context.spOffset - loop.variable.location) + ')|0) >> ' + this.getTypeShift(loop.variable.type) + '] = '
+            + this.castTo(this.getMemoryType(loop.variable.type) + '[((SP - ' + (context.spOffset - loop.variable.location) + ')|0) >> ' + this.getTypeShift(loop.variable.type) + '] + 1', 'INTEGER') + ';');
+
+        // Add tester for the loop end
+        this.expr(loop.range.end, context);
+        // Do the testing
+        context.curFunc.nodes.push('if ('
+            + this.castTo(this.getMemoryType(loop.variable.type) + '[((SP - ' + (context.spOffset - loop.variable.location) + ')|0) >> ' + this.getTypeShift(loop.variable.type) + ']', loop.variable.type)
+            + ' > '
+            + this.castTo(this.getMemoryType(loop.variable.type) + '[((SP - ' + (this.getTypeSize(loop.variable.type)) + ')|0) >> ' + this.getTypeShift(loop.variable.type) + ']', loop.variable.type)
+            + ') {'
+            );
+        {
+            // Return from the loop: basically just pop the variables and call stack
+            context.curFunc.nodes.push('\tSP = (SP - ' + (2 * this.getTypeSize(loop.variable.type)) + ')|0;');
+            context.curFunc.nodes.push('\tCS = (CS - ' + this.getTypeSize('INTEGER') + ')|0;');
+            context.curFunc.nodes.push('\treturn 1;');
+        }
+        context.curFunc.nodes.push('}');
+
+        // Otherwise just pop the end-test value from the stack
+        context.curFunc.nodes.push('SP = (SP - ' + this.getTypeSize(loop.variable.type) + ')|0;');
+        context.spOffset -= this.getTypeSize(loop.variable.type);
+        // And set the next function to go to the start of the loop
+        context.curFunc.nodes.push('MEMU32[CS >> ' + this.getTypeShift('INTEGER') + '] = ' + blockFunc.index + ';');
+
+        // Then it is time for continuation
+        context.curFunc = retFunc;
+        // ... so pop the loop variable off
+        context.curFunc.nodes.push('SP = (SP - ' + this.getTypeSize(loop.variable.type) + ')|0;');
+        context.spOffset -= this.getTypeSize(loop.variable.type);
     },
 
     expr: function expr(expr, context) {
