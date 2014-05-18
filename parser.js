@@ -235,7 +235,8 @@ Parser.prototype = {
 
         while (this.peek().type !== 'newline'
             && this.peek().type !== 'rparen'
-            && this.peek().type !== 'eos') {
+            && this.peek().type !== 'eos'
+            && this.peek().type !== 'comment') {
 
             params.push(this.parseExpr());
 

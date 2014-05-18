@@ -69,7 +69,7 @@ Atomicchecker.prototype = {
     /*
      * Visits a function call
      */
-    visitFunctionCall: function visitFunctionCall(call, parent) {
+    visitFunctionCall: function visitFunctionCall(call) {
         /*if (typeof call.definition.atomic === 'undefined') {
             console.log(call);
         }*/
@@ -86,12 +86,19 @@ Atomicchecker.prototype = {
     /*
      * Visits a function definition
      */
-    visitFunctionDefinition: function visitFunctionDefinition(func, parent) {
+    visitFunctionDefinition: function visitFunctionDefinition(func) {
         func.atomic = this.visit(func.block);
         if (!func.atomic) {
             this.getFunctionDefinition(func.name, func.params).atomic = func.atomic;
         }
         return func.atomic;
+    },
+
+    /*
+     * Visits a return statement
+     */
+    visitReturn: function visitReturn(ret) {
+        return ret.atomic = this.visitExpr(ret.expr);
     },
 
     visitExpr: function visitExpr(expr) {
@@ -108,6 +115,8 @@ Atomicchecker.prototype = {
                 if (!res)
                     expr.atomic = false;
                 return expr.atomic;
+            case 'FunctionCall':
+                return expr.atomic = this.visitFunctionCall(expr);
         }
         throw new Error('Unsupported expression to be atomicness-tested "' + expr.nodeType + '"');
     },

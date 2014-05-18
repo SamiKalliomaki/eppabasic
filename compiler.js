@@ -139,19 +139,20 @@ Compiler.prototype = {
         };
 
         // Find out parameter offsets
-        var offset = 0;
-        var i = def.params.length;
-        while (i--) {
+        //var offset = 0;
+        //var i = def.params.length;
+        for (var i = 0; i < def.params.length; i++) {
             var param = def.params[i];
             var size = this.getTypeSize(param.type);
-            offset -= size;
-            param.location = offset;
+            //offset -= size;
+            param.location = context.spOffset;
+            context.spOffset += size;
         }
 
         this.compileBlock(def.block, context);
 
-        // Clear the reserved stack
-        context.curFunc.nodes.push('SP = (SP - ' + -offset + ')|0;');
+        // Clear the reserved stack (practically only for subs because every function should end with a return statement)
+        context.curFunc.nodes.push('SP = (SP - ' + context.spOffset + ')|0;');
         context.curFunc.nodes.push('CS = (CS - ' + this.getTypeSize('INTEGER') + ')|0;');
     },
 
@@ -167,6 +168,19 @@ Compiler.prototype = {
                     }
                     break;
                 case 'Return':
+                    // Compile the expression to the top of the stack
+                    this.expr(node.expr, context);
+                    // Move the result to the begining of the return stack
+                    context.curFunc.nodes.push(this.getMemoryType(node.expr.type) + '[((SP - ' + context.spOffset + ')|0) >> ' + this.getTypeShift(node.expr.type) + '] = '
+                        + this.getMemoryType(node.expr.type) + '[((SP - ' + this.getTypeSize(node.expr.type) + ')|0) >> ' + this.getTypeShift(node.expr.type) + '];');
+
+                    // Return the stack to appropriate state
+                    context.curFunc.nodes.push('SP = (SP - ' + (context.spOffset - this.getTypeSize(node.expr.type)) + ')|0;');
+                    // ...pop the function from the call stack
+                    context.curFunc.nodes.push('CS = (CS - ' + this.getTypeSize('INTEGER') + ')|0;');
+                    // And get out of here!
+                    context.curFunc.nodes.push('return 1;');
+
                     break;
                 case 'Comment':
                     break;
@@ -270,8 +284,10 @@ Compiler.prototype = {
                 context.spOffset = context.spOffset - (this.getTypeSize(expr.left.type) + this.getTypeSize(expr.right.type)) + this.getTypeSize(expr.type);
                 //context.curFunc.nodes.push('//!Binop');
                 return;
-            case 'Range':
             case 'FunctionCall':
+                this.callFunction(expr, context);
+                return;
+            case 'Range':
 
         }
         throw new Error('Unsupported expression to be compiled "' + expr.nodeType + '"');
