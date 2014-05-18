@@ -196,8 +196,17 @@ Compiler.prototype = {
                 case 'Comment':
                     break;
                 case 'VariableDefinition':
-                    if (node.initial)
-                        throw new Error('Compiler doesn\'t support variable definitions with initial values');
+                    if (node.initial) {
+                        // Get the initial value to the top of the stack
+                        this.expr(node.initial, context);
+                        // Copy it from there to the variable location
+                        context.curFunc.nodes.push(this.getMemoryType(node.initial.type) + '[((SP - ' + (context.spOffset - node.location) + ')|0) >> ' + this.getTypeShift(node.initial.type) + '] = '
+                            + this.getMemoryType(node.initial.type) + '[((SP - ' + this.getTypeSize(node.initial.type) + ')|0) >> ' + this.getTypeShift(node.initial.type) + '];');
+                        // Pop the original expression result from the stack
+                        context.curFunc.nodes.push('SP = (SP - ' + this.getTypeSize(node.initial.type) + ')|0;');
+                        context.spOffset -= this.getTypeSize(node.initial.type);
+                        //throw new Error('Compiler doesn\'t support variable definitions with initial values');
+                    }
                     console.log(node);
                     break;
                 case 'VariableAssignment':
