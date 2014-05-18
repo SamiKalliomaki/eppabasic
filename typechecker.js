@@ -28,13 +28,22 @@ Typechecker.prototype = {
     visitBlock: function visitBlock(block, parent) {
         block.variables = [];
         block.defineVariable = function defineVariable(def) {
-            if (block.variables[def.name])
+            if (block.variables.some(
+                function some(elem) {
+                    return elem.name === def.name;
+            })) {
                 throw new Error('Redefinition of variable "' + name + '"');
-            block.variables[def.name] = def;
+            }
+            block.variables.push(def);
         }
         block.getVariable = function getVariable(name) {
-            if (block.variables[name])
-                return block.variables[name];
+            var variable = block.variables.find(function find(elem) {
+                return elem.name === name;
+            });
+            if (variable)
+                return variable;
+            //if (block.variables[name])
+            //    return block.variables[name];
             if (parent)
                 return parent.getVariable(name);
         }
@@ -64,6 +73,17 @@ Typechecker.prototype = {
                 throw new Error('Can not cast type "' + this.resolveExprType(definition.initial, parent) + '" to "' + definition.type + '"');
         }
         parent.defineVariable(definition);
+    },
+
+    /*
+     * Visits a variable definition
+     */
+    visitVariableAssignment: function visitVariableAssignment(assignemnt, parent) {
+        var variable = parent.getVariable(assignemnt.name);
+        if (!variable)
+            throw new Error('No variable called "' + assignemnt.name + '" exists in scope');
+        assignemnt.definition = variable;
+        assignemnt.type = this.resolveExprType(assignemnt.expr, parent);
     },
 
     /*

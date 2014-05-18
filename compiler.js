@@ -157,6 +157,17 @@ Compiler.prototype = {
     },
 
     compileBlock: function compileBlock(block, context) {
+        // Reserve space for variables
+        var varSize = 0;
+        block.variables.forEach(function each(variable) {
+            variable.location = context.spOffset;
+            context.spOffset += this.getTypeSize(variable.type);
+            varSize += this.getTypeSize(variable.type);
+        }.bind(this));
+        if (varSize)
+            context.curFunc.nodes.push('SP = (SP + ' + varSize + ')|0;');
+
+        // Compile all the nodes
         block.nodes.forEach(function each(node) {
             switch (node.nodeType) {
                 case 'FunctionCall':
@@ -184,10 +195,30 @@ Compiler.prototype = {
                     break;
                 case 'Comment':
                     break;
+                case 'VariableDefinition':
+                    if (node.initial)
+                        throw new Error('Compiler doesn\'t support variable definitions with initial values');
+                    console.log(node);
+                    break;
+                case 'VariableAssignment':
+                    // Get the value to the top of the stack
+                    this.expr(node.expr, context);
+                    // Copy it from there to the variable location
+                    context.curFunc.nodes.push(this.getMemoryType(node.expr.type) + '[((SP - ' + (context.spOffset - node.definition.location) + ')|0) >> ' + this.getTypeShift(node.expr.type) + '] = '
+                        + this.getMemoryType(node.expr.type) + '[((SP - ' + this.getTypeSize(node.expr.type) + ')|0) >> ' + this.getTypeShift(node.expr.type) + '];');
+                    // Pop the original expression result from the stack
+                    context.curFunc.nodes.push('SP = (SP - ' + this.getTypeSize(node.expr.type) + ')|0;');
+                    context.spOffset -= this.getTypeSize(node.expr.type);
+                    console.log(node);
+                    break;
                 default:
                     throw new Error('Unsupported node type "' + node.nodeType + '"');
             }
         }.bind(this));
+
+        // Remove variables
+        if (varSize)
+            context.curFunc.nodes.push('SP = (SP - ' + varSize + ')|0;');
     },
 
     /*

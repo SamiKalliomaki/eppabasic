@@ -47,7 +47,15 @@ Atomicchecker.prototype = {
      * A dummy visit for comment variable definition
      */
     visitVariableDefinition: function visitVariableDefinition(definition) {
+        if (definition.initial)
+            return definition.atomic = this.visitExpr(definition.initial);
         return definition.atomic = true;
+    },
+    /*
+     * Visits a variable assignment
+     */
+    visitVariableAssignment: function visitVariableAssignment(assignment) {
+        return assignment.atomic = this.visitExpr(assignment.expr);
     },
 
     /*

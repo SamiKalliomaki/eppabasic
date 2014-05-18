@@ -213,7 +213,10 @@ Parser.prototype = {
     parseIdentifier: function parseIdentifier() {
         var tok = this.expect('identifier');
 
-        if (this.peek(2).type === 'eq') {
+        if (this.peek().type === 'eq') {
+            this.expect('eq');
+            var expr = this.parseExpr();
+            return new Nodes.VariableAssignment(tok.val, expr);
             throw new Error('Variable assignments not yet supported');
         } else {
             var params = this.parseParams();

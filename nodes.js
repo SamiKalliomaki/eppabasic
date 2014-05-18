@@ -111,6 +111,17 @@ Nodes.VariableDefinition.prototype = {
 };
 
 /*
+ * Creates a new ast variable assignment node 
+ */
+Nodes.VariableAssignment = function VariableAssignment(name, expr) {
+    this.name = name;
+    this.expr = expr;
+}
+Nodes.VariableAssignment.prototype = {
+    nodeType: 'VariableAssignment'
+};
+
+/*
  * Creates a new ast function definition node 
  */
 Nodes.FunctionDefinition = function FunctionDefinition(name, params, type, block) {
