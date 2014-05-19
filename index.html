@@ -133,6 +133,11 @@
                 compiler.defineJsFunction('DRAWSCREEN', [], 'drawScreen', undefined, false);
                 compiler.defineJsFunction('LOG', ['INTEGER'], 'log');
 
+                // Mathematical functions
+                compiler.defineJsFunction('INT', ['DOUBLE'], 'int', 'INTEGER');
+                compiler.defineJsFunction('SIN', ['INTEGER'], 'sinInt', 'DOUBLE');
+                compiler.defineJsFunction('COS', ['INTEGER'], 'cosInt', 'DOUBLE');
+
                 var compiled = compiler.compile();
 
                 document.getElementById('compiled').innerHTML = beautifyJs(compiled);

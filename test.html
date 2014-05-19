@@ -2,6 +2,12 @@
 <html>
 <head>
     <title></title>
+    <style>
+        #canv {
+            width: 100%;
+            border: 1px dashed #000;
+        }
+    </style>
     <script>
         if (!window.Math.imul) {
             window.Math.imul = function (a, b) {
@@ -21,11 +27,14 @@
             var line = env.line;
             var drawScreen = env.drawScreen;
             var log = env.log;
+            var int = env.int;
+            var sinInt = env.sinInt;
+            var cosInt = env.cosInt;
             function next() {
                 while ($fTable[MEMU32[CS >> 2] & 15]() | 0);
             }
             function init() {
-                MEMU32[CS >> 2] = 3;
+                MEMU32[CS >> 2] = 6;
             }
             function sp() {
                 return SP | 0;
@@ -57,95 +66,114 @@
                 CS = (CS - 4) | 0;
                 return 1;
             }
-            // entry
+            // INT
             function $f3() {
                 __log(3);
-                MEMS32[SP >> 2] = 0;
-                SP = (SP + 4) | 0;
-                MEMU32[CS >> 2] = 6;
-                CS = (CS + 4) | 0;
-                MEMU32[CS >> 2] = 4;
+                int(SP | 0);
+                SP = (SP - 0) | 0;
+                CS = (CS - 4) | 0;
                 return 1;
             }
-            // rek
+            // SIN
             function $f4() {
                 __log(4);
-                MEMS32[SP >> 2] = 0;
-                SP = (SP + 4) | 0;
-                MEMS32[SP >> 2] = 0;
-                SP = (SP + 4) | 0;
-                MEMS32[SP >> 2] = 100;
-                SP = (SP + 4) | 0;
-                MEMS32[SP >> 2] = 10;
-                SP = (SP + 4) | 0;
-                MEMS32[SP >> 2] = MEMS32[((SP - 20) | 0) >> 2];
-                SP = (SP + 4) | 0;
-                MEMS32[((SP - 8) | 0) >> 2] = ((imul(((MEMS32[((SP - 8) | 0) >> 2]) | 0), ((MEMS32[((SP - 4) | 0) >> 2]) | 0))) | 0);
+                sinInt(SP | 0);
+                SP = (SP - 0) | 0;
+                CS = (CS - 4) | 0;
+                return 1;
+            }
+            // COS
+            function $f5() {
+                __log(5);
+                cosInt(SP | 0);
+                SP = (SP - 0) | 0;
+                CS = (CS - 4) | 0;
+                return 1;
+            }
+            // MAIN
+            function $f6() {
+                __log(6);
+                SP = (SP + 8) | 0;
+                MEMS32[SP >> 2] = ((320) | 0); SP = (SP + 4) | 0;
+                MEMS32[((SP - 12) | 0) >> 2] = MEMS32[((SP - 4) | 0) >> 2];
+                SP = (SP - 4) | 0;
+                MEMS32[SP >> 2] = ((240) | 0); SP = (SP + 4) | 0;
+                MEMS32[((SP - 8) | 0) >> 2] = MEMS32[((SP - 4) | 0) >> 2];
+                SP = (SP - 4) | 0;
+                MEMU32[CS >> 2] = 8;
+                CS = (CS + 4) | 0;
+                MEMU32[CS >> 2] = 7;
+                MEMS32[SP >> 2] = ((0) | 0); SP = (SP + 4) | 0;
+                return 1;
+            }
+            // MAIN
+            function $f7() {
+                __log(7);
+                MEMS32[SP >> 2] = ((((MEMS32[((SP - 12) | 0) >> 2]) | 0)) | 0); SP = (SP + 4) | 0;
+                MEMS32[SP >> 2] = ((((MEMS32[((SP - 12) | 0) >> 2]) | 0)) | 0); SP = (SP + 4) | 0;
+                MEMS32[SP >> 2] = ((((MEMS32[((SP - 12) | 0) >> 2]) | 0)) | 0); SP = (SP + 4) | 0;
+                CS = (CS + 4) | 0;
+                MEMU32[CS >> 2] = 5;
+                $f5() | 0;
+                MEMF32[SP >> 2] = +(100.1); SP = (SP + 4) | 0;
+                MEMF32[((SP - 8) | 0) >> 2] = +(+(MEMF32[((SP - 8) | 0) >> 2]) * +(MEMF32[((SP - 4) | 0) >> 2]));
                 SP = (SP - 8 + 4) | 0;
-                MEMS32[SP >> 2] = 17;
-                SP = (SP + 4) | 0;
+                CS = (CS + 4) | 0;
+                MEMU32[CS >> 2] = 3;
+                $f3() | 0;
+                MEMS32[SP >> 2] = ((((MEMS32[((SP - 24) | 0) >> 2]) | 0)) | 0); SP = (SP + 4) | 0;
+                MEMS32[((SP - 8) | 0) >> 2] = ((((MEMS32[((SP - 8) | 0) >> 2]) | 0) + ((MEMS32[((SP - 4) | 0) >> 2]) | 0)) | 0);
+                SP = (SP - 8 + 4) | 0;
+                MEMS32[SP >> 2] = ((((MEMS32[((SP - 16) | 0) >> 2]) | 0)) | 0); SP = (SP + 4) | 0;
+                CS = (CS + 4) | 0;
+                MEMU32[CS >> 2] = 4;
+                $f4() | 0;
+                MEMF32[SP >> 2] = +(100.1); SP = (SP + 4) | 0;
+                MEMF32[((SP - 8) | 0) >> 2] = +(+(MEMF32[((SP - 8) | 0) >> 2]) * +(MEMF32[((SP - 4) | 0) >> 2]));
+                SP = (SP - 8 + 4) | 0;
+                CS = (CS + 4) | 0;
+                MEMU32[CS >> 2] = 3;
+                $f3() | 0;
+                MEMS32[SP >> 2] = ((((MEMS32[((SP - 24) | 0) >> 2]) | 0)) | 0); SP = (SP + 4) | 0;
                 MEMS32[((SP - 8) | 0) >> 2] = ((((MEMS32[((SP - 8) | 0) >> 2]) | 0) + ((MEMS32[((SP - 4) | 0) >> 2]) | 0)) | 0);
                 SP = (SP - 8 + 4) | 0;
                 CS = (CS + 4) | 0;
                 MEMU32[CS >> 2] = 0;
                 $f0() | 0;
-                CS = (CS + 4) | 0;
-                MEMU32[CS >> 2] = 5;
-                $f5() | 0;
-                MEMU32[CS >> 2] = 7;
+                MEMU32[CS >> 2] = 9;
                 CS = (CS + 4) | 0;
                 MEMU32[CS >> 2] = 1;
                 return 1;
             }
-            // aodfm
-            function $f5() {
-                __log(5);
-                MEMS32[SP >> 2] = 10;
-                SP = (SP + 4) | 0;
-                MEMS32[SP >> 2] = 20;
-                SP = (SP + 4) | 0;
-                MEMS32[SP >> 2] = 30;
-                SP = (SP + 4) | 0;
-                MEMS32[SP >> 2] = 40;
-                SP = (SP + 4) | 0;
-                CS = (CS + 4) | 0;
-                MEMU32[CS >> 2] = 0;
-                $f0() | 0;
-                SP = (SP - 0) | 0;
-                CS = (CS - 4) | 0;
-                return 1;
-            }
-            // entry
-            function $f6() {
-                __log(6);
-                SP = (SP - 4) | 0;
-                SP = (SP - 0) | 0;
-                CS = (CS - 4) | 0;
-                return 1;
-            }
-            // rek
-            function $f7() {
-                __log(7);
-                MEMS32[SP >> 2] = MEMS32[((SP - 4) | 0) >> 2];
-                SP = (SP + 4) | 0;
-                MEMS32[SP >> 2] = 1;
-                SP = (SP + 4) | 0;
-                MEMS32[((SP - 8) | 0) >> 2] = ((((MEMS32[((SP - 8) | 0) >> 2]) | 0) + ((MEMS32[((SP - 4) | 0) >> 2]) | 0)) | 0);
-                SP = (SP - 8 + 4) | 0;
-                MEMU32[CS >> 2] = 8;
-                CS = (CS + 4) | 0;
-                MEMU32[CS >> 2] = 4;
-                return 1;
-            }
-            // rek
+            // MAIN
             function $f8() {
                 __log(8);
                 SP = (SP - 4) | 0;
-                SP = (SP - 4) | 0;
-                CS = (CS - 4) | 0;
+                SP = (SP - 8) | 0;
+                MEMU32[CS >> 2] = 10;
                 return 1;
             }
-            var $fTable = [$f0, $f1, $f2, $f3, $f4, $f5, $f6, $f7, $f8, $f0, $f0, $f0, $f0, $f0, $f0, $f0];
+            // MAIN
+            function $f9() {
+                __log(9);
+                MEMS32[((SP - 4) | 0) >> 2] = (((MEMS32[((SP - 4) | 0) >> 2] | 0) + 1) | 0);
+                MEMS32[SP >> 2] = ((100000000) | 0); SP = (SP + 4) | 0;
+                if (((MEMS32[((SP - 8) | 0) >> 2]) | 0) > ((MEMS32[((SP - 4) | 0) >> 2]) | 0)) {
+                    SP = (SP - 8) | 0;
+                    CS = (CS - 4) | 0;
+                    return 1;
+                }
+                SP = (SP - 4) | 0;
+                MEMU32[CS >> 2] = 7;
+                return 1;
+            }
+            // END
+            function $f10() {
+                __log(10);
+
+                return 0;
+            }
+            var $fTable = [$f0, $f1, $f2, $f3, $f4, $f5, $f6, $f7, $f8, $f9, $f10, $f0, $f0, $f0, $f0, $f0];
             return {
                 init: init,
                 next: next,
@@ -159,6 +187,7 @@
             var canvas = document.getElementById('canv');
             var ctx = canvas.getContext('2d');
             var MEMS32 = new Int32Array(heap);
+            var MEMF32 = new Float32Array(heap);
             var game = Program(
                 window,
                 {
@@ -179,6 +208,18 @@
                     log: function log(sp) {
                         var x = MEMS32[(sp - 4) >> 2];
                         console.log(x);
+                    },
+                    int: function int(sp) {
+                        var x = MEMF32[(sp - 4) >> 2];
+                        MEMS32[(sp - 4) >> 2] = x;
+                    },
+                    sinInt: function sinInt(sp) {
+                        var a = MEMS32[(sp - 4) >> 2];
+                        MEMF32[(sp - 4) >> 2] = Math.sin(a);
+                    },
+                    cosInt: function cosInt(sp) {
+                        var a = MEMS32[(sp - 4) >> 2];
+                        MEMF32[(sp - 4) >> 2] = Math.cos(a);
                     },
                     __log: function __log(i) {
                         console.log(i);
@@ -219,20 +260,32 @@
                 heap);
 
             game.init();
-            function next() {
+            var running = false;
+            function step() {
                 game.next();
-                //window.requestAnimationFrame(next);
+                if (running)
+                    window.requestAnimationFrame(step);
             }
-            //next();
-            document.getElementById('nextBtn').addEventListener('click', next);
+            function start() {
+                running = true;
+                step();
+            }
+            function stop() {
+                running = false;
+            }
+            document.getElementById('startBtn').addEventListener('click', start);
+            document.getElementById('stopBtn').addEventListener('click', stop);
+            document.getElementById('stepBtn').addEventListener('click', step);
         }
     </script>
 </head>
 <body onload="onload()">
-    <canvas id="canv"></canvas>
-    <br>
-    <button id="nextBtn">Next step</button>
-    <br>
-    <pre id="memdump"></pre>
+    <div id="header">
+        <button id="startBtn">Start</button>
+        <button id="stopBtn">Stop</button>
+        <button id="stepBtn">Step</button>
+        <pre id="memdump"></pre>
+    </div>
+    <canvas id="canv" width="640" height="480"></canvas>
 </body>
 </html>
