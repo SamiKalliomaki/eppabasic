@@ -297,21 +297,15 @@ Compiler.prototype = {
         // Select loop function
         context.curFunc.nodes.push('MEMU32[CS >> ' + this.getTypeShift('INTEGER') + '] = ' + blockFunc.index + ';');
 
-        // Add loop index to the stack
+        // Add loop index to the stack with the start value
         loop.variable.location = context.spOffset;
         //context.spOffset += this.getTypeSize(loop.variable.type);
         this.expr(loop.range.start, context);
 
         // Compile the block
         context.curFunc = blockFunc;
-        this.compileBlock(loop.block, context);
 
-        // In the end increase the loop variable
-        context.curFunc.nodes.push(
-            this.getMemoryType(loop.variable.type) + '[((SP - ' + (context.spOffset - loop.variable.location) + ')|0) >> ' + this.getTypeShift(loop.variable.type) + '] = '
-            + '(' + this.castTo(this.getMemoryType(loop.variable.type) + '[((SP - ' + (context.spOffset - loop.variable.location) + ')|0) >> ' + this.getTypeShift(loop.variable.type) + ']|0) + 1', 'INTEGER') + ';');
-
-        // Add tester for the loop end
+        // Test for continuation in the begining
         this.expr(loop.range.end, context);
         // Do the testing
         context.curFunc.nodes.push('if ('
@@ -321,22 +315,30 @@ Compiler.prototype = {
             + ') {'
             );
         {
-            // Return from the loop: basically just pop the test value and call stack
+            // Exit the loop: basically just pop the test value and call stack
             context.curFunc.nodes.push('\tSP = (SP - ' + this.getTypeSize(loop.variable.type) + ')|0;');
             context.curFunc.nodes.push('\tCS = (CS - ' + this.getTypeSize('INTEGER') + ')|0;');
             context.curFunc.nodes.push('\treturn 1;');
         }
         context.curFunc.nodes.push('}');
-
-        // Otherwise just pop the end-test value from the stack
+        // Pop the test value
         context.curFunc.nodes.push('SP = (SP - ' + this.getTypeSize(loop.variable.type) + ')|0;');
         context.spOffset -= this.getTypeSize(loop.variable.type);
-        // And set the next function to go to the start of the loop
+
+        // Then comes the block
+        this.compileBlock(loop.block, context);
+
+        // In the end increase the loop variable
+        context.curFunc.nodes.push(
+            this.getMemoryType(loop.variable.type) + '[((SP - ' + (context.spOffset - loop.variable.location) + ')|0) >> ' + this.getTypeShift(loop.variable.type) + '] = '
+            + '(' + this.castTo(this.getMemoryType(loop.variable.type) + '[((SP - ' + (context.spOffset - loop.variable.location) + ')|0) >> ' + this.getTypeShift(loop.variable.type) + ']|0) + 1', 'INTEGER') + ';');
+
+        // And go to the begining of the loop
         context.curFunc.nodes.push('MEMU32[CS >> ' + this.getTypeShift('INTEGER') + '] = ' + blockFunc.index + ';');
 
-        // Then it is time for continuation
+        // After the loop:
         context.curFunc = retFunc;
-        // ... so pop the loop variable off
+        // Pop the loop variable off
         context.curFunc.nodes.push('SP = (SP - ' + this.getTypeSize(loop.variable.type) + ')|0;');
         context.spOffset -= this.getTypeSize(loop.variable.type);
     },
