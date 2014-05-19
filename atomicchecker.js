@@ -62,14 +62,10 @@ Atomicchecker.prototype = {
      * Visits a for loop
      */
     visitFor: function visitFor(loop) {
-        loop.atomic = true;
+        loop.atomic = false;
 
-        var res = this.visit(loop.range);
-        if (!res)
-            loop.atomic = false;
-        res = this.visit(loop.block);
-        if (!res)
-            loop.atomic = false;
+        this.visit(loop.range);
+        this.visit(loop.block);
 
         return loop.atomic;
     },

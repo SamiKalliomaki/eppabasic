@@ -321,8 +321,8 @@ Compiler.prototype = {
             + ') {'
             );
         {
-            // Return from the loop: basically just pop the variables and call stack
-            context.curFunc.nodes.push('\tSP = (SP - ' + (2 * this.getTypeSize(loop.variable.type)) + ')|0;');
+            // Return from the loop: basically just pop the test value and call stack
+            context.curFunc.nodes.push('\tSP = (SP - ' + this.getTypeSize(loop.variable.type) + ')|0;');
             context.curFunc.nodes.push('\tCS = (CS - ' + this.getTypeSize('INTEGER') + ')|0;');
             context.curFunc.nodes.push('\treturn 1;');
         }

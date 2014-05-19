@@ -134,9 +134,12 @@
                 compiler.defineJsFunction('LOG', ['INTEGER'], 'log');
 
                 // Mathematical functions
+                compiler.defineJsFunction('DBL', ['INTEGER'], 'dbl', 'DOUBLE');
                 compiler.defineJsFunction('INT', ['DOUBLE'], 'int', 'INTEGER');
                 compiler.defineJsFunction('SIN', ['INTEGER'], 'sinInt', 'DOUBLE');
+                compiler.defineJsFunction('SIN', ['DOUBLE'], 'sinDbl', 'DOUBLE');
                 compiler.defineJsFunction('COS', ['INTEGER'], 'cosInt', 'DOUBLE');
+                compiler.defineJsFunction('COS', ['DOUBLE'], 'cosDbl', 'DOUBLE');
 
                 var compiled = compiler.compile();
 
