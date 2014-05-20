@@ -156,6 +156,27 @@ Typechecker.prototype = {
         ret.type = this.resolveExprType(ret.expr, parent);
     },
 
+    /*
+     * Visits a repeat-forever statement
+     */
+    visitRepeatForever: function visitRepeatForever(loop, parent) {
+        this.visit(loop.block, parent);
+    },
+    /*
+     * Visits a repeat-until statement
+     */
+    visitRepeatUntil: function visitRepeatUntil(loop, parent) {
+        this.visit(loop.block, parent);
+        this.resolveExprType(loop.expr, parent);
+    },
+    /*
+     * Visits a repeat-while statement
+     */
+    visitRepeatWhile: function visitRepeatWhile(loop, parent) {
+        this.visit(loop.block, parent);
+        this.resolveExprType(loop.expr, parent);
+    },
+
 
 
     /*
@@ -167,7 +188,7 @@ Typechecker.prototype = {
 
         switch (expr.nodeType) {
             case 'Number':
-                if (+expr.val === (expr.val | 0)) {
+                if (+expr.val === (expr.val | 0) && expr.val.indexOf('.') === -1) {
                     return expr.type = 'INTEGER';
                 } else {
                     return expr.type = 'DOUBLE';
@@ -178,12 +199,15 @@ Typechecker.prototype = {
                 var rightType = this.resolveExprType(expr.right, context);
                 switch (expr.op) {
                     case 'lt':
+                    case 'gt':
                         return expr.type = 'INTEGER';
                         break;
                     case 'plus':
                     case 'minus':
                     case 'mul':
                     case 'div':
+                        if (leftType === 'DOUBLE' || rightType === 'DOUBLE')
+                            return expr.type = 'DOUBLE';
                         if (leftType === rightType)
                             return expr.type = leftType;
                         break;

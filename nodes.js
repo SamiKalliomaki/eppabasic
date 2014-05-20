@@ -135,12 +135,43 @@ Nodes.FunctionDefinition.prototype = {
 };
 
 /*
- * Creates a new ast retyrb node 
+ * Creates a new ast return node 
  */
 Nodes.Return = function Return(expr) {
     this.expr = expr;
 }
 Nodes.Return.prototype = {
     nodeType: 'Return'
+};
+
+/*
+ * Creates a new ast repeat-forever node 
+ */
+Nodes.RepeatForever = function RepeatForever(block) {
+    this.block = block;
+}
+Nodes.RepeatForever.prototype = {
+    nodeType: 'RepeatForever'
+};
+/*
+ * Creates a new ast repeat-while node 
+ */
+Nodes.RepeatWhile = function RepeatWhile(block, expr) {
+    this.block = block;
+    this.expr = expr;
+}
+Nodes.RepeatWhile.prototype = {
+    nodeType: 'RepeatWhile'
+};
+
+/*
+ * Creates a new ast repeat-until node 
+ */
+Nodes.RepeatUntil = function RepeatUntil(block, expr) {
+    this.block = block;
+    this.expr = expr;
+}
+Nodes.RepeatUntil.prototype = {
+    nodeType: 'RepeatUntil'
 };
 

@@ -128,7 +128,7 @@ Compiler.prototype = {
                 + this.createFTable() + '\n'
                 + 'return {\n'
                 + '\tinit: init,\n'
-                + '\reset: init,\n'
+                + '\treset: init,\n'
                 + '\tnext: next,\n'
                 + '\tsp: sp,\n'
                 + '\tcs: cs\n'
@@ -234,6 +234,15 @@ Compiler.prototype = {
                     break;
                 case 'If':
                     this.ifStatement(node, context);
+                    break;
+                case 'RepeatForever':
+                    this.repeatForever(node, context);
+                    break;
+                case 'RepeatUntil':
+                    this.repeatUntil(node, context);
+                    break;
+                case 'RepeatWhile':
+                    this.repeatWhile(node, context);
                     break;
                 case 'FunctionDefinition':
                     if (skipFunctionDefinitions)
@@ -405,6 +414,113 @@ Compiler.prototype = {
         context.curFunc = retBlock;
     },
 
+    /*
+     * Compiles a repeat-forever loop
+     */
+    repeatForever: function repeatForever(loop, context) {
+        var blockFunc = this.createFunction(context.name);
+        var retFunc = this.createFunction(context.name);
+
+        // Set the return function
+        context.curFunc.nodes.push('MEMU32[CS >> ' + this.getTypeShift('INTEGER') + '] = ' + retFunc.index + ';');
+        // Jump to the block
+        context.curFunc.nodes.push('CS = (CS + ' + this.getTypeSize('INTEGER') + ')|0;');
+        context.curFunc.nodes.push('MEMU32[CS >> ' + this.getTypeShift('INTEGER') + '] = ' + blockFunc.index + ';');
+
+        // Compile the block
+        context.curFunc = blockFunc;
+        this.compileBlock(loop.block, context);
+        // In the end go back to the begining
+        context.curFunc.nodes.push('MEMU32[CS >> ' + this.getTypeShift('INTEGER') + '] = ' + blockFunc.index + ';');
+
+        // TODO Breaking from the forever loop!
+
+        // After the loop
+        context.curFunc = retFunc;
+    },
+    /*
+     * Compiles a repeat-until loop
+     */
+    repeatUntil: function repeatUntil(loop, context) {
+        var blockFunc = this.createFunction(context.name);
+        var retFunc = this.createFunction(context.name);
+
+        // Set the return function
+        context.curFunc.nodes.push('MEMU32[CS >> ' + this.getTypeShift('INTEGER') + '] = ' + retFunc.index + ';');
+        // Jump to the block
+        context.curFunc.nodes.push('CS = (CS + ' + this.getTypeSize('INTEGER') + ')|0;');
+        context.curFunc.nodes.push('MEMU32[CS >> ' + this.getTypeShift('INTEGER') + '] = ' + blockFunc.index + ';');
+
+        // Compile the block
+        context.curFunc = blockFunc;
+        this.compileBlock(loop.block, context);
+
+        // In the end do the testing
+        this.expr(loop.expr, context);
+        context.curFunc.nodes.push('if (' + this.castTo(this.getMemoryType(loop.expr.type) + '[((SP - ' + this.getTypeSize(loop.expr.type) + ')|0) >> ' + this.getTypeShift(loop.expr.type) + ']', loop.expr.type) + ') {');
+        {
+            // Get rid of the test value
+            context.curFunc.nodes.push('\tSP = (SP - ' + this.getTypeSize(loop.expr.type) + ')|0;');
+            // Jump out of the loop
+            context.curFunc.nodes.push('\tCS = (CS - ' + this.getTypeSize('INTEGER') + ')|0;');
+            context.curFunc.nodes.push('\treturn 1;');
+        }
+        context.curFunc.nodes.push('}');
+
+        // Get rid of the test value
+        context.curFunc.nodes.push('SP = (SP - ' + this.getTypeSize(loop.expr.type) + ')|0;');
+        context.spOffset -= this.getTypeSize(loop.expr.type);
+
+        // Not jumping out so go to the begining
+        context.curFunc.nodes.push('MEMU32[CS >> ' + this.getTypeShift('INTEGER') + '] = ' + blockFunc.index + ';');
+
+        // TODO Breaking from the forever loop!
+
+        // After the loop
+        context.curFunc = retFunc;
+    },
+    /*
+    * Compiles a repeat-while loop
+    */
+    repeatWhile: function repeatWhile(loop, context) {
+        var blockFunc = this.createFunction(context.name);
+        var retFunc = this.createFunction(context.name);
+
+        // Set the return function
+        context.curFunc.nodes.push('MEMU32[CS >> ' + this.getTypeShift('INTEGER') + '] = ' + retFunc.index + ';');
+        // Jump to the block
+        context.curFunc.nodes.push('CS = (CS + ' + this.getTypeSize('INTEGER') + ')|0;');
+        context.curFunc.nodes.push('MEMU32[CS >> ' + this.getTypeShift('INTEGER') + '] = ' + blockFunc.index + ';');
+
+        // Compile the block
+        context.curFunc = blockFunc;
+        this.compileBlock(loop.block, context);
+
+        // In the end do the testing
+        this.expr(loop.expr, context);
+        context.curFunc.nodes.push('if (!(' + this.castTo(this.getMemoryType(loop.expr.type) + '[((SP - ' + this.getTypeSize(loop.expr.type) + ')|0) >> ' + this.getTypeShift(loop.expr.type) + ']', loop.expr.type) + ')) {');
+        {
+            // Get rid of the test value
+            context.curFunc.nodes.push('\tSP = (SP - ' + this.getTypeSize(loop.expr.type) + ')|0;');
+            // Jump out of the loop
+            context.curFunc.nodes.push('\tCS = (CS - ' + this.getTypeSize('INTEGER') + ')|0;');
+            context.curFunc.nodes.push('\treturn 1;');
+        }
+        context.curFunc.nodes.push('}');
+
+        // Get rid of the test value
+        context.curFunc.nodes.push('SP = (SP - ' + this.getTypeSize(loop.expr.type) + ')|0;');
+        context.spOffset -= this.getTypeSize(loop.expr.type);
+
+        // Not jumping out so go to the begining
+        context.curFunc.nodes.push('MEMU32[CS >> ' + this.getTypeShift('INTEGER') + '] = ' + blockFunc.index + ';');
+
+        // TODO Breaking from the forever loop!
+
+        // After the loop
+        context.curFunc = retFunc;
+    },
+
     expr: function expr(expr, context) {
         switch (expr.nodeType) {
             case 'Number':
@@ -440,7 +556,8 @@ Compiler.prototype = {
                     minus: '-',
                     mul: '*',
                     div: '/',
-                    lt: '<'
+                    lt: '<',
+                    gt: '>'
                 };
                 var op = map[expr.op];
                 var src;

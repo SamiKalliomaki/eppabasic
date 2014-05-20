@@ -74,6 +74,8 @@ Parser.prototype = {
                 return this.parseIdentifier();
             case 'if':
                 return this.parseIf();
+            case 'repeat':
+                return this.parseRepeat();
             case 'sub':
                 return this.parseSubDefinition();
             default:
@@ -140,6 +142,9 @@ Parser.prototype = {
                 case 'endif':
                 case 'endfunction':
                 case 'endsub':
+                case 'forever':
+                case 'until':
+                case 'while':
                     return block;
             }
             block.nodes.push(this.parseStatement());
@@ -357,6 +362,31 @@ Parser.prototype = {
         this.expect('endsub');
 
         return new Nodes.FunctionDefinition(name, params, undefined, block);
+    },
+
+    /*
+     * Parses an repeat-forever/until/while statement
+     */
+    parseRepeat: function parseRepeat() {
+        this.expect('repeat');
+
+        var block = this.parseBlock();
+
+        switch (this.peek().type) {
+            case 'forever':
+                this.advance();
+                return new Nodes.RepeatForever(block);
+            case 'until':
+                this.advance();
+                var expr = this.parseExpr();
+                return new Nodes.RepeatUntil(block, expr);
+            case 'while':
+                this.advance();
+                var expr = this.parseExpr();
+                return new Nodes.RepeatWhile(block, expr);
+            default:
+                this.expect('forever/until/while');
+        }
     },
 
     /*

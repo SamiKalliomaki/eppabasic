@@ -121,12 +121,44 @@ Atomicchecker.prototype = {
         }
         return func.atomic;
     },
-
     /*
      * Visits a return statement
      */
     visitReturn: function visitReturn(ret) {
         return ret.atomic = this.visitExpr(ret.expr);
+    },
+
+    /*
+     * Visits a repeat-forever statement
+     */
+    visitRepeatForever: function visitRepeatForever(loop) {
+        loop.atomic = false;
+
+        this.visit(loop.block);
+
+        return loop.atomic;
+    },
+    /*
+     * Visits a repeat-until statement
+     */
+    visitRepeatUntil: function visitRepeatUntil(loop) {
+        loop.atomic = false;
+
+        this.visit(loop.block);
+        this.visitExpr(loop.expr);
+
+        return loop.atomic;
+    },
+    /*
+     * Visits a repeat-forever statement
+     */
+    visitRepeatWhile: function visitRepeatWhile(loop) {
+        loop.atomic = false;
+
+        this.visit(loop.block);
+        this.visitExpr(loop.expr);
+
+        return loop.atomic;
     },
 
     visitExpr: function visitExpr(expr) {

@@ -69,6 +69,11 @@ Lexer.prototype = {
             || this.forToken()
             || this.nextToken()
 
+            || this.repeatToken()
+            || this.foreverToken()
+            || this.untilToken()
+            || this.whileToken()
+
             || this.ifToken()
             || this.thenToken()
             || this.elseIfToken()
@@ -209,27 +214,36 @@ Lexer.prototype = {
      */
     forToken: function forToken() {
         return this.scan(/^ *(FOR)\b/i, 'for');
-        //var captures;
-        //if (captures = /^FOR\b/i.exec(this.input)) {
-        //    this.consume(captures[0].length);
-        //    return this.tok('for');
-        //    //tok.variable = parseIdentifier();
-        //    //if (!(captures = /^ *= */i.exec(this.input))) {
-        //    //    throw new Error('For loop must be in form FOR identifier = range');
-        //    //}
-        //    //tok.range = parseRange();
-        //}
     },
     /*
      * Parses a "NEXT" token from the input
      */
     nextToken: function nextToken() {
         return this.scan(/^ *(NEXT)\b/i, 'next');
-        //var captures;
-        //if (captures = /^ *(NEXT)/i.exec(this.input)) {
-        //    this.consume(captures[0].length);
-        //    return this.tok('next', captures[1]);
-        //}
+    },
+    /*
+    * Parses a "REPEAT" token from the input
+    */
+    repeatToken: function repeatToken() {
+        return this.scan(/^ *(REPEAT)\b/i, 'repeat');
+    },
+    /*
+    * Parses a "REPEAT" token from the input
+    */
+    foreverToken: function foreverToken() {
+        return this.scan(/^ *(FOREVER)\b/i, 'forever');
+    },
+    /*
+    * Parses a "UNTIL" token from the input
+    */
+    untilToken: function untilToken() {
+        return this.scan(/^ *(UNTIL)\b/i, 'until');
+    },
+    /*
+    * Parses a "WHILE" token from the input
+    */
+    whileToken: function whileToken() {
+        return this.scan(/^ *(WHILE)\b/i, 'while');
     },
 
     /*
