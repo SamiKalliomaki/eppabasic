@@ -82,6 +82,17 @@ Atomicchecker.prototype = {
             loop.atomic = false;
         return range.atomic;
     },
+    /*
+     * Visits an if statement
+     */
+    visitIf: function visitIf(statement) {
+        statement.atomic = false;
+        this.visitExpr(statement.expr);
+        this.visit(statement.trueStatement)
+        if (statement.falseStatement)
+            this.visit(statement.falseStatement);
+        return statement.atomic;
+    },
 
     /*
      * Visits a function call

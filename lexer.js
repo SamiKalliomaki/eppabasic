@@ -260,7 +260,7 @@ Lexer.prototype = {
      * Parses a "ENDIF" token from the input
      */
     endIfToken: function endIfToken() {
-        return this.scan(/^ *(ENDIF)\b/i, 'endif');
+        return this.scan(/^ *(END +IF)\b/i, 'endif');
     },
 
     /*

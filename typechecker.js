@@ -176,10 +176,19 @@ Typechecker.prototype = {
             case 'BinaryOp':
                 var leftType = this.resolveExprType(expr.left, context);
                 var rightType = this.resolveExprType(expr.right, context);
-                if (leftType === rightType)
-                    return expr.type = leftType;
+                switch (expr.op) {
+                    case 'lt':
+                        return expr.type = 'INTEGER';
+                        break;
+                    case 'plus':
+                    case 'minus':
+                    case 'mul':
+                    case 'div':
+                        if (leftType === rightType)
+                            return expr.type = leftType;
+                        break;
+                }
                 throw new Error('Unresolvable return type of a binary operator');
-
             case 'Range':
                 var startType = this.resolveExprType(expr.start, context);
                 var endType = this.resolveExprType(expr.end, context);

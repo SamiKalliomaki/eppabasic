@@ -23,7 +23,7 @@
             var imul = stdlib.Math.imul;
             var __log = env.__log;
             var SP = 0;
-            var CS = 1024;
+            var CS = 0;
             var line = env.line;
             var drawScreen = env.drawScreen;
             var log = env.log;
@@ -34,10 +34,12 @@
             var cosInt = env.cosInt;
             var cosDbl = env.cosDbl;
             function next() {
-                while ($fTable[MEMU32[CS >> 2] & 31]() | 0);
+                while ($fTable[MEMU32[CS >> 2] & 15]() | 0);
             }
             function init() {
-                MEMU32[CS >> 2] = 12;
+                SP = 0;
+                CS = 1024;
+                MEMU32[CS >> 2] = 9;
             }
             function sp() {
                 return SP | 0;
@@ -117,214 +119,90 @@
                 CS = (CS - 4) | 0;
                 return 1;
             }
-            // ELLIPSE
+            // MAIN
             function $f9() {
                 __log(9);
                 SP = (SP + 8) | 0;
-                MEMS32[SP >> 2] = ((((MEMS32[((SP - 24) | 0) >> 2]) | 0)) | 0); SP = (SP + 4) | 0;
+                MEMS32[SP >> 2] = ((10) | 0); SP = (SP + 4) | 0;
                 MEMS32[((SP - 12) | 0) >> 2] = MEMS32[((SP - 4) | 0) >> 2];
                 SP = (SP - 4) | 0;
-                MEMS32[SP >> 2] = ((((MEMS32[((SP - 20) | 0) >> 2]) | 0)) | 0); SP = (SP + 4) | 0;
-                MEMS32[SP >> 2] = ((((MEMS32[((SP - 16) | 0) >> 2]) | 0)) | 0); SP = (SP + 4) | 0;
-                MEMS32[((SP - 8) | 0) >> 2] = ((((MEMS32[((SP - 8) | 0) >> 2]) | 0) + ((MEMS32[((SP - 4) | 0) >> 2]) | 0)) | 0);
-                SP = (SP - 8 + 4) | 0;
+                MEMS32[SP >> 2] = ((17) | 0); SP = (SP + 4) | 0;
                 MEMS32[((SP - 8) | 0) >> 2] = MEMS32[((SP - 4) | 0) >> 2];
                 SP = (SP - 4) | 0;
-                MEMU32[CS >> 2] = 11;
-                CS = (CS + 4) | 0;
-                MEMU32[CS >> 2] = 10;
-                MEMS32[SP >> 2] = ((1) | 0); SP = (SP + 4) | 0;
-                return 1;
-            }
-            // ELLIPSE
-            function $f10() {
-                __log(10);
+                MEMS32[SP >> 2] = ((0) | 0); SP = (SP + 4) | 0;
+                MEMS32[SP >> 2] = ((0) | 0); SP = (SP + 4) | 0;
                 MEMS32[SP >> 2] = ((100) | 0); SP = (SP + 4) | 0;
-                if (((MEMS32[((SP - 8) | 0) >> 2]) | 0) > ((MEMS32[((SP - 4) | 0) >> 2]) | 0)) {
-                    SP = (SP - 4) | 0;
-                    CS = (CS - 4) | 0;
-                    return 1;
-                }
-                SP = (SP - 4) | 0;
-                SP = (SP + 8) | 0;
-                MEMS32[SP >> 2] = ((((MEMS32[((SP - 12) | 0) >> 2]) | 0)) | 0); SP = (SP + 4) | 0;
-                CS = (CS + 4) | 0;
-                MEMU32[CS >> 2] = 3;
-                $f3() | 0;
-                MEMF32[SP >> 2] = +(0.06283185307179586); SP = (SP + 4) | 0;
-                MEMF32[((SP - 8) | 0) >> 2] = +(+(MEMF32[((SP - 8) | 0) >> 2]) * +(MEMF32[((SP - 4) | 0) >> 2]));
-                SP = (SP - 8 + 4) | 0;
-                CS = (CS + 4) | 0;
-                MEMU32[CS >> 2] = 6;
-                $f6() | 0;
-                MEMS32[SP >> 2] = ((((MEMS32[((SP - 32) | 0) >> 2]) | 0)) | 0); SP = (SP + 4) | 0;
-                CS = (CS + 4) | 0;
-                MEMU32[CS >> 2] = 3;
-                $f3() | 0;
-                MEMF32[((SP - 8) | 0) >> 2] = +(+(MEMF32[((SP - 8) | 0) >> 2]) * +(MEMF32[((SP - 4) | 0) >> 2]));
-                SP = (SP - 8 + 4) | 0;
-                CS = (CS + 4) | 0;
-                MEMU32[CS >> 2] = 4;
-                $f4() | 0;
-                MEMS32[SP >> 2] = ((((MEMS32[((SP - 40) | 0) >> 2]) | 0)) | 0); SP = (SP + 4) | 0;
-                MEMS32[((SP - 8) | 0) >> 2] = ((((MEMS32[((SP - 8) | 0) >> 2]) | 0) + ((MEMS32[((SP - 4) | 0) >> 2]) | 0)) | 0);
-                SP = (SP - 8 + 4) | 0;
-                MEMS32[((SP - 12) | 0) >> 2] = MEMS32[((SP - 4) | 0) >> 2];
-                SP = (SP - 4) | 0;
-                MEMS32[SP >> 2] = ((((MEMS32[((SP - 12) | 0) >> 2]) | 0)) | 0); SP = (SP + 4) | 0;
-                CS = (CS + 4) | 0;
-                MEMU32[CS >> 2] = 3;
-                $f3() | 0;
-                MEMF32[SP >> 2] = +(0.06283185307179586); SP = (SP + 4) | 0;
-                MEMF32[((SP - 8) | 0) >> 2] = +(+(MEMF32[((SP - 8) | 0) >> 2]) * +(MEMF32[((SP - 4) | 0) >> 2]));
-                SP = (SP - 8 + 4) | 0;
-                CS = (CS + 4) | 0;
-                MEMU32[CS >> 2] = 8;
-                $f8() | 0;
-                MEMS32[SP >> 2] = ((((MEMS32[((SP - 28) | 0) >> 2]) | 0)) | 0); SP = (SP + 4) | 0;
-                CS = (CS + 4) | 0;
-                MEMU32[CS >> 2] = 3;
-                $f3() | 0;
-                MEMF32[((SP - 8) | 0) >> 2] = +(+(MEMF32[((SP - 8) | 0) >> 2]) * +(MEMF32[((SP - 4) | 0) >> 2]));
-                SP = (SP - 8 + 4) | 0;
-                CS = (CS + 4) | 0;
-                MEMU32[CS >> 2] = 4;
-                $f4() | 0;
-                MEMS32[SP >> 2] = ((((MEMS32[((SP - 36) | 0) >> 2]) | 0)) | 0); SP = (SP + 4) | 0;
-                MEMS32[((SP - 8) | 0) >> 2] = ((((MEMS32[((SP - 8) | 0) >> 2]) | 0) + ((MEMS32[((SP - 4) | 0) >> 2]) | 0)) | 0);
-                SP = (SP - 8 + 4) | 0;
-                MEMS32[((SP - 8) | 0) >> 2] = MEMS32[((SP - 4) | 0) >> 2];
-                SP = (SP - 4) | 0;
-                MEMS32[SP >> 2] = ((((MEMS32[((SP - 20) | 0) >> 2]) | 0)) | 0); SP = (SP + 4) | 0;
-                MEMS32[SP >> 2] = ((((MEMS32[((SP - 20) | 0) >> 2]) | 0)) | 0); SP = (SP + 4) | 0;
-                MEMS32[SP >> 2] = ((((MEMS32[((SP - 16) | 0) >> 2]) | 0)) | 0); SP = (SP + 4) | 0;
-                MEMS32[SP >> 2] = ((((MEMS32[((SP - 16) | 0) >> 2]) | 0)) | 0); SP = (SP + 4) | 0;
+                MEMS32[SP >> 2] = ((100) | 0); SP = (SP + 4) | 0;
                 CS = (CS + 4) | 0;
                 MEMU32[CS >> 2] = 0;
                 $f0() | 0;
                 MEMS32[SP >> 2] = ((((MEMS32[((SP - 8) | 0) >> 2]) | 0)) | 0); SP = (SP + 4) | 0;
-                MEMS32[((SP - 24) | 0) >> 2] = MEMS32[((SP - 4) | 0) >> 2];
-                SP = (SP - 4) | 0;
-                MEMS32[SP >> 2] = ((((MEMS32[((SP - 4) | 0) >> 2]) | 0)) | 0); SP = (SP + 4) | 0;
-                MEMS32[((SP - 20) | 0) >> 2] = MEMS32[((SP - 4) | 0) >> 2];
-                SP = (SP - 4) | 0;
-                SP = (SP - 8) | 0;
-                MEMS32[((SP - 4) | 0) >> 2] = (((MEMS32[((SP - 4) | 0) >> 2] | 0) + 1) | 0);
+                MEMS32[SP >> 2] = ((((MEMS32[((SP - 8) | 0) >> 2]) | 0)) | 0); SP = (SP + 4) | 0;
+                MEMS32[((SP - 8) | 0) >> 2] = ((((MEMS32[((SP - 8) | 0) >> 2]) | 0) < ((MEMS32[((SP - 4) | 0) >> 2]) | 0)) | 0);
+                SP = (SP - 8 + 4) | 0;
                 MEMU32[CS >> 2] = 10;
+                if (((MEMS32[((SP - 4) | 0) >> 2]) | 0)) {
+                    SP = (SP - 4) | 0;
+                    CS = (CS + 4) | 0;
+                    MEMU32[CS >> 2] = 11;
+                } else {
+                    SP = (SP - 4) | 0;
+                    CS = (CS + 4) | 0;
+                    MEMU32[CS >> 2] = 12;
+                }
                 return 1;
             }
-            // ELLIPSE
+            // MAIN
+            function $f10() {
+                __log(10);
+                MEMS32[SP >> 2] = ((200) | 0); SP = (SP + 4) | 0;
+                MEMS32[SP >> 2] = ((200) | 0); SP = (SP + 4) | 0;
+                MEMS32[SP >> 2] = ((300) | 0); SP = (SP + 4) | 0;
+                MEMS32[SP >> 2] = ((300) | 0); SP = (SP + 4) | 0;
+                CS = (CS + 4) | 0;
+                MEMU32[CS >> 2] = 0;
+                $f0() | 0;
+                SP = (SP - 8) | 0;
+                MEMU32[CS >> 2] = 13;
+                return 1;
+            }
+            // MAIN
             function $f11() {
                 __log(11);
-                SP = (SP - 4) | 0;
-                SP = (SP - 8) | 0;
-                SP = (SP - 16) | 0;
+                MEMS32[SP >> 2] = ((100) | 0); SP = (SP + 4) | 0;
+                MEMS32[SP >> 2] = ((100) | 0); SP = (SP + 4) | 0;
+                MEMS32[SP >> 2] = ((100) | 0); SP = (SP + 4) | 0;
+                MEMS32[SP >> 2] = ((200) | 0); SP = (SP + 4) | 0;
+                CS = (CS + 4) | 0;
+                MEMU32[CS >> 2] = 0;
+                $f0() | 0;
                 CS = (CS - 4) | 0;
                 return 1;
             }
             // MAIN
             function $f12() {
                 __log(12);
-                SP = (SP + 4) | 0;
+                MEMS32[SP >> 2] = ((100) | 0); SP = (SP + 4) | 0;
+                MEMS32[SP >> 2] = ((100) | 0); SP = (SP + 4) | 0;
+                MEMS32[SP >> 2] = ((200) | 0); SP = (SP + 4) | 0;
                 MEMS32[SP >> 2] = ((100) | 0); SP = (SP + 4) | 0;
                 CS = (CS + 4) | 0;
-                MEMU32[CS >> 2] = 3;
-                $f3() | 0;
-                MEMF32[((SP - 8) | 0) >> 2] = MEMF32[((SP - 4) | 0) >> 2];
-                SP = (SP - 4) | 0;
-                MEMU32[CS >> 2] = 14;
-                CS = (CS + 4) | 0;
-                MEMU32[CS >> 2] = 13;
-                MEMS32[SP >> 2] = ((1) | 0); SP = (SP + 4) | 0;
-                return 1;
-            }
-            // MAIN
-            function $f13() {
-                __log(13);
-                MEMS32[SP >> 2] = ((100) | 0); SP = (SP + 4) | 0;
-                if (((MEMS32[((SP - 8) | 0) >> 2]) | 0) > ((MEMS32[((SP - 4) | 0) >> 2]) | 0)) {
-                    SP = (SP - 4) | 0;
-                    CS = (CS - 4) | 0;
-                    return 1;
-                }
-                SP = (SP - 4) | 0;
-                MEMS32[SP >> 2] = ((320) | 0); SP = (SP + 4) | 0;
-                MEMS32[SP >> 2] = ((((MEMS32[((SP - 8) | 0) >> 2]) | 0)) | 0); SP = (SP + 4) | 0;
-                CS = (CS + 4) | 0;
-                MEMU32[CS >> 2] = 3;
-                $f3() | 0;
-                MEMF32[SP >> 2] = +(0.06283185307179586); SP = (SP + 4) | 0;
-                MEMF32[((SP - 8) | 0) >> 2] = +(+(MEMF32[((SP - 8) | 0) >> 2]) * +(MEMF32[((SP - 4) | 0) >> 2]));
-                SP = (SP - 8 + 4) | 0;
-                CS = (CS + 4) | 0;
-                MEMU32[CS >> 2] = 6;
-                $f6() | 0;
-                MEMF32[SP >> 2] = +(+(MEMF32[((SP - 16) | 0) >> 2])); SP = (SP + 4) | 0;
-                MEMF32[((SP - 8) | 0) >> 2] = +(+(MEMF32[((SP - 8) | 0) >> 2]) * +(MEMF32[((SP - 4) | 0) >> 2]));
-                SP = (SP - 8 + 4) | 0;
-                CS = (CS + 4) | 0;
-                MEMU32[CS >> 2] = 4;
-                $f4() | 0;
-                MEMS32[((SP - 8) | 0) >> 2] = ((((MEMS32[((SP - 8) | 0) >> 2]) | 0) + ((MEMS32[((SP - 4) | 0) >> 2]) | 0)) | 0);
-                SP = (SP - 8 + 4) | 0;
-                MEMS32[SP >> 2] = ((240) | 0); SP = (SP + 4) | 0;
-                MEMS32[SP >> 2] = ((((MEMS32[((SP - 12) | 0) >> 2]) | 0)) | 0); SP = (SP + 4) | 0;
-                CS = (CS + 4) | 0;
-                MEMU32[CS >> 2] = 3;
-                $f3() | 0;
-                MEMF32[SP >> 2] = +(0.06283185307179586); SP = (SP + 4) | 0;
-                MEMF32[((SP - 8) | 0) >> 2] = +(+(MEMF32[((SP - 8) | 0) >> 2]) * +(MEMF32[((SP - 4) | 0) >> 2]));
-                SP = (SP - 8 + 4) | 0;
-                CS = (CS + 4) | 0;
-                MEMU32[CS >> 2] = 8;
-                $f8() | 0;
-                MEMF32[SP >> 2] = +(+(MEMF32[((SP - 20) | 0) >> 2])); SP = (SP + 4) | 0;
-                MEMF32[((SP - 8) | 0) >> 2] = +(+(MEMF32[((SP - 8) | 0) >> 2]) * +(MEMF32[((SP - 4) | 0) >> 2]));
-                SP = (SP - 8 + 4) | 0;
-                CS = (CS + 4) | 0;
-                MEMU32[CS >> 2] = 4;
-                $f4() | 0;
-                MEMS32[((SP - 8) | 0) >> 2] = ((((MEMS32[((SP - 8) | 0) >> 2]) | 0) + ((MEMS32[((SP - 4) | 0) >> 2]) | 0)) | 0);
-                SP = (SP - 8 + 4) | 0;
-                MEMS32[SP >> 2] = ((10) | 0); SP = (SP + 4) | 0;
-                MEMS32[SP >> 2] = ((10) | 0); SP = (SP + 4) | 0;
-                MEMU32[CS >> 2] = 15;
-                CS = (CS + 4) | 0;
-                MEMU32[CS >> 2] = 9;
-                return 1;
-            }
-            // MAIN
-            function $f14() {
-                __log(14);
-                SP = (SP - 4) | 0;
-                SP = (SP - 4) | 0;
-                MEMU32[CS >> 2] = 17;
-                return 1;
-            }
-            // MAIN
-            function $f15() {
-                __log(15);
-                MEMU32[CS >> 2] = 16;
-                CS = (CS + 4) | 0;
-                MEMU32[CS >> 2] = 1;
-                return 1;
-            }
-            // MAIN
-            function $f16() {
-                __log(16);
-                MEMS32[((SP - 4) | 0) >> 2] = (((MEMS32[((SP - 4) | 0) >> 2] | 0) + 1) | 0);
-                MEMU32[CS >> 2] = 13;
+                MEMU32[CS >> 2] = 0;
+                $f0() | 0;
+                CS = (CS - 4) | 0;
                 return 1;
             }
             // END
-            function $f17() {
-                __log(17);
+            function $f13() {
+                __log(13);
 
                 return 0;
             }
-            var $fTable = [$f0, $f1, $f2, $f3, $f4, $f5, $f6, $f7, $f8, $f9, $f10, $f11, $f12, $f13, $f14, $f15, $f16, $f17, $f0, $f0, $f0, $f0, $f0, $f0, $f0, $f0, $f0, $f0, $f0, $f0, $f0, $f0];
+            var $fTable = [$f0, $f1, $f2, $f3, $f4, $f5, $f6, $f7, $f8, $f9, $f10, $f11, $f12, $f13, $f0, $f0];
             return {
                 init: init,
+
+                eset: init,
                 next: next,
                 sp: sp,
                 cs: cs
@@ -424,6 +302,11 @@
                 if (running)
                     window.requestAnimationFrame(step);
             }
+            function reset() {
+                canvas.width = canvas.width;        // Clear the canvas
+                stop();
+                game.reset();
+            }
             function start() {
                 running = true;
                 step();
@@ -433,6 +316,7 @@
             }
             document.getElementById('startBtn').addEventListener('click', start);
             document.getElementById('stopBtn').addEventListener('click', stop);
+            document.getElementById('resetBtn').addEventListener('click', reset);
             document.getElementById('stepBtn').addEventListener('click', step);
         }
     </script>
@@ -441,6 +325,7 @@
     <div id="header">
         <button id="startBtn">Start</button>
         <button id="stopBtn">Stop</button>
+        <button id="resetBtn">Reset</button>
         <button id="stepBtn">Step</button>
         <pre id="memdump"></pre>
     </div>

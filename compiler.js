@@ -103,8 +103,8 @@ Compiler.prototype = {
                 + 'var MEMF64 = new stdlib.Float64Array(heap);\n'
                 + 'var imul = stdlib.Math.imul;\n'
                 + 'var __log = env.__log;\n'                                        // Logger function TODO Revove
-                + 'var SP = ' + 0 + ';\n'                                           // Stack pointer
-                + 'var CS = ' + 1024 + ';\n'                                        // Call stack pointer
+                + 'var SP = 0;\n'                                                   // Stack pointer
+                + 'var CS = 0;\n'                                                   // Call stack pointer
                 + this.compileSystemFunctionDefinitions() + '\n'
 
                 + 'function next() {\n'
@@ -112,6 +112,8 @@ Compiler.prototype = {
                 + '}\n'
 
                 + 'function init() {\n'
+                + '\tSP = 0;\n'
+                + '\tCS = 1024;\n'
                 + '\tMEMU32[CS >> ' + this.getTypeShift('INTEGER') + '] = ' + entry.index + ';\n'
                 + '}\n'
 
@@ -126,6 +128,7 @@ Compiler.prototype = {
                 + this.createFTable() + '\n'
                 + 'return {\n'
                 + '\tinit: init,\n'
+                + '\reset: init,\n'
                 + '\tnext: next,\n'
                 + '\tsp: sp,\n'
                 + '\tcs: cs\n'
@@ -228,6 +231,9 @@ Compiler.prototype = {
                     break;
                 case 'For':
                     this.forLoop(node, context);
+                    break;
+                case 'If':
+                    this.ifStatement(node, context);
                     break;
                 case 'FunctionDefinition':
                     if (skipFunctionDefinitions)
@@ -343,6 +349,62 @@ Compiler.prototype = {
         context.spOffset -= this.getTypeSize(loop.variable.type);
     },
 
+    /*
+     * Compiles an if statement
+     */
+    ifStatement: function ifStatement(statement, context) {
+        console.log(statement);
+        // Get the test value to the top of the stack
+        this.expr(statement.expr, context);
+
+        var retBlock = this.createFunction(context.name);
+        var trueBlock = this.createFunction(context.name);
+        var falseBlock;
+        if (statement.falseStatement)
+            falseBlock = this.createFunction(context.name);
+
+        // Set the return function
+        context.curFunc.nodes.push('\tMEMU32[CS >> ' + this.getTypeShift('INTEGER') + '] = ' + retBlock.index + ';');
+        // Do the testing
+        context.curFunc.nodes.push('if (' + this.castTo(this.getMemoryType(statement.expr.type) + '[((SP - ' + this.getTypeSize(statement.expr.type) + ')|0) >> ' + this.getTypeShift(statement.expr.type) + ']', statement.expr.type) + ') {');
+        context.spOffset -= this.getTypeSize(statement.expr.type);                      // For getting rid of the test value (happens both in true and false blocks so must be one common over here)
+        {
+            // Get rid of the test value
+            context.curFunc.nodes.push('\tSP = (SP - ' + this.getTypeSize(statement.expr.type) + ')|0;');
+            // Jump to the true block
+            context.curFunc.nodes.push('\tCS = (CS + ' + this.getTypeSize('INTEGER') + ')|0;');
+            context.curFunc.nodes.push('\tMEMU32[CS >> ' + this.getTypeShift('INTEGER') + '] = ' + trueBlock.index + ';');
+        }
+        if (falseBlock) {
+            context.curFunc.nodes.push('} else {');
+            {
+                // Get rid of the test value
+                context.curFunc.nodes.push('\tSP = (SP - ' + this.getTypeSize(statement.expr.type) + ')|0;');
+                // Jump to the false block (or return block if false block is omitted) block
+                context.curFunc.nodes.push('\tCS = (CS + ' + this.getTypeSize('INTEGER') + ')|0;');
+                context.curFunc.nodes.push('\tMEMU32[CS >> ' + this.getTypeShift('INTEGER') + '] = ' + falseBlock.index + ';');
+            }
+        }
+        context.curFunc.nodes.push('}');
+
+        // Compile the true block
+        context.curFunc = trueBlock;
+        this.compileBlock(statement.trueStatement, context);
+        // Return from the true block
+        context.curFunc.nodes.push('\tCS = (CS - ' + this.getTypeSize('INTEGER') + ')|0;');
+
+        // Compile the false block
+        if (falseBlock) {
+            context.curFunc = falseBlock;
+            this.compileBlock(statement.falseStatement, context);
+            // Return from the true block
+            context.curFunc.nodes.push('\tCS = (CS - ' + this.getTypeSize('INTEGER') + ')|0;');
+        }
+
+        // And continue after the if statement
+        context.curFunc = retBlock;
+    },
+
     expr: function expr(expr, context) {
         switch (expr.nodeType) {
             case 'Number':
@@ -377,7 +439,8 @@ Compiler.prototype = {
                     plus: '+',
                     minus: '-',
                     mul: '*',
-                    div: '/'
+                    div: '/',
+                    lt: '<'
                 };
                 var op = map[expr.op];
                 var src;
