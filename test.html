@@ -8,217 +8,16 @@
             border: 1px dashed #000;
         }
     </style>
+    <script id="programCode"></script>
     <script>
+        // A polyfill
         if (!window.Math.imul) {
             window.Math.imul = function (a, b) {
                 return a * b;           // TODO Fix
             }
         }
-        function Program(stdlib, env, heap) {
-            "use asm";
-            var MEMS32 = new stdlib.Int32Array(heap);
-            var MEMU32 = new stdlib.Uint32Array(heap);
-            var MEMF32 = new stdlib.Float32Array(heap);
-            var MEMF64 = new stdlib.Float64Array(heap);
-            var imul = stdlib.Math.imul;
-            var __log = env.__log;
-            var SP = 0;
-            var CS = 0;
-            var line = env.line;
-            var drawScreen = env.drawScreen;
-            var log = env.log;
-            var dbl = env.dbl;
-            var int = env.int;
-            var sinInt = env.sinInt;
-            var sinDbl = env.sinDbl;
-            var cosInt = env.cosInt;
-            var cosDbl = env.cosDbl;
-            function next() {
-                while ($fTable[MEMU32[CS >> 2] & 15]() | 0);
-            }
-            function init() {
-                SP = 0;
-                CS = 1024;
-                MEMU32[CS >> 2] = 9;
-            }
-            function sp() {
-                return SP | 0;
-            }
-            function cs() {
-                return CS | 0;
-            }
-            // LINE
-            function $f0() {
-                __log(0);
-                line(SP | 0);
-                SP = (SP - 16) | 0;
-                CS = (CS - 4) | 0;
-                return 1;
-            }
-            // DRAWSCREEN
-            function $f1() {
-                __log(1);
-                drawScreen(SP | 0);
-                SP = (SP - 0) | 0;
-                CS = (CS - 4) | 0;
-                return 0;
-            }
-            // LOG
-            function $f2() {
-                __log(2);
-                log(SP | 0);
-                SP = (SP - 4) | 0;
-                CS = (CS - 4) | 0;
-                return 1;
-            }
-            // DBL
-            function $f3() {
-                __log(3);
-                dbl(SP | 0);
-                SP = (SP - 0) | 0;
-                CS = (CS - 4) | 0;
-                return 1;
-            }
-            // INT
-            function $f4() {
-                __log(4);
-                int(SP | 0);
-                SP = (SP - 0) | 0;
-                CS = (CS - 4) | 0;
-                return 1;
-            }
-            // SIN
-            function $f5() {
-                __log(5);
-                sinInt(SP | 0);
-                SP = (SP - 0) | 0;
-                CS = (CS - 4) | 0;
-                return 1;
-            }
-            // SIN
-            function $f6() {
-                __log(6);
-                sinDbl(SP | 0);
-                SP = (SP - 0) | 0;
-                CS = (CS - 4) | 0;
-                return 1;
-            }
-            // COS
-            function $f7() {
-                __log(7);
-                cosInt(SP | 0);
-                SP = (SP - 0) | 0;
-                CS = (CS - 4) | 0;
-                return 1;
-            }
-            // COS
-            function $f8() {
-                __log(8);
-                cosDbl(SP | 0);
-                SP = (SP - 0) | 0;
-                CS = (CS - 4) | 0;
-                return 1;
-            }
-            // MAIN
-            function $f9() {
-                __log(9);
-                SP = (SP + 8) | 0;
-                MEMF32[SP >> 2] = +(0.1); SP = (SP + 4) | 0;
-                MEMF32[((SP - 12) | 0) >> 2] = MEMF32[((SP - 4) | 0) >> 2];
-                SP = (SP - 4) | 0;
-                MEMF32[SP >> 2] = +(0.0); SP = (SP + 4) | 0;
-                MEMF32[((SP - 8) | 0) >> 2] = MEMF32[((SP - 4) | 0) >> 2];
-                SP = (SP - 4) | 0;
-                MEMU32[CS >> 2] = 11;
-                CS = (CS + 4) | 0;
-                MEMU32[CS >> 2] = 10;
-                return 1;
-            }
-            // MAIN
-            function $f10() {
-                __log(10);
-                MEMS32[SP >> 2] = ((100) | 0); SP = (SP + 4) | 0;
-                MEMS32[SP >> 2] = ((100) | 0); SP = (SP + 4) | 0;
-                MEMF32[SP >> 2] = +(+(MEMF32[((SP - 12) | 0) >> 2])); SP = (SP + 4) | 0;
-                CS = (CS + 4) | 0;
-                MEMU32[CS >> 2] = 6;
-                $f6() | 0;
-                MEMF32[SP >> 2] = +(100.0); SP = (SP + 4) | 0;
-                MEMF32[((SP - 8) | 0) >> 2] = +(+(MEMF32[((SP - 8) | 0) >> 2]) * +(MEMF32[((SP - 4) | 0) >> 2]));
-                SP = (SP - 8 + 4) | 0;
-                CS = (CS + 4) | 0;
-                MEMU32[CS >> 2] = 4;
-                $f4() | 0;
-                MEMS32[SP >> 2] = ((100) | 0); SP = (SP + 4) | 0;
-                MEMS32[((SP - 8) | 0) >> 2] = ((((MEMS32[((SP - 8) | 0) >> 2]) | 0) + ((MEMS32[((SP - 4) | 0) >> 2]) | 0)) | 0);
-                SP = (SP - 8 + 4) | 0;
-                MEMF32[SP >> 2] = +(+(MEMF32[((SP - 16) | 0) >> 2])); SP = (SP + 4) | 0;
-                CS = (CS + 4) | 0;
-                MEMU32[CS >> 2] = 8;
-                $f8() | 0;
-                MEMF32[SP >> 2] = +(100.0); SP = (SP + 4) | 0;
-                MEMF32[((SP - 8) | 0) >> 2] = +(+(MEMF32[((SP - 8) | 0) >> 2]) * +(MEMF32[((SP - 4) | 0) >> 2]));
-                SP = (SP - 8 + 4) | 0;
-                CS = (CS + 4) | 0;
-                MEMU32[CS >> 2] = 4;
-                $f4() | 0;
-                MEMS32[SP >> 2] = ((100) | 0); SP = (SP + 4) | 0;
-                MEMS32[((SP - 8) | 0) >> 2] = ((((MEMS32[((SP - 8) | 0) >> 2]) | 0) + ((MEMS32[((SP - 4) | 0) >> 2]) | 0)) | 0);
-                SP = (SP - 8 + 4) | 0;
-                CS = (CS + 4) | 0;
-                MEMU32[CS >> 2] = 0;
-                $f0() | 0;
-                MEMU32[CS >> 2] = 12;
-                CS = (CS + 4) | 0;
-                MEMU32[CS >> 2] = 1;
-                return 1;
-            }
-            // MAIN
-            function $f11() {
-                __log(11);
-                SP = (SP - 8) | 0;
-                MEMU32[CS >> 2] = 13;
-                return 1;
-            }
-            // MAIN
-            function $f12() {
-                __log(12);
-                MEMF32[SP >> 2] = +(+(MEMF32[((SP - 4) | 0) >> 2])); SP = (SP + 4) | 0;
-                MEMF32[SP >> 2] = +(+(MEMF32[((SP - 12) | 0) >> 2])); SP = (SP + 4) | 0;
-                MEMF32[((SP - 8) | 0) >> 2] = +(+(MEMF32[((SP - 8) | 0) >> 2]) + +(MEMF32[((SP - 4) | 0) >> 2]));
-                SP = (SP - 8 + 4) | 0;
-                MEMF32[((SP - 8) | 0) >> 2] = MEMF32[((SP - 4) | 0) >> 2];
-                SP = (SP - 4) | 0;
-                MEMF32[SP >> 2] = +(+(MEMF32[((SP - 4) | 0) >> 2])); SP = (SP + 4) | 0;
-                MEMF32[SP >> 2] = +(3.14); SP = (SP + 4) | 0;
-                MEMS32[((SP - 8) | 0) >> 2] = ((+(MEMF32[((SP - 8) | 0) >> 2]) < +(MEMF32[((SP - 4) | 0) >> 2])) | 0);
-                SP = (SP - 8 + 4) | 0;
-                if (!(((MEMS32[((SP - 4) | 0) >> 2]) | 0))) {
-                    SP = (SP - 4) | 0;
-                    CS = (CS - 4) | 0;
-                    return 1;
-                }
-                SP = (SP - 4) | 0;
-                MEMU32[CS >> 2] = 10;
-                return 1;
-            }
-            // END
-            function $f13() {
-                __log(13);
 
-                return 0;
-            }
-            var $fTable = [$f0, $f1, $f2, $f3, $f4, $f5, $f6, $f7, $f8, $f9, $f10, $f11, $f12, $f13, $f0, $f0];
-            return {
-                init: init,
-                reset: init,
-                next: next,
-                sp: sp,
-                cs: cs
-            };
-        }
-
-        function onload() {
+        function init() {
             var heap = new ArrayBuffer(1024 * 1024);
             var canvas = document.getElementById('canv');
             var ctx = canvas.getContext('2d');
@@ -233,6 +32,40 @@
             var game = Program(
                 window,
                 {
+                    clearColor: function lineColor(sp) {
+                        var r = MEMS32[(sp - 12) >> 2];
+                        var g = MEMS32[(sp - 8) >> 2];
+                        var b = MEMS32[(sp - 4) >> 2];
+                        game.clearColor = 'rgb(' + r + ',' + g + ',' + b + ')';
+                    },
+                    lineColor: function lineColor(sp) {
+                        var r = MEMS32[(sp - 12) >> 2];
+                        var g = MEMS32[(sp - 8) >> 2];
+                        var b = MEMS32[(sp - 4) >> 2];
+                        ctx.strokeStyle = 'rgb(' + r + ',' + g + ',' + b + ')';
+                    },
+                    fillColor: function fillColor(sp) {
+                        var r = MEMS32[(sp - 12) >> 2];
+                        var g = MEMS32[(sp - 8) >> 2];
+                        var b = MEMS32[(sp - 4) >> 2];
+                        ctx.fillStyle = 'rgb(' + r + ',' + g + ',' + b + ')';
+                    },
+                    rect: function rect(sp) {
+                        var x = MEMS32[(sp - 16) >> 2];
+                        var y = MEMS32[(sp - 12) >> 2];
+                        var w = MEMS32[(sp - 8) >> 2];
+                        var h = MEMS32[(sp - 4) >> 2];
+
+                        ctx.rect(x, y, w, h);
+                    },
+                    fillRect: function fillRect(sp) {
+                        var x = MEMS32[(sp - 16) >> 2];
+                        var y = MEMS32[(sp - 12) >> 2];
+                        var w = MEMS32[(sp - 8) >> 2];
+                        var h = MEMS32[(sp - 4) >> 2];
+
+                        ctx.fillRect(x, y, w, h);
+                    },
                     line: function line(sp) {
                         var x1 = MEMS32[(sp - 16) >> 2];
                         var y1 = MEMS32[(sp - 12) >> 2];
@@ -244,6 +77,12 @@
                         ctx.lineTo(x2, y2);
                         ctx.stroke();
                     },
+                    clear: function clear(sp) {
+                        var origStyle = ctx.fillStyle;
+                        ctx.fillStyle = game.clearColor;
+                        ctx.fillRect(0, 0, canvas.width, canvas.height);
+                        ctx.fillStyle = origStyle;
+                    },
                     drawScreen: function drawScreen(sp) {
                         // Update fps-counter
                         if (++frameCount >= 10) {
@@ -254,10 +93,7 @@
                             frameCount = 0;
                         }
                     },
-                    log: function log(sp) {
-                        var x = MEMS32[(sp - 4) >> 2];
-                        console.log(x);
-                    },
+
                     dbl: function dbl(sp) {
                         var x = MEMS32[(sp - 4) >> 2];
                         MEMF32[(sp - 4) >> 2] = x;
@@ -266,6 +102,7 @@
                         var x = MEMF32[(sp - 4) >> 2];
                         MEMS32[(sp - 4) >> 2] = x;
                     },
+
                     sinInt: function sinInt(sp) {
                         MEMF32[(sp - 4) >> 2] = Math.sin(MEMS32[(sp - 4) >> 2]);
                     },
@@ -319,10 +156,16 @@
 
             game.init();
             var running = false;
+            var funcBox = document.getElementById('funcBox');
             function step() {
                 game.next();
-                if (running)
-                    window.requestAnimationFrame(step);
+                funcBox.innerHTML = MEMS32[game.cs() >> 2];
+            }
+            function run() {
+                if (!running)
+                    return;
+                step();
+                window.requestAnimationFrame(run);
             }
             function reset() {
                 canvas.width = canvas.width;        // Clear the canvas
@@ -331,7 +174,7 @@
             }
             function start() {
                 running = true;
-                step();
+                run();
             }
             function stop() {
                 running = false;
@@ -340,6 +183,11 @@
             document.getElementById('stopBtn').addEventListener('click', stop);
             document.getElementById('resetBtn').addEventListener('click', reset);
             document.getElementById('stepBtn').addEventListener('click', step);
+
+            window.ebstart = start;
+            window.ebstop = stop;
+            window.ebreset = reset;
+            window.ebstep = step;
         }
     </script>
 </head>
@@ -350,6 +198,7 @@
         <button id="resetBtn">Reset</button>
         <button id="stepBtn">Step</button>
         FPS: <span id="fpsBox"></span>
+        Function: <span id="funcBox"></span>
         <pre id="memdump"></pre>
     </div>
     <canvas id="canv" width="640" height="480"></canvas>

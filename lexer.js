@@ -61,6 +61,7 @@ Lexer.prototype = {
         return null
             || this.eosToken()
             || this.commentToken()
+            || this.numberToken()
             || this.opToken()
             || this.commaToken()
             || this.parenthesisToken()
@@ -91,7 +92,6 @@ Lexer.prototype = {
             || this.endSubToken()
 
             || this.identifierToken()
-            || this.numberToken()
             || this.newlineToken()
             || this.fail();
     },
@@ -180,7 +180,7 @@ Lexer.prototype = {
      * Parses a number from the input
      */
     numberToken: function numberToken() {
-        return this.scan(/^ *(\d*\.?\d+)/, 'number')
+        return this.scan(/^ *(-?\d*\.?\d+)/, 'number')
         //var captures;
         //if (captures = /^ *(\d*\.?\d+)/.exec(this.input)) {
         //    this.consume(captures[0].length);

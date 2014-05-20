@@ -107,6 +107,7 @@
             return code; //code.replace(/\n/g, '<br>');
         }
 
+        var debugWindow;
         function compile() {
             var src = document.getElementById('code').value;
 
@@ -123,15 +124,15 @@
 
                 var compiler = new Compiler(ast);
 
-                // Define 'native' functions
-                //compiler.defineJsFunction('LINE', ['INTEGER', 'INTEGER', 'INTEGER', 'INTEGER'], '_drawLine');
-                //compiler.defineJsFunction('RECT', ['INTEGER', 'INTEGER', 'INTEGER', 'INTEGER'], '_dradRect');
-                //compiler.defineJsFunction('ELLIPSE', ['INTEGER', 'INTEGER', 'INTEGER', 'INTEGER'], '_drawEllipse');
-                //compiler.defineJsFunction('log', ['INTEGER'], 'log');
-                //compiler.defineJsFunction('DRAWSCREEN', [], '_drawScreen', undefined, true);
+                // Drawing functions
+                compiler.defineJsFunction('CLEARCOLOR', ['INTEGER', 'INTEGER', 'INTEGER'], 'clearColor');
+                compiler.defineJsFunction('LINECOLOR', ['INTEGER', 'INTEGER', 'INTEGER'], 'lineColor');
+                compiler.defineJsFunction('FILLCOLOR', ['INTEGER', 'INTEGER', 'INTEGER'], 'fillColor');
                 compiler.defineJsFunction('LINE', ['INTEGER', 'INTEGER', 'INTEGER', 'INTEGER'], 'line');
+                compiler.defineJsFunction('RECT', ['INTEGER', 'INTEGER', 'INTEGER', 'INTEGER'], 'rect');
+                compiler.defineJsFunction('FILLRECT', ['INTEGER', 'INTEGER', 'INTEGER', 'INTEGER'], 'fillRect');
+                compiler.defineJsFunction('CLEAR', [], 'clear');
                 compiler.defineJsFunction('DRAWSCREEN', [], 'drawScreen', undefined, false);
-                compiler.defineJsFunction('LOG', ['INTEGER'], 'log');
 
                 // Mathematical functions
                 compiler.defineJsFunction('DBL', ['INTEGER'], 'dbl', 'DOUBLE');
@@ -148,6 +149,16 @@
                 // Show ast as html
                 document.getElementById('tree').innerHTML = astToHtml(ast);
                 hideTree(document.getElementById('tree').children[0]);
+
+                if (debugWindow)
+                    debugWindow.close()
+                debugWindow = window.open('test.html', '', 'dependent,dialog', true);
+                console.log(debugWindow);
+                debugWindow.addEventListener('load', function insertCode() {
+                    debugWindow.document.getElementById('programCode').innerHTML = compiled;
+                    debugWindow.init();
+                    debugWindow.ebstart();
+                });
             } catch (e) {
                 document.getElementById('errBox').innerHTML = e.message;
                 throw e;
