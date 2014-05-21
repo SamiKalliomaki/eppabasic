@@ -83,7 +83,8 @@ Typechecker.prototype = {
         if (!variable)
             throw new Error('No variable called "' + assignemnt.name + '" exists in scope');
         assignemnt.definition = variable;
-        assignemnt.type = this.resolveExprType(assignemnt.expr, parent);
+        this.resolveExprType(assignemnt.expr, parent);
+        assignemnt.type = variable.type;
     },
 
     /*

@@ -150,6 +150,9 @@
                 compiler.defineJsFunction('SECONDS', [], 'seconds', 'INTEGER');
                 compiler.defineJsFunction('MILLISECONDS', [], 'milliseconds', 'INTEGER');
 
+                // Logging functions
+                compiler.defineJsFunction('LOG', ['INTEGER'], 'logInt');
+                compiler.defineJsFunction('LOG', ['DOUBLE'], 'logDbl');
 
                 var compiled = compiler.compile();
 
@@ -186,30 +189,54 @@
 </head>
 <body>
     <textarea id="code">
-' Just a short example code for testing purposes
-' with a multiline comment at the start of the file
+' Define some settings
+DIM midX = 640/2
+DIM midY = 480/2
+DIM r = 200
+DIM hourR = INT(r*0.5)
+DIM minR = INT(r*0.7)
+DIM secR = INT(r*0.9)
+DIM pi = 3.141592653589793
+DIM dotR = r - 20
 
-' Define some variables needed
-DIM a AS INTEGER = 10
-DIM b = 20
-DIM c = a + b
+CLEARCOLOR 0, 0, 0
 
-FOR i = 0 TO (10*2)
-  DIM d = a - b
-  IF a = b THEN             ' A comment at the end of a line?
-    DIM e = a * a
-    LINE a, b, 10, 10       ' A commented comment?
-  ELSEIF b = c THEN
-    RECT b, c, 20, 10
-  ELSE
-    CIRCLE a, c, 10
-  END IF
-NEXT i
+' Main loop
+REPEAT
+  DIM angle AS DOUBLE
+  CLEAR
 
-' Define earlier used function in the end
-FUNCTION ADD(a AS INTEGER, b AS INTEGER) AS INTEGER
-  RETURN a + b
-END FUNCTION
+  ' Draw the background
+  LINECOLOR 255, 255, 255
+  CIRCLE midX, midY, r
+
+  FOR i = 1 TO 12
+    angle = 2*pi*i/12
+    LINE midX + INT(SIN(angle)*dotR), midY - INT(COS(angle)*dotR), midX + INT(SIN(angle)*r), midY - INT(COS(angle)*r)
+  NEXT i
+  
+  ' To make seconds go smoothier
+  angle = 2*pi*MILLISECONDS()/1000
+
+  ' Draw the second hand
+  angle = (2*pi*SECONDS() + angle)/60
+  LINECOLOR 255, 0, 0
+  LINE midX, midY, midX + INT(SIN(angle)*secR), midY - INT(COS(angle)*secR)
+
+  ' Draw the minute hand
+  angle = (2*pi*MINUTES() + angle)/60
+  LINECOLOR 0, 255, 0
+  LINE midX, midY, midX + INT(SIN(angle)*minR), midY - INT(COS(angle)*minR)
+
+  ' Draw the hour hand
+  angle = (2*pi*HOURS() + angle)/12
+  LINECOLOR 0, 0, 255
+  LINE midX, midY, midX + INT(SIN(angle)*hourR), midY - INT(COS(angle)*hourR)
+
+
+  ' Show everything on screen
+  DRAWSCREEN
+FOREVER
     </textarea>
     <div id="errBox"></div>
     <button onclick="compile()">Compile</button>

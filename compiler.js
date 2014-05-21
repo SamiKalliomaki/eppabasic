@@ -220,10 +220,11 @@ Compiler.prototype = {
                     }
                     break;
                 case 'VariableAssignment':
+                    console.log(node);
                     // Get the value to the top of the stack
                     this.expr(node.expr, context);
                     // Copy it from there to the variable location
-                    context.curFunc.nodes.push(this.getMemoryType(node.expr.type) + '[((SP - ' + (context.spOffset - node.definition.location) + ')|0) >> ' + this.getTypeShift(node.expr.type) + '] = '
+                    context.curFunc.nodes.push(this.getMemoryType(node.type) + '[((SP - ' + (context.spOffset - node.definition.location) + ')|0) >> ' + this.getTypeShift(node.type) + '] = '
                         + this.getMemoryType(node.expr.type) + '[((SP - ' + this.getTypeSize(node.expr.type) + ')|0) >> ' + this.getTypeShift(node.expr.type) + '];');
                     // Pop the original expression result from the stack
                     context.curFunc.nodes.push('SP = (SP - ' + this.getTypeSize(node.expr.type) + ')|0;');

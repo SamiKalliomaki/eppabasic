@@ -139,16 +139,24 @@
 
                     // Time functions
                     hours: function hours(sp) {
-                        MEMS32[(sp - 4) >> 2] = new Date().getHours();
+                        MEMS32[sp >> 2] = new Date().getHours();
                     },
                     minutes: function minutes(sp) {
-                        MEMS32[(sp - 4) >> 2] = new Date().getMinutes();
+                        MEMS32[sp >> 2] = new Date().getMinutes();
                     },
                     seconds: function seconds(sp) {
-                        MEMS32[(sp - 4) >> 2] = new Date().getSeconds();
+                        MEMS32[sp >> 2] = new Date().getSeconds();
                     },
                     milliseconds: function milliseconds(sp) {
-                        MEMS32[(sp - 4) >> 2] = new Date().getMilliseconds();
+                        MEMS32[sp >> 2] = new Date().getMilliseconds();
+                    },
+
+                    // Logging functions
+                    logInt: function logInt(sp) {
+                        console.log(MEMS32[(sp - 4) >> 2]);
+                    },
+                    logDbl: function logDbl(sp) {
+                        console.log(MEMF32[(sp - 4) >> 2]);
                     },
 
                     // Some compiler-only functions
@@ -195,7 +203,7 @@
             var running = false;
             var funcBox = document.getElementById('funcBox');
             function step() {
-                game.next();
+                game.next(); console.log(new Date().getSeconds());
                 funcBox.innerHTML = MEMS32[game.cs() >> 2];
             }
             function run() {
