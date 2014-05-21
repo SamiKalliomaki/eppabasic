@@ -96,6 +96,11 @@
                         ctx.lineTo(x2, y2);
                         ctx.stroke();
                     },
+                    dot:function dot(sp) {
+                        var x = MEMS32[(sp - 8) >> 2];
+                        var y = MEMS32[(sp - 4) >> 2];
+                        ctx.fillRect(x, y, 1, 1);
+                    },
                     clear: function clear(sp) {
                         var origStyle = ctx.fillStyle;
                         ctx.fillStyle = game.clearColor;
