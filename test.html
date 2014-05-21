@@ -32,6 +32,7 @@
             var game = Program(
                 window,
                 {
+                    // Draw functions
                     clearColor: function lineColor(sp) {
                         var r = MEMS32[(sp - 12) >> 2];
                         var g = MEMS32[(sp - 8) >> 2];
@@ -66,6 +67,24 @@
 
                         ctx.fillRect(x, y, w, h);
                     },
+                    circle: function circle(sp) {
+                        var x = MEMS32[(sp - 12) >> 2];
+                        var y = MEMS32[(sp - 8) >> 2];
+                        var r = MEMS32[(sp - 4) >> 2];
+
+                        ctx.beginPath();
+                        ctx.arc(x, y, r, 0, 2 * Math.PI, false);
+                        ctx.stroke();
+                    },
+                    fillCircle: function fillCircle(sp) {
+                        var x = MEMS32[(sp - 12) >> 2];
+                        var y = MEMS32[(sp - 8) >> 2];
+                        var r = MEMS32[(sp - 4) >> 2];
+
+                        ctx.beginPath();
+                        ctx.arc(x, y, r, 0, 2 * Math.PI, false);
+                        ctx.fill();
+                    },
                     line: function line(sp) {
                         var x1 = MEMS32[(sp - 16) >> 2];
                         var y1 = MEMS32[(sp - 12) >> 2];
@@ -94,6 +113,7 @@
                         }
                     },
 
+                    // Cast operators
                     dbl: function dbl(sp) {
                         var x = MEMS32[(sp - 4) >> 2];
                         MEMF32[(sp - 4) >> 2] = x;
@@ -103,6 +123,7 @@
                         MEMS32[(sp - 4) >> 2] = x;
                     },
 
+                    // Math functions
                     sinInt: function sinInt(sp) {
                         MEMF32[(sp - 4) >> 2] = Math.sin(MEMS32[(sp - 4) >> 2]);
                     },
@@ -115,6 +136,22 @@
                     cosDbl: function cosDbl(sp) {
                         MEMF32[(sp - 4) >> 2] = Math.cos(MEMF32[(sp - 4) >> 2]);
                     },
+
+                    // Time functions
+                    hours: function hours(sp) {
+                        MEMS32[(sp - 4) >> 2] = new Date().getHours();
+                    },
+                    minutes: function minutes(sp) {
+                        MEMS32[(sp - 4) >> 2] = new Date().getMinutes();
+                    },
+                    seconds: function seconds(sp) {
+                        MEMS32[(sp - 4) >> 2] = new Date().getSeconds();
+                    },
+                    milliseconds: function milliseconds(sp) {
+                        MEMS32[(sp - 4) >> 2] = new Date().getMilliseconds();
+                    },
+
+                    // Some compiler-only functions
                     __log: function __log(i) {
                         return;
                         console.log(i);
@@ -191,7 +228,7 @@
         }
     </script>
 </head>
-<body onload="onload()">
+<body>
     <div id="header">
         <button id="startBtn">Start</button>
         <button id="stopBtn">Stop</button>

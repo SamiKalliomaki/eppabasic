@@ -112,7 +112,7 @@
             var src = document.getElementById('code').value;
 
             try {
-                // No errors, yer
+                // No errors, yet
                 document.getElementById('errBox').innerHTML = '';
 
 
@@ -129,6 +129,8 @@
                 compiler.defineJsFunction('LINECOLOR', ['INTEGER', 'INTEGER', 'INTEGER'], 'lineColor');
                 compiler.defineJsFunction('FILLCOLOR', ['INTEGER', 'INTEGER', 'INTEGER'], 'fillColor');
                 compiler.defineJsFunction('LINE', ['INTEGER', 'INTEGER', 'INTEGER', 'INTEGER'], 'line');
+                compiler.defineJsFunction('CIRCLE', ['INTEGER', 'INTEGER', 'INTEGER'], 'circle');
+                compiler.defineJsFunction('FILLCIRCLE', ['INTEGER', 'INTEGER', 'INTEGER'], 'fillCircle');
                 compiler.defineJsFunction('RECT', ['INTEGER', 'INTEGER', 'INTEGER', 'INTEGER'], 'rect');
                 compiler.defineJsFunction('FILLRECT', ['INTEGER', 'INTEGER', 'INTEGER', 'INTEGER'], 'fillRect');
                 compiler.defineJsFunction('CLEAR', [], 'clear');
@@ -142,6 +144,13 @@
                 compiler.defineJsFunction('COS', ['INTEGER'], 'cosInt', 'DOUBLE');
                 compiler.defineJsFunction('COS', ['DOUBLE'], 'cosDbl', 'DOUBLE');
 
+                // Time functions
+                compiler.defineJsFunction('HOURS', [], 'hours', 'INTEGER');
+                compiler.defineJsFunction('MINUTES', [], 'minutes', 'INTEGER');
+                compiler.defineJsFunction('SECONDS', [], 'seconds', 'INTEGER');
+                compiler.defineJsFunction('MILLISECONDS', [], 'milliseconds', 'INTEGER');
+
+
                 var compiled = compiler.compile();
 
                 document.getElementById('compiled').innerHTML = beautifyJs(compiled);
@@ -154,11 +163,20 @@
                     debugWindow.close()
                 debugWindow = window.open('test.html', '', 'dependent,dialog', true);
                 console.log(debugWindow);
-                debugWindow.addEventListener('load', function insertCode() {
-                    debugWindow.document.getElementById('programCode').innerHTML = compiled;
-                    debugWindow.init();
-                    debugWindow.ebstart();
-                });
+                function onLoad() {
+                    if (debugWindow.document.getElementById('programCode')) {
+                        // Loaded
+                        debugWindow.document.getElementById('programCode').innerHTML = compiled;
+                        debugWindow.init();
+                        debugWindow.ebstart();
+                    } else {
+                        setTimeout(onLoad, 10);
+                    }
+                }
+                onLoad();
+                /*debugWindow.addEventListener('load', function insertCode() {
+                    
+                });*/
             } catch (e) {
                 document.getElementById('errBox').innerHTML = e.message;
                 throw e;
@@ -184,13 +202,13 @@ FOR i = 0 TO (10*2)
   ELSEIF b = c THEN
     RECT b, c, 20, 10
   ELSE
-    ELLIPSE a, c, 10, 10
-  ENDIF
+    CIRCLE a, c, 10
+  END IF
 NEXT i
 
 ' Define earlier used function in the end
 FUNCTION ADD(a AS INTEGER, b AS INTEGER) AS INTEGER
-RETURN a + b
+  RETURN a + b
 END FUNCTION
     </textarea>
     <div id="errBox"></div>

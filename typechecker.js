@@ -200,6 +200,7 @@ Typechecker.prototype = {
                 switch (expr.op) {
                     case 'lt':
                     case 'gt':
+                    case 'eq':
                         return expr.type = 'INTEGER';
                         break;
                     case 'plus':
@@ -212,7 +213,7 @@ Typechecker.prototype = {
                             return expr.type = leftType;
                         break;
                 }
-                throw new Error('Unresolvable return type of a binary operator');
+                throw new Error('Unresolvable return type of a binary operator "' + expr.op + '"');
             case 'Range':
                 var startType = this.resolveExprType(expr.start, context);
                 var endType = this.resolveExprType(expr.end, context);

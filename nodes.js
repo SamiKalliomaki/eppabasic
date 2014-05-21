@@ -58,8 +58,8 @@ Nodes.Variable.prototype = {
 /*
  * Creates a new ast block node
  */
-Nodes.Block = function Block() {
-    this.nodes = [];
+Nodes.Block = function Block(nodes) {
+    this.nodes = nodes || [];
 };
 Nodes.Block.prototype = {
     nodeType: 'Block'

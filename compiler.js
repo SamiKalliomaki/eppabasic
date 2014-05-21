@@ -362,7 +362,6 @@ Compiler.prototype = {
      * Compiles an if statement
      */
     ifStatement: function ifStatement(statement, context) {
-        console.log(statement);
         // Get the test value to the top of the stack
         this.expr(statement.expr, context);
 
@@ -405,7 +404,10 @@ Compiler.prototype = {
         // Compile the false block
         if (falseBlock) {
             context.curFunc = falseBlock;
-            this.compileBlock(statement.falseStatement, context);
+            if (statement.falseStatement.nodeType === 'If')
+                this.ifStatement(statement.falseStatement, context);
+            else
+                this.compileBlock(statement.falseStatement, context);
             // Return from the true block
             context.curFunc.nodes.push('\tCS = (CS - ' + this.getTypeSize('INTEGER') + ')|0;');
         }
@@ -557,7 +559,8 @@ Compiler.prototype = {
                     mul: '*',
                     div: '/',
                     lt: '<',
-                    gt: '>'
+                    gt: '>',
+                    eq: '=='
                 };
                 var op = map[expr.op];
                 var src;
