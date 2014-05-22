@@ -239,15 +239,9 @@
             window.ebreset = reset;
             window.ebstep = step;
         }
-
-        // For cases when the page is loaded independently and program exists
-        function onload() {
-            if (Program)
-                init();
-        }
     </script>
 </head>
-<body onload="onload()">
+<body>
     <div id="header">
         <button id="startBtn">Start</button>
         <button id="stopBtn">Stop</button>

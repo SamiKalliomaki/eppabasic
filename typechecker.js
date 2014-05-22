@@ -200,8 +200,11 @@ Typechecker.prototype = {
                 var rightType = this.resolveExprType(expr.right, context);
                 switch (expr.op) {
                     case 'lt':
+                    case 'lte':
                     case 'gt':
+                    case 'gte':
                     case 'eq':
+                    case 'neq':
                         return expr.type = 'INTEGER';
                         break;
                     case 'plus':

@@ -550,16 +550,20 @@ Compiler.prototype = {
                 this.expr(expr.right, context);
 
                 var dest = this.getMemoryType(expr.type) + '[((SP - ' + (this.getTypeSize(expr.left.type) + this.getTypeSize(expr.right.type)) + ')|0) >> ' + this.getTypeShift(expr.type) + ']';
-                var left = this.castTo(this.getMemoryType(expr.left.type) + '[((SP - ' + (this.getTypeSize(expr.left.type) + this.getTypeSize(expr.right.type)) + ')|0) >> ' + this.getTypeShift(expr.left.type) + ']', expr.left.type);
-                var right = this.castTo(this.getMemoryType(expr.right.type) + '[((SP - ' + (this.getTypeSize(expr.right.type)) + ')|0) >> ' + this.getTypeShift(expr.right.type) + ']', expr.right.type);
+                var left = this.castTo(this.castTo(this.getMemoryType(expr.left.type) + '[((SP - ' + (this.getTypeSize(expr.left.type) + this.getTypeSize(expr.right.type)) + ')|0) >> ' + this.getTypeShift(expr.left.type) + ']', expr.left.type), expr.type);
+                var right = this.castTo(this.castTo(this.getMemoryType(expr.right.type) + '[((SP - ' + (this.getTypeSize(expr.right.type)) + ')|0) >> ' + this.getTypeShift(expr.right.type) + ']', expr.right.type), expr.type);
                 var map = {
                     plus: '+',
                     minus: '-',
                     mul: '*',
                     div: '/',
+
                     lt: '<',
+                    lte: '<=',
                     gt: '>',
-                    eq: '=='
+                    gte: '>=',
+                    eq: '==',
+                    neq: '!='
                 };
                 var op = map[expr.op];
                 var src;
