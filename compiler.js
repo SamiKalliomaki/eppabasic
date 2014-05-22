@@ -220,7 +220,6 @@ Compiler.prototype = {
                     }
                     break;
                 case 'VariableAssignment':
-                    console.log(node);
                     // Get the value to the top of the stack
                     this.expr(node.expr, context);
                     // Copy it from there to the variable location
@@ -376,10 +375,7 @@ Compiler.prototype = {
         context.curFunc.nodes.push('\tMEMU32[CS >> ' + this.getTypeShift('INTEGER') + '] = ' + retBlock.index + ';');
         // Do the testing
         context.curFunc.nodes.push('if (' + this.castTo(this.getMemoryType(statement.expr.type) + '[((SP - ' + this.getTypeSize(statement.expr.type) + ')|0) >> ' + this.getTypeShift(statement.expr.type) + ']', statement.expr.type) + ') {');
-        context.spOffset -= this.getTypeSize(statement.expr.type);                      // For getting rid of the test value (happens both in true and false blocks so must be one common over here)
         {
-            // Get rid of the test value
-            context.curFunc.nodes.push('\tSP = (SP - ' + this.getTypeSize(statement.expr.type) + ')|0;');
             // Jump to the true block
             context.curFunc.nodes.push('\tCS = (CS + ' + this.getTypeSize('INTEGER') + ')|0;');
             context.curFunc.nodes.push('\tMEMU32[CS >> ' + this.getTypeShift('INTEGER') + '] = ' + trueBlock.index + ';');
@@ -387,14 +383,16 @@ Compiler.prototype = {
         if (falseBlock) {
             context.curFunc.nodes.push('} else {');
             {
-                // Get rid of the test value
-                context.curFunc.nodes.push('\tSP = (SP - ' + this.getTypeSize(statement.expr.type) + ')|0;');
-                // Jump to the false block (or return block if false block is omitted) block
+                // Jump to the false block if it exists
                 context.curFunc.nodes.push('\tCS = (CS + ' + this.getTypeSize('INTEGER') + ')|0;');
                 context.curFunc.nodes.push('\tMEMU32[CS >> ' + this.getTypeShift('INTEGER') + '] = ' + falseBlock.index + ';');
             }
         }
         context.curFunc.nodes.push('}');
+
+        // Get rid of the test value
+        context.curFunc.nodes.push('\tSP = (SP - ' + this.getTypeSize(statement.expr.type) + ')|0;');
+        context.spOffset -= this.getTypeSize(statement.expr.type);
 
         // Compile the true block
         context.curFunc = trueBlock;

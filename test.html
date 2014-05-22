@@ -96,7 +96,7 @@
                         ctx.lineTo(x2, y2);
                         ctx.stroke();
                     },
-                    dot:function dot(sp) {
+                    dot: function dot(sp) {
                         var x = MEMS32[(sp - 8) >> 2];
                         var y = MEMS32[(sp - 4) >> 2];
                         ctx.fillRect(x, y, 1, 1);
@@ -208,7 +208,7 @@
             var running = false;
             var funcBox = document.getElementById('funcBox');
             function step() {
-                game.next(); console.log(new Date().getSeconds());
+                game.next();
                 funcBox.innerHTML = MEMS32[game.cs() >> 2];
             }
             function run() {
@@ -239,9 +239,15 @@
             window.ebreset = reset;
             window.ebstep = step;
         }
+
+        // For cases when the page is loaded independently and program exists
+        function onload() {
+            if (Program)
+                init();
+        }
     </script>
 </head>
-<body>
+<body onload="onload()">
     <div id="header">
         <button id="startBtn">Start</button>
         <button id="stopBtn">Stop</button>
