@@ -211,6 +211,7 @@ Typechecker.prototype = {
                     case 'minus':
                     case 'mul':
                     case 'div':
+                    case 'mod':
                         if (leftType === 'DOUBLE' || rightType === 'DOUBLE')
                             return expr.type = 'DOUBLE';
                         if (leftType === rightType)

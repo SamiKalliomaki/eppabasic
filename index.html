@@ -136,6 +136,8 @@
                 compiler.defineJsFunction('DOT', ['INTEGER', 'INTEGER'], 'dot');
                 compiler.defineJsFunction('CLEAR', [], 'clear');
                 compiler.defineJsFunction('DRAWSCREEN', [], 'drawScreen', undefined, false);
+                compiler.defineJsFunction('PRINT', ['INTEGER'], 'printInt');
+                compiler.defineJsFunction('PRINT', ['DOUBLE'], 'printDbl');
 
                 // Mathematical functions
                 compiler.defineJsFunction('DBL', ['INTEGER'], 'dbl', 'DOUBLE');
@@ -144,6 +146,9 @@
                 compiler.defineJsFunction('SIN', ['DOUBLE'], 'sinDbl', 'DOUBLE');
                 compiler.defineJsFunction('COS', ['INTEGER'], 'cosInt', 'DOUBLE');
                 compiler.defineJsFunction('COS', ['DOUBLE'], 'cosDbl', 'DOUBLE');
+
+                compiler.defineJsFunction('SQR', ['INTEGER'], 'sqrInt', 'DOUBLE');
+                compiler.defineJsFunction('SQR', ['DOUBLE'], 'sqrDbl', 'DOUBLE');
 
                 // Time functions
                 compiler.defineJsFunction('HOURS', [], 'hours', 'INTEGER');
@@ -165,7 +170,7 @@
 
                 if (debugWindow)
                     debugWindow.close()
-                debugWindow = window.open('test.html', '', 'dependent,dialog', true);
+                debugWindow = window.open('test.html', '', 'dependent,dialog,height=520,width=640', true);
                 console.log(debugWindow);
                 function onLoad() {
                     if (debugWindow.document.getElementById('programCode')) {

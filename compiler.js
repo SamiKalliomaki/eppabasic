@@ -557,6 +557,7 @@ Compiler.prototype = {
                     minus: '-',
                     mul: '*',
                     div: '/',
+                    mod: '%',
 
                     lt: '<',
                     lte: '<=',

@@ -28,7 +28,21 @@
             var lastFrame = new Date().getTime();
             var fps = 0;
             var fpsBox = document.getElementById('fpsBox');
+            
+            var firstTextPos = -5;
+            var textPos = -5;
+            var textHeight = 20;
+            var maxTextPos = 460;
 
+            function print(text) {
+                if (textPos >= maxTextPos) {              
+                    ctx.drawImage(canvas, 0, firstTextPos+textHeight, 640, 480, 0, firstTextPos, 640, 480);
+                } else {
+                    textPos += textHeight;
+                }
+                ctx.strokeText(text,5,textPos);
+            }
+            
             var game = Program(
                 window,
                 {
@@ -117,7 +131,13 @@
                             frameCount = 0;
                         }
                     },
-
+                    printInt: function printInt(sp) {
+                        print(MEMS32[(sp - 4) >> 2]);
+                    },
+                    printDbl: function printDbl(sp) {
+                        print(MEMF32[(sp - 4) >> 2]);
+                    },
+                    
                     // Cast operators
                     dbl: function dbl(sp) {
                         var x = MEMS32[(sp - 4) >> 2];
@@ -140,6 +160,13 @@
                     },
                     cosDbl: function cosDbl(sp) {
                         MEMF32[(sp - 4) >> 2] = Math.cos(MEMF32[(sp - 4) >> 2]);
+                    },
+                    sqrInt: function sqrInt(sp) {
+                        MEMF32[(sp - 4) >> 2] = Math.sqrt(MEMS32[(sp - 4) >> 2]);
+                    },
+                    sqrDbl: function sqrDbl(sp) {
+                        alert(Math.sqrt(MEMF32[(sp - 4) >> 2]));
+                        MEMF32[(sp - 4) >> 2] = Math.sqrt(MEMF32[(sp - 4) >> 2]);
                     },
 
                     // Time functions
