@@ -27,6 +27,7 @@
     </style>
     <script src="compiler/polyfill.js"></script>
     <script src="compiler/nodes.js"></script>
+    <script src="compiler/types.js"></script>
     <script src="compiler/lexer.js"></script>
     <script src="compiler/parser.js"></script>
     <script src="compiler/typechecker.js"></script>
@@ -34,6 +35,10 @@
     <script src="compiler/compiler.js"></script>
     <script>
         function astToHtml(ast) {
+            if (ast === Types.Integer)
+                return 'Integer';
+            if (ast === Types.Double)
+                return 'Double';
             if (typeof ast === 'string'
                 || typeof ast === 'number'
                 || typeof ast === 'boolean')
@@ -93,40 +98,40 @@
                 var compiler = new Compiler(ast);
 
                 // Drawing functions
-                compiler.defineJsFunction('CLEARCOLOR', ['INTEGER', 'INTEGER', 'INTEGER'], 'clearColor');
-                compiler.defineJsFunction('LINECOLOR', ['INTEGER', 'INTEGER', 'INTEGER'], 'lineColor');
-                compiler.defineJsFunction('FILLCOLOR', ['INTEGER', 'INTEGER', 'INTEGER'], 'fillColor');
-                compiler.defineJsFunction('LINE', ['INTEGER', 'INTEGER', 'INTEGER', 'INTEGER'], 'line');
-                compiler.defineJsFunction('CIRCLE', ['INTEGER', 'INTEGER', 'INTEGER'], 'circle');
-                compiler.defineJsFunction('FILLCIRCLE', ['INTEGER', 'INTEGER', 'INTEGER'], 'fillCircle');
-                compiler.defineJsFunction('RECT', ['INTEGER', 'INTEGER', 'INTEGER', 'INTEGER'], 'rect');
-                compiler.defineJsFunction('FILLRECT', ['INTEGER', 'INTEGER', 'INTEGER', 'INTEGER'], 'fillRect');
-                compiler.defineJsFunction('DOT', ['INTEGER', 'INTEGER'], 'dot');
+                compiler.defineJsFunction('CLEARCOLOR', [Types.Integer, Types.Integer, Types.Integer], 'clearColor');
+                compiler.defineJsFunction('LINECOLOR', [Types.Integer, Types.Integer, Types.Integer], 'lineColor');
+                compiler.defineJsFunction('FILLCOLOR', [Types.Integer, Types.Integer, Types.Integer], 'fillColor');
+                compiler.defineJsFunction('LINE', [Types.Integer, Types.Integer, Types.Integer, Types.Integer], 'line');
+                compiler.defineJsFunction('CIRCLE', [Types.Integer, Types.Integer, Types.Integer], 'circle');
+                compiler.defineJsFunction('FILLCIRCLE', [Types.Integer, Types.Integer, Types.Integer], 'fillCircle');
+                compiler.defineJsFunction('RECT', [Types.Integer, Types.Integer, Types.Integer, Types.Integer], 'rect');
+                compiler.defineJsFunction('FILLRECT', [Types.Integer, Types.Integer, Types.Integer, Types.Integer], 'fillRect');
+                compiler.defineJsFunction('DOT', [Types.Integer, Types.Integer], 'dot');
                 compiler.defineJsFunction('CLEAR', [], 'clear');
                 compiler.defineJsFunction('DRAWSCREEN', [], 'drawScreen', undefined, false);
-                compiler.defineJsFunction('PRINT', ['INTEGER'], 'printInt');
-                compiler.defineJsFunction('PRINT', ['DOUBLE'], 'printDbl');
+                compiler.defineJsFunction('PRINT', [Types.Integer], 'printInt');
+                compiler.defineJsFunction('PRINT', [Types.Double], 'printDbl');
 
                 // Mathematical functions
-                compiler.defineJsFunction('DBL', ['INTEGER'], 'dbl', 'DOUBLE');
-                compiler.defineJsFunction('INT', ['DOUBLE'], 'int', 'INTEGER');
-                compiler.defineJsFunction('SIN', ['INTEGER'], 'sinInt', 'DOUBLE');
-                compiler.defineJsFunction('SIN', ['DOUBLE'], 'sinDbl', 'DOUBLE');
-                compiler.defineJsFunction('COS', ['INTEGER'], 'cosInt', 'DOUBLE');
-                compiler.defineJsFunction('COS', ['DOUBLE'], 'cosDbl', 'DOUBLE');
+                compiler.defineJsFunction('DBL', [Types.Integer], 'dbl', Types.Double);
+                compiler.defineJsFunction('INT', [Types.Double], 'int', Types.Integer);
+                compiler.defineJsFunction('SIN', [Types.Integer], 'sinInt', Types.Double);
+                compiler.defineJsFunction('SIN', [Types.Double], 'sinDbl', Types.Double);
+                compiler.defineJsFunction('COS', [Types.Integer], 'cosInt', Types.Double);
+                compiler.defineJsFunction('COS', [Types.Double], 'cosDbl', Types.Double);
 
-                compiler.defineJsFunction('SQR', ['INTEGER'], 'sqrInt', 'DOUBLE');
-                compiler.defineJsFunction('SQR', ['DOUBLE'], 'sqrDbl', 'DOUBLE');
+                compiler.defineJsFunction('SQR', [Types.Integer], 'sqrInt', Types.Double);
+                compiler.defineJsFunction('SQR', [Types.Double], 'sqrDbl', Types.Double);
 
                 // Time functions
-                compiler.defineJsFunction('HOURS', [], 'hours', 'INTEGER');
-                compiler.defineJsFunction('MINUTES', [], 'minutes', 'INTEGER');
-                compiler.defineJsFunction('SECONDS', [], 'seconds', 'INTEGER');
-                compiler.defineJsFunction('MILLISECONDS', [], 'milliseconds', 'INTEGER');
+                compiler.defineJsFunction('HOURS', [], 'hours', Types.Integer);
+                compiler.defineJsFunction('MINUTES', [], 'minutes', Types.Integer);
+                compiler.defineJsFunction('SECONDS', [], 'seconds', Types.Integer);
+                compiler.defineJsFunction('MILLISECONDS', [], 'milliseconds', Types.Integer);
 
                 // Logging functions
-                compiler.defineJsFunction('LOG', ['INTEGER'], 'logInt');
-                compiler.defineJsFunction('LOG', ['DOUBLE'], 'logDbl');
+                compiler.defineJsFunction('LOG', [Types.Integer], 'logInt');
+                compiler.defineJsFunction('LOG', [Types.Double], 'logDbl');
 
                 var compiled = compiler.compile();
 
@@ -152,7 +157,7 @@
                 }
                 onLoad();
                 /*debugWindow.addEventListener('load', function insertCode() {
-                    
+
                 });*/
             } catch (e) {
                 document.getElementById('errBox').innerHTML = e.message;
@@ -163,54 +168,54 @@
 </head>
 <body>
     <textarea id="code">
-' Define some settings
-DIM midX = 640/2
-DIM midY = 480/2
-DIM r = 200
-DIM hourR = INT(r*0.5)
-DIM minR = INT(r*0.7)
-DIM secR = INT(r*0.9)
-DIM pi = 3.141592653589793
-DIM dotR = r - 20
+        ' Define some settings
+        DIM midX = 640/2
+        DIM midY = 480/2
+        DIM r = 200
+        DIM hourR = INT(r*0.5)
+        DIM minR = INT(r*0.7)
+        DIM secR = INT(r*0.9)
+        DIM pi = 3.141592653589793
+        DIM dotR = r - 20
 
-CLEARCOLOR 0, 0, 0
+        CLEARCOLOR 0, 0, 0
 
-' Main loop
-REPEAT
-  DIM angle AS DOUBLE
-  CLEAR
+        ' Main loop
+        REPEAT
+        DIM angle AS DOUBLE
+        CLEAR
 
-  ' Draw the background
-  LINECOLOR 255, 255, 255
-  CIRCLE midX, midY, r
+        ' Draw the background
+        LINECOLOR 255, 255, 255
+        CIRCLE midX, midY, r
 
-  FOR i = 1 TO 12
-    angle = 2*pi*i/12
-    LINE midX + INT(SIN(angle)*dotR), midY - INT(COS(angle)*dotR), midX + INT(SIN(angle)*r), midY - INT(COS(angle)*r)
-  NEXT i
-  
-  ' To make seconds go smoothier
-  angle = 2*pi*MILLISECONDS()/1000
+        FOR i = 1 TO 12
+        angle = 2*pi*i/12
+        LINE midX + INT(SIN(angle)*dotR), midY - INT(COS(angle)*dotR), midX + INT(SIN(angle)*r), midY - INT(COS(angle)*r)
+        NEXT i
 
-  ' Draw the second hand
-  angle = (2*pi*SECONDS() + angle)/60
-  LINECOLOR 255, 0, 0
-  LINE midX, midY, midX + INT(SIN(angle)*secR), midY - INT(COS(angle)*secR)
+        ' To make seconds go smoothier
+        angle = 2*pi*MILLISECONDS()/1000
 
-  ' Draw the minute hand
-  angle = (2*pi*MINUTES() + angle)/60
-  LINECOLOR 0, 255, 0
-  LINE midX, midY, midX + INT(SIN(angle)*minR), midY - INT(COS(angle)*minR)
+        ' Draw the second hand
+        angle = (2*pi*SECONDS() + angle)/60
+        LINECOLOR 255, 0, 0
+        LINE midX, midY, midX + INT(SIN(angle)*secR), midY - INT(COS(angle)*secR)
 
-  ' Draw the hour hand
-  angle = (2*pi*HOURS() + angle)/12
-  LINECOLOR 0, 0, 255
-  LINE midX, midY, midX + INT(SIN(angle)*hourR), midY - INT(COS(angle)*hourR)
+        ' Draw the minute hand
+        angle = (2*pi*MINUTES() + angle)/60
+        LINECOLOR 0, 255, 0
+        LINE midX, midY, midX + INT(SIN(angle)*minR), midY - INT(COS(angle)*minR)
+
+        ' Draw the hour hand
+        angle = (2*pi*HOURS() + angle)/12
+        LINECOLOR 0, 0, 255
+        LINE midX, midY, midX + INT(SIN(angle)*hourR), midY - INT(COS(angle)*hourR)
 
 
-  ' Show everything on screen
-  DRAWSCREEN
-FOREVER
+        ' Show everything on screen
+        DRAWSCREEN
+        FOREVER
     </textarea>
     <div id="errBox"></div>
     <button onclick="compile()">Compile</button>

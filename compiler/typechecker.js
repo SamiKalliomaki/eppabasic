@@ -1,4 +1,4 @@
-﻿
+﻿/// <reference path="types.js" />
 
 function Typechecker(ast, functions) {
     this.ast = ast;
@@ -190,9 +190,9 @@ Typechecker.prototype = {
         switch (expr.nodeType) {
             case 'Number':
                 if (+expr.val === (expr.val | 0) && expr.val.indexOf('.') === -1) {
-                    return expr.type = 'INTEGER';
+                    return expr.type = Types.Integer;
                 } else {
-                    return expr.type = 'DOUBLE';
+                    return expr.type = Types.Double;
                 }
 
             case 'BinaryOp':
@@ -205,15 +205,15 @@ Typechecker.prototype = {
                     case 'gte':
                     case 'eq':
                     case 'neq':
-                        return expr.type = 'INTEGER';
+                        return expr.type = Types.Integer;
                         break;
                     case 'plus':
                     case 'minus':
                     case 'mul':
                     case 'div':
                     case 'mod':
-                        if (leftType === 'DOUBLE' || rightType === 'DOUBLE')
-                            return expr.type = 'DOUBLE';
+                        if (leftType === Types.Double || rightType === Types.Double)
+                            return expr.type = Types.Double;
                         if (leftType === rightType)
                             return expr.type = leftType;
                         break;
@@ -252,18 +252,11 @@ Typechecker.prototype = {
                 // Check all parameters one by one
                 var j = params.length;
                 while (j--) {
-                    if (!this.canBeCasted(params[j].type, this.functions[i].paramTypes[j]))
+                    if (!params[j].type.canCastImplicitlyTo(this.functions[i].paramTypes[j]))
                         continue funcloop;
                 }
                 return this.functions[i];
             }
         }
     },
-
-    /*
-     * Tests if one type can be implictly casted to another
-     */
-    canBeCasted: function canBeCasted(from, to) {
-        return from === to;
-    }
 };

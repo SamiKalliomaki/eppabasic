@@ -222,7 +222,6 @@ Parser.prototype = {
             this.expect('eq');
             var expr = this.parseExpr();
             return new Nodes.VariableAssignment(tok.val, expr);
-            throw new Error('Variable assignments not yet supported');
         } else {
             var params = this.parseParams();
             return new Nodes.FunctionCall(tok.val, params);
@@ -268,7 +267,7 @@ Parser.prototype = {
         var initial;
         if (this.peek().type === 'as') {
             this.advance();
-            type = this.expect('identifier').val;
+            type = Types.toType(this.expect('identifier').val);
         }
         if (this.peek().type === 'eq') {
             this.advance();
@@ -290,7 +289,7 @@ Parser.prototype = {
         paramloop: while (this.peek().type !== 'rparen') {
             var paramname = this.expect('identifier').val;
             this.expect('as');
-            var paramtype = this.expect('identifier').val;
+            var paramtype = Types.toType(this.expect('identifier').val);
 
             params.push({
                 name: paramname,

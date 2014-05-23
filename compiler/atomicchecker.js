@@ -193,17 +193,11 @@ Atomicchecker.prototype = {
                 // Check all parameters one by one
                 var j = params.length;
                 while (j--) {
-                    if (!this.canBeCasted(params[j].type, this.functions[i].paramTypes[j]))
+                    if (!params[j].type.canCastImplicitlyTo(this.functions[i].paramTypes[j]))
                         continue funcloop;
                 }
                 return this.functions[i];
             }
         }
     },
-    /*
-     * Tests if one type can be implictly casted to another
-     */
-    canBeCasted: function canBeCasted(from, to) {
-        return from === to;
-    }
 }
