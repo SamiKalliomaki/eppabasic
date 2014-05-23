@@ -25,46 +25,14 @@
             font-family: monospace;
         }
     </style>
-    <script src="polyfill.js"></script>
-    <script src="nodes.js"></script>
-    <script src="lexer.js"></script>
-    <script src="parser.js"></script>
-    <script src="typechecker.js"></script>
-    <script src="atomicchecker.js"></script>
-    <script src="compiler.js"></script>
+    <script src="compiler/polyfill.js"></script>
+    <script src="compiler/nodes.js"></script>
+    <script src="compiler/lexer.js"></script>
+    <script src="compiler/parser.js"></script>
+    <script src="compiler/typechecker.js"></script>
+    <script src="compiler/atomicchecker.js"></script>
+    <script src="compiler/compiler.js"></script>
     <script>
-        //(function () {
-        //    var MB = 1024 * 1024;
-        //    var SIZE = 256 * MB;
-        //    var STACK_SIZE = 2 * MB;
-        //    var HEAP_SIZE = SIZE - STACK_SIZE;
-        //    var buffer = new ArrayBuffer(SIZE);
-
-        //    var asm = (function (stdlib, env, heap) {
-        //        "use asm";
-
-        //        var log = env.log;
-
-        //        function recursion() {
-        //            var a = 0;
-        //            if (1) {
-        //            }
-        //        }
-
-        //        return {
-        //            f: recursion
-        //        };
-        //    })(
-        //    window,
-        //    {
-        //        log: console.log
-        //    }
-        //    );
-
-        //    //asm.f(3, 3);
-        //    console.log(asm.f(2, 2));
-        //})();
-
         function astToHtml(ast) {
             if (typeof ast === 'string'
                 || typeof ast === 'number'
