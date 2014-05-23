@@ -9,7 +9,7 @@ Atomicchecker.prototype = {
     /*
      * Checks atomicness of the ast
      */
-    check: function typecheck() {
+    check: function check() {
         // TODO Make more efficient loop!!!
         for (var i = 0; i < 100; i++)
             this.visit(this.ast);

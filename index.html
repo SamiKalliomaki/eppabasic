@@ -169,53 +169,54 @@
 <body>
     <textarea id="code">
         ' Define some settings
-        DIM midX = 640/2
-        DIM midY = 480/2
-        DIM r = 200
-        DIM hourR = INT(r*0.5)
-        DIM minR = INT(r*0.7)
-        DIM secR = INT(r*0.9)
-        DIM pi = 3.141592653589793
-        DIM dotR = r - 20
+DIM midX = 640/2
+DIM midY = 480/2
+DIM r = 200
+DIM hourR = INT(r*0.5)
+DIM minR = INT(r*0.7)
+DIM secR = INT(r*0.9)
+DIM pi = 3.141592653589793
+DIM dotR = r - 20
 
-        CLEARCOLOR 0, 0, 0
+CLEARCOLOR 0, 0, 0
 
-        ' Main loop
-        REPEAT
-        DIM angle AS DOUBLE
-        CLEAR
+' Main loop
+REPEAT
+  DIM angle AS DOUBLE
+  CLEAR
 
-        ' Draw the background
-        LINECOLOR 255, 255, 255
-        CIRCLE midX, midY, r
+  ' Draw the background
+  LINECOLOR 255, 255, 255
+  CIRCLE midX, midY, r
 
-        FOR i = 1 TO 12
-        angle = 2*pi*i/12
-        LINE midX + INT(SIN(angle)*dotR), midY - INT(COS(angle)*dotR), midX + INT(SIN(angle)*r), midY - INT(COS(angle)*r)
-        NEXT i
+  FOR i = 1 TO 12
+    angle = 2*pi*i/12
+    LINE midX + INT(SIN(angle)*dotR), midY - INT(COS(angle)*dotR), midX + INT(SIN(angle)*r), midY - INT(COS(angle)*r)
+  NEXT i
+  
+  ' To make seconds go smoothier
+  angle = 2*pi*MILLISECONDS()/1000
 
-        ' To make seconds go smoothier
-        angle = 2*pi*MILLISECONDS()/1000
+  ' Draw the second hand
+  angle = (2*pi*SECONDS() + angle)/60
+  LINECOLOR 255, 0, 0
+  LINE midX, midY, midX + INT(SIN(angle)*secR), midY - INT(COS(angle)*secR)
 
-        ' Draw the second hand
-        angle = (2*pi*SECONDS() + angle)/60
-        LINECOLOR 255, 0, 0
-        LINE midX, midY, midX + INT(SIN(angle)*secR), midY - INT(COS(angle)*secR)
+  ' Draw the minute hand
+  angle = (2*pi*MINUTES() + angle)/60
+  LINECOLOR 0, 255, 0
+  LINE midX, midY, midX + INT(SIN(angle)*minR), midY - INT(COS(angle)*minR)
 
-        ' Draw the minute hand
-        angle = (2*pi*MINUTES() + angle)/60
-        LINECOLOR 0, 255, 0
-        LINE midX, midY, midX + INT(SIN(angle)*minR), midY - INT(COS(angle)*minR)
-
-        ' Draw the hour hand
-        angle = (2*pi*HOURS() + angle)/12
-        LINECOLOR 0, 0, 255
-        LINE midX, midY, midX + INT(SIN(angle)*hourR), midY - INT(COS(angle)*hourR)
+  ' Draw the hour hand
+  angle = (2*pi*HOURS() + angle)/12
+  LINECOLOR 0, 0, 255
+  LINE midX, midY, midX + INT(SIN(angle)*hourR), midY - INT(COS(angle)*hourR)
 
 
-        ' Show everything on screen
-        DRAWSCREEN
-        FOREVER
+  ' Show everything on screen
+  DRAWSCREEN
+FOREVER
+
     </textarea>
     <div id="errBox"></div>
     <button onclick="compile()">Compile</button>

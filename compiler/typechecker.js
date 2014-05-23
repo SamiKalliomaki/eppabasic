@@ -9,7 +9,7 @@ Typechecker.prototype = {
     /*
      * Checks types of the ast
      */
-    check: function typecheck() {
+    check: function check() {
         this.visit(this.ast);
     },
 
@@ -69,7 +69,7 @@ Typechecker.prototype = {
             definition.type = this.resolveExprType(definition.initial, parent);
         }
         if (definition.initial) {
-            if (definition.type !== this.resolveExprType(definition.initial, parent))
+            if (!this.resolveExprType(definition.initial, parent).canCastImplicitlyTo(definition.type))
                 throw new Error('Can not cast type "' + this.resolveExprType(definition.initial, parent) + '" to "' + definition.type + '"');
         }
         parent.defineVariable(definition);
@@ -128,6 +128,12 @@ Typechecker.prototype = {
         var definition = this.getFunctionDefinition(call.name, call.params);
         if (!definition)
             throw new Error('Call of an undefined function "' + call.name + '"');
+
+        // Redefine parameter types to match function call so that the compiler can cast them
+        var i = call.params.length;
+        while (i--) {
+            call.params[i].type = definition.paramTypes[i];
+        }
 
         call.definition = definition;
         call.type = definition.returnType;
