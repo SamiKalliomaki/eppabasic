@@ -1,0 +1,26 @@
+﻿body {
+    /* No margins on the side */
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+#canvasHolder {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+    #canvasHolder > canvas {
+        position: relative;
+        width: 100%;
+        height: 100%;
+    }
+
+#error {
+    background: #f00;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+}

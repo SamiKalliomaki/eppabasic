@@ -97,9 +97,9 @@ Compiler.prototype = {
                 + 'var MEMS32 = new stdlib.Int32Array(heap);\n'
                 + 'var MEMU32 = new stdlib.Uint32Array(heap);\n'
                 + 'var MEMF32 = new stdlib.Float32Array(heap);\n'
-                + 'var MEMF64 = new stdlib.Float64Array(heap);\n'
+                //+ 'var MEMF64 = new stdlib.Float64Array(heap);\n'
                 + 'var imul = stdlib.Math.imul;\n'
-                + 'var __log = env.__log;\n'                                        // Logger function TODO Revove
+                //+ 'var __log = env.__log;\n'                                        // Logger function TODO Revove
                 + 'var SP = 0;\n'                                                   // Stack pointer
                 + 'var CS = 0;\n'                                                   // Call stack pointer
                 + this.compileSystemFunctionDefinitions() + '\n'
@@ -569,7 +569,7 @@ Compiler.prototype = {
             if (func.origName)
                 buf.push('// ' + func.origName);
             buf.push('function ' + func.name + '() {');
-            buf.push('\t__log(' + i + ');');
+            //buf.push('\t__log(' + i + ');');
             buf.push('\t' + func.nodes.join('\n\t'));
             buf.push('\treturn ' + (func.nativeBreaking ? '0' : '1') + ';');
             buf.push('}');
