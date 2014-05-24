@@ -85,16 +85,12 @@ Compiler.prototype = {
         }.bind(this));
         // ... and then the main code
         var entry = this.createFunction('MAIN');
-        var context = {
-            name: 'MAIN',
-            curFunc: entry,
-            spOffset: 0
-        };
+        var context = new CompilerContext('MAIN', entry);
         this.compileBlock(this.ast, context, true);
         // Finally call stop function forever
         var stopFunction = this.createFunction('END');
         stopFunction.nativeBreaking = true;
-        context.curFunc.nodes.push('MEMU32[CS >> ' + Types.Integer.shift + '] = ' + stopFunction.index + ';');
+        context.setCallStack(stopFunction);
 
         return ('function Program(stdlib, env, heap) {\n'
                 + '"use asm";\n'
@@ -144,11 +140,7 @@ Compiler.prototype = {
      * Compiles an user defined function
      */
     compileFunctionDefinition: function compileFunctionDefinition(def) {
-        var context = {
-            name: def.name,
-            curFunc: def.entry,
-            spOffset: 0
-        };
+        var context = new CompilerContext(def.name, def.entry);
 
         // Find out parameter offsets
         for (var i = 0; i < def.params.length; i++) {
@@ -161,8 +153,8 @@ Compiler.prototype = {
         this.compileBlock(def.block, context);
 
         // Clear the reserved stack (practically only for subs because every function should end with a return statement)
-        context.curFunc.nodes.push('SP = (SP - ' + context.spOffset + ')|0;');
-        context.curFunc.nodes.push('CS = (CS - ' + Types.Integer.size + ')|0;');
+        context.push('SP = (SP - ' + context.spOffset + ')|0;');
+        context.popCallStack();
     },
 
     compileBlock: function compileBlock(block, context, skipFunctionDefinitions) {
@@ -176,7 +168,7 @@ Compiler.prototype = {
             varSize += size;
         }.bind(this));
         if (varSize)
-            context.curFunc.nodes.push('SP = (SP + ' + varSize + ')|0;');
+            context.push('SP = (SP + ' + varSize + ')|0;');
 
 
         // Compile all the nodes
@@ -186,7 +178,7 @@ Compiler.prototype = {
                     this.callFunction(node, context);
                     // Skip the result
                     if (node.type) {
-                        context.curFunc.nodes.push('SP = (SP - ' + node.type.size + ')|0;');
+                        context.push('SP = (SP - ' + node.type.size + ')|0;');
                         context.spOffset -= node.type.size;
                     }
                     break;
@@ -194,15 +186,15 @@ Compiler.prototype = {
                     // Compile the expression to the top of the stack
                     this.expr(node.expr, context);
                     // Move the result to the begining of the return stack
-                    context.curFunc.nodes.push(node.expr.type.memoryType + '[((SP - ' + context.spOffset + ')|0) >> ' + node.expr.type.shift + '] = '
+                    context.push(node.expr.type.memoryType + '[((SP - ' + context.spOffset + ')|0) >> ' + node.expr.type.shift + '] = '
                         + node.expr.type.memoryType + '[((SP - ' + node.expr.type.size + ')|0) >> ' + node.expr.type.shift + '];');
 
                     // Return the stack to appropriate state
-                    context.curFunc.nodes.push('SP = (SP - ' + (context.spOffset - node.expr.type.size) + ')|0;');
+                    context.push('SP = (SP - ' + (context.spOffset - node.expr.type.size) + ')|0;');
                     // ...pop the function from the call stack
-                    context.curFunc.nodes.push('CS = (CS - ' + Types.Integer.size + ')|0;');
+                    context.push('CS = (CS - ' + Types.Integer.size + ')|0;');
                     // And get out of here!
-                    context.curFunc.nodes.push('return 1;');
+                    context.push('return 1;');
 
                     break;
                 case 'Comment':
@@ -212,10 +204,10 @@ Compiler.prototype = {
                         // Get the initial value to the top of the stack
                         this.expr(node.initial, context);
                         // Copy it from there to the variable location
-                        context.curFunc.nodes.push(node.initial.type.memoryType + '[((SP - ' + (context.spOffset - node.location) + ')|0) >> ' + node.initial.type.shift + '] = '
+                        context.push(node.initial.type.memoryType + '[((SP - ' + (context.spOffset - node.location) + ')|0) >> ' + node.initial.type.shift + '] = '
                             + node.initial.type.memoryType + '[((SP - ' + node.initial.type.size + ')|0) >> ' + node.initial.type.shift + '];');
                         // Pop the original expression result from the stack
-                        context.curFunc.nodes.push('SP = (SP - ' + node.initial.type.size + ')|0;');
+                        context.push('SP = (SP - ' + node.initial.type.size + ')|0;');
                         context.spOffset -= node.initial.type.size;
                         //throw new Error('Compiler doesn\'t support variable definitions with initial values');
                     }
@@ -224,10 +216,10 @@ Compiler.prototype = {
                     // Get the value to the top of the stack
                     this.expr(node.expr, context);
                     // Copy it from there to the variable location
-                    context.curFunc.nodes.push(node.type.memoryType + '[((SP - ' + (context.spOffset - node.definition.location) + ')|0) >> ' + node.type.shift + '] = '
+                    context.push(node.type.memoryType + '[((SP - ' + (context.spOffset - node.definition.location) + ')|0) >> ' + node.type.shift + '] = '
                         + node.expr.type.memoryType + '[((SP - ' + node.expr.type.size + ')|0) >> ' + node.expr.type.shift + '];');
                     // Pop the original expression result from the stack
-                    context.curFunc.nodes.push('SP = (SP - ' + node.expr.type.size + ')|0;');
+                    context.push('SP = (SP - ' + node.expr.type.size + ')|0;');
                     context.spOffset -= node.expr.type.size;
                     break;
                 case 'For':
@@ -256,7 +248,7 @@ Compiler.prototype = {
 
         // Remove variables
         if (varSize)
-            context.curFunc.nodes.push('SP = (SP - ' + varSize + ')|0;');
+            context.push('SP = (SP - ' + varSize + ')|0;');
         context.spOffset -= varSize;
     },
 
@@ -272,25 +264,20 @@ Compiler.prototype = {
 
         // Now call the function
         if (func.atomic) {
-            // Move call stack pointer
-            context.curFunc.nodes.push('CS = (CS + ' + Types.Integer.size + ')|0;');
             // Select function to be called
-            context.curFunc.nodes.push('MEMU32[CS >> ' + Types.Integer.shift + '] = ' + func.definition.entry.index + ';');
+            context.pushCallStack(func.definition.entry);
             // Call the function
-            context.curFunc.nodes.push(this.fprefix + func.definition.entry.index + '()|0;');
-            //throw new Error('Compiler doesn\'t support atomic calls (call to "' + func.name + '")');
+            context.push(this.fprefix + func.definition.entry.index + '()|0;');
         } else {
             // Set return function
             var retFunc = this.createFunction(context.name);
 
             // Set return function
-            context.curFunc.nodes.push('MEMU32[CS >> ' + Types.Integer.shift + '] = ' + retFunc.index + ';');
-            // Move call stack pointer
-            context.curFunc.nodes.push('CS = (CS + ' + Types.Integer.size + ')|0;');
+            context.setCallStack(retFunc);
             // Select function to be called
-            context.curFunc.nodes.push('MEMU32[CS >> ' + Types.Integer.shift + '] = ' + func.definition.entry.index + ';');
+            context.pushCallStack(func.definition.entry);
 
-            context.curFunc = retFunc;
+            context.setFunction(retFunc);
         }
 
         // Return stack
@@ -306,12 +293,9 @@ Compiler.prototype = {
         var blockFunc = this.createFunction(context.name);
         var retFunc = this.createFunction(context.name);
 
-        // Set return function
-        context.curFunc.nodes.push('MEMU32[CS >> ' + Types.Integer.shift + '] = ' + retFunc.index + ';');
-        // Move call stack pointer
-        context.curFunc.nodes.push('CS = (CS + ' + Types.Integer.size + ')|0;');
-        // Select loop function
-        context.curFunc.nodes.push('MEMU32[CS >> ' + Types.Integer.shift + '] = ' + blockFunc.index + ';');
+        // Set return and loop functions
+        context.setCallStack(retFunc);
+        context.pushCallStack(blockFunc);
 
         // Add loop index to the stack with the start value
         loop.variable.location = context.spOffset;
@@ -319,12 +303,12 @@ Compiler.prototype = {
         this.expr(loop.range.start, context);
 
         // Compile the block
-        context.curFunc = blockFunc;
+        context.setFunction(blockFunc);
 
         // Test for continuation in the begining
         this.expr(loop.range.end, context);
         // Do the testing
-        context.curFunc.nodes.push('if ('
+        context.push('if ('
             + loop.variable.type.cast(loop.variable.type.memoryType + '[((SP - ' + (context.spOffset - loop.variable.location) + ')|0) >> ' + loop.variable.type.shift + ']')
             + ' > '
             + loop.variable.type.cast(loop.variable.type.memoryType + '[((SP - ' + (loop.variable.type.size) + ')|0) >> ' + loop.variable.type.shift + ']')
@@ -332,30 +316,30 @@ Compiler.prototype = {
             );
         {
             // Exit the loop: basically just pop the test value and call stack
-            context.curFunc.nodes.push('\tSP = (SP - ' + loop.variable.type.size + ')|0;');
-            context.curFunc.nodes.push('\tCS = (CS - ' + Types.Integer.size + ')|0;');
-            context.curFunc.nodes.push('\treturn 1;');
+            context.push('\tSP = (SP - ' + loop.variable.type.size + ')|0;');
+            context.popCallStack();
+            context.push('\treturn 1;');
         }
-        context.curFunc.nodes.push('}');
+        context.push('}');
         // Pop the test value
-        context.curFunc.nodes.push('SP = (SP - ' + loop.variable.type.size + ')|0;');
+        context.push('SP = (SP - ' + loop.variable.type.size + ')|0;');
         context.spOffset -= loop.variable.type.size;
 
         // Then comes the block
         this.compileBlock(loop.block, context);
 
         // In the end increase the loop variable
-        context.curFunc.nodes.push(
+        context.push(
             loop.variable.type.memoryType + '[((SP - ' + (context.spOffset - loop.variable.location) + ')|0) >> ' + loop.variable.type.shift + '] = '
             + '(' + Types.Integer.cast(loop.variable.type.memoryType + '[((SP - ' + (context.spOffset - loop.variable.location) + ')|0) >> ' + loop.variable.type.shift + ']|0) + 1') + ';');
 
         // And go to the begining of the loop
-        context.curFunc.nodes.push('MEMU32[CS >> ' + Types.Integer.shift + '] = ' + blockFunc.index + ';');
+        context.setCallStack(blockFunc);
 
         // After the loop:
-        context.curFunc = retFunc;
+        context.setFunction(retFunc);
         // Pop the loop variable off
-        context.curFunc.nodes.push('SP = (SP - ' + loop.variable.type.size + ')|0;');
+        context.push('SP = (SP - ' + loop.variable.type.size + ')|0;');
         context.spOffset -= loop.variable.type.size;
     },
 
@@ -373,47 +357,45 @@ Compiler.prototype = {
             falseBlock = this.createFunction(context.name);
 
         // Set the return function
-        context.curFunc.nodes.push('\tMEMU32[CS >> ' + Types.Integer.shift + '] = ' + retBlock.index + ';');
+        context.setCallStack(retBlock);
         // Do the testing
-        context.curFunc.nodes.push('if (' + statement.expr.type.cast(statement.expr.type.memoryType + '[((SP - ' + statement.expr.type.size + ')|0) >> ' + statement.expr.type.shift + ']') + ') {');
+        context.push('if (' + statement.expr.type.cast(statement.expr.type.memoryType + '[((SP - ' + statement.expr.type.size + ')|0) >> ' + statement.expr.type.shift + ']') + ') {');
         {
             // Jump to the true block
-            context.curFunc.nodes.push('\tCS = (CS + ' + Types.Integer.size + ')|0;');
-            context.curFunc.nodes.push('\tMEMU32[CS >> ' + Types.Integer.shift + '] = ' + trueBlock.index + ';');
+            context.pushCallStack(trueBlock);
         }
         if (falseBlock) {
-            context.curFunc.nodes.push('} else {');
+            context.push('} else {');
             {
                 // Jump to the false block if it exists
-                context.curFunc.nodes.push('\tCS = (CS + ' + Types.Integer.size + ')|0;');
-                context.curFunc.nodes.push('\tMEMU32[CS >> ' + Types.Integer.shift + '] = ' + falseBlock.index + ';');
+                context.pushCallStack(falseBlock);
             }
         }
-        context.curFunc.nodes.push('}');
+        context.push('}');
 
         // Get rid of the test value
-        context.curFunc.nodes.push('\tSP = (SP - ' + statement.expr.type.size + ')|0;');
+        context.push('\tSP = (SP - ' + statement.expr.type.size + ')|0;');
         context.spOffset -= statement.expr.type.size;
 
         // Compile the true block
-        context.curFunc = trueBlock;
+        context.setFunction(trueBlock);
         this.compileBlock(statement.trueStatement, context);
         // Return from the true block
-        context.curFunc.nodes.push('\tCS = (CS - ' + Types.Integer.size + ')|0;');
+        context.popCallStack();
 
         // Compile the false block
         if (falseBlock) {
-            context.curFunc = falseBlock;
+            context.setFunction(falseBlock);
             if (statement.falseStatement.nodeType === 'If')
                 this.ifStatement(statement.falseStatement, context);
             else
                 this.compileBlock(statement.falseStatement, context);
             // Return from the true block
-            context.curFunc.nodes.push('\tCS = (CS - ' + Types.Integer.size + ')|0;');
+            context.popCallStack();
         }
 
         // And continue after the if statement
-        context.curFunc = retBlock;
+        context.setFunction(retBlock);
     },
 
     /*
@@ -423,22 +405,20 @@ Compiler.prototype = {
         var blockFunc = this.createFunction(context.name);
         var retFunc = this.createFunction(context.name);
 
-        // Set the return function
-        context.curFunc.nodes.push('MEMU32[CS >> ' + Types.Integer.shift + '] = ' + retFunc.index + ';');
-        // Jump to the block
-        context.curFunc.nodes.push('CS = (CS + ' + Types.Integer.size + ')|0;');
-        context.curFunc.nodes.push('MEMU32[CS >> ' + Types.Integer.shift + '] = ' + blockFunc.index + ';');
+        // Set the return and block functions
+        context.setCallStack(retFunc);
+        context.pushCallStack(blockFunc);
 
         // Compile the block
-        context.curFunc = blockFunc;
+        context.setFunction(blockFunc);
         this.compileBlock(loop.block, context);
         // In the end go back to the begining
-        context.curFunc.nodes.push('MEMU32[CS >> ' + Types.Integer.shift + '] = ' + blockFunc.index + ';');
+        context.setCallStack(blockFunc);
 
         // TODO Breaking from the forever loop!
 
         // After the loop
-        context.curFunc = retFunc;
+        context.setFunction(retFunc);
     },
     /*
      * Compiles a repeat-until loop
@@ -447,39 +427,37 @@ Compiler.prototype = {
         var blockFunc = this.createFunction(context.name);
         var retFunc = this.createFunction(context.name);
 
-        // Set the return function
-        context.curFunc.nodes.push('MEMU32[CS >> ' + Types.Integer.shift + '] = ' + retFunc.index + ';');
-        // Jump to the block
-        context.curFunc.nodes.push('CS = (CS + ' + Types.Integer.size + ')|0;');
-        context.curFunc.nodes.push('MEMU32[CS >> ' + Types.Integer.shift + '] = ' + blockFunc.index + ';');
+        // Set the return and block functions
+        context.setCallStack(retFunc);
+        context.pushCallStack(blockFunc);
 
         // Compile the block
-        context.curFunc = blockFunc;
+        context.setFunction(blockFunc);
         this.compileBlock(loop.block, context);
 
         // In the end do the testing
         this.expr(loop.expr, context);
-        context.curFunc.nodes.push('if (' + loop.expr.type.cast(loop.expr.type.memoryType + '[((SP - ' + loop.expr.type.size + ')|0) >> ' + loop.expr.type.shift + ']') + ') {');
+        context.push('if (' + loop.expr.type.cast(loop.expr.type.memoryType + '[((SP - ' + loop.expr.type.size + ')|0) >> ' + loop.expr.type.shift + ']') + ') {');
         {
             // Get rid of the test value
-            context.curFunc.nodes.push('\tSP = (SP - ' + loop.expr.type.size + ')|0;');
+            context.push('\tSP = (SP - ' + loop.expr.type.size + ')|0;');
             // Jump out of the loop
-            context.curFunc.nodes.push('\tCS = (CS - ' + Types.Integer.size + ')|0;');
-            context.curFunc.nodes.push('\treturn 1;');
+            context.popCallStack();
+            context.push('\treturn 1;');
         }
-        context.curFunc.nodes.push('}');
+        context.push('}');
 
         // Get rid of the test value
-        context.curFunc.nodes.push('SP = (SP - ' + loop.expr.type.size + ')|0;');
+        context.push('SP = (SP - ' + loop.expr.type.size + ')|0;');
         context.spOffset -= loop.expr.type.size;
 
         // Not jumping out so go to the begining
-        context.curFunc.nodes.push('MEMU32[CS >> ' + Types.Integer.shift + '] = ' + blockFunc.index + ';');
+        context.setCallStack(blockFunc);
 
-        // TODO Breaking from the forever loop!
+        // TODO Breaking from the until loop!
 
         // After the loop
-        context.curFunc = retFunc;
+        context.setFunction(retFunc);
     },
     /*
     * Compiles a repeat-while loop
@@ -488,51 +466,49 @@ Compiler.prototype = {
         var blockFunc = this.createFunction(context.name);
         var retFunc = this.createFunction(context.name);
 
-        // Set the return function
-        context.curFunc.nodes.push('MEMU32[CS >> ' + Types.Integer.shift + '] = ' + retFunc.index + ';');
-        // Jump to the block
-        context.curFunc.nodes.push('CS = (CS + ' + Types.Integer.size + ')|0;');
-        context.curFunc.nodes.push('MEMU32[CS >> ' + Types.Integer.shift + '] = ' + blockFunc.index + ';');
+        // Set the return and block functions
+        context.setCallStack(retFunc);
+        context.pushCallStack(blockFunc);
 
         // Compile the block
-        context.curFunc = blockFunc;
+        context.setFunction(blockFunc);
         this.compileBlock(loop.block, context);
 
         // In the end do the testing
         this.expr(loop.expr, context);
-        context.curFunc.nodes.push('if (!(' + loop.expr.type.cast(loop.expr.type.memoryType + '[((SP - ' + loop.expr.type.size + ')|0) >> ' + loop.expr.type.shift + ']') + ')) {');
+        context.push('if (!(' + loop.expr.type.cast(loop.expr.type.memoryType + '[((SP - ' + loop.expr.type.size + ')|0) >> ' + loop.expr.type.shift + ']') + ')) {');
         {
             // Get rid of the test value
-            context.curFunc.nodes.push('\tSP = (SP - ' + loop.expr.type.size + ')|0;');
+            context.push('\tSP = (SP - ' + loop.expr.type.size + ')|0;');
             // Jump out of the loop
-            context.curFunc.nodes.push('\tCS = (CS - ' + Types.Integer.size + ')|0;');
-            context.curFunc.nodes.push('\treturn 1;');
+            context.popCallStack();
+            context.push('\treturn 1;');
         }
-        context.curFunc.nodes.push('}');
+        context.push('}');
 
         // Get rid of the test value
-        context.curFunc.nodes.push('SP = (SP - ' + loop.expr.type.size + ')|0;');
+        context.push('SP = (SP - ' + loop.expr.type.size + ')|0;');
         context.spOffset -= loop.expr.type.size;
 
         // Not jumping out so go to the begining
-        context.curFunc.nodes.push('MEMU32[CS >> ' + Types.Integer.shift + '] = ' + blockFunc.index + ';');
+        context.setCallStack(blockFunc);
 
-        // TODO Breaking from the forever loop!
+        // TODO Breaking from the while loop!
 
         // After the loop
-        context.curFunc = retFunc;
+        context.setFunction(retFunc);
     },
 
     expr: function expr(expr, context) {
         switch (expr.nodeType) {
             case 'Number':
                 //context.curFunc.nodes.push('//Number');
-                context.curFunc.nodes.push(this.pushToStack(expr.type, expr.val, context));
+                context.push(this.pushToStack(expr.type, expr.val, context));
                 //context.curFunc.nodes.push('//!Number');
                 return;
             case 'Variable':
                 //context.curFunc.nodes.push('//Variable');
-                context.curFunc.nodes.push(this.pushToStack(expr.type, this.readFromMemory(expr.definition, context), context));
+                context.push(this.pushToStack(expr.type, this.readFromMemory(expr.definition, context), context));
                 //context.curFunc.nodes.push('//!Variable');
                 return;
             case 'BinaryOp':
@@ -569,9 +545,9 @@ Compiler.prototype = {
                     src = left + ' ' + op + ' ' + right;
                 }
 
-                context.curFunc.nodes.push(dest + ' = ' + expr.type.cast(src) + ';');
+                context.push(dest + ' = ' + expr.type.cast(src) + ';');
 
-                context.curFunc.nodes.push('SP = (SP - ' + (expr.left.type.size + expr.right.type.size) + ' + ' + expr.type.size + ')|0;');
+                context.push('SP = (SP - ' + (expr.left.type.size + expr.right.type.size) + ' + ' + expr.type.size + ')|0;');
                 context.spOffset = context.spOffset - (expr.left.type.size + expr.right.type.size) + expr.type.size;
                 //context.curFunc.nodes.push('//!Binop');
                 return;
@@ -651,3 +627,32 @@ Compiler.prototype = {
         return buf.join('\n');
     }
 }
+
+function CompilerContext(name, entry) {
+    this.name = name;
+    this.func = entry;
+    this.spOffset = 0;
+}
+
+CompilerContext.prototype = {
+    setCallStack: function setCallStack(func) {
+        this.push('MEMU32[CS >> ' + Types.Integer.shift + '] = ' + func.index + ';');
+    },
+    pushCallStack: function pushCallStack(func) {
+        // Increase call stack pointer...
+        this.push('CS = (CS + ' + Types.Integer.size + ')|0;');
+        // ...and set the function
+        this.setCallStack(func);
+    },
+    popCallStack: function popCallStack() {
+        this.push('CS = (CS - ' + Types.Integer.size + ')|0;');
+    },
+
+
+    push: function push(str) {
+        this.func.nodes.push(str);
+    },
+    setFunction: function setFunction(func) {
+        this.func = func;
+    }
+};
