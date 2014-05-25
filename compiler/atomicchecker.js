@@ -101,7 +101,7 @@ Atomicchecker.prototype = {
         /*if (typeof call.definition.atomic === 'undefined') {
             console.log(call);
         }*/
-        call.atomic = call.definition.atomic;
+        call.atomic = call.handle.atomic;
 
         call.params.forEach(function each(param) {
             var res = this.visitExpr(param);
@@ -115,10 +115,10 @@ Atomicchecker.prototype = {
      * Visits a function definition
      */
     visitFunctionDefinition: function visitFunctionDefinition(func) {
-        func.atomic = this.visit(func.block);
-        if (!func.atomic) {
+        func.handle.atomic = func.atomic = this.visit(func.block);
+        /*if (!func.atomic) {
             this.getFunctionDefinition(func.name, func.params).atomic = func.atomic;
-        }
+        }*/
         return func.atomic;
     },
     /*
@@ -179,25 +179,5 @@ Atomicchecker.prototype = {
                 return expr.atomic = this.visitFunctionCall(expr);
         }
         throw new Error('Unsupported expression to be atomicness-tested "' + expr.nodeType + '"');
-    },
-
-
-    /*
-     * Gets the function definition
-     */
-    getFunctionDefinition: function getFunctionDefinition(name, params) {
-        var i = this.functions.length;
-        funcloop: while (i--) {
-            if (this.functions[i].name.toLowerCase() === name.toLowerCase()
-                && this.functions[i].paramTypes.length === params.length) {
-                // Check all parameters one by one
-                var j = params.length;
-                while (j--) {
-                    if (!params[j].type.canCastImplicitlyTo(this.functions[i].paramTypes[j]))
-                        continue funcloop;
-                }
-                return this.functions[i];
-            }
-        }
     },
 }

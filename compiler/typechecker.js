@@ -125,18 +125,18 @@ Typechecker.prototype = {
         }.bind(this));
 
         // Then try to find a function accepting those parameters
-        var definition = this.getFunctionDefinition(call.name, call.params);
-        if (!definition)
+        var handle = this.getFunctionHandle(call.name, call.params);
+        if (!handle)
             throw new Error('Call of an undefined function "' + call.name + '"');
 
         // Redefine parameter types to match function call so that the compiler can cast them
         var i = call.params.length;
         while (i--) {
-            call.params[i].type = definition.paramTypes[i];
+            call.params[i].type = handle.paramTypes[i];
         }
 
-        call.definition = definition;
-        call.type = definition.returnType;
+        call.handle = handle;
+        call.type = handle.returnType;
     },
 
     /*
@@ -250,7 +250,7 @@ Typechecker.prototype = {
     /*
      * Gets the function definition
      */
-    getFunctionDefinition: function getFunctionDefinition(name, params) {
+    getFunctionHandle: function getFunctionHandle(name, params) {
         var i = this.functions.length;
         funcloop: while (i--) {
             if (this.functions[i].name.toLowerCase() === name.toLowerCase()

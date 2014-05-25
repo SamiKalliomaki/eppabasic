@@ -48,14 +48,16 @@ Compiler.prototype = {
         }
         if (!atomic)
             entry.nativeBreaking = true;
-        this.functions.push({
+        var ret = {
             name: name,
             paramTypes: paramTypes,
             jsname: jsname,
             returnType: returnType,
             atomic: atomic,
             entry: entry
-        });
+        };
+        this.functions.push(ret);
+        return ret;
     },
 
     /*
@@ -63,12 +65,12 @@ Compiler.prototype = {
      */
     compile: function compile() {
         // Find user defined functions
-        this.ast.nodes.forEach(function each(val) {
-            if (val.nodeType === 'FunctionDefinition') {
-                var paramTypes = val.params.map(function map(val) {
-                    return val.type;
+        this.ast.nodes.forEach(function each(def) {
+            if (def.nodeType === 'FunctionDefinition') {
+                var paramTypes = def.params.map(function map(def) {
+                    return def.type;
                 })
-                this.defineJsFunction(val.name, paramTypes, undefined, val.type, undefined, val.entry = this.createFunction(val.name));
+                def.handle = this.defineJsFunction(def.name, paramTypes, undefined, def.type, undefined, this.createFunction(def.name));
             }
         }.bind(this));
 
@@ -140,7 +142,7 @@ Compiler.prototype = {
      * Compiles an user defined function
      */
     compileFunctionDefinition: function compileFunctionDefinition(def) {
-        var context = new CompilerContext(def.name, def.entry);
+        var context = new CompilerContext(def.name, def.handle.entry);
         context.pushOffset();       // Save current stack state
 
         // Find out parameter offsets
@@ -257,9 +259,9 @@ Compiler.prototype = {
         // Now call the function
         if (func.atomic) {
             // Select function to be called
-            context.pushCallStack(func.definition.entry);
+            context.pushCallStack(func.handle.entry);
             // Call the function
-            context.push(this.fprefix + func.definition.entry.index + '()|0;');
+            context.push(this.fprefix + func.handle.entry.index + '()|0;');
         } else {
             // Set return function
             var retFunc = this.createFunction(context.name);
@@ -267,7 +269,7 @@ Compiler.prototype = {
             // Set return function
             context.setCallStack(retFunc);
             // Select function to be called
-            context.pushCallStack(func.definition.entry);
+            context.pushCallStack(func.handle.entry);
 
             context.setFunction(retFunc);
         }
