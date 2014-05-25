@@ -1,4 +1,5 @@
 ﻿/// <reference path="math.js" />
+/// <reference path="memory.js" />
 /// <reference path="graphics2d.js" />
 
 function initialize() {
@@ -22,7 +23,8 @@ function initialize() {
         Math: Math,
         Int32Array: Int32Array,
         Uint32Array: Uint32Array,
-        Float32Array: Float32Array
+        Float32Array: Float32Array,
+        Float64Array: Float64Array
     };
     var env = {};
     var heap = new ArrayBuffer(1024 * 1024);
@@ -34,6 +36,9 @@ function initialize() {
     var ebmath = new EbMath(heap);
     mixin(env, ebmath.env);
     mixin(stdlib, ebmath.stdlib);
+
+    env.heapSize = 1024 * 1024;
+
 
     // Create program
     var program = Program(stdlib, env, heap);

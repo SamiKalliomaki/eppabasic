@@ -61,6 +61,18 @@ Compiler.prototype = {
     },
 
     /*
+     * A helper function for loading runtime modules
+     */
+    loadModule: function loadModule(name) {
+        var module = window['compiler' + name];
+        module = module.toString();
+        var start = module.indexOf('{');
+        var end = module.lastIndexOf('}');
+        module = module.substr(start + 1, end - start - 1);
+        return module;
+    },
+
+    /*
      * Compiles ast tree into asm.js
      */
     compile: function compile() {
@@ -96,23 +108,32 @@ Compiler.prototype = {
 
         return ('function Program(stdlib, env, heap) {\n'
                 + '"use asm";\n'
+                // Memories
                 + 'var MEMS32 = new stdlib.Int32Array(heap);\n'
                 + 'var MEMU32 = new stdlib.Uint32Array(heap);\n'
                 + 'var MEMF32 = new stdlib.Float32Array(heap);\n'
-                //+ 'var MEMF64 = new stdlib.Float64Array(heap);\n'
-                + 'var imul = stdlib.Math.imul;\n'
-                //+ 'var __log = env.__log;\n'                                        // Logger function TODO Revove
+                + 'var MEMF64 = new stdlib.Float64Array(heap);\n'
+                // Pointers
                 + 'var SP = 0;\n'                                                   // Stack pointer
                 + 'var CS = 0;\n'                                                   // Call stack pointer
+
+                // Imported functions
                 + this.compileSystemFunctionDefinitions() + '\n'
 
+                // Modules
+                + this.loadModule('Memory')
+                + this.loadModule('Math')
+
+                // Calling next operator
                 + 'function next() {\n'
                 + '\twhile(' + this.ftableName + '[MEMU32[CS >> ' + Types.Integer.shift + '] & ' + this.getFTableMask() + ']()|0);\n'
                 + '}\n'
 
+                // Initialize program
                 + 'function init() {\n'
-                + '\tSP = 0;\n'
-                + '\tCS = 1024;\n'
+                + '\tmeminit();\n'
+                + '\tSP = memreserve4(4096)|0;\n'
+                + '\tCS = memreserve4(256)|0;\n'
                 + '\tMEMU32[CS >> ' + Types.Integer.shift + '] = ' + entry.index + ';\n'
                 + '}\n'
 
