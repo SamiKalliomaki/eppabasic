@@ -8,21 +8,8 @@
             height: 30em;
         }
 
-        .hidden > * > * {
-            display: none;
-        }
-
         #errBox {
             color: #f00;
-        }
-
-        #tree, #compiled {
-            width: 50%;
-            float: left;
-        }
-
-        #compiled {
-            font-family: monospace;
         }
     </style>
     <!--Compiler recources-->
@@ -37,129 +24,47 @@
     <script src="compiler/typechecker.js"></script>
     <script src="compiler/atomicchecker.js"></script>
     <script src="compiler/compiler.js"></script>
+    <!--Editor-->
+    <script src="editor.js"></script>
     <script>
-        function astToHtml(ast) {
-            if (ast === Types.Integer)
-                return 'Integer';
-            if (ast === Types.Double)
-                return 'Double';
-            if (typeof ast === 'string'
-                || typeof ast === 'number'
-                || typeof ast === 'boolean')
-                return ast;
-            if (!ast)
-                return '';
-            var res = '';
-            for (key in ast) {
-                if (ast.hasOwnProperty(key)
-                    && typeof ast[key] !== 'function') {
-                    res += '<li><strong>' + key + '</strong>: ' + astToHtml(ast[key]) + '</li>';
-                }
-            }
-            return (ast.nodeType ? ast.nodeType : '') + (res ? ('<ul>' + res + '</ul>') : '');
-        }
+        window.addEventListener('load', function init() {
+            var editor = new Editor();
+            window.ebeditor = editor;
+            document.getElementById('compile&run').addEventListener('click', function compilerun() {
+                editor.parse();
+                editor.compile();
 
-        function hideTree(node) {
-            if (node.tagName === 'LI') {
-                node.classList.add('hidden');
-                node.addEventListener('dblclick', function (e) {
-                    e.stopPropagation();
-                    e.preventDefault();
+                editor.runtimeReady(function ready() {
+                    editor.window.ebruntime.init();
+                    editor.window.ebruntime.start();
+                });
+                editor.openRuntime();
+            }, false);
+            //document.getElementById('compile&download').addEventListener('click', function compiledownload() {
+            //    editor.parse();
+            //    editor.compile();
 
-                    if (node.classList.contains('hidden'))
-                        node.classList.remove('hidden');
-                    else
-                        node.classList.add('hidden');
+            //    editor.runtimeReady(function ready() {
+            //        var code = editor.window.document.documentElement.innerHTML;
+            //        editor.closeRuntime();
 
-                    return false;
-                }, false);
-            }
-
-            for (var i = 0; i < node.children.length; i++) {
-                hideTree(node.children[i]);
-            }
-        }
-
-        function beautifyJs(code) {
-            return code; //code.replace(/\n/g, '<br>');
-        }
-
-        var debugWindow;
-        function compile() {
-            var src = document.getElementById('code').value;
-
-            try {
-                // No errors, yet
-                document.getElementById('errBox').innerHTML = '';
-
-                var parser = new Parser(src);
-                var ast = parser.parse();
-
-                // Show incomplete ast as html
-                document.getElementById('tree').innerHTML = astToHtml(ast);
-
-                var compiler = new Compiler(ast);
-
-                // Drawing functions
-                compiler.defineJsFunction('CLEARCOLOR', [Types.Integer, Types.Integer, Types.Integer], 'clearColor');
-                compiler.defineJsFunction('LINECOLOR', [Types.Integer, Types.Integer, Types.Integer], 'lineColor');
-                compiler.defineJsFunction('FILLCOLOR', [Types.Integer, Types.Integer, Types.Integer], 'fillColor');
-                compiler.defineJsFunction('LINE', [Types.Integer, Types.Integer, Types.Integer, Types.Integer], 'line');
-                compiler.defineJsFunction('CIRCLE', [Types.Integer, Types.Integer, Types.Integer], 'circle');
-                compiler.defineJsFunction('FILLCIRCLE', [Types.Integer, Types.Integer, Types.Integer], 'fillCircle');
-                compiler.defineJsFunction('RECT', [Types.Integer, Types.Integer, Types.Integer, Types.Integer], 'rect');
-                compiler.defineJsFunction('FILLRECT', [Types.Integer, Types.Integer, Types.Integer, Types.Integer], 'fillRect');
-                compiler.defineJsFunction('DOT', [Types.Integer, Types.Integer], 'dot');
-                compiler.defineJsFunction('CLEAR', [], 'clear');
-                compiler.defineJsFunction('DRAWSCREEN', [], 'drawScreen', undefined, false);
-                compiler.defineJsFunction('PRINT', [Types.Integer], 'printInt');
-                compiler.defineJsFunction('PRINT', [Types.Double], 'printDbl');
-
-                // Mathematical functions
-                compiler.defineJsFunction('DBL', [Types.Integer], 'dbl', Types.Double);
-                compiler.defineJsFunction('INT', [Types.Double], 'int', Types.Integer);
-                compiler.defineJsFunction('SIN', [Types.Double], 'sin', Types.Double);
-                compiler.defineJsFunction('COS', [Types.Double], 'cos', Types.Double);
-
-                compiler.defineJsFunction('SQRT', [Types.Double], 'sqrt', Types.Double);
-
-                // Time functions
-                compiler.defineJsFunction('HOURS', [], 'hours', Types.Integer);
-                compiler.defineJsFunction('MINUTES', [], 'minutes', Types.Integer);
-                compiler.defineJsFunction('SECONDS', [], 'seconds', Types.Integer);
-                compiler.defineJsFunction('MILLISECONDS', [], 'milliseconds', Types.Integer);
-
-                var compiled = compiler.compile();
-
-                document.getElementById('compiled').innerHTML = beautifyJs(compiled);
-
-                // Show ast as html
-                document.getElementById('tree').innerHTML = astToHtml(ast);
-                hideTree(document.getElementById('tree').children[0]);
-
-                if (debugWindow)
-                    debugWindow.close()
-                debugWindow = window.open('runtime/', '', 'dependent,dialog,height=420,width=640', true);
-                window.ebcode = compiled;
-            } catch (e) {
-                document.getElementById('errBox').innerHTML = e.message;
-                throw e;
-            }
-        }
+            //        var blob = new Blob([code]);
+            //        var url = URL.createObjectURL(blob);
+            //        document.getElementById('downloadlink').href = url;
+            //    });
+            //    editor.openRuntime();
+            //}, false);
+        });
     </script>
 </head>
 <body>
     <div>
         <a href="examples">Check for example codes!</a>
     </div>
-    <textarea id="code">
-    </textarea>
+    <textarea id="code"></textarea>
     <div id="errBox"></div>
-    <button onclick="compile()">Compile&amp;Run</button>
-
-    <div>
-        <div id="tree"></div>
-        <pre id="compiled"></pre>
-    </div>
+    <button id="compile&run">Compile&amp;Run</button>
+    <!--<button id="compile&download">Compile&amp;Download</button>
+    <a id="downloadlink">Download as a standalone application (under work)</a>-->
 </body>
 </html>

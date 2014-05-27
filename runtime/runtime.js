@@ -2,80 +2,70 @@
 /// <reference path="memory.js" />
 /// <reference path="graphics2d.js" />
 
-function initialize() {
-    // Get hooks to neccessary elements
+function Runtime() {
     var codeElem = document.getElementById('code');
-    var canvasHolder = document.getElementById('canvasHolder');
-
+    this.canvasHolder = document.getElementById('canvasHolder');
     // Test if opened as standalone
     if (!window.opener) {
         return error('Runtime has no owner! This page should only be loaded by using the compile&run button on the front page.');
     }
-
-    // Get code from the owner
-    var code = window.opener.ebcode;
+    // Get code from the editor
+    var code = window.opener.ebeditor.compiled;
     if (!code)
         return error('Error while obtaining code from the editor');
     codeElem.innerHTML = code;
 
-    // Initialize functions
-    var stdlib = {
+    // Initialize variables used by asm.js
+    this.stdlib = {
         Math: Math,
         Int32Array: Int32Array,
         Uint32Array: Uint32Array,
         Float32Array: Float32Array,
         Float64Array: Float64Array
     };
-    var env = {};
-    var heap = new ArrayBuffer(1024 * 1024);
+    this.env = {};
+    this.env.heapSize = 1024 * 1024;
+    this.heap = new ArrayBuffer(this.env.heapSize);
 
-    var g2d = new Graphics2D(canvasHolder, heap);
-    g2d.setSize(640, 480);
-    mixin(env, g2d.env);
-    mixin(stdlib, g2d.stdlib);
-    var ebmath = new EbMath(heap);
-    mixin(env, ebmath.env);
-    mixin(stdlib, ebmath.stdlib);
-
-    env.heapSize = 1024 * 1024;
-
-
-    // Create program
-    var program = Program(stdlib, env, heap);
-    program.init();
-
-    // Show some public functions to the editor
-    var running = false;
-    var canvas = this.canvas;
-    function step() {
-        program.next();
-    }
-    function run() {
-        if (!running)
-            return;
-        step();
-        window.requestAnimationFrame(run);
-    }
-    function reset() {
-        canvas.width = canvas.width;
-        stop();
-        program.reset();
-    }
-    function start() {
-        running = true;
-        run();
-    }
-    function stop() {
-        running = false;
-    }
-
-    window.ebstart = start;
-    window.ebstop = stop;
-    window.ebreset = reset;
-
-    // Start the execution
-    start();
+    this.loadLibraries();
 }
+
+Runtime.prototype = {
+    loadLibraries: function loadLibraries() {
+        var g2d = new Graphics2D(this.canvasHolder, this.heap);
+        g2d.setSize(640, 480);
+        mixin(this.env, g2d.env);
+        var ebmath = new EbMath(this.heap);
+        mixin(this.env, ebmath.env);
+    },
+
+    init: function init() {
+        this.program = Program(this.stdlib, this.env, this.heap);
+        this.program.init();
+    },
+
+
+    step: function step() {
+        this.program.next();
+    },
+    run: function run() {
+        if (!this.running)
+            return;
+        this.step();
+        window.requestAnimationFrame(this.run.bind(this));
+    },
+    reset: function reset() {
+        this.stop();
+        this.program.reset();
+    },
+    start: function start() {
+        this.running = true;
+        this.run();
+    },
+    stop: function stop() {
+        this.running = false;
+    }
+};
 
 /*
  * Stops everything and shows an error message
@@ -102,5 +92,8 @@ function mixin(a, b) {
     }
 }
 
-//window.onload = initialize;
-window.addEventListener('load', initialize, false);
+window.addEventListener('load', function init() {
+    window.ebruntime = new Runtime();
+    if (window.opener)
+        window.opener.ebeditor.runtimeReady();
+}, false);
