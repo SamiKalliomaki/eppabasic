@@ -67,30 +67,40 @@ Lexer.prototype = {
             || this.parenthesisToken()
             || this.toToken()
 
+            // For loops
             || this.forToken()
             || this.nextToken()
 
+            // Repeat loops
             || this.repeatToken()
             || this.foreverToken()
             || this.untilToken()
             || this.whileToken()
 
+            // If statements
             || this.ifToken()
             || this.thenToken()
             || this.elseIfToken()
             || this.elseToken()
             || this.endIfToken()
 
+            // Variable declarations
             || this.dimToken()
             || this.asToken()
 
+            // Function declarations
             || this.functionToken()
             || this.returnToken()
             || this.endFunctionToken()
 
+            // Subprogram declarations
             || this.subToken()
             || this.endSubToken()
 
+            // Arrays
+            || this.bracketToken()
+
+            // Other, unspecified tokens
             || this.identifierToken()
             || this.newlineToken()
             || this.fail();
@@ -159,11 +169,6 @@ Lexer.prototype = {
      */
     toToken: function toToken() {
         return this.scan(/^ *(TO)\b/i, 'to');
-        //var captures;
-        //if (captures = /^ *(TO)/i.exec(this.input)) {
-        //    this.consume(captures[0].length);
-        //    return this.tok('to', captures[1]);
-        //}
     },
 
     /*
@@ -171,22 +176,12 @@ Lexer.prototype = {
      */
     identifierToken: function ideintifierToken() {
         return this.scan(/^ *([A-Za-z][-_\w]*)/, 'identifier');
-        //var captures;
-        //if (captures = /^ *([A-Za-z][-_\w]*)/.exec(this.input)) {
-        //    this.consume(captures[0].length);
-        //    return this.tok('identifier', captures[1]);
-        //}
     },
     /*
      * Parses a number from the input
      */
     numberToken: function numberToken() {
         return this.scan(/^ *(-?\d*\.?\d+)/, 'number')
-        //var captures;
-        //if (captures = /^ *(\d*\.?\d+)/.exec(this.input)) {
-        //    this.consume(captures[0].length);
-        //    return this.tok('number', captures[1]);
-        //}
     },
     /*
      * Parses a newline from the input
@@ -197,11 +192,6 @@ Lexer.prototype = {
             ++this.lineno;
             return res;
         }
-        //var captures;
-        //if (captures = /^ *\n/.exec(this.input)) {
-        //    this.consume(captures[0].length);
-        //    return this.tok('newline');
-        //}
     },
     /*
      * Parses a comma from the input
@@ -321,6 +311,21 @@ Lexer.prototype = {
      */
     endSubToken: function endSubToken() {
         return this.scan(/^ *(END +SUB)\b/i, 'endsub');
+    },
+
+    /*
+     * Parses brackets ("[" and "]") from the input
+     */
+    bracketToken:function bracketToken() {
+        var captures;
+        if (captures = /^ *(\[|\])/i.exec(this.input)) {
+            this.consume(captures[0].length);
+            var map = {
+                '[': 'lbracket',
+                ']': 'rbracket',
+            };
+            return this.tok(map[captures[1].toLowerCase()]);
+        }
     },
 
     /*

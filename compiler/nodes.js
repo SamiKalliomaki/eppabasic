@@ -48,8 +48,9 @@ Nodes.Number.prototype = {
 /*
  * Creates a new ast variable node
  */
-Nodes.Variable = function Variable(val) {
+Nodes.Variable = function Variable(val, dimensions) {
     this.val = val;
+    this.dimensions = dimensions;
 };
 Nodes.Variable.prototype = {
     nodeType: 'Variable'
@@ -101,10 +102,11 @@ Nodes.FunctionCall.prototype = {
 /*
  * Creates a new ast variable definition node 
  */
-Nodes.VariableDefinition = function VariableDefinition(name, type, initial) {
+Nodes.VariableDefinition = function VariableDefinition(name, type, initial, dimensions) {
     this.name = name;
     this.type = type;
     this.initial = initial;
+    this.dimensions = dimensions;
 }
 Nodes.VariableDefinition.prototype = {
     nodeType: 'VariableDefinition'
@@ -113,9 +115,10 @@ Nodes.VariableDefinition.prototype = {
 /*
  * Creates a new ast variable assignment node 
  */
-Nodes.VariableAssignment = function VariableAssignment(name, expr) {
+Nodes.VariableAssignment = function VariableAssignment(name, expr, dimensions) {
     this.name = name;
     this.expr = expr;
+    this.dimensions = dimensions;
 }
 Nodes.VariableAssignment.prototype = {
     nodeType: 'VariableAssignment'

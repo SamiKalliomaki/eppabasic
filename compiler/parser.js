@@ -218,10 +218,14 @@ Parser.prototype = {
     parseIdentifier: function parseIdentifier() {
         var tok = this.expect('identifier');
 
-        if (this.peek().type === 'eq') {
+        if (this.peek().type === 'eq' || this.peek().type === 'lbracket') {
+            var dimensions;
+            if (this.peek().type === 'lbracket') {
+                dimensions = this.parseDimensions();
+            }
             this.expect('eq');
             var expr = this.parseExpr();
-            return new Nodes.VariableAssignment(tok.val, expr);
+            return new Nodes.VariableAssignment(tok.val, expr, dimensions);
         } else {
             var params = this.parseParams();
             return new Nodes.FunctionCall(tok.val, params);
@@ -265,6 +269,10 @@ Parser.prototype = {
         var name = this.expect('identifier').val;
         var type;
         var initial;
+        var dimensions;
+        if (this.peek().type === 'lbracket') {
+            dimensions = this.parseDimensions();
+        }
         if (this.peek().type === 'as') {
             this.advance();
             type = Types.toType(this.expect('identifier').val);
@@ -273,7 +281,7 @@ Parser.prototype = {
             this.advance();
             initial = this.parseExpr();
         }
-        return new Nodes.VariableDefinition(name, type, initial);
+        return new Nodes.VariableDefinition(name, type, initial, dimensions);
     },
 
     /*
@@ -455,11 +463,23 @@ Parser.prototype = {
                     var params = this.parseParams();
                     return new Nodes.FunctionCall(t.val, params);
                 }
-                return new Nodes.Variable(t.val);
+                var dimensions;
+                if (this.peek().type === 'lbracket') {
+                    // An array
+                    dimensions = this.parseDimensions();
+                }
+                return new Nodes.Variable(t.val, dimensions);
                 break;
             default:
                 throw new Error('Number or variable expected instead of "' + t.type + '" at line ' + t.line);
         }
+    },
+
+    parseDimensions: function parseDimensions() {
+        this.expect('lbracket');
+        var expr = this.parseExpr();
+        this.expect('rbracket');
+        return expr;
     },
 
     /*

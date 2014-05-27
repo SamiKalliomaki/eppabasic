@@ -47,15 +47,21 @@ Atomicchecker.prototype = {
      * A dummy visit for comment variable definition
      */
     visitVariableDefinition: function visitVariableDefinition(definition) {
+        definition.atomic = true
         if (definition.initial)
-            return definition.atomic = this.visitExpr(definition.initial);
-        return definition.atomic = true;
+            definition.atomic = this.visitExpr(definition.initial) ? definition.atomic : false;
+        if (definition.dimensions)
+            definition.atomic = this.visitDimensions(definition.dimensions) ? definition.atomic : false;
+        return definition.atomic;
     },
     /*
      * Visits a variable assignment
      */
     visitVariableAssignment: function visitVariableAssignment(assignment) {
-        return assignment.atomic = this.visitExpr(assignment.expr);
+        assignment.atomic = this.visitExpr(assignment.expr);
+        if (assignment.dimensions)
+            assignment.atomic = this.visitDimensions(assignment.dimensions) ? assignment.atomic : false;
+        return assignment.atomic;
     },
 
     /*
@@ -161,10 +167,19 @@ Atomicchecker.prototype = {
         return loop.atomic;
     },
 
+    /*
+     * Visits array dimensions
+     */
+    visitDimensions: function visitDimensions(dim) {
+        this.visitExpr(dim);
+    },
+
     visitExpr: function visitExpr(expr) {
         switch (expr.nodeType) {
             case 'Number':
             case 'Variable':
+                if (expr.dimensions)
+                    return expr.atomic = this.visitDimensions(expr.dimensions);
                 return expr.atomic = true;
             case 'BinaryOp':
                 expr.atomic = true;

@@ -72,6 +72,9 @@ Typechecker.prototype = {
             if (!this.resolveExprType(definition.initial, parent).canCastImplicitlyTo(definition.type))
                 throw new Error('Can not cast type "' + this.resolveExprType(definition.initial, parent) + '" to "' + definition.type + '"');
         }
+        if (definition.dimensions) {
+            definition.dimensions.type = this.resolveExprType(definition.dimensions, parent);
+        }
         parent.defineVariable(definition);
     },
 
@@ -82,6 +85,9 @@ Typechecker.prototype = {
         var variable = parent.getVariable(assignemnt.name);
         if (!variable)
             throw new Error('No variable called "' + assignemnt.name + '" exists in scope');
+        if (assignemnt.dimensions) {
+            assignemnt.dimensions.type = this.resolveExprType(assignemnt.dimensions, parent);
+        }
         assignemnt.definition = variable;
         this.resolveExprType(assignemnt.expr, parent);
         assignemnt.type = variable.type;
@@ -236,6 +242,8 @@ Typechecker.prototype = {
                 var variable = context.getVariable(expr.val);
                 if (!variable)
                     throw new Error('No variable called "' + expr.val + '" exists in scope');
+                if (expr.dimensions)
+                    expr.dimensions.type = this.resolveExprType(expr.dimensions, context);
                 expr.definition = variable;
                 return expr.type = variable.type;
 

@@ -13,6 +13,7 @@ Editor.prototype = {
             this.ast = parser.parse();
         } catch (e) {
             this.errBox.innerHTML = e.message;
+            throw e;
         }
     },
     compile: function compile() {
@@ -49,8 +50,11 @@ Editor.prototype = {
 
         try {
             this.compiled = compiler.compile();
+
+            document.getElementById('codeBox').innerHTML = this.compiled;
         } catch (e) {
             this.errBox.innerHTML = e.message;
+            throw e;
         }
     },
 

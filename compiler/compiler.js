@@ -117,6 +117,9 @@ Compiler.prototype = {
                 + 'var SP = 0;\n'                                                   // Stack pointer
                 + 'var CS = 0;\n'                                                   // Call stack pointer
 
+                // Standard math functions
+                + 'var imul = stdlib.Math.imul;'
+
                 // Imported functions
                 + this.compileSystemFunctionDefinitions() + '\n'
 
@@ -220,11 +223,19 @@ Compiler.prototype = {
                 case 'Comment':
                     break;
                 case 'VariableDefinition':
+                    if (node.dimensions) {
+                        if (node.initial)
+                            throw new Error('Initial values not supported for arrays');
+                        this.expr(node.dimensions, context);
+                        context.push(node.dimensions.type.memoryType + '[((SP - ' + (context.spOffset - node.location) + ')|0) >> ' + node.dimensions.type.shift + '] = '
+                            + 'memreserve' + node.dimensions.type.size + '(' + node.dimensions.type.cast(node.dimensions.type.cast(node.dimensions.type.memoryType + '[((SP - ' + node.dimensions.type.size + ')|0) >> ' + node.dimensions.type.shift + ']') + '*' + node.type.size) + ')|0');
+                        context.popStack(node.dimensions.type);
+                    }
                     if (node.initial) {
                         // Get the initial value to the top of the stack
                         this.expr(node.initial, context);
                         // Copy it from there to the variable location
-                        context.push(node.initial.type.memoryType + '[((SP - ' + (context.spOffset - node.location) + ')|0) >> ' + node.initial.type.shift + '] = '
+                        context.push(node.type.memoryType + '[((SP - ' + (context.spOffset - node.location) + ')|0) >> ' + node.type.shift + '] = '
                             + node.initial.type.memoryType + '[((SP - ' + node.initial.type.size + ')|0) >> ' + node.initial.type.shift + '];');
                         // Pop the original expression result from the stack
                         context.popStack(node.initial.type);
@@ -234,8 +245,20 @@ Compiler.prototype = {
                     // Get the value to the top of the stack
                     this.expr(node.expr, context);
                     // Copy it from there to the variable location
-                    context.push(node.type.memoryType + '[((SP - ' + (context.spOffset - node.definition.location) + ')|0) >> ' + node.type.shift + '] = '
-                        + node.expr.type.memoryType + '[((SP - ' + node.expr.type.size + ')|0) >> ' + node.expr.type.shift + '];');
+                    if (node.dimensions) {
+                        // An array
+                        //throw new Error('Assignements to arrays not supported yet');
+                        this.expr(node.dimensions, context);
+                        var baseAddress = '(' + node.dimensions.type.memoryType + '[((SP - ' + (context.spOffset - node.definition.location) + ')|0) >> ' + node.dimensions.type.shift + ']|0)';
+                        var offsetAddress = '(((' + node.dimensions.type.memoryType + '[((SP - ' + node.dimensions.type.size + ')|0) >> ' + node.dimensions.type.shift + ']|0)*' + node.type.size + ')|0)';
+                        context.push(node.type.memoryType + '[((' + baseAddress + ' + ' + offsetAddress + ')|0) >> ' + node.type.shift + ']' + ' = '
+                            + node.type.cast(node.expr.type.memoryType + '[((SP - ' + (node.expr.type.size + node.dimensions.type.size) + ')|0) >> ' + node.expr.type.shift + ']') + ';');
+                        context.popStack(node.dimensions.type);
+                    } else {
+                        // Not an array
+                        context.push(node.type.memoryType + '[((SP - ' + (context.spOffset - node.definition.location) + ')|0) >> ' + node.type.shift + '] = '
+                            + node.expr.type.memoryType + '[((SP - ' + node.expr.type.size + ')|0) >> ' + node.expr.type.shift + '];');
+                    }
                     // Pop the original expression result from the stack
                     context.popStack(node.expr.type);
                     break;
@@ -519,7 +542,27 @@ Compiler.prototype = {
                 return;
             case 'Variable':
                 //context.curFunc.nodes.push('//Variable');
-                context.pushStack(expr.type, context.getVariableValue(expr.definition));
+                if (expr.dimensions) {
+                    context.pushStack(expr.type);
+
+                    this.expr(expr.dimensions, context);
+
+                    var baseAddress = '(' + expr.dimensions.type.memoryType + '[((SP - ' + (context.spOffset - expr.definition.location) + ')|0) >> ' + expr.dimensions.type.shift + ']|0)';
+                    var offsetAddress = '(((' + expr.dimensions.type.memoryType + '[((SP - ' + expr.dimensions.type.size + ')|0) >> ' + expr.dimensions.type.shift + ']|0)*' + expr.type.size + ')|0)';
+
+                    context.push(expr.type.memoryType + '[((SP - ' + (expr.dimensions.type.size + expr.type.size) + ')|0) >> ' + expr.type.shift + '] = '
+                                + expr.type.memoryType + '[((' + baseAddress + ' + ' + offsetAddress + ')|0) >> ' + expr.type.shift + ']');
+
+                    //context.push(expr.type.memoryType + '[((' + baseAddress + ' + ' + offsetAddress + ')|0) >> ' + expr.type.shift + ']' + ' = '
+                    //    + expr.expr.type.memoryType + '[((SP - ' + (expr.expr.type.size + expr.dimensions.type.size) + ')|0) >> ' + expr.expr.type.shift + '];');
+
+                    // Pop the dimensions
+                    context.popStack(expr.dimensions.type);
+
+                    //throw new Error('Arrays not supported in expressions, yet.');
+                } else {
+                    context.pushStack(expr.type, context.getVariableValue(expr.definition));
+                }
                 //context.curFunc.nodes.push('//!Variable');
                 return;
             case 'BinaryOp':
