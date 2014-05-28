@@ -100,6 +100,8 @@ Parser.prototype = {
                 return this.parseIdentifier();
             case 'if':
                 return this.parseIf();
+            case 'repeat':
+                return this.parseRepeat();
             case 'return':
                 return this.parseReturn();
             default:

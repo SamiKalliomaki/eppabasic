@@ -46,7 +46,9 @@ Graphics2D.prototype = {
             var w = this.MEMS32[(sp - 8) >> 2];
             var h = this.MEMS32[(sp - 4) >> 2];
 
+            this.ctx.beginPath();
             this.ctx.rect(x, y, w, h);
+            this.ctx.stroke();
         },
         fillRect: function fillRect(sp) {
             var x = this.MEMS32[(sp - 16) >> 2];
