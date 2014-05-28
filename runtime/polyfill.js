@@ -9,3 +9,13 @@
         return ((al * bl) + (((ah * bl + al * bh) << 16) >>> 0) | 0);
     }
 }
+
+if (!window.requestAnimationFrame) {
+    window.requestAnimationFrame = (function () {
+        return window.webkitRequestAnimationFrame
+            || window.mozRequestAnimationFrame
+            || window.msRequestAnimationFrame
+            || window.oRequestAnimationFrame
+            || function (func) { return setTimeout(func, 1.0 / 60); };
+    })();
+}
