@@ -1,5 +1,6 @@
 ﻿/// <reference path="math.js" />
 /// <reference path="memory.js" />
+/// <reference path="input.js" />
 /// <reference path="graphics2d.js" />
 
 function Runtime() {
@@ -37,6 +38,8 @@ Runtime.prototype = {
         mixin(this.env, g2d.env);
         var ebmath = new EbMath(this.heap);
         mixin(this.env, ebmath.env);
+        var input = new Input(this.heap, document.body);
+        mixin(this.env, input.env);
     },
 
     init: function init() {

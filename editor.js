@@ -48,6 +48,14 @@ Editor.prototype = {
         compiler.defineJsFunction('SECONDS', [], 'seconds', Types.Integer);
         compiler.defineJsFunction('MILLISECONDS', [], 'milliseconds', Types.Integer);
 
+        // Input
+        compiler.defineJsFunction('KEYDOWN', [Types.Integer], 'keyDown', Types.Integer);
+        compiler.defineJsFunction('KEYUP', [Types.Integer], 'keyUp', Types.Integer);
+        compiler.defineJsFunction('MOUSEX', [], 'mouseX', Types.Integer);
+        compiler.defineJsFunction('MOUSEY', [], 'mouseY', Types.Integer);
+        compiler.defineJsFunction('MOUSEDOWN', [Types.Integer], 'mouseDown', Types.Integer);
+        
+
         try {
             this.compiled = compiler.compile();
 
@@ -64,7 +72,7 @@ Editor.prototype = {
 
         // Close opened window
         this.closeRuntime();
-        this.window = window.open('runtime/', 'runtime', 'dependent,dialog,height=420,width=640', true);
+        this.window = window.open('runtime/', 'runtime', 'dependent,dialog,height=480,width=640', true);
 
     },
     closeRuntime: function closeRuntime() {

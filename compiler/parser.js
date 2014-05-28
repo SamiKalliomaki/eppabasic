@@ -403,6 +403,7 @@ Parser.prototype = {
         var left = this.parseMathExpr();
         switch (this.peek().type) {
             case 'eq':
+            case 'neq':
             case 'lt':
             case 'lte':
             case 'gt':

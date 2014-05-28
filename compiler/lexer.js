@@ -175,7 +175,7 @@ Lexer.prototype = {
      * Parses a identifier (ie. variable names) token
      */
     identifierToken: function ideintifierToken() {
-        return this.scan(/^ *([A-Za-z][-_\w]*)/, 'identifier');
+        return this.scan(/^ *([A-Za-z][_\w]*)/, 'identifier');
     },
     /*
      * Parses a number from the input
