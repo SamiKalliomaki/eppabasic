@@ -173,8 +173,7 @@ Compiler.prototype = {
         for (var i = 0; i < def.params.length; i++) {
             var param = def.params[i];
             var size = param.type.size;
-            param.location = context.spOffset;
-            context.pushStack(param.type);
+            param.location = context.pushStack(param.type);
         }
 
         this.compileBlock(def.block, context);
@@ -192,8 +191,7 @@ Compiler.prototype = {
         var varSize = 0;
         block.variables.forEach(function each(variable) {
             var size = variable.type.size;
-            variable.location = context.spOffset;
-            context.pushStack(variable.type);
+            variable.location = context.pushStack(variable.type);
         }.bind(this));
 
 
@@ -226,38 +224,40 @@ Compiler.prototype = {
                     if (node.dimensions) {
                         if (node.initial)
                             throw new Error('Initial values not supported for arrays');
-                        this.expr(node.dimensions, context);
-                        context.push(node.dimensions.type.memoryType + '[((SP - ' + (context.spOffset - node.location) + ')|0) >> ' + node.dimensions.type.shift + '] = '
-                            + 'memreserve' + node.dimensions.type.size + '(' + node.dimensions.type.cast(node.dimensions.type.cast(node.dimensions.type.memoryType + '[((SP - ' + node.dimensions.type.size + ')|0) >> ' + node.dimensions.type.shift + ']') + '*' + node.type.size) + ')|0');
+                        var dims = this.expr(node.dimensions, context);
+                        context.push(node.location.setValue('memreserve' + node.type.size + '((' + dims.getValue() + '*' + node.type.size + ')|0)'));
+                        //context.push(node.dimensions.type.memoryType + '[((SP - ' + (context.spOffset - node.location) + ')|0) >> ' + node.dimensions.type.shift + '] = '
+                        //    + 'memreserve' + node.dimensions.type.size + '(' + node.dimensions.type.cast(node.dimensions.type.cast(node.dimensions.type.memoryType + '[((SP - ' + node.dimensions.type.size + ')|0) >> ' + node.dimensions.type.shift + ']') + '*' + node.type.size) + ')|0');
                         context.popStack(node.dimensions.type);
                     }
                     if (node.initial) {
                         // Get the initial value to the top of the stack
-                        this.expr(node.initial, context);
+                        var val = this.expr(node.initial, context);
                         // Copy it from there to the variable location
-                        context.push(node.type.memoryType + '[((SP - ' + (context.spOffset - node.location) + ')|0) >> ' + node.type.shift + '] = '
-                            + node.initial.type.memoryType + '[((SP - ' + node.initial.type.size + ')|0) >> ' + node.initial.type.shift + '];');
+                        context.push(node.location.setValue(val.getValue()));
+                        //context.push(node.type.memoryType + '[((SP - ' + (context.spOffset - node.location) + ')|0) >> ' + node.type.shift + '] = '
+                        //    + node.initial.type.memoryType + '[((SP - ' + node.initial.type.size + ')|0) >> ' + node.initial.type.shift + '];');
                         // Pop the original expression result from the stack
                         context.popStack(node.initial.type);
                     }
                     break;
                 case 'VariableAssignment':
                     // Get the value to the top of the stack
-                    this.expr(node.expr, context);
+                    var val = this.expr(node.expr, context);
                     // Copy it from there to the variable location
                     if (node.dimensions) {
                         // An array
-                        //throw new Error('Assignements to arrays not supported yet');
-                        this.expr(node.dimensions, context);
-                        var baseAddress = '(' + node.dimensions.type.memoryType + '[((SP - ' + (context.spOffset - node.definition.location) + ')|0) >> ' + node.dimensions.type.shift + ']|0)';
-                        var offsetAddress = '(((' + node.dimensions.type.memoryType + '[((SP - ' + node.dimensions.type.size + ')|0) >> ' + node.dimensions.type.shift + ']|0)*' + node.type.size + ')|0)';
-                        context.push(node.type.memoryType + '[((' + baseAddress + ' + ' + offsetAddress + ')|0) >> ' + node.type.shift + ']' + ' = '
-                            + node.type.cast(node.expr.type.memoryType + '[((SP - ' + (node.expr.type.size + node.dimensions.type.size) + ')|0) >> ' + node.expr.type.shift + ']') + ';');
+                        var dims = this.expr(node.dimensions, context);
+
+                        var baseAddress = node.definition.location.getValue();//'(' + expr.dimensions.type.memoryType + '[((SP - ' + (context.spOffset - expr.definition.location) + ')|0) >> ' + expr.dimensions.type.shift + ']|0)';
+                        var offsetAddress = '((' + dims.getValue() + '*' + node.type.size + ')|0)';
+
+                        context.push(new CompilerAbsoluteReference(node.type, baseAddress + ' + ' + offsetAddress, context).setValue(val.getValue()));
+
                         context.popStack(node.dimensions.type);
                     } else {
                         // Not an array
-                        context.push(node.type.memoryType + '[((SP - ' + (context.spOffset - node.definition.location) + ')|0) >> ' + node.type.shift + '] = '
-                            + node.expr.type.memoryType + '[((SP - ' + node.expr.type.size + ')|0) >> ' + node.expr.type.shift + '];');
+                        context.push(node.definition.location.setValue(val.getValue()));
                     }
                     // Pop the original expression result from the stack
                     context.popStack(node.expr.type);
@@ -320,8 +320,10 @@ Compiler.prototype = {
 
         // Return stack
         context.spOffset = origSpOffset;
-        if (func.type)
+        if (func.type) {
             context.spOffset += func.type.size;
+            return new CompilerStackReference(func.type, context.spOffset - func.type.size, context);
+        }
     },
 
     /*
@@ -336,9 +338,9 @@ Compiler.prototype = {
         context.pushCallStack(blockFunc);
 
         // Add loop index to the stack with the start value
-        loop.variable.location = context.spOffset;
+        loop.variable.location = this.expr(loop.range.start, context);
         //context.spOffset += loop.variable.type.size;
-        this.expr(loop.range.start, context);
+
 
         // Compile the block
         context.setFunction(blockFunc);
@@ -347,7 +349,7 @@ Compiler.prototype = {
         this.expr(loop.range.end, context);
         // Do the testing
         context.push('if ('
-            + loop.variable.type.cast(loop.variable.type.memoryType + '[((SP - ' + (context.spOffset - loop.variable.location) + ')|0) >> ' + loop.variable.type.shift + ']')
+            + loop.variable.location.getValue()
             + ' > '
             + loop.variable.type.cast(loop.variable.type.memoryType + '[((SP - ' + (loop.variable.type.size) + ')|0) >> ' + loop.variable.type.shift + ']')
             + ') {'
@@ -367,9 +369,10 @@ Compiler.prototype = {
         this.compileBlock(loop.block, context);
 
         // In the end increase the loop variable
-        context.push(
-            loop.variable.type.memoryType + '[((SP - ' + (context.spOffset - loop.variable.location) + ')|0) >> ' + loop.variable.type.shift + '] = '
-            + '(' + Types.Integer.cast(loop.variable.type.memoryType + '[((SP - ' + (context.spOffset - loop.variable.location) + ')|0) >> ' + loop.variable.type.shift + ']|0) + 1') + ';');
+        context.push(loop.variable.location.setValue(Types.Integer.cast(loop.variable.location.getValue() + ' + 1')));
+        //context.push(
+        //    loop.variable.type.memoryType + '[((SP - ' + (context.spOffset - loop.variable.location) + ')|0) >> ' + loop.variable.type.shift + '] = '
+        //    + '(' + Types.Integer.cast(loop.variable.type.memoryType + '[((SP - ' + (context.spOffset - loop.variable.location) + ')|0) >> ' + loop.variable.type.shift + ']|0) + 1') + ';');
 
         // And go to the begining of the loop
         context.setCallStack(blockFunc);
@@ -536,22 +539,20 @@ Compiler.prototype = {
     expr: function expr(expr, context) {
         switch (expr.nodeType) {
             case 'Number':
-                //context.curFunc.nodes.push('//Number');
-                context.pushStack(expr.type, expr.val);
-                //context.curFunc.nodes.push('//!Number');
-                return;
+                return context.pushStack(expr.type, expr.val);
             case 'Variable':
-                //context.curFunc.nodes.push('//Variable');
                 if (expr.dimensions) {
-                    context.pushStack(expr.type);
+                    var val = context.pushStack(expr.type);
 
-                    this.expr(expr.dimensions, context);
+                    var dims = this.expr(expr.dimensions, context);
 
-                    var baseAddress = '(' + expr.dimensions.type.memoryType + '[((SP - ' + (context.spOffset - expr.definition.location) + ')|0) >> ' + expr.dimensions.type.shift + ']|0)';
-                    var offsetAddress = '(((' + expr.dimensions.type.memoryType + '[((SP - ' + expr.dimensions.type.size + ')|0) >> ' + expr.dimensions.type.shift + ']|0)*' + expr.type.size + ')|0)';
+                    var baseAddress = expr.definition.location.getValue();//'(' + expr.dimensions.type.memoryType + '[((SP - ' + (context.spOffset - expr.definition.location) + ')|0) >> ' + expr.dimensions.type.shift + ']|0)';
+                    var offsetAddress = '((' + dims.getValue() + '*' + expr.type.size + ')|0)';
 
-                    context.push(expr.type.memoryType + '[((SP - ' + (expr.dimensions.type.size + expr.type.size) + ')|0) >> ' + expr.type.shift + '] = '
-                                + expr.type.memoryType + '[((' + baseAddress + ' + ' + offsetAddress + ')|0) >> ' + expr.type.shift + ']');
+                    context.push(val.setValue(new CompilerAbsoluteReference(expr.type, baseAddress + ' + ' + offsetAddress, context).getValue()));
+
+                    //context.push(expr.type.memoryType + '[((SP - ' + (expr.dimensions.type.size + expr.type.size) + ')|0) >> ' + expr.type.shift + '] = '
+                    //            + expr.type.memoryType + '[((' + baseAddress + ' + ' + offsetAddress + ')|0) >> ' + expr.type.shift + ']');
 
                     //context.push(expr.type.memoryType + '[((' + baseAddress + ' + ' + offsetAddress + ')|0) >> ' + expr.type.shift + ']' + ' = '
                     //    + expr.expr.type.memoryType + '[((SP - ' + (expr.expr.type.size + expr.dimensions.type.size) + ')|0) >> ' + expr.expr.type.shift + '];');
@@ -559,14 +560,14 @@ Compiler.prototype = {
                     // Pop the dimensions
                     context.popStack(expr.dimensions.type);
 
+                    return val;
+
                     //throw new Error('Arrays not supported in expressions, yet.');
                 } else {
-                    context.pushStack(expr.type, context.getVariableValue(expr.definition));
+                    console.log(expr);
+                    return context.pushStack(expr.type, expr.definition.location.getValue());
                 }
-                //context.curFunc.nodes.push('//!Variable');
-                return;
             case 'BinaryOp':
-                //context.curFunc.nodes.push('//Binop');
                 // Get the left and right side of the operator to the top of the stack
                 this.expr(expr.left, context);
                 this.expr(expr.right, context);
@@ -603,11 +604,9 @@ Compiler.prototype = {
 
                 context.push('SP = (SP - ' + (expr.left.type.size + expr.right.type.size) + ' + ' + expr.type.size + ')|0;');
                 context.spOffset = context.spOffset - (expr.left.type.size + expr.right.type.size) + expr.type.size;
-                //context.curFunc.nodes.push('//!Binop');
-                return;
+                return new CompilerStackReference(expr.type, context.spOffset - expr.type.size, context);
             case 'FunctionCall':
-                this.callFunction(expr, context);
-                return;
+                return this.callFunction(expr, context);
             case 'Range':
 
         }
@@ -697,6 +696,7 @@ CompilerContext.prototype = {
             code = type.memoryType + '[SP >> ' + type.shift + '] = ' + type.cast(value) + ';';
         code += 'SP = (SP + ' + type.size + ')|0;';
         this.push(code);
+        return new CompilerStackReference(type, this.spOffset - type.size, this);
     },
     popStack: function popStack(type, editOffset) {
         if (editOffset !== false)
@@ -748,5 +748,35 @@ CompilerContext.prototype = {
     },
     setFunction: function setFunction(func) {
         this.func = func;
+    }
+};
+
+function CompilerStackReference(type, offset, context) {
+    this.type = type;
+    this.offset = offset;
+    this.context = context;
+}
+
+CompilerStackReference.prototype = {
+    getValue: function getValue() {
+        return this.type.cast(this.type.memoryType + '[((SP - ' + (this.context.spOffset - this.offset) + ')|0) >> ' + this.type.shift + ']');
+    },
+    setValue: function setValue(value) {
+        return this.type.memoryType + '[((SP - ' + (this.context.spOffset - this.offset) + ')|0) >> ' + this.type.shift + '] = ' + this.type.cast(value) + ';';
+    }
+};
+
+function CompilerAbsoluteReference(type, offset, context) {
+    this.type = type;
+    this.offset = offset;
+    this.context = context;
+}
+
+CompilerAbsoluteReference.prototype = {
+    getValue: function getValue() {
+        return this.type.cast(this.type.memoryType + '[((' + this.offset + ')|0) >> ' + this.type.shift + ']');
+    },
+    setValue: function setValue(value) {
+        return this.type.memoryType + '[((' + this.offset + ')|0) >> ' + this.type.shift + '] = ' + this.type.cast(value) + ';';
     }
 };
