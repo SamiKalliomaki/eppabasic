@@ -51,6 +51,7 @@ Editor.prototype = {
         // Input
         compiler.defineJsFunction('KEYDOWN', [Types.Integer], 'keyDown', Types.Integer);
         compiler.defineJsFunction('KEYUP', [Types.Integer], 'keyUp', Types.Integer);
+        compiler.defineJsFunction('KEYHIT', [Types.Integer], 'keyHit', Types.Integer);
         compiler.defineJsFunction('MOUSEX', [], 'mouseX', Types.Integer);
         compiler.defineJsFunction('MOUSEY', [], 'mouseY', Types.Integer);
         compiler.defineJsFunction('MOUSEDOWN', [Types.Integer], 'mouseDown', Types.Integer);

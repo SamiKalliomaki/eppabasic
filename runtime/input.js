@@ -1,6 +1,7 @@
 ﻿function Input(heap, container) {
     this.MEMS32 = new Int32Array(heap);
-    this.keysPressed = new Array(256);
+    this.keysDown = new Array(256);
+    this.keysHit = new Array(256);
     this.mousePressed = new Array(16);
     this.mouseX = this.mouseY = -1;
 
@@ -25,17 +26,22 @@
 
 Input.prototype = {
     env: {
-        keyDown: function isKeyDown(sp) {
-            this.MEMS32[(sp - 4) >> 2] = this.keysPressed[this.MEMS32[(sp - 4) >> 2]] | 0;
+        keyDown: function keyDown(sp) {
+            this.MEMS32[(sp - 4) >> 2] = this.keysDown[this.MEMS32[(sp - 4) >> 2]] | 0;
         },
-        keyUp: function isKeyUp(sp) {
-            this.MEMS32[(sp - 4) >> 2] = (!this.keysPressed[this.MEMS32[(sp - 4) >> 2]]) | 0;
+        keyUp: function keyUp(sp) {
+            this.MEMS32[(sp - 4) >> 2] = (!this.keysDown[this.MEMS32[(sp - 4) >> 2]]) | 0;
+        },
+        keyHit: function keyHit(sp) {
+            var key = this.MEMS32[(sp - 4) >> 2];
+            this.MEMS32[(sp - 4) >> 2] = this.keysHit[key] | 0;
+            this.keysHit[key] = false;
         },
 
-        mouseX: function getMouseX(sp) {
+        mouseX: function mouseX(sp) {
             this.MEMS32[sp >> 2] = this.mouseX;
         },
-        mouseY: function getMouseY(sp) {
+        mouseY: function mouseY(sp) {
             this.MEMS32[sp >> 2] = this.mouseY;
         },
         mouseDown: function mouseDown(sp) {
@@ -44,12 +50,13 @@ Input.prototype = {
     },
 
     keyDown: function keyDown(e) {
-        this.keysPressed[e.keyCode] = true;
+        this.keysDown[e.keyCode] = true;
+        this.keysHit[e.keyCode] = true;
         e.preventDefault();
         return false;
     },
     keyUp: function keyUp(e) {
-        this.keysPressed[e.keyCode] = false;
+        this.keysDown[e.keyCode] = false;
         e.preventDefault();
         return false;
     },
