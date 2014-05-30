@@ -172,14 +172,22 @@ Parser.prototype = {
         //if (this.peek().type !== 'binop' || this.peek().val !== '=')
         //    throw new Error('For statement must have an equal siqn before range');
         this.expect('eq');
-        var range = this.parseRange();
+        var start = this.parseExpr();
+        this.expect('to');
+        var stop = this.parseExpr();
+        var step = new Nodes.Number('1');
+        if (this.peek().type === 'step') {
+            this.advance();
+            step = this.parseExpr();
+        }
+
         var block = this.parseBlock();
 
         this.expect('next');
         if (variable.name !== this.expect('identifier').val)
             throw new Error('Next statement must have same variable as the original for statement');
 
-        return new Nodes.For(variable, range, block);
+        return new Nodes.For(variable, block, start, stop, step);
     },
     /*
      * Parses an if statement
@@ -318,7 +326,7 @@ Parser.prototype = {
         }
         this.expect('rparen');
         this.expect('as');
-        var type = this.expect('identifier').val;
+        var type = Types.toType(this.expect('identifier').val);
 
         var block = this.parseBlock();
 

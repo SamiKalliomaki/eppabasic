@@ -97,7 +97,11 @@ Typechecker.prototype = {
      * Visits a for loop
      */
     visitFor: function visitFor(loop, parent) {
-        loop.variable.type = this.resolveExprType(loop.range, parent);
+        loop.variable.type = this.resolveExprType(loop.start, parent);
+        if (this.resolveExprType(loop.stop, parent) !== loop.variable.type)
+            throw new Error('Loop end and start types must be same');
+        if (!this.resolveExprType(loop.step, parent).canCastImplicitlyTo(loop.variable.type))
+            throw new Error('Loop step type must match the iterator type');
 
         // Adds a custom get variable for loop iterator
         loop.getVariable = function getVariable(name) {

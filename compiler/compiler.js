@@ -33,11 +33,13 @@ Compiler.prototype = {
             // Define an entry point
             entry = this.createFunction(name);
 
+            // Compute parameter size
             var paramSize = 0;
             paramTypes.forEach(function each(param) {
                 paramSize += param.size;
             }.bind(this));
 
+            // Call the native function
             entry.nodes.push(jsname + '(SP|0);');
 
             var retSize = 0;
@@ -166,14 +168,15 @@ Compiler.prototype = {
      * Compiles an user defined function
      */
     compileFunctionDefinition: function compileFunctionDefinition(def) {
-        var context = new CompilerContext(def.name, def.handle.entry);
+        var context = new CompilerContext(def.name, def.handle.entry, def.type);
         context.pushOffset();       // Save current stack state
 
         // Find out parameter offsets
         for (var i = 0; i < def.params.length; i++) {
             var param = def.params[i];
             var size = param.type.size;
-            param.location = context.pushStack(param.type);
+            param.location = new CompilerStackReference(param.type, context.spOffset, context);
+            context.spOffset += size;
         }
 
         this.compileBlock(def.block, context);
@@ -199,20 +202,22 @@ Compiler.prototype = {
         block.nodes.forEach(function each(node) {
             switch (node.nodeType) {
                 case 'FunctionCall':
-                    this.callFunction(node, context);
+                    var val = this.callFunction(node, context);
                     // Skip the return value
-                    if (node.type)
-                        context.popStack(node.type);
+                    if (val)
+                        val.pop();
                     break;
                 case 'Return':
                     // Compile the expression to the top of the stack
-                    this.expr(node.expr, context);
+                    var val = this.expr(node.expr, context);
+                    if (val.type !== context.returnType)
+                        throw new Error('Return statement type doesn\'t match function type');
+
                     // Move the result to the begining of the return stack
-                    context.push(node.expr.type.memoryType + '[((SP - ' + context.spOffset + ')|0) >> ' + node.expr.type.shift + '] = '
-                        + node.expr.type.memoryType + '[((SP - ' + node.expr.type.size + ')|0) >> ' + node.expr.type.shift + '];');
+                    context.push(new CompilerStackReference(context.returnType, 0, context).setValue(val.getValue()));
 
                     // Return the stack to appropriate state
-                    context.push('SP = (SP - ' + (context.spOffset - node.expr.type.size) + ')|0;');
+                    context.popStack(context.spOffset - val.type.size, false);
                     // ...pop the function from the call stack
                     context.popCallStack();
                     // And get out of here!
@@ -226,8 +231,6 @@ Compiler.prototype = {
                             throw new Error('Initial values not supported for arrays');
                         var dims = this.expr(node.dimensions, context);
                         context.push(node.location.setValue('memreserve' + node.type.size + '((' + dims.getValue() + '*' + node.type.size + ')|0)'));
-                        //context.push(node.dimensions.type.memoryType + '[((SP - ' + (context.spOffset - node.location) + ')|0) >> ' + node.dimensions.type.shift + '] = '
-                        //    + 'memreserve' + node.dimensions.type.size + '(' + node.dimensions.type.cast(node.dimensions.type.cast(node.dimensions.type.memoryType + '[((SP - ' + node.dimensions.type.size + ')|0) >> ' + node.dimensions.type.shift + ']') + '*' + node.type.size) + ')|0');
                         context.popStack(node.dimensions.type);
                     }
                     if (node.initial) {
@@ -235,8 +238,6 @@ Compiler.prototype = {
                         var val = this.expr(node.initial, context);
                         // Copy it from there to the variable location
                         context.push(node.location.setValue(val.getValue()));
-                        //context.push(node.type.memoryType + '[((SP - ' + (context.spOffset - node.location) + ')|0) >> ' + node.type.shift + '] = '
-                        //    + node.initial.type.memoryType + '[((SP - ' + node.initial.type.size + ')|0) >> ' + node.initial.type.shift + '];');
                         // Pop the original expression result from the stack
                         context.popStack(node.initial.type);
                     }
@@ -249,7 +250,7 @@ Compiler.prototype = {
                         // An array
                         var dims = this.expr(node.dimensions, context);
 
-                        var baseAddress = node.definition.location.getValue();//'(' + expr.dimensions.type.memoryType + '[((SP - ' + (context.spOffset - expr.definition.location) + ')|0) >> ' + expr.dimensions.type.shift + ']|0)';
+                        var baseAddress = node.definition.location.getValue();
                         var offsetAddress = '((' + dims.getValue() + '*' + node.type.size + ')|0)';
 
                         context.push(new CompilerAbsoluteReference(node.type, baseAddress + ' + ' + offsetAddress, context).setValue(val.getValue()));
@@ -337,59 +338,49 @@ Compiler.prototype = {
         context.setCallStack(retFunc);
         context.pushCallStack(blockFunc);
 
-        // Add loop index to the stack with the start value
-        loop.variable.location = this.expr(loop.range.start, context);
-        //context.spOffset += loop.variable.type.size;
+        // Compute start, stop and step values to stack
+        loop.variable.location = this.expr(loop.start, context);
+        var stop = this.expr(loop.stop, context);
+        var step = this.expr(loop.step, context);
 
-
-        // Compile the block
+        // Set block to be compiled
         context.setFunction(blockFunc);
 
-        // Test for continuation in the begining
-        this.expr(loop.range.end, context);
-        // Do the testing
+        // Test for continuation in the begining of every loop
         context.push('if ('
             + loop.variable.location.getValue()
             + ' > '
-            + loop.variable.type.cast(loop.variable.type.memoryType + '[((SP - ' + (loop.variable.type.size) + ')|0) >> ' + loop.variable.type.shift + ']')
+            + stop.getValue()
             + ') {'
             );
         {
-            // Exit the loop: basically just pop the test value and call stack
-            context.push('\tSP = (SP - ' + loop.variable.type.size + ')|0;');
+            // Exit the loop
             context.popCallStack();
             context.push('\treturn 1;');
         }
         context.push('}');
-        // Pop the test value
-        context.push('SP = (SP - ' + loop.variable.type.size + ')|0;');
-        context.spOffset -= loop.variable.type.size;
 
-        // Then comes the block
+        // Compile block
         this.compileBlock(loop.block, context);
 
         // In the end increase the loop variable
-        context.push(loop.variable.location.setValue(Types.Integer.cast(loop.variable.location.getValue() + ' + 1')));
-        //context.push(
-        //    loop.variable.type.memoryType + '[((SP - ' + (context.spOffset - loop.variable.location) + ')|0) >> ' + loop.variable.type.shift + '] = '
-        //    + '(' + Types.Integer.cast(loop.variable.type.memoryType + '[((SP - ' + (context.spOffset - loop.variable.location) + ')|0) >> ' + loop.variable.type.shift + ']|0) + 1') + ';');
+        context.push(loop.variable.location.setValue(loop.variable.location.getValue() + ' + ' + step.getValue()));
 
         // And go to the begining of the loop
         context.setCallStack(blockFunc);
 
         // After the loop:
         context.setFunction(retFunc);
-        // Pop the loop variable off
-        context.popStack(loop.variable.type);
+        // Pop the loop variables off
+        step.pop();
+        stop.pop();
+        loop.variable.location.pop();
     },
 
     /*
      * Compiles an if statement
      */
     ifStatement: function ifStatement(statement, context) {
-        // Get the test value to the top of the stack
-        this.expr(statement.expr, context);
-
         var retBlock = this.createFunction(context.name);
         var trueBlock = this.createFunction(context.name);
         var falseBlock;
@@ -399,7 +390,8 @@ Compiler.prototype = {
         // Set the return function
         context.setCallStack(retBlock);
         // Do the testing
-        context.push('if (' + statement.expr.type.cast(statement.expr.type.memoryType + '[((SP - ' + statement.expr.type.size + ')|0) >> ' + statement.expr.type.shift + ']') + ') {');
+        var test = this.expr(statement.expr, context);
+        context.push('if (' + test.getValue() + ') {');
         {
             // Jump to the true block
             context.pushCallStack(trueBlock);
@@ -414,7 +406,7 @@ Compiler.prototype = {
         context.push('}');
 
         // Get rid of the test value
-        context.popStack(statement.expr.type);
+        test.pop();
 
         // Compile the true block
         context.setFunction(trueBlock);
@@ -475,8 +467,8 @@ Compiler.prototype = {
         this.compileBlock(loop.block, context);
 
         // In the end do the testing
-        this.expr(loop.expr, context);
-        context.push('if (' + loop.expr.type.cast(loop.expr.type.memoryType + '[((SP - ' + loop.expr.type.size + ')|0) >> ' + loop.expr.type.shift + ']') + ') {');
+        var test = this.expr(loop.expr, context);
+        context.push('if (' + test.getValue() + ') {');
         {
             // Get rid of the test value
             context.popStack(loop.expr.type, false);
@@ -487,7 +479,7 @@ Compiler.prototype = {
         context.push('}');
 
         // Get rid of the test value
-        context.popStack(loop.expr.type);
+        test.pop();
 
         // Not jumping out so go to the begining
         context.setCallStack(blockFunc);
@@ -513,8 +505,8 @@ Compiler.prototype = {
         this.compileBlock(loop.block, context);
 
         // In the end do the testing
-        this.expr(loop.expr, context);
-        context.push('if (!(' + loop.expr.type.cast(loop.expr.type.memoryType + '[((SP - ' + loop.expr.type.size + ')|0) >> ' + loop.expr.type.shift + ']') + ')) {');
+        var test = this.expr(loop.expr, context);
+        context.push('if (!(' + test.getValue() + ')) {');
         {
             // Get rid of the test value
             context.popStack(loop.expr.type, false);
@@ -525,7 +517,7 @@ Compiler.prototype = {
         context.push('}');
 
         // Get rid of the test value
-        context.popStack(loop.expr.type);
+        test.pop();
 
         // Not jumping out so go to the begining
         context.setCallStack(blockFunc);
@@ -546,35 +538,24 @@ Compiler.prototype = {
 
                     var dims = this.expr(expr.dimensions, context);
 
-                    var baseAddress = expr.definition.location.getValue();//'(' + expr.dimensions.type.memoryType + '[((SP - ' + (context.spOffset - expr.definition.location) + ')|0) >> ' + expr.dimensions.type.shift + ']|0)';
+                    var baseAddress = expr.definition.location.getValue();
                     var offsetAddress = '((' + dims.getValue() + '*' + expr.type.size + ')|0)';
 
                     context.push(val.setValue(new CompilerAbsoluteReference(expr.type, baseAddress + ' + ' + offsetAddress, context).getValue()));
-
-                    //context.push(expr.type.memoryType + '[((SP - ' + (expr.dimensions.type.size + expr.type.size) + ')|0) >> ' + expr.type.shift + '] = '
-                    //            + expr.type.memoryType + '[((' + baseAddress + ' + ' + offsetAddress + ')|0) >> ' + expr.type.shift + ']');
-
-                    //context.push(expr.type.memoryType + '[((' + baseAddress + ' + ' + offsetAddress + ')|0) >> ' + expr.type.shift + ']' + ' = '
-                    //    + expr.expr.type.memoryType + '[((SP - ' + (expr.expr.type.size + expr.dimensions.type.size) + ')|0) >> ' + expr.expr.type.shift + '];');
 
                     // Pop the dimensions
                     context.popStack(expr.dimensions.type);
 
                     return val;
-
-                    //throw new Error('Arrays not supported in expressions, yet.');
                 } else {
-                    console.log(expr);
                     return context.pushStack(expr.type, expr.definition.location.getValue());
                 }
             case 'BinaryOp':
                 // Get the left and right side of the operator to the top of the stack
-                this.expr(expr.left, context);
-                this.expr(expr.right, context);
+                var dest = context.pushStack(expr.type);
+                var leftVal = this.expr(expr.left, context);
+                var rightVal = this.expr(expr.right, context);
 
-                var dest = expr.type.memoryType + '[((SP - ' + (expr.left.type.size + expr.right.type.size) + ')|0) >> ' + expr.type.shift + ']';
-                var left = expr.type.cast(expr.left.type.cast(expr.left.type.memoryType + '[((SP - ' + (expr.left.type.size + expr.right.type.size) + ')|0) >> ' + expr.left.type.shift + ']'));
-                var right = expr.type.cast(expr.right.type.cast(expr.right.type.memoryType + '[((SP - ' + (expr.right.type.size) + ')|0) >> ' + expr.right.type.shift + ']'));
                 var map = {
                     plus: '+',
                     minus: '-',
@@ -595,16 +576,16 @@ Compiler.prototype = {
                     throw new Error('Compiler doesn\'t suuport "' + expr.op + '" operator');
                 if (op === '*' && expr.type === Types.Integer) {
                     // Integer multiplication is a special case
-                    src = 'imul(' + left + ', ' + right + ')';
+                    src = 'imul(' + leftVal.getValue() + ', ' + rightVal.getValue() + ')';
                 } else {
-                    src = left + ' ' + op + ' ' + right;
+                    src = leftVal.getValue() + ' ' + op + ' ' + rightVal.getValue();
                 }
 
-                context.push(dest + ' = ' + expr.type.cast(src) + ';');
+                context.push(dest.setValue(src));
 
-                context.push('SP = (SP - ' + (expr.left.type.size + expr.right.type.size) + ' + ' + expr.type.size + ')|0;');
-                context.spOffset = context.spOffset - (expr.left.type.size + expr.right.type.size) + expr.type.size;
-                return new CompilerStackReference(expr.type, context.spOffset - expr.type.size, context);
+                rightVal.pop();
+                leftVal.pop();
+                return dest;
             case 'FunctionCall':
                 return this.callFunction(expr, context);
             case 'Range':
@@ -669,11 +650,12 @@ Compiler.prototype = {
     }
 }
 
-function CompilerContext(name, entry) {
+function CompilerContext(name, entry, type) {
     this.name = name;
     this.func = entry;
     this.spOffset = 0;
     this.offsets = [];
+    this.returnType = type;
 }
 
 CompilerContext.prototype = {
@@ -699,11 +681,16 @@ CompilerContext.prototype = {
         return new CompilerStackReference(type, this.spOffset - type.size, this);
     },
     popStack: function popStack(type, editOffset) {
+        var size;
+        if (typeof type === 'number')
+            size = type;
+        else
+            size = type.size;
         if (editOffset !== false)
             editOffset = true;
         if (editOffset)
-            this.spOffset -= type.size;
-        this.push('SP = (SP - ' + type.size + ')|0;');
+            this.spOffset -= size;
+        this.push('SP = (SP - ' + size + ')|0;');
     },
     pushOffset: function pushOffset() {
         this.offsets.push(this.spOffset);
@@ -755,6 +742,7 @@ function CompilerStackReference(type, offset, context) {
     this.type = type;
     this.offset = offset;
     this.context = context;
+    this.exists = true;
 }
 
 CompilerStackReference.prototype = {
@@ -763,6 +751,17 @@ CompilerStackReference.prototype = {
     },
     setValue: function setValue(value) {
         return this.type.memoryType + '[((SP - ' + (this.context.spOffset - this.offset) + ')|0) >> ' + this.type.shift + '] = ' + this.type.cast(value) + ';';
+    },
+    pop: function pop(editOffset) {
+        if (editOffset !== false)
+            editOffset = true;
+        if (this.offset + this.type.size !== this.context.spOffset && editOffset)
+            throw new Error('Compiler popping stack in wrong order!')
+        if (!this.exists)
+            throw new Error('Value already popped from the stack');
+        this.context.popStack(this.type.size, editOffset);
+        if (editOffset)
+            this.exists = false;
     }
 };
 
@@ -778,5 +777,6 @@ CompilerAbsoluteReference.prototype = {
     },
     setValue: function setValue(value) {
         return this.type.memoryType + '[((' + this.offset + ')|0) >> ' + this.type.shift + '] = ' + this.type.cast(value) + ';';
-    }
+    },
+    pop: function pop() { }
 };

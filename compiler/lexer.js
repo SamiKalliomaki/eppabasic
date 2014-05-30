@@ -70,6 +70,7 @@ Lexer.prototype = {
             // For loops
             || this.forToken()
             || this.nextToken()
+            || this.stepToken()
 
             // Repeat loops
             || this.repeatToken()
@@ -213,6 +214,13 @@ Lexer.prototype = {
         return this.scan(/^ *(NEXT)\b/i, 'next');
     },
     /*
+     * Parses a "STEP" token from the input
+     */
+    stepToken: function stepToken() {
+        return this.scan(/^ *(STEP)\b/i, 'step');
+    },
+
+    /*
     * Parses a "REPEAT" token from the input
     */
     repeatToken: function repeatToken() {
@@ -316,7 +324,7 @@ Lexer.prototype = {
     /*
      * Parses brackets ("[" and "]") from the input
      */
-    bracketToken:function bracketToken() {
+    bracketToken: function bracketToken() {
         var captures;
         if (captures = /^ *(\[|\])/i.exec(this.input)) {
             this.consume(captures[0].length);

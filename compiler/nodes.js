@@ -3,10 +3,12 @@
 /*
  * Creates a new ast for node
  */
-Nodes.For = function For(variable, range, block) {
+Nodes.For = function For(variable, block, start, stop, step) {
     this.variable = variable;
-    this.range = range;
     this.block = block;
+    this.start = start;
+    this.stop = stop;
+    this.step = step;
 };
 Nodes.For.prototype = {
     nodeType: 'For'
@@ -22,17 +24,6 @@ Nodes.If = function If(expr, trueStatement, falseStatement) {
 };
 Nodes.If.prototype = {
     nodeType: 'If'
-};
-
-/*
- * Creates a new ast range node
- */
-Nodes.Range = function Range(start, end) {
-    this.start = start;
-    this.end = end;
-};
-Nodes.Range.prototype = {
-    nodeType: 'Range'
 };
 
 /*
