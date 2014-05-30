@@ -355,7 +355,7 @@ Parser.prototype = {
         paramloop: while (this.peek().type !== 'rparen') {
             var paramname = this.expect('identifier').val;
             this.expect('as');
-            var paramtype = this.expect('identifier').val;
+            var paramtype = Types.toType(this.expect('identifier').val);
 
             params.push({
                 name: paramname,

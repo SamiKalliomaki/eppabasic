@@ -1,9 +1,9 @@
 ﻿function compilerMemory() {
     var memnextFree = 0;
-    var HEAP_SIZE = env.heapSize|0;
+    var HEAP_SIZE = env.heapSize | 0;
 
-    function meminit() {
-        memnextFree = 0;
+    function meminit(firstFree) {
+        memnextFree = firstFree;
     }
 
     function memreserve4(size) {

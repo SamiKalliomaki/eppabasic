@@ -94,6 +94,14 @@ Compiler.prototype = {
         checker = new Atomicchecker(this.ast, this.functions);
         checker.check();
 
+        // Find locations for global functions
+        var globalVarariableOffset = 0;
+        this.ast.variables.forEach(function each(variable) {
+            var size = variable.type.size;
+            variable.location = new CompilerAbsoluteReference(variable.type, globalVarariableOffset, null);
+            globalVarariableOffset += size;
+        }.bind(this));
+
         // Compile functions...
         this.ast.nodes.forEach(function each(val) {
             if (val.nodeType === 'FunctionDefinition')
@@ -136,7 +144,7 @@ Compiler.prototype = {
 
                 // Initialize program
                 + 'function init() {\n'
-                + '\tmeminit();\n'
+                + '\tmeminit(' + globalVarariableOffset + ');\n'
                 + '\tSP = memreserve4(4096)|0;\n'
                 + '\tCS = memreserve4(256)|0;\n'
                 + '\tMEMU32[CS >> ' + Types.Integer.shift + '] = ' + entry.index + ';\n'
@@ -188,14 +196,16 @@ Compiler.prototype = {
     /*
      * Compiles a block
      */
-    compileBlock: function compileBlock(block, context, skipFunctionDefinitions) {
+    compileBlock: function compileBlock(block, context, global) {
         // Reserve space for variables
         context.pushOffset();
         var varSize = 0;
-        block.variables.forEach(function each(variable) {
-            var size = variable.type.size;
-            variable.location = context.pushStack(variable.type);
-        }.bind(this));
+        if (!global) {
+            block.variables.forEach(function each(variable) {
+                var size = variable.type.size;
+                variable.location = context.pushStack(variable.type);
+            }.bind(this));
+        }
 
 
         // Compile all the nodes
@@ -279,7 +289,7 @@ Compiler.prototype = {
                     this.repeatWhile(node, context);
                     break;
                 case 'FunctionDefinition':
-                    if (skipFunctionDefinitions)
+                    if (global)
                         break;
                 default:
                     console.log(node);
