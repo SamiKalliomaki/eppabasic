@@ -37,9 +37,48 @@
         size: 4
     };
 
+    function String() { }
+    String.prototype = {
+        canCastImplicitlyTo: function canCastImplicitlyTo(type) {
+            switch (type) {
+                case Types.String:
+                    return true;
+            }
+            return false;
+        },
+        cast: function (expr) {
+            return '((' + expr + ')|0)';
+        },
+        pointer: true,
+
+        memoryType: 'MEMU32',
+        shift: 2,
+        size: 4
+    };
+
+    function Char() { }
+    Char.prototype = {
+        canCastImplicitlyTo: function canCastImplicitlyTo(type) {
+            switch (type) {
+                case Types.Integer:
+                case Types.Double:
+                    return true;
+            }
+            return false;
+        },
+        cast: function cast(expr) {
+            return '((' + expr + ')|0)';
+        },
+        memoryType: 'MEMU8',
+        shift: 0,
+        size: 1
+    }
+
     // Make singletones from types
     Types.Integer = new Integer();
     Types.Double = new Double();
+    Types.String = new String();
+    Types.Char = new Char();
 })();
 
 Types.toType = function toType(type) {

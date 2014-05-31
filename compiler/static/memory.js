@@ -3,6 +3,8 @@
     var HEAP_SIZE = env.heapSize | 0;
 
     function meminit(firstFree) {
+        firstFree = firstFree | 0;
+
         memnextFree = firstFree;
     }
 

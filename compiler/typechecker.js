@@ -211,6 +211,8 @@ Typechecker.prototype = {
                     return expr.type = Types.Double;
                 }
 
+            case 'String':
+                return expr.type = Types.String;
             case 'BinaryOp':
                 var leftType = this.resolveExprType(expr.left, context);
                 var rightType = this.resolveExprType(expr.right, context);

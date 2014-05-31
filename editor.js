@@ -55,7 +55,10 @@ Editor.prototype = {
         compiler.defineJsFunction('MOUSEX', [], 'mouseX', Types.Integer);
         compiler.defineJsFunction('MOUSEY', [], 'mouseY', Types.Integer);
         compiler.defineJsFunction('MOUSEDOWN', [Types.Integer], 'mouseDown', Types.Integer);
-        
+
+        // Output
+        compiler.defineJsFunction('PRINT', [Types.String], 'print');
+
 
         try {
             this.compiled = compiler.compile();

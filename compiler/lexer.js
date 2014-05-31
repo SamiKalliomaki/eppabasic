@@ -62,6 +62,7 @@ Lexer.prototype = {
             || this.eosToken()
             || this.commentToken()
             || this.numberToken()
+            || this.stringToken()
             || this.opToken()
             || this.commaToken()
             || this.parenthesisToken()
@@ -183,6 +184,12 @@ Lexer.prototype = {
      */
     numberToken: function numberToken() {
         return this.scan(/^ *(-?\d*\.?\d+)/, 'number')
+    },
+    /*
+     * Parses a string from the input
+     */
+    stringToken: function stringToken() {
+        return this.scan(/^ *"(.*?)"/, 'string')            // TODO More sophisticated string lexer
     },
     /*
      * Parses a newline from the input

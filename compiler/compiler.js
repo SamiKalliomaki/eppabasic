@@ -119,6 +119,7 @@ Compiler.prototype = {
         return ('function Program(stdlib, env, heap) {\n'
                 + '"use asm";\n'
                 // Memories
+                + 'var MEMU8 = new stdlib.Uint8Array(heap);\n'
                 + 'var MEMS32 = new stdlib.Int32Array(heap);\n'
                 + 'var MEMU32 = new stdlib.Uint32Array(heap);\n'
                 + 'var MEMF32 = new stdlib.Float32Array(heap);\n'
@@ -542,6 +543,20 @@ Compiler.prototype = {
         switch (expr.nodeType) {
             case 'Number':
                 return context.pushStack(expr.type, expr.val);
+            case 'String':
+                // Create pointer
+                var ptr = context.pushStack(expr.type);
+                // Get value for it
+                context.push(ptr.setValue('memreserve4((' + (8 + expr.val.length) + ')|0)'));
+                // Save string length
+                context.push(new CompilerAbsoluteReference(Types.Char, ptr.getValue(), context).setValue(expr.val.length));
+                // Set string value
+                var buf = [];
+                for (var i = 0; i < expr.val.length; i++) {
+                    buf.push(new CompilerAbsoluteReference(Types.Char, ptr.getValue() + ' + ' + (i + 8), context).setValue(expr.val.charCodeAt(i)));
+                }
+                context.push(buf.join(''));
+                return ptr;
             case 'Variable':
                 if (expr.dimensions) {
                     var val = context.pushStack(expr.type);

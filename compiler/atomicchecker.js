@@ -166,6 +166,8 @@ Atomicchecker.prototype = {
     visitExpr: function visitExpr(expr) {
         switch (expr.nodeType) {
             case 'Number':
+            case 'String':
+                return expr.atomic = true;
             case 'Variable':
                 if (expr.dimensions)
                     return expr.atomic = this.visitDimensions(expr.dimensions);

@@ -19,6 +19,7 @@ function Runtime() {
     // Initialize variables used by asm.js
     this.stdlib = {
         Math: Math,
+        Uint8Array: Uint8Array,
         Int32Array: Int32Array,
         Uint32Array: Uint32Array,
         Float32Array: Float32Array,
@@ -36,8 +37,13 @@ Runtime.prototype = {
         var g2d = new Graphics2D(this.canvasHolder, this.heap);
         g2d.setSize(640, 480);
         mixin(this.env, g2d.env);
+
         var ebmath = new EbMath(this.heap);
         mixin(this.env, ebmath.env);
+
+        var ebstring = new EbString(this.heap);
+        mixin(this.env, ebstring.env);
+
         var input = new Input(this.heap, document.body);
         mixin(this.env, input.env);
     },

@@ -37,6 +37,16 @@ Nodes.Number.prototype = {
 };
 
 /*
+ * Creates a new ast number node
+ */
+Nodes.String = function String(val) {
+    this.val = val;
+};
+Nodes.String.prototype = {
+    nodeType: 'String'
+};
+
+/*
  * Creates a new ast variable node
  */
 Nodes.Variable = function Variable(val, dimensions) {

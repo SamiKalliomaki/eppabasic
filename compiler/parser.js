@@ -468,6 +468,8 @@ Parser.prototype = {
                 return new Nodes.UnaryOp('neg', this.parseFactor());
             case 'number':
                 return new Nodes.Number(t.val);
+            case 'string':
+                return new Nodes.String(t.val);
             case 'identifier':
                 if (this.peek().type === 'lparen') {
                     // A function call
