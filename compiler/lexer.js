@@ -129,7 +129,7 @@ Lexer.prototype = {
      */
     opToken: function opToken() {
         var captures;
-        if (captures = /^ *(<>|<=?|>=?|=|\+|-|\*|\/|MOD\b|AND\b|OR\b|XOR\b)/i.exec(this.input)) {
+        if (captures = /^ *(<>|<=?|>=?|=|\+|-|\*|\/|&|MOD\b|AND\b|OR\b|XOR\b)/i.exec(this.input)) {
             this.consume(captures[0].length);
             var map = {
                 '<': 'lt',
@@ -148,6 +148,7 @@ Lexer.prototype = {
                 '*': 'mul',
                 '/': 'div',
                 'mod': 'mod',
+                '&': 'concat',
             };
             return this.tok(map[captures[1].toLowerCase()], captures[1].toLowerCase());
         }

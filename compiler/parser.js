@@ -430,6 +430,7 @@ Parser.prototype = {
             switch (this.peek().type) {
                 case 'plus':
                 case 'minus':
+                case 'concat':
                     var op = this.advance();
                     var right = this.parseTerm();
                     left = new Nodes.BinaryOp(left, op.type, right);

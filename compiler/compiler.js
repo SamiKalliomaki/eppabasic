@@ -137,6 +137,7 @@ Compiler.prototype = {
                 // Modules
                 + this.loadModule('Memory')
                 + this.loadModule('Math')
+                + this.loadModule('String')
 
                 // Calling next operator
                 + 'function next() {\n'
@@ -165,7 +166,10 @@ Compiler.prototype = {
                 + '\treset: init,\n'
                 + '\tnext: next,\n'
                 + '\tsp: sp,\n'
-                + '\tcs: cs\n'
+                + '\tcs: cs,\n'
+                + '\tmemreserve4: memreserve4,\n'
+                + '\tmemreserve8: memreserve8,\n'
+                + '\tmemfree: memfree\n'
                 + '};\n'
                 + '}'
             )
@@ -588,6 +592,8 @@ Compiler.prototype = {
                     div: '/',
                     mod: '%',
 
+                    concat: 'strconcat',
+
                     lt: '<',
                     lte: '<=',
                     gt: '>',
@@ -602,6 +608,8 @@ Compiler.prototype = {
                 if (op === '*' && expr.type === Types.Integer) {
                     // Integer multiplication is a special case
                     src = 'imul(' + leftVal.getValue() + ', ' + rightVal.getValue() + ')';
+                } else if (op === 'strconcat') {
+                    src = 'strconcat(' + leftVal.getValue() + ', ' + rightVal.getValue() + ')';
                 } else {
                     src = leftVal.getValue() + ' ' + op + ' ' + rightVal.getValue();
                 }

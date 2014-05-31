@@ -235,6 +235,8 @@ Typechecker.prototype = {
                         if (leftType === rightType)
                             return expr.type = leftType;
                         break;
+                    case 'concat':
+                        return expr.type = Types.String;
                 }
                 throw new Error('Unresolvable return type of a binary operator "' + expr.op + '"');
             case 'Range':
