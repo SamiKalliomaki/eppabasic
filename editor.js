@@ -8,7 +8,8 @@ function Editor() {
 
 Editor.prototype = {
     parse: function parse() {
-        var parser = new Parser(this.codeBox.value);
+//         var parser = new Parser(this.codeBox.value);
+        var parser = new Parser(editor.getValue());
         try {
             this.ast = parser.parse();
         } catch (e) {
@@ -63,7 +64,8 @@ Editor.prototype = {
         try {
             this.compiled = compiler.compile();
 
-            document.getElementById('codeBox').innerHTML = this.compiled;
+            //document.getElementById('codeBox').innerHTML = this.compiled;
+            this.errBox.innerHTML = "";
         } catch (e) {
             this.errBox.innerHTML = e.message;
             throw e;
@@ -76,7 +78,7 @@ Editor.prototype = {
 
         // Close opened window
         this.closeRuntime();
-        this.window = window.open('runtime/', 'runtime', 'dependent,dialog,height=480,width=640', true);
+        this.window = window.open('runtime/index.html', 'runtime', 'dependent,dialog,height=480,width=640', true);
 
     },
     closeRuntime: function closeRuntime() {

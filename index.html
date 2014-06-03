@@ -11,6 +11,14 @@
         #errBox {
             color: #f00;
         }
+
+        #editor { 
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+        }
     </style>
     <!--Compiler recources-->
     <script src="compiler/static/math.js"></script>
@@ -58,13 +66,33 @@
         });
     </script>
 </head>
-<body>
-    <div>
+<body bgcolor="black">
+<img src="logo.png">    
+<!--    <div>
         <a href="examples">Check for example codes!</a>
-    </div>
-    <textarea id="code"></textarea>
+    </div>-->
+<table>
+<tr><td width="800">
+<div id="code" style="border-style:solid;border-color:white;border-width:1px">FOR i = 1 TO 10
+    CIRCLE 100, 100, i*10
+NEXT i</div>
+</td><td width="200">
+File list
+</td></tr>
+</table>
+<script src="ace/ace.js" type="text/javascript" charset="utf-8"></script>
+<script>
+    var editor = ace.edit("code");
+    editor.setTheme("ace/theme/terminal");
+    editor.setHighlightActiveLine(false);
+    editor.renderer.setShowGutter(false); 
+    editor.renderer.setPrintMarginColumn(false);
+    editor.renderer.setPadding(5);
+    //editor.setHighlightGutterLine(false);
+    //editor.getSession().setMode("ace/mode/javascript");
+</script>
     <div id="errBox"></div>
-    <button id="compile&run">Compile&amp;Run</button>
+    <button id="compile&run">Start</button>
     <pre id="codeBox"></pre>
     <!--<button id="compile&download">Compile&amp;Download</button>
     <a id="downloadlink">Download as a standalone application (under work)</a>-->
