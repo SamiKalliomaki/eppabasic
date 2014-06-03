@@ -34,6 +34,7 @@
     <script src="compiler/atomicchecker.js"></script>
     <script src="compiler/compiler.js"></script>
     <!--Editor-->
+    <script src="editor/files.js"></script>
     <script src="editor.js"></script>
     <script>
         window.addEventListener('load', function init() {
@@ -71,13 +72,28 @@
 <!--    <div>
         <a href="examples">Check for example codes!</a>
     </div>-->
+<br>
+<button id="newcode" onclick="newCode()">New code</button>
+<button id="newcode" onclick="saveCode()">Save code</button>
+<button id="publish">Publish</button>
+<button id="help">Help</button>
 <table>
 <tr><td width="800">
 <div id="code" style="border-style:solid;border-color:white;border-width:1px">FOR i = 1 TO 10
     CIRCLE 100, 100, i*10
 NEXT i</div>
 </td><td width="200">
-File list
+<table>
+<tr><td>
+<font color="white">Code list</font>
+</td></tr><tr><td>
+<select id="filelist" size="15" style="width:120px">
+</select>
+<script>updateList();</script>
+</td></tr><tr><td>
+<button id="loadcode" onclick="loadFile()">Load code</button><br>
+<button id="deletecode" onclick="deleteCode()">Delete code</button>
+</td></tr></table>
 </td></tr>
 </table>
 <script src="ace/ace.js" type="text/javascript" charset="utf-8"></script>
@@ -92,7 +108,7 @@ File list
     //editor.getSession().setMode("ace/mode/javascript");
 </script>
     <div id="errBox"></div>
-    <button id="compile&run">Start</button>
+    <button id="compile&run">Start code</button>
     <pre id="codeBox"></pre>
     <!--<button id="compile&download">Compile&amp;Download</button>
     <a id="downloadlink">Download as a standalone application (under work)</a>-->
