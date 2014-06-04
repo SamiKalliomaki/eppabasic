@@ -189,10 +189,10 @@ exports.Mode = Mode;
 });
 ace.define('ace/mode/xquery/jsoniq_lexer', ['require', 'exports', 'module' ], function(require, exports, module) {
 module.exports = (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({
-1:[function(_dereq_,module,exports){
+1:[function(_dereq_,module,exports){
                                                             var JSONiqTokenizer = exports.JSONiqTokenizer = function JSONiqTokenizer(string, parsingEventHandler)
                                                             {
-                                                              init(string, parsingEventHandler);
+                                                              init(string, parsingEventHandler);
   var self = this;
 
   this.ParseException = function(b, e, s, o, x)
@@ -280,7 +280,7 @@ module.exports = (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=ty
   this.parse_start = function()
   {
     eventHandler.startNonterminal("start", e0);
-    lookahead1W(14);                // ModuleDecl | Annotation | OptionDecl | Operator | Variable | Tag | AttrTest |
+    lookahead1W(14);                // ModuleDecl | Annotation | OptionDecl | Operator | Variable | Tag | AttrTest |
     switch (l1)
     {
     case 58:                        // '<![CDATA['
@@ -424,7 +424,7 @@ module.exports = (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=ty
   this.parse_TagContent = function()
   {
     eventHandler.startNonterminal("TagContent", e0);
-    lookahead1(11);                 // Tag | EndTag | PredefinedEntityRef | ElementContentChar | CharRef | EOF |
+    lookahead1(11);                 // Tag | EndTag | PredefinedEntityRef | ElementContentChar | CharRef | EOF |
     switch (l1)
     {
     case 25:                        // ElementContentChar
@@ -466,7 +466,7 @@ module.exports = (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=ty
   this.parse_AposAttr = function()
   {
     eventHandler.startNonterminal("AposAttr", e0);
-    lookahead1(10);                 // PredefinedEntityRef | EscapeApos | AposAttrContentChar | CharRef | EOF | "'" |
+    lookahead1(10);                 // PredefinedEntityRef | EscapeApos | AposAttrContentChar | CharRef | EOF | "'" |
     switch (l1)
     {
     case 23:                        // EscapeApos
@@ -502,7 +502,7 @@ module.exports = (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=ty
   this.parse_QuotAttr = function()
   {
     eventHandler.startNonterminal("QuotAttr", e0);
-    lookahead1(9);                  // PredefinedEntityRef | EscapeQuot | QuotAttrContentChar | CharRef | EOF | '"' |
+    lookahead1(9);                  // PredefinedEntityRef | EscapeQuot | QuotAttrContentChar | CharRef | EOF | '"' |
     switch (l1)
     {
     case 22:                        // EscapeQuot
@@ -712,7 +712,7 @@ module.exports = (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=ty
   this.parse_Prefix = function()
   {
     eventHandler.startNonterminal("Prefix", e0);
-    lookahead1W(13);                // NCName^Token | S^WS | 'after' | 'allowing' | 'ancestor' | 'ancestor-or-self' |
+    lookahead1W(13);                // NCName^Token | S^WS | 'after' | 'allowing' | 'ancestor' | 'ancestor-or-self' |
     whitespace();
     parse_NCName();
     eventHandler.endNonterminal("Prefix", e0);
@@ -721,7 +721,7 @@ module.exports = (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=ty
   this.parse__EQName = function()
   {
     eventHandler.startNonterminal("_EQName", e0);
-    lookahead1W(12);                // EQName^Token | S^WS | 'after' | 'allowing' | 'ancestor' | 'ancestor-or-self' |
+    lookahead1W(12);                // EQName^Token | S^WS | 'after' | 'allowing' | 'ancestor' | 'ancestor-or-self' |
     whitespace();
     parse_EQName();
     eventHandler.endNonterminal("_EQName", e0);
@@ -2010,7 +2010,7 @@ JSONiqTokenizer.TOKEN =
   "'|'",
   "'}'",
   "'}}'"
-];
+];
 
 },
 {}],

@@ -79,8 +79,21 @@
 <button id="help">Help</button>
 <table>
 <tr><td width="800">
-<div id="code" style="border-style:solid;border-color:white;border-width:1px">FOR i = 1 TO 10
-    CIRCLE 100, 100, i*10
+<div id="code" style="border-style:solid;border-color:white;border-width:1px">CLEAR
+
+FOR i = 0 TO 255
+    FILLCOLOR i, 0, 0
+    FILLCIRCLE 200, 200, (255-i)/3
+NEXT i
+
+FOR i = 0 TO 255
+    FILLCOLOR 0, 0, i
+    FILLCIRCLE 400, 200, (255-i)/3
+NEXT i
+
+FOR i = 0 TO 255
+    FILLCOLOR 0, i, 0
+    FILLCIRCLE 300, 300, (255-i)/3
 NEXT i</div>
 </td><td width="200">
 <table>
