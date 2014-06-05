@@ -32,9 +32,10 @@ Editor.prototype = {
         compiler.defineJsFunction('DOT', [Types.Integer, Types.Integer], 'dot');
         compiler.defineJsFunction('CLEAR', [], 'clear');
         compiler.defineJsFunction('DRAWSCREEN', [], 'drawScreen', undefined, false);
-        compiler.defineJsFunction('PRINT', [Types.Integer], 'printInt');
-        compiler.defineJsFunction('PRINT', [Types.Double], 'printDbl');
 
+        compiler.defineJsFunction('SHOWCONSOLE', [], 'showConsole');
+        compiler.defineJsFunction('HIDECONSOLE', [], 'hideConsole');
+        
         // Mathematical functions
         compiler.defineJsFunction('DBL', [Types.Integer], 'dbl', Types.Double);
         compiler.defineJsFunction('INT', [Types.Double], 'int', Types.Integer);
@@ -42,6 +43,10 @@ Editor.prototype = {
         compiler.defineJsFunction('COS', [Types.Double], 'cos', Types.Double);
 
         compiler.defineJsFunction('SQRT', [Types.Double], 'sqrt', Types.Double);
+        
+        compiler.defineJsFunction('RANDOM', [], 'random', Types.Double);
+        compiler.defineJsFunction('RANDINT', [Types.Integer, Types.Integer], 'randint', Types.Integer);
+        
 
         // Time functions
         compiler.defineJsFunction('HOURS', [], 'hours', Types.Integer);
@@ -59,6 +64,8 @@ Editor.prototype = {
 
         // Output
         compiler.defineJsFunction('PRINT', [Types.String], 'print');
+        compiler.defineJsFunction('PRINT', [Types.Double], 'printDbl');
+        compiler.defineJsFunction('PRINT', [Types.Integer], 'printInt');
 
 
         try {

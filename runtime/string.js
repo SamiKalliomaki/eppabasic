@@ -2,7 +2,7 @@
     this.MEMU8 = new Uint8Array(heap);
     this.MEMS32 = new Int32Array(heap);
     this.MEMF32 = new Float32Array(heap);
-
+    
     // Make all functions to use right this
     for (func in this.env) {
         if (this.env.hasOwnProperty(func))
@@ -12,16 +12,18 @@
 
 EbString.prototype = {
     env: {
-        print: function print(sp) {
-            var ptr = this.MEMS32[(sp - 4) >> 2];
-            var len = this.MEMS32[ptr >> 2];
-            var buf = [];
-            for (var i = 0; i < len; i++) {
-                buf.push(String.fromCharCode(this.MEMU8[ptr + i + 8]));
-            }
-            var str = buf.join('');
-            alert(str);
-        }
+//         print: function print(sp) {
+//             var ptr = this.MEMS32[(sp - 4) >> 2];
+//             var len = this.MEMS32[ptr >> 2];
+//             var buf = [];
+//             for (var i = 0; i < len; i++) {
+//                 buf.push(String.fromCharCode(this.MEMU8[ptr + i + 8]));
+//             }
+//             var str = buf.join('');
+//             var console = document.getElementById("console");
+//             console.value = console.value + str + "\n";
+//             this.canvas.style.visibility = "hidden";
+//         }
     },
 
     stdlib: {}

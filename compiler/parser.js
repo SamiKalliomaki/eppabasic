@@ -447,6 +447,7 @@ Parser.prototype = {
                 case 'mul':
                 case 'div':
                 case 'mod':
+                case 'pow':
                     var op = this.advance();
                     var right = this.parseFactor();
                     left = new Nodes.BinaryOp(left, op.type, right);

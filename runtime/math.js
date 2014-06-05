@@ -33,6 +33,17 @@ EbMath.prototype = {
         sqrt: function sqrt(sp) {
             this.MEMF32[(sp - 4) >> 2] = Math.sqrt(this.MEMF32[(sp - 4) >> 2]);
         },
+        
+        // Random numbers
+        random: function random(sp) {
+            this.MEMF32[sp >> 2] = Math.random();
+        },
+        randint: function randint(sp) {
+            var a = this.MEMS32[(sp - 8) >> 2];
+            var b = this.MEMS32[(sp - 4) >> 2];
+            var r = a+parseInt(Math.random()*(b-a+1));
+            this.MEMS32[(sp - 8) >> 2] = r;
+        },
 
         // Time function
         hours: function hours(sp) {

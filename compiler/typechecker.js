@@ -229,6 +229,7 @@ Typechecker.prototype = {
                     case 'minus':
                     case 'mul':
                     case 'div':
+                    case 'pow':
                     case 'mod':
                         if (leftType === Types.Double || rightType === Types.Double)
                             return expr.type = Types.Double;

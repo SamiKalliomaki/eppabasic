@@ -590,6 +590,7 @@ Compiler.prototype = {
                     minus: '-',
                     mul: '*',
                     div: '/',
+                    pow: 'pow',
                     mod: '%',
 
                     concat: 'strconcat',
@@ -604,12 +605,14 @@ Compiler.prototype = {
                 var op = map[expr.op];
                 var src;
                 if (!op)
-                    throw new Error('Compiler doesn\'t suuport "' + expr.op + '" operator');
+                    throw new Error('Compiler doesn\'t support "' + expr.op + '" operator');
                 if (op === '*' && expr.type === Types.Integer) {
                     // Integer multiplication is a special case
                     src = 'imul(' + leftVal.getValue() + ', ' + rightVal.getValue() + ')';
                 } else if (op === 'strconcat') {
                     src = 'strconcat(' + leftVal.getValue() + ', ' + rightVal.getValue() + ')';
+                } else if (op === 'pow') {
+                    src = 'Math.pow(' + leftVal.getValue() + ", " + rightVal.getValue() + ")";
                 } else {
                     src = leftVal.getValue() + ' ' + op + ' ' + rightVal.getValue();
                 }
