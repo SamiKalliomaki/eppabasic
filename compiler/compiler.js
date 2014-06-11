@@ -129,7 +129,8 @@ Compiler.prototype = {
                 + 'var CS = 0;\n'                                                   // Call stack pointer
 
                 // Standard math functions
-                + 'var imul = stdlib.Math.imul;'
+                + 'var imul = stdlib.Math.imul;\n'
+                + 'var pow = stdlib.Math.pow;\n'
 
                 // Imported functions
                 + this.compileSystemFunctionDefinitions() + '\n'
@@ -612,7 +613,7 @@ Compiler.prototype = {
                 } else if (op === 'strconcat') {
                     src = 'strconcat(' + leftVal.getValue() + ', ' + rightVal.getValue() + ')';
                 } else if (op === 'pow') {
-                    src = 'Math.pow(' + leftVal.getValue() + ", " + rightVal.getValue() + ")";
+                    src = 'pow(' + leftVal.getValue() + ", " + rightVal.getValue() + ")";
                 } else {
                     src = leftVal.getValue() + ' ' + op + ' ' + rightVal.getValue();
                 }
@@ -624,8 +625,6 @@ Compiler.prototype = {
                 return dest;
             case 'FunctionCall':
                 return this.callFunction(expr, context);
-            case 'Range':
-
         }
         throw new Error('Unsupported expression to be compiled "' + expr.nodeType + '"');
     },
@@ -637,7 +636,6 @@ Compiler.prototype = {
             origName: originalName,
             index: this.nextFreeFunction,
             nodes: [],
-            //stackDepth: 0
         };
         this.nextFreeFunction++;
 
@@ -651,7 +649,6 @@ Compiler.prototype = {
             if (func.origName)
                 buf.push('// ' + func.origName);
             buf.push('function ' + func.name + '() {');
-            //buf.push('\t__log(' + i + ');');
             buf.push('\t' + func.nodes.join('\n\t'));
             buf.push('\treturn ' + (func.nativeBreaking ? '0' : '1') + ';');
             buf.push('}');
@@ -814,5 +811,6 @@ CompilerAbsoluteReference.prototype = {
     setValue: function setValue(value) {
         return this.type.memoryType + '[((' + this.offset + ')|0) >> ' + this.type.shift + '] = ' + this.type.cast(value) + ';';
     },
-    pop: function pop() { }
+    pop: function pop() {
+    }
 };

@@ -8,7 +8,7 @@ function Editor() {
 
 Editor.prototype = {
     parse: function parse() {
-//         var parser = new Parser(this.codeBox.value);
+        //         var parser = new Parser(this.codeBox.value);
         var parser = new Parser(editor.getValue());
         try {
             this.ast = parser.parse();
@@ -33,9 +33,11 @@ Editor.prototype = {
         compiler.defineJsFunction('CLEAR', [], 'clear');
         compiler.defineJsFunction('DRAWSCREEN', [], 'drawScreen', undefined, false);
 
-        compiler.defineJsFunction('SHOWCONSOLE', [], 'showConsole');
-        compiler.defineJsFunction('HIDECONSOLE', [], 'hideConsole');
-        
+        compiler.defineJsFunction('TEXT', [Types.Integer, Types.Integer, Types.String], 'text');
+
+        //compiler.defineJsFunction('SHOWCONSOLE', [], 'showConsole');
+        //compiler.defineJsFunction('HIDECONSOLE', [], 'hideConsole');
+
         // Mathematical functions
         compiler.defineJsFunction('DBL', [Types.Integer], 'dbl', Types.Double);
         compiler.defineJsFunction('INT', [Types.Double], 'int', Types.Integer);
@@ -43,10 +45,10 @@ Editor.prototype = {
         compiler.defineJsFunction('COS', [Types.Double], 'cos', Types.Double);
 
         compiler.defineJsFunction('SQRT', [Types.Double], 'sqrt', Types.Double);
-        
+
         compiler.defineJsFunction('RANDOM', [], 'random', Types.Double);
         compiler.defineJsFunction('RANDINT', [Types.Integer, Types.Integer], 'randint', Types.Integer);
-        
+
 
         // Time functions
         compiler.defineJsFunction('HOURS', [], 'hours', Types.Integer);

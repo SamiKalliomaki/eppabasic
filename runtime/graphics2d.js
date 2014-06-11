@@ -2,14 +2,9 @@
     this.canvas = document.createElement('canvas');
     canvasHolder.appendChild(this.canvas);
 
-    this.canvas.style.left = "0px";
-    this.canvas.style.top = "0px";
-    this.canvas.style.position = "absolute";
-    this.canvas.style.background = "black";
-
     this.ctx = this.canvas.getContext('2d');
+    this.MEMU8 = new Int8Array(heap);
     this.MEMS32 = new Int32Array(heap);
-    this.MEMU8 = new Uint8Array(heap);    
     this.MEMF32 = new Float32Array(heap);
 
     // Make all functions to use right this
@@ -17,8 +12,6 @@
         if (this.env.hasOwnProperty(func))
             this.env[func] = this.env[func].bind(this);
     }
-    
-    
 }
 
 Graphics2D.prototype = {
@@ -101,6 +94,20 @@ Graphics2D.prototype = {
             var y = this.MEMS32[(sp - 4) >> 2];
             this.ctx.fillRect(x, y, 1, 1);
         },
+        text: function text(sp) {
+            var ptr = this.MEMS32[(sp - 4) >> 2];
+            var len = this.MEMS32[ptr >> 2];
+            var buf = [];
+            for (var i = 0; i < len; i++) {
+                buf.push(String.fromCharCode(this.MEMU8[ptr + i + 8]));
+            }
+            var str = buf.join('');
+
+            var x = this.MEMS32[(sp - 12) >> 2];
+            var y = this.MEMS32[(sp - 8) >> 2];
+
+            this.ctx.fillText(str, x, y);
+        },
         clear: function clear(sp) {
             var origStyle = this.ctx.fillStyle;
             this.ctx.fillStyle = this.clearColor;
@@ -109,36 +116,6 @@ Graphics2D.prototype = {
         },
         drawScreen: function drawScreen(sp) {
             this.canvas.style.visibility = "visible";
-        },
-
-        showConsole: function showConsole(sp) {
-            this.canvas.style.visibility = "hidden";
-        },
-        hideConsole: function hideConsole(sp) {
-            this.canvas.style.visibility = "visible";
-        },
-
-        print: function print(sp) {
-            var ptr = this.MEMS32[(sp - 4) >> 2];
-            var len = this.MEMS32[ptr >> 2];
-            var buf = [];
-            for (var i = 0; i < len; i++) {
-                buf.push(String.fromCharCode(this.MEMU8[ptr + i + 8]));
-            }
-            var str = buf.join('');
-            var console = document.getElementById("console");
-            console.value = console.value + str + "\n";
-            this.canvas.style.visibility = "hidden";
-        },
-        printInt: function printInt(sp) {
-            var console = document.getElementById("console");
-            console.value = console.value + this.MEMS32[(sp - 4) >> 2] + "\n";
-            this.canvas.style.visibility = "hidden";
-        },
-        printDbl: function printDbl(sp) {
-            var console = document.getElementById("console");
-            console.value = console.value + this.MEMF32[(sp - 4) >> 2] + "\n";
-            this.canvas.style.visibility = "hidden";
         }
     },
     stdlib: {}
