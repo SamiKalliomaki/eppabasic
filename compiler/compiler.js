@@ -364,9 +364,8 @@ Compiler.prototype = {
 
         // Test for continuation in the begining of every loop
         context.push('if ('
-            + loop.variable.location.getValue()
-            + ' > '
-            + stop.getValue()
+            + '(((((' + step.getValue() + ' > 0)|0) & ((' + loop.variable.location.getValue() + ' > ' + stop.getValue() + ')|0)))'
+            + '| ((((' + step.getValue() + ' < 0)|0) & ((' + loop.variable.location.getValue() + ' < ' + stop.getValue() + ')|0)))|0)'
             + ') {'
             );
         {
