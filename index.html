@@ -26,8 +26,8 @@
     <script src="compiler/compiler.js"></script>
     <!--Editor-->
     <script src="editor/editor.js"></script>
+    <script src="editor/filemanager.js"></script>
     <script src="editor/main.js"></script>
-    <script src="editor/files.js"></script>
 </head>
 <body>
     <div id="header">
@@ -38,8 +38,10 @@
         </div>
         <div class="header-block" id="loading-controls">
             <select class="header-ui-element header-select" id="filelist"></select>
+            <button class="header-ui-element header-button" id="new">New</button>
             <button class="header-ui-element header-button" id="load">Load</button>
-            <button class="header-ui-element header-button" id="save">Delete</button>
+            <button class="header-ui-element header-button" id="save">Save</button>
+            <button class="header-ui-element header-button" id="save-as">Save as</button>
         </div>
     </div>
     <div id="main-container">

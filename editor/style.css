@@ -52,6 +52,11 @@ body
 	width: 75px;
 }
 
+#filelist
+{
+	width: 200px;
+}
+
 #main-container
 {
 	flex: 1 1 auto;

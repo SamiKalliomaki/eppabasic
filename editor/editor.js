@@ -10,6 +10,12 @@ function Editor(editorName, errBox) {
 }
 
 Editor.prototype = {
+    getCode: function getCode() {
+        return this.ace.getValue();
+    },
+    setCode: function setCode(code) {
+        this.ace.setValue(code);
+    },
     parse: function parse() {
         //         var parser = new Parser(this.codeBox.value);
         var parser = new Parser(this.ace.getValue());

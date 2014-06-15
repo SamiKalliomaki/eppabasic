@@ -9,6 +9,40 @@ window.addEventListener('load', function init() {
         handles: "e"
     });
 
+    var filemanager = new Filemanager();
+    var openedFile = null;
+
+    document.getElementById('new').addEventListener('click', function() {
+        editor.setCode('');
+        openedFile = null;
+    });
+    document.getElementById('load').addEventListener('click', function() {
+        var file = filemanager.fileDialog(false);
+        if(file !== null) {
+            editor.setCode(filemanager.loadFile(file));
+            openedFile = file;
+        }
+    });
+    document.getElementById('save').addEventListener('click', function() {
+        if(openedFile === null) {
+            openedFile = filemanager.fileDialog(true);
+
+            if(openedFile === null) {
+                return;
+            }
+        }
+
+        filemanager.saveFile(openedFile, editor.getCode());
+    });
+    document.getElementById('save-as').addEventListener('click', function() {
+        var file = filemanager.fileDialog(true);
+
+        if(file !== null) {
+            openedFile = file;
+            filemanager.saveFile(openedFile, editor.getCode());
+        }        
+    });
+
     document.getElementById('compilerun').addEventListener('click', function compilerun() {
         editor.parse();
         editor.compile();
