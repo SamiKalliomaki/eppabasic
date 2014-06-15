@@ -1,15 +1,18 @@
-﻿/// <reference path="compiler/parser.js" />
-/// <reference path="compiler/compiler.js" />
+﻿/// <reference path="../compiler/parser.js" />
+/// <reference path="../compiler/compiler.js" />
 
-function Editor() {
-    this.codeBox = document.getElementById('code');
-    this.errBox = document.getElementById('errBox');
+function Editor(editorName, errBox) {
+    this.editorName = editorName;
+    this.errBox = errBox;
+
+    this.ace = ace.edit(editorName);
+    this.ace.getSession().setMode("mode/eppabasic");
 }
 
 Editor.prototype = {
     parse: function parse() {
         //         var parser = new Parser(this.codeBox.value);
-        var parser = new Parser(editor.getValue());
+        var parser = new Parser(this.ace.getValue());
         try {
             this.ast = parser.parse();
         } catch (e) {

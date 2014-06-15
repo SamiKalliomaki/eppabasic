@@ -1,0 +1,88 @@
+*
+{
+	margin: 0;
+	padding: 0;
+}
+
+html, body
+{
+	height: 100%;
+}
+
+body
+{
+	display: flex;
+	flex-flow: column;
+}
+
+#header
+{
+	flex: 0 0 50px;
+	background-color: black;
+	border-bottom: 2px solid blue;
+	padding-left: 160px;
+	vertical-align: middle;
+	line-height: 50px;
+}
+
+.header-block
+{
+	display: inline-block;
+	margin-right: 20px;
+}
+
+#logo
+{
+	height: 40px;
+	position: absolute;
+	left: 5px;
+	top: 5px;
+}
+
+.header-ui-element
+{
+	height: 30px;
+	margin-right: 5px;
+	border: 1px solid blue;
+	background-color: #9ae3ff;
+}
+
+.header-button
+{
+	width: 75px;
+}
+
+#main-container
+{
+	flex: 1 1 auto;
+
+	display: flex;
+	flex-flow: row;
+	align-items: stretch;
+}
+
+#editor
+{
+	flex: 0 0 50%;
+
+	border-right: 5px solid #CCCCCC;
+	width: 0px;
+}
+
+#manual
+{
+	flex: 1 1 auto;
+
+	padding: 5px;
+	max-height: 100%;
+	overflow: auto;
+}
+
+#footer
+{
+	height: 20px;
+	line-height: 20px;
+	vertical-align: middle;
+
+	background-color: #DDDDDD;
+}

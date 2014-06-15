@@ -1,25 +1,16 @@
-﻿<!DOCTYPE html>
-<html>
+﻿<!doctype html>
+<html lang="en">
 <head>
-    <title>Eppabasic</title>
-    <style>
-        #code {
-            width: 100%;
-            height: 30em;
-        }
+    <meta charset="UTF-8">
+    <title>EppaBasic</title>
 
-        #errBox {
-            color: #f00;
-        }
-
-        #editor {
-            position: absolute;
-            top: 0;
-            right: 0;
-            bottom: 0;
-            left: 0;
-        }
-    </style>
+    <link rel="stylesheet" href="editor/style.css">
+    
+    <!-- Libraries -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/themes/smoothness/jquery-ui.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
+    <script src="ace/ace.js" type="text/javascript" charset="utf-8"></script>
     <!--Compiler recources-->
     <script src="compiler/static/math.js"></script>
     <script src="compiler/static/memory.js"></script>
@@ -34,122 +25,43 @@
     <script src="compiler/atomicchecker.js"></script>
     <script src="compiler/compiler.js"></script>
     <!--Editor-->
+    <script src="editor/editor.js"></script>
+    <script src="editor/main.js"></script>
     <script src="editor/files.js"></script>
-    <script src="editor.js"></script>
-    <script>
-        window.addEventListener('load', function init() {
-            var editor = new Editor();
-            window.ebeditor = editor;
-            document.getElementById('compile&run').addEventListener('click', function compilerun() {
-                editor.parse();
-                editor.compile();
-
-                editor.runtimeReady(function ready() {
-                    editor.window.ebruntime.init();
-                    editor.window.ebruntime.start();
-                });
-                editor.openRuntime();
-            }, false);
-            document.getElementById('compile&view').addEventListener('click', function compileview() {
-                editor.parse();
-                editor.compile();
-
-                editor.runtimeReady(function ready() {
-                    var code = editor.window.document.documentElement.innerHTML;
-                    editor.closeRuntime();
-
-                    alert(code);
-                });
-                editor.openRuntime();
-            }, false);
-            //document.getElementById('compile&download').addEventListener('click', function compiledownload() {
-            //    editor.parse();
-            //    editor.compile();
-
-            //    editor.runtimeReady(function ready() {
-            //        var code = editor.window.document.documentElement.innerHTML;
-            //        editor.closeRuntime();
-
-            //        var blob = new Blob([code]);
-            //        var url = URL.createObjectURL(blob);
-            //        document.getElementById('downloadlink').href = url;
-            //    });
-            //    editor.openRuntime();
-            //}, false);
-        });
-    </script>
 </head>
-<body bgcolor="black">
-    <img src="logo.png">
-    <!--    <div>
-            <a href="examples">Check for example codes!</a>
-        </div>-->
-    <br>
-    <button id="newcode" onclick="newCode()">New code</button>
-    <button id="newcode" onclick="saveCode()">Save code</button>
-    <button id="publish">Publish</button>
-    <button id="help">Help</button>
-    <table>
-        <tr>
-            <td width="800">
-                <div id="code" style="border-style:solid;border-color:white;border-width:1px">
-                    CLEAR
+<body>
+    <div id="header">
+        <img src="logo.png" id="logo">
+        <div class="header-block" id="code-controls">
+            <button class="header-ui-element header-button" id="compilerun">Run</button>
+            <button class="header-ui-element header-button" id="compileview">Source</button>
+        </div>
+        <div class="header-block" id="loading-controls">
+            <select class="header-ui-element header-select" id="filelist"></select>
+            <button class="header-ui-element header-button" id="load">Load</button>
+            <button class="header-ui-element header-button" id="save">Delete</button>
+        </div>
+    </div>
+    <div id="main-container">
+        <div id="editor" class="panel">CLEAR
 
-                    FOR i = 0 TO 255
-                    FILLCOLOR i, 0, 0
-                    FILLCIRCLE 200, 200, (255-i)/3
-                    NEXT i
+FOR i = 0 TO 255
+    FILLCOLOR i, 0, 0
+    FILLCIRCLE 200, 200, (255-i)/3
+NEXT i
 
-                    FOR i = 0 TO 255
-                    FILLCOLOR 0, 0, i
-                    FILLCIRCLE 400, 200, (255-i)/3
-                    NEXT i
+FOR i = 0 TO 255
+    FILLCOLOR 0, 0, i
+    FILLCIRCLE 400, 200, (255-i)/3
+NEXT i
 
-                    FOR i = 0 TO 255
-                    FILLCOLOR 0, i, 0
-                    FILLCIRCLE 300, 300, (255-i)/3
-                    NEXT i
-                </div>
-            </td>
-            <td width="200">
-                <table>
-                    <tr>
-                        <td>
-                            <font color="white">Code list</font>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <select id="filelist" size="15" style="width:120px"></select>
-                            <script>updateList();</script>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <button id="loadcode" onclick="loadFile()">Load code</button><br>
-                            <button id="deletecode" onclick="deleteCode()">Delete code</button>
-                        </td>
-                    </tr>
-                </table>
-            </td>
-        </tr>
-    </table>
-    <script src="ace/ace.js" type="text/javascript" charset="utf-8"></script>
-    <script>
-        var editor = ace.edit("code");
-        editor.setTheme("ace/theme/terminal");
-        editor.setHighlightActiveLine(false);
-        editor.renderer.setShowGutter(false);
-        editor.renderer.setPrintMarginColumn(false);
-        editor.renderer.setPadding(5);
-        //editor.setHighlightGutterLine(false);
-        //editor.getSession().setMode("ace/mode/javascript");
-    </script>
-    <div id="errBox"></div>
-    <button id="compile&run">Start code</button>
-    <button id="compile&view">View compiled source</button>
-    <pre id="codeBox"></pre>
-    <!--<button id="compile&download">Compile&amp;Download</button>
-    <a id="downloadlink">Download as a standalone application (under work)</a>-->
+FOR i = 0 TO 255
+    FILLCOLOR 0, i, 0
+    FILLCIRCLE 300, 300, (255-i)/3
+NEXT i
+        </div>
+        <div id="manual" class="panel">
+        </div>
+    </div>
 </body>
 </html>
