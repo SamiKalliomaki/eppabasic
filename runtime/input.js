@@ -50,8 +50,9 @@ Input.prototype = {
     },
 
     keyDown: function keyDown(e) {
+        if (!this.keyDown[e.keyCode])
+            this.keysHit[e.keyCode] = true;
         this.keysDown[e.keyCode] = true;
-        this.keysHit[e.keyCode] = true;
         e.preventDefault();
         return false;
     },

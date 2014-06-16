@@ -1,5 +1,5 @@
 window.addEventListener('load', function init() {
-	var editor = new Editor("editor", document.getElementById('manual'));
+    var editor = new Editor("editor", document.getElementById('manual'));
     window.ebeditor = editor;
 
     $('#editor').resizable({
@@ -54,16 +54,20 @@ window.addEventListener('load', function init() {
         editor.openRuntime();
     });
     document.getElementById('compileview').addEventListener('click', function compileview() {
-        editor.parse();
-        editor.compile();
+        var ast = editor.parse();
+        editor.compile(ast);
 
-        editor.runtimeReady(function ready() {
-            var code = editor.window.document.documentElement.innerHTML;
-            editor.closeRuntime();
+        var code = editor.compiled;
+        // TODO Should really be manual box instead of errbox
+        editor.errBox.innerHTML = code.replace(/\n/g, '<br>');
 
-            alert(code);
-        });
-        editor.openRuntime();
+        // editor.runtimeReady(function ready() {
+        //     var code = editor.window.document.documentElement.innerHTML;
+        //     editor.closeRuntime();
+        //
+        //     alert(code);
+        // });
+        // editor.openRuntime();
     }, false);
     //document.getElementById('compile&download').addEventListener('click', function compiledownload() {
     //    editor.parse();

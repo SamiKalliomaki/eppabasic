@@ -4684,7 +4684,7 @@ function TreeBuilder() {
 	modes.afterBody.endTagHtml = function(name) {
 		if (tree.context) {
 			tree.parseError('end-html-in-innerhtml');
-		} else {
+		} else {
 			tree.setInsertionMode('afterAfterBody');
 		}
 	};
@@ -6965,7 +6965,7 @@ TreeBuilder.prototype.generateImpliedEndTags = function(exclude) {
 		this.generateImpliedEndTags(exclude);
 	}
 };
-TreeBuilder.prototype.reconstructActiveFormattingElements = function() {
+TreeBuilder.prototype.reconstructActiveFormattingElements = function() {
 	if (this.activeFormattingElements.length === 0)
 		return;
 	var i = this.activeFormattingElements.length - 1;
@@ -7025,7 +7025,7 @@ TreeBuilder.prototype.ensureNoahsArkCondition = function(item) {
 			return;
 		candidates = remainingCandidates;
 		remainingCandidates = [];
-	}
+	}
 	for (var i = kNoahsArkCapacity - 1; i < candidates.length; i++)
 		this.removeElementFromActiveFormattingElements(candidates[i]);
 };
@@ -7055,7 +7055,7 @@ TreeBuilder.prototype.clearActiveFormattingElements = function() {
 TreeBuilder.prototype.reparentChildren = function(oldParent, newParent) {
 	throw new Error("Not implemented");
 };
-TreeBuilder.prototype.setFragmentContext = function(context) {
+TreeBuilder.prototype.setFragmentContext = function(context) {
 	this.context = context;
 };
 TreeBuilder.prototype.parseError = function(code, args) {
@@ -7741,7 +7741,7 @@ Node.prototype.visit = function(treeParser) {
 };
 Node.prototype.revisit = function(treeParser) {
 	return;
-};
+};
 Node.prototype.detach = function() {
 	if (this.parentNode !== null) {
 		this.parentNode.removeChild(this);
@@ -7793,7 +7793,7 @@ ParentNode.prototype.insertBefore = function(child, sibling) {
 	return child;
 };
 
-ParentNode.prototype.insertBetween = function(child, prev, next) {
+ParentNode.prototype.insertBetween = function(child, prev, next) {
 	if (!next) {
 		return this.appendChild(child);
 	}
@@ -7984,7 +7984,7 @@ function SkippedEntity(name) {
 SkippedEntity.prototype = Object.create(Node.prototype);
 SkippedEntity.prototype.visit = function(treeParser) {
 	treeParser.skippedEntity(this.name, this);
-};
+};
 function ProcessingInstruction(target, data) {
 	Node.call(this);
 	this.target = target;
