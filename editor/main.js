@@ -75,10 +75,17 @@ window.addEventListener('load', function init() {
     // Keyboard listener
     document.body.addEventListener('keydown', function keydown(e) {
         if (e.keyCode == 116 || (e.keyCode == 82 && e.ctrlKey)) {
-            // F5
-            compilerun();
-            e.preventDefault();
-            return false;
+            // F5 or CTRL+R
+            try {
+                compilerun();
+            } finally {
+                e.preventDefault();
+                return false;
+            }
+        }
+        if (e.keyCode == 112) {
+            // F1
+            // TODO Show help
         }
     }, true);
 
