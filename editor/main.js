@@ -74,13 +74,19 @@ window.addEventListener('load', function init() {
 
     // Keyboard listener
     document.body.addEventListener('keydown', function keydown(e) {
-        if (e.keyCode == 116) {
+        if (e.keyCode == 116 || (e.keyCode == 82 && e.ctrlKey)) {
             // F5
             compilerun();
             e.preventDefault();
             return false;
         }
     }, true);
+
+    // Tell user about page reload
+    window.addEventListener('beforeunload', function beforunload(e) {
+        e.preventDefault();
+        return "Are you sure you want to refresh this page. All your code is lost."
+    });
 
     //document.getElementById('compile&download').addEventListener('click', function compiledownload() {
     //    editor.parse();
