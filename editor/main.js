@@ -43,7 +43,7 @@ window.addEventListener('load', function init() {
         }        
     });
 
-    document.getElementById('compilerun').addEventListener('click', function compilerun() {
+    function compilerun() {
         editor.parse();
         editor.compile();
 
@@ -52,7 +52,9 @@ window.addEventListener('load', function init() {
             editor.window.ebruntime.start();
         });
         editor.openRuntime();
-    });
+    }
+    document.getElementById('compilerun').addEventListener('click', compilerun);
+
     document.getElementById('compileview').addEventListener('click', function compileview() {
         var ast = editor.parse();
         editor.compile(ast);
@@ -69,6 +71,17 @@ window.addEventListener('load', function init() {
         // });
         // editor.openRuntime();
     }, false);
+
+    // Keyboard listener
+    document.body.addEventListener('keydown', function keydown(e) {
+        if (e.keyCode == 116) {
+            // F5
+            compilerun();
+            e.preventDefault();
+            return false;
+        }
+    }, true);
+
     //document.getElementById('compile&download').addEventListener('click', function compiledownload() {
     //    editor.parse();
     //    editor.compile();
