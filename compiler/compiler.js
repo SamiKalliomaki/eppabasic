@@ -312,6 +312,7 @@ Compiler.prototype = {
      */
     callFunction: function callFunction(func, context) {
         var origSpOffset = context.spOffset;
+
         // Push parameters to the stack
         func.params.forEach(function each(param) {
             this.expr(param, context);
@@ -549,7 +550,7 @@ Compiler.prototype = {
                 return context.pushStack(expr.type, expr.val);
             case 'String':
                 // Create pointer
-                var ptr = context.pushStack(expr.type);
+                var ptr = context.getTemporary(expr.type);//context.pushStack(expr.type);
                 // Get value for it
                 context.push(ptr.setValue('memreserve4((' + (8 + expr.val.length) + ')|0)'));
                 // Save string length
@@ -560,7 +561,11 @@ Compiler.prototype = {
                     buf.push(new CompilerAbsoluteReference(Types.Char, ptr.getValue() + ' + ' + (i + 8), context).setValue(expr.val.charCodeAt(i)));
                 }
                 context.push(buf.join(''));
-                return ptr;
+                
+                // For now just push the pointer to the top of the stack
+                var stackptr = context.pushStack(expr.type, ptr.getValue());
+                ptr.pop();
+                return stackptr;
             case 'Variable':
                 if (expr.dimensions) {
                     var val = context.pushStack(expr.type);
@@ -688,6 +693,8 @@ function CompilerContext(name, entry, type) {
     this.spOffset = 0;
     this.offsets = [];
     this.returnType = type;
+    this.temporaries = [];
+    this.lastTemporary = 0;
 }
 
 CompilerContext.prototype = {
@@ -703,6 +710,16 @@ CompilerContext.prototype = {
     popCallStack: function popCallStack() {
         this.push('CS = (CS - ' + Types.Integer.size + ')|0;');
     },
+
+    pushOffset: function pushOffset() {
+        this.offsets.push(this.spOffset);
+    },
+    popOffset: function popOffset() {
+        var oldOffset = this.offsets.pop();
+        this.push('SP = (SP - ' + (this.spOffset - oldOffset) + ')|0;');
+        this.spOffset = oldOffset;
+    },
+
     pushStack: function pushStack(type, value) {
         this.spOffset += type.size;
         var code = '';
@@ -724,49 +741,51 @@ CompilerContext.prototype = {
             this.spOffset -= size;
         this.push('SP = (SP - ' + size + ')|0;');
     },
-    pushOffset: function pushOffset() {
-        this.offsets.push(this.spOffset);
-    },
-    popOffset: function popOffset() {
-        var oldOffset = this.offsets.pop();
-        this.push('SP = (SP - ' + (this.spOffset - oldOffset) + ')|0;');
-        this.spOffset = oldOffset;
-    },
-    getVariableValue: function getVariableValue(variable, type) {
-        var offset;
-        if (typeof variable === 'Number') {
-            offset = variable;
-        } else {
-            offset = this.spOffset - variable.location
-            if (!type)
-                type = variable.type;
+
+    getTemporary: function getTemporary(type) {
+        var res = this.temporaries.find(function find(tmp) {
+            if (tmp.type === type && tmp.used === false)
+                return true;
+
+            return false;
+        });
+
+        if (!res) {
+            var i = this.lastTemporary++;
+            res = [];
+            do {
+                res.push(String.fromCharCode(97 + i % 26));
+                i = (i / 26) | 0;
+            } while (i > 0);
+            res = res.join('');
+            if (type === Types.Double)
+                this.func.nodes.unshift('var ' + res + ' = 0.0;');
+            else
+                this.func.nodes.unshift('var ' + res + ' = 0;');
+            res = new CompilerTemporaryReference(type, res, this);
+            this.temporaries.push(res);
         }
-        if (!type)
-            throw new Error('Type not defined');
 
-        return type.cast(type.memoryType + '[((SP - ' + offset + ')|0) >> ' + type.shift + ']');
+        res.used = true;
+
+        return res;
     },
-    setVariableValue: function setVariableValue(variable, value, type) {
-        var offset;
-        if (typeof variable === 'Number') {
-            offset = variable;
-        } else {
-            offset = this.spOffset - variable.location
-            if (!type)
-                type = variable.type;
-        }
-        if (!type)
-            throw new Error('Type not defined');
-
-        return type.memoryType + '[((SP - ' + offset + ')|0) >> ' + type.shift + '] = ' + type.cast(value) + ';';
+    freeTemporary: function freeTemporary(tmp) {
+        tmp.used = false;
     },
 
 
+    /*
+     * Append code to the end of output function
+     */
     push: function push(str) {
         this.func.nodes.push(str);
     },
     setFunction: function setFunction(func) {
         this.func = func;
+        // Temporaries are only for one function
+        this.temporaries = [];
+        this.lastTemporary = 0;
     }
 };
 
@@ -810,6 +829,24 @@ CompilerAbsoluteReference.prototype = {
     setValue: function setValue(value) {
         return this.type.memoryType + '[((' + this.offset + ')|0) >> ' + this.type.shift + '] = ' + this.type.cast(value) + ';';
     },
+    pop: function pop() { }
+};
+
+
+function CompilerTemporaryReference(type, varname, context) {
+    this.type = type;
+    this.varname = varname;
+    this.context = context;
+}
+
+CompilerTemporaryReference.prototype = {
+    getValue: function getValue() {
+        return this.type.cast(this.varname);
+    },
+    setValue: function setValue(value) {
+        return this.varname + ' = ' + this.type.cast(value) + ';';
+    },
     pop: function pop() {
+        this.context.freeTemporary(this);
     }
 };
