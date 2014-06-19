@@ -1,8 +1,12 @@
 ﻿/// <reference path="lexer.js" />
+/// <reference path="operators.js" />
 /// <reference path="nodes.js" />
 
-function Parser(input) {
+function Parser(input, operators) {
+    /// <param name='input' type='String' />
+    /// <param name='operators' type='OperatorContainer' />
     this.lexer = new Lexer(input);
+    this.operators = operators;
 }
 
 Parser.prototype = {
@@ -409,85 +413,76 @@ Parser.prototype = {
     /*
      * Parses an expression (ie. 1+2, x*3, 2<1 AND 2<3)
      */
-    parseExpr: function parseExpr() {
-        var left = this.parseMathExpr();
-        switch (this.peek().type) {
-            case 'eq':
-            case 'neq':
-            case 'lt':
-            case 'lte':
-            case 'gt':
-            case 'gte':
-                var op = this.advance();
-                var right = this.parseMathExpr();
-                return new Nodes.BinaryOp(left, op.type, right);
-        }
-        return left;
-    },
-    parseMathExpr: function parseMathExpr() {
-        var left = this.parseTerm();
-        while (1) {
-            switch (this.peek().type) {
-                case 'plus':
+    parseExpr: function parseExpr(level) {
+        if (!level)
+            level = 0;
+        var tokens = this.operators.getTokensByPriority(level);
+        if (!tokens) {
+            // No operators at this level any more -> let's parse whats left
+            var t = this.advance();
+
+            // Test if it is an expression in parenthesis
+            if (t.type === 'lparen') {
+                var e = this.parseExpr();
+                this.expect('rparen');
+                return e;
+            }
+
+            switch (t.type) {
+                // TODO Move unary operators away from parseExpr
                 case 'minus':
-                case 'concat':
-                    var op = this.advance();
-                    var right = this.parseTerm();
-                    left = new Nodes.BinaryOp(left, op.type, right);
+                    return new Nodes.UnaryOp('neg', this.parseExpr(level));
+                case 'number':
+                    return new Nodes.Number(t.val, t.line);
+                case 'string':
+                    return new Nodes.String(t.val, t.line);
+                case 'identifier':
+                    // An identifier! Then it must be either function call or variable
+                    if (this.peek().type === 'lparen') {
+                        // It's function call!
+                        var params = this.parseParams();
+                        return new Nodes.FunctionCall(t.val, params, t.line);
+                    }
+                    var dimensions;
+                    if (this.peek().type === 'lbracket') {
+                        // An array
+                        dimensions = this.parseDimensions();
+                    }
+                    // Ok, it's just variable
+                    return new Nodes.Variable(t.val, dimensions, t.line);
                     break;
                 default:
-                    return left;
+                    throw new Error('Number or variable expected instead of "' + t.type + '" at line ' + t.line);
             }
-        }
-    },
-    parseTerm: function parseTerm() {
-        var left = this.parseFactor();
-        while (1) {
-            switch (this.peek().type) {
-                case 'mul':
-                case 'div':
-                case 'mod':
-                case 'pow':
-                    var op = this.advance();
-                    var right = this.parseFactor();
-                    left = new Nodes.BinaryOp(left, op.type, right);
-                    break;
-                default:
-                    return left;
-            }
-        }
-    },
-    parseFactor: function parseFactor() {
-        var t = this.advance();
-        if (t.type === 'lparen') {
-            var e = this.parseExpr();
-            this.expect('rparen');
-            return e;
         }
 
-        switch (t.type) {
-            case 'minus':
-                return new Nodes.UnaryOp('neg', this.parseFactor());
-            case 'number':
-                return new Nodes.Number(t.val);
-            case 'string':
-                return new Nodes.String(t.val);
-            case 'identifier':
-                if (this.peek().type === 'lparen') {
-                    // A function call
-                    var params = this.parseParams();
-                    return new Nodes.FunctionCall(t.val, params);
-                }
-                var dimensions;
-                if (this.peek().type === 'lbracket') {
-                    // An array
-                    dimensions = this.parseDimensions();
-                }
-                return new Nodes.Variable(t.val, dimensions);
-                break;
-            default:
-                throw new Error('Number or variable expected instead of "' + t.type + '" at line ' + t.line);
-        }
+        // Ok, we have a list of tokens.
+        // First parse the first operand
+        var left = this.parseExpr(level + 1);
+        do {
+            // Then test if we have right kind of token awaiting
+            var opType = this.peek().type;
+            var tokenType = tokens.find(function find(token) {
+                return token == opType;
+            });
+
+            if (!tokenType) {
+                // Ok, we are out of right kind of tokens
+                // Just return what we have
+                return left;
+            }
+
+            // Take operator token for later use
+            var op = this.expect(tokenType);
+
+            // Then last but not least parse the next operand of the expression
+            var right = this.parseExpr(level + 1);
+
+            left = new Nodes.BinaryOp(left, tokenType, right, op.line);
+        } while (tokens.chainable);
+        // Ok, this level of operators was not chainable
+        // Just be quiet and give out what we got
+        return left;
     },
 
     parseDimensions: function parseDimensions() {

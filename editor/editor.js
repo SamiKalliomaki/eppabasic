@@ -1,9 +1,13 @@
 ﻿/// <reference path="../compiler/parser.js" />
+/// <reference path="../compiler/operators.js" />
 /// <reference path="../compiler/compiler.js" />
 
 function Editor(editorName, errBox) {
     this.editorName = editorName;
     this.errBox = errBox;
+
+    this.operators = new OperatorContainer();
+    this.operators.addDefaultOperators();
 
     this.ace = ace.edit(editorName);
     this.ace.getSession().setMode("mode/eppabasic");
@@ -18,7 +22,7 @@ Editor.prototype = {
     },
     parse: function parse() {
         //         var parser = new Parser(this.codeBox.value);
-        var parser = new Parser(this.ace.getValue());
+        var parser = new Parser(this.ace.getValue(), this.operators);
         try {
             this.ast = parser.parse();
         } catch (e) {
