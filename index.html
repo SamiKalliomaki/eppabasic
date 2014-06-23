@@ -28,6 +28,7 @@
     <script src="editor/editor.js"></script>
     <script src="editor/filemanager.js"></script>
     <script src="editor/main.js"></script>
+    <script src="editor/users.js"></script>
 </head>
 <body>
     <div id="header">
@@ -43,6 +44,37 @@
             <button class="header-ui-element header-button" id="save">Save</button>
             <button class="header-ui-element header-button" id="save-as">Save as</button>
         </div>
+        <div class="header-block" id="user-controls">
+            <div id="user-status">
+                <a id="login-link" href="">Login</a>
+            </div>
+            <div id="login-box" class="top-right-box">
+                <form id="login-form">
+                    <label for="login-username">Username:</label>
+                    <input type="text" name="username" id="login-username"><br>
+                    <label for="login-password">Password:</label>
+                    <input type="password" name="password" id="login-password"><br>
+                    <div class="submit-box">
+                        <input type="submit" value="Login" id="login">
+                    </div>
+                    <a href="#" id="register-link">No account? Register</a>
+                </form>
+                <form id="register-form">
+                    <label for="register-username">Username:</label>
+                    <input type="text" name="username" id="register-username"><br>
+                    <label for="register-email">Email:</label>
+                    <input type="email" name="email" id="register-email"><br>
+                    <label for="register-password">Password:</label>
+                    <input type="password" name="password" id="register-password"><br>
+                    <label for="register-password-again">Password again:</label>
+                    <input type="password" name="password-again" id="register-password-again"><br>
+                    <div class="submit-box">
+                        <input type="submit" value="Register" id="register">
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="clear"></div>
     </div>
     <div id="main-container">
         <div id="editor" class="panel">CLEAR
