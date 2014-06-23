@@ -19,7 +19,7 @@ body
 {
 	flex: 0 0 50px;
 	background-color: black;
-	border-bottom: 2px solid blue;
+	border-bottom: 3px solid #410C02;
 	padding-left: 160px;
 	vertical-align: middle;
 	line-height: 50px;
@@ -41,10 +41,11 @@ body
 
 .header-ui-element
 {
+	color: #AAAAAA;
 	height: 30px;
 	margin-right: 5px;
-	border: 1px solid blue;
-	background-color: #9ae3ff;
+	border: 2px solid #031E29;
+	background-color: #046184;
 }
 
 .header-button
@@ -70,12 +71,15 @@ body
 {
 	flex: 0 0 50%;
 
-	border-right: 5px solid #CCCCCC;
+	border-right: 2px solid #410C02;
 	width: 0px;
 }
 
 #manual
 {
+	background-color: black;
+	color: white;
+
 	flex: 1 1 auto;
 
 	padding: 5px;

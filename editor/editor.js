@@ -6,7 +6,9 @@ function Editor(editorName, errBox) {
     this.errBox = errBox;
 
     this.ace = ace.edit(editorName);
-    this.ace.getSession().setMode("mode/eppabasic");
+    this.ace.setTheme('ace/theme/terminal');
+    this.ace.getSession().setMode('mode/eppabasic');
+
 }
 
 Editor.prototype = {
