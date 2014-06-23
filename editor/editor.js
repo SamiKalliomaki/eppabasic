@@ -8,6 +8,7 @@ function Editor(editorName, errBox) {
     this.ace = ace.edit(editorName);
     this.ace.setTheme('ace/theme/terminal');
     this.ace.getSession().setMode('mode/eppabasic');
+    this.ace.setPrintMarginColumn(false);
 
 }
 
