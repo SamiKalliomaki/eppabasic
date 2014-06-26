@@ -2,8 +2,11 @@
 /// <reference path="typechecker.js" />
 /// <reference path="atomicchecker.js" />
 
-function Compiler(ast) {
+function Compiler(ast, operators) {
+    /// <param name='operators' type='OperatorContainer' />
+
     this.ast = ast;
+    this.operators = operators;
     this.functions = [];
     this.buf = [];
 
@@ -89,7 +92,7 @@ Compiler.prototype = {
         }.bind(this));
 
         // Do typechecking
-        var checker = new Typechecker(this.ast, this.functions);
+        var checker = new Typechecker(this.ast, this.functions, this.operators);
         checker.check();
         checker = new Atomicchecker(this.ast, this.functions);
         checker.check();
@@ -246,7 +249,7 @@ Compiler.prototype = {
                         if (node.initial)
                             throw new Error('Initial values not supported for arrays');
                         var dims = this.expr(node.dimensions, context);
-                        context.push(node.location.setValue('memreserve' + node.type.size + '((' + dims.getValue() + '*' + node.type.size + ')|0)'));
+                        context.push(node.location.setValue('(memreserve' + node.type.size + '((' + dims.getValue() + '*' + node.type.size + ')|0)|0)'));
                         context.popStack(node.dimensions.type);
                     }
                     if (node.initial) {
@@ -255,7 +258,7 @@ Compiler.prototype = {
                         // Copy it from there to the variable location
                         context.push(node.location.setValue(val.getValue()));
                         // Pop the original expression result from the stack
-                        context.popStack(node.initial.type);
+                        val.pop();
                     }
                     break;
                 case 'VariableAssignment':
@@ -301,6 +304,9 @@ Compiler.prototype = {
                     console.log(node);
                     throw new Error('Unsupported node type "' + node.nodeType + '"');
             }
+
+            // Free all reserved memory
+            context.freeQueuedObjects();
         }.bind(this));
 
         // Remove variables
@@ -313,9 +319,16 @@ Compiler.prototype = {
     callFunction: function callFunction(func, context) {
         var origSpOffset = context.spOffset;
 
+        //var params = [];
         // Push parameters to the stack
         func.params.forEach(function each(param) {
-            this.expr(param, context);
+            var ref = this.expr(param, context);
+            //if (ref.reftype !== 'stack') {
+            //    var newref = context.pushStack(ref);
+            //    ref.pop();
+            //    ref = newref;
+            //}
+            //params.push(ref);
         }.bind(this));
 
         // Now call the function
@@ -335,6 +348,11 @@ Compiler.prototype = {
 
             context.setFunction(retFunc);
         }
+
+        // Free all parameters
+        ////while (params.length)
+        ////    params.pop().pop(false);
+        //context.freeQueuedObjects();
 
         // Return stack
         context.spOffset = origSpOffset;
@@ -561,7 +579,7 @@ Compiler.prototype = {
                     buf.push(new CompilerAbsoluteReference(Types.Char, ptr.getValue() + ' + ' + (i + 8), context).setValue(expr.val.charCodeAt(i)));
                 }
                 context.push(buf.join(''));
-                
+
                 // For now just push the pointer to the top of the stack
                 var stackptr = context.pushStack(expr.type, ptr.getValue());
                 ptr.pop();
@@ -589,39 +607,19 @@ Compiler.prototype = {
                 var dest = context.pushStack(expr.type);
                 var leftVal = this.expr(expr.left, context);
                 var rightVal = this.expr(expr.right, context);
-
-                var map = {
-                    plus: '+',
-                    minus: '-',
-                    mul: '*',
-                    div: '/',
-                    pow: 'pow',
-                    mod: '%',
-
-                    concat: 'strconcat',
-
-                    lt: '<',
-                    lte: '<=',
-                    gt: '>',
-                    gte: '>=',
-                    eq: '==',
-                    neq: '!='
-                };
-                var op = map[expr.op];
+                var operator = expr.operator;
+                var comp = operator.compiler;
                 var src;
-                if (!op)
-                    throw new Error('Compiler doesn\'t support "' + expr.op + '" operator');
-                if (op === '*' && expr.type === Types.Integer) {
-                    // Integer multiplication is a special case
-                    src = 'imul(' + leftVal.getValue() + ', ' + rightVal.getValue() + ')';
-                } else if (op === 'strconcat') {
-                    src = 'strconcat(' + leftVal.getValue() + ', ' + rightVal.getValue() + ')';
-                } else if (op === 'pow') {
-                    src = 'pow(' + leftVal.getValue() + ", " + rightVal.getValue() + ")";
+                if (comp.infix) {
+                    src = '(' + leftVal.type.castTo(leftVal.getValue(), comp.leftType) + ')'
+                            + comp.func
+                            + '(' + rightVal.type.castTo(rightVal.getValue(), comp.rightType) + ')';
                 } else {
-                    src = leftVal.getValue() + ' ' + op + ' ' + rightVal.getValue();
+                    src = comp.func + '(' + leftVal.type.castTo(leftVal.getValue(), comp.leftType) + ','
+                             + rightVal.type.castTo(rightVal.getValue(), comp.rightType) + ')';
                 }
 
+                src = comp.returnType.cast(src);
                 context.push(dest.setValue(src));
 
                 rightVal.pop();
@@ -695,6 +693,7 @@ function CompilerContext(name, entry, type) {
     this.returnType = type;
     this.temporaries = [];
     this.lastTemporary = 0;
+    this.freeingQueue = [];
 }
 
 CompilerContext.prototype = {
@@ -723,6 +722,8 @@ CompilerContext.prototype = {
     pushStack: function pushStack(type, value) {
         this.spOffset += type.size;
         var code = '';
+        if (value && typeof value !== 'string')
+            value = value.getValue();
         if (value)
             code = type.memoryType + '[SP >> ' + type.shift + '] = ' + type.cast(value) + ';';
         code += 'SP = (SP + ' + type.size + ')|0;';
@@ -774,6 +775,14 @@ CompilerContext.prototype = {
         tmp.used = false;
     },
 
+    queueObjectFreeing: function queueObjectFreeing(func) {
+        this.freeingQueue.push(func);
+    },
+    freeQueuedObjects: function freeQueuedObjects() {
+        while (this.freeingQueue.length) {
+            this.freeingQueue.shift()();
+        }
+    },
 
     /*
      * Append code to the end of output function
@@ -782,6 +791,7 @@ CompilerContext.prototype = {
         this.func.nodes.push(str);
     },
     setFunction: function setFunction(func) {
+        this.freeQueuedObjects();
         this.func = func;
         // Temporaries are only for one function
         this.temporaries = [];
@@ -813,7 +823,22 @@ CompilerStackReference.prototype = {
         this.context.popStack(this.type.size, editOffset);
         if (editOffset)
             this.exists = false;
-    }
+        //if (editOffset !== false)
+        //    editOffset = true;
+        //if (this.offset + this.type.size !== this.context.spOffset && editOffset)
+        //    throw new Error('Compiler popping stack in wrong order!')
+        //if (!this.exists)
+        //    throw new Error('Value already popped from the stack');
+        //this.exists = false;
+        //// Edit offset now if necessary
+        //if (editOffset)
+        //    this.context.spOffset -= this.type.size;
+        //this.context.queueObjectFreeing(function free() {
+        //    this.context.popStack(this.type.size, false);
+        //}.bind(this));
+    },
+
+    reftype: "stack"
 };
 
 function CompilerAbsoluteReference(type, offset, context) {
@@ -829,7 +854,13 @@ CompilerAbsoluteReference.prototype = {
     setValue: function setValue(value) {
         return this.type.memoryType + '[((' + this.offset + ')|0) >> ' + this.type.shift + '] = ' + this.type.cast(value) + ';';
     },
-    pop: function pop() { }
+    pop: function pop() {
+        //this.context.queueObjectFreeing(function free() {
+        //    this.context.push('// Free a variable at offset "' + this.offset + '"');
+        //}.bind());
+    },
+
+    reftype: "absolute"
 };
 
 
@@ -847,6 +878,10 @@ CompilerTemporaryReference.prototype = {
         return this.varname + ' = ' + this.type.cast(value) + ';';
     },
     pop: function pop() {
+        //this.context.queueObjectFreeing(function free() {
         this.context.freeTemporary(this);
-    }
+        //}.bind());
+    },
+
+    reftype: "temp"
 };
