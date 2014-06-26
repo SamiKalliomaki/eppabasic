@@ -15,6 +15,20 @@ body
 	flex-flow: column;
 }
 
+input, button, select
+{
+	color: #AAAAAA;
+	border: 2px solid #031E29;
+	background-color: #046184;
+	padding: 5px 10px;
+}
+
+input:disabled
+{
+	border: 2px solid #333333;
+	background-color: #555555;
+}
+
 .clear
 {
 	clear: both;
@@ -44,14 +58,6 @@ body
 	top: 5px;
 }
 
-input, button, select
-{
-	color: #AAAAAA;
-	border: 2px solid #031E29;
-	background-color: #046184;
-	padding: 5px 10px;
-}
-
 .header-ui-element
 {
 	height: 30px;
@@ -66,55 +72,6 @@ input, button, select
 #filelist
 {
 	width: 200px;
-}
-
-#user-controls
-{
-	float: right;
-}
-
-#user-status a
-{
-	color: white;
-}
-
-.top-right-box
-{
-	position: absolute;
-	right: 0;
-	top: 50px;
-
-	width: 318px;
-	height: 0px;
-	overflow-y: hidden;
-
-	border-left: 3px solid #410C02;
-	border-bottom: 3px solid #410C02;
-	background-color: black;
-
-	transition: height 1s;
-}
-
-
-.top-right-box form a
-{
-	color: white;
-	margin-left: 20px;
-}
-
-.top-right-box form label
-{
-	display: inline-block;
-	margin: 0px 10px;
-	width: 100px;
-	color: white;
-	text-align: right;
-}
-
-.top-right-box form .submit-box
-{
-	position: absolute;
-	right: 20px;
 }
 
 #main-container

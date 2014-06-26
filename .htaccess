@@ -1,0 +1,5 @@
+RewriteEngine On
+RewriteRule ^(eb/)(.*)$ http://localhost:8000/EppaBasic/eb/$2 [P]
+
+# Comment out next line in production
+RewriteRule ^(static/)(.*)$ http://localhost:8000/EppaBasic/static/$2 [P]

@@ -1,37 +1,137 @@
-window.addEventListener('load', function() {
-	document.getElementById('login-link').addEventListener('click', function(e) {
-		e.preventDefault();
+$(function() {
+	function freezeFields(form) {
+		$(':input', form).attr('disabled', true);
+	}
 
-		var loginBox = document.getElementById('login-box');
+	function unfreezeFields(form) {
+		$(':input', form).attr('disabled', false);
+	}
+	
+	function clearLoginBox() {
+		var loginBox = $('#login-box');
+		loginBox.slideUp(function() {
+			$('form', loginBox).each(function() {
+				this.reset();
+				unfreezeFields(this);
+			});
+			$('.error-box', loginBox).hide();
+		});
+	}
 
-		document.getElementById('login-form').style.display = 'block';
-		document.getElementById('register-form').style.display = 'none';
+	function setLoggedIn(username) {
+		clearLoginBox();
 
-		if(loginBox.style.height != '160px') {
-			loginBox.style.height = '160px';
+		var userControls = $('#user-controls');
+
+		userControls.removeClass('logged-out');
+		userControls.removeClass('pending');
+
+		userControls.addClass('logged-in');
+		$('#current-user').text(username);
+	}
+
+	function setLoggedOut() {
+		clearLoginBox();
+
+		var userControls = $('#user-controls');
+
+		userControls.removeClass('logged-in');
+		userControls.removeClass('pending');
+
+		userControls.addClass('logged-out');
+	}
+
+	function setPending() {
+		clearLoginBox();
+
+		var userControls = $('#user-controls');
+
+		userControls.removeClass('logged-in');
+		userControls.removeClass('logged-out');
+
+		userControls.addClass('pending');
+	}
+
+	$('#login-box').hide();
+	$('#register-form').hide();
+	clearLoginBox();
+
+	$.ajax(
+		'eb/user/get/',
+		{
+			success: function(data) {
+				if(data['authenticated']) {
+					setLoggedIn(data['username']);
+				}
+				else {
+					setLoggedOut();
+				}
+			}
 		}
-		else {
-			loginBox.style.height = '0px';
-		}
-	});
+	)
 
-	document.getElementById('register-link').addEventListener('click', function(e) {
+	$('#login-link').on('click', function(e) {
 		e.preventDefault();
 
-		document.getElementById('login-form').style.display = 'none';
-		document.getElementById('register-form').style.display = 'block';
-		document.getElementById('login-box').style.height = '260px';
+		$('#login-box').slideToggle();
 	});
 
-	document.getElementById('login-form').addEventListener('submit', function(e) {
+	$('#logout-link').on('click', function(e) {
 		e.preventDefault();
-
-		// TODO Make AJAX calls
+		
+		setPending();
+		$.post(
+			'eb/user/logout/',
+			'',
+			function(data) {
+				setLoggedOut();
+			}
+		);
 	});
 
-	document.getElementById('register-form').addEventListener('submit', function(e) {
+	$('#register-link').on('click', function(e) {
 		e.preventDefault();
 
-		// TODO Make AJAX calls
+		$('#login-form').hide();
+		$('#register-form').show();
+	});
+
+	$('#already-registered-link').on('click', function(e) {
+		e.preventDefault();
+
+		$('#login-form').show();
+		$('#register-form').hide();
+	});
+
+	$('#login-form').on('submit', function(e) {
+		e.preventDefault();
+
+		var form = $('#login-form');
+
+		freezeFields(form);
+		submitForm(form, 'eb/user/login/', function(data) {
+			if(data['result'] === 'success') {
+				setLoggedIn(data['username']);
+			} else {
+				fillFormErrors(form, data['errors']);
+				unfreezeFields(form);
+			}
+		});
+	});
+
+	$('#register-form').on('submit', function(e) {
+		e.preventDefault();
+
+		var form = $('#register-form');
+
+		freezeFields(form);
+		submitForm(form, 'eb/user/register/', function(data) {
+			if(data['result'] === 'success') {
+				setLoggedIn(data['username']);
+			} else {
+				fillFormErrors(form, data['errors']);
+				unfreezeFields(form);
+			}
+		});
 	});
 });
