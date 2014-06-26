@@ -43,6 +43,7 @@
             <button class="header-ui-element header-button" id="load">Load</button>
             <button class="header-ui-element header-button" id="save">Save</button>
             <button class="header-ui-element header-button" id="save-as">Save as</button>
+            <input type="checkbox" id="dev-mode" /> <label for="dev-mode">Developer mode</label>
         </div>
     </div>
     <div id="main-container">
@@ -61,8 +62,7 @@ NEXT i
 FOR i = 0 TO 255
     FILLCOLOR 0, i, 0
     FILLCIRCLE 300, 300, (255-i)/3
-NEXT i
-        </div>
+NEXT i</div>
         <div id="manual" class="panel">
         </div>
     </div>

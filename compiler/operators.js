@@ -1,4 +1,5 @@
-﻿/// <reference path="types.js" />
+﻿/// <reference path="polyfill.js" />
+/// <reference path="types.js" />
 
 function OperatorContainer() {
     this.operators = [];
@@ -49,80 +50,177 @@ OperatorContainer.prototype = {
         this.addToken(4, 'pow', true);
 
         // Boolean operators
-        this.addOperator(new BinaryOperator(Types.Boolean, 'or', Types.Boolean, Types.Boolean, true));
-        this.addOperator(new BinaryOperator(Types.Boolean, 'and', Types.Boolean, Types.Boolean, true));
-        this.addOperator(new BinaryOperator(Types.Boolean, 'xor', Types.Boolean, Types.Boolean, true));
+        var operators = {
+            'or': '|',
+            'and': '&',
+            'xor': '^'
+        };
+        for (var op in operators) {
+            if (operators.hasOwnProperty(op)) {
+                this.addOperator(new BinaryOperator(Types.Boolean, op, Types.Boolean, Types.Boolean,
+                    new BinaryOperatorCompiler(operators[op], Types.Boolean, Types.Boolean, Types.Boolean, true)));
+            }
+        }
+        //this.addOperator(new BinaryOperator(Types.Boolean, 'or', Types.Boolean, Types.Boolean, new BinaryOperatorCompiler('|', Types.Boolean, Types.Boolean, Types.Boolean, true)));
+        //this.addOperator(new BinaryOperator(Types.Boolean, 'and', Types.Boolean, Types.Boolean));
+        //this.addOperator(new BinaryOperator(Types.Boolean, 'xor', Types.Boolean, Types.Boolean));
 
         // Comparison operators
-        this.addOperator(new BinaryOperator(Types.Integer, 'eq', Types.Integer, Types.Boolean, false));
-        this.addOperator(new BinaryOperator(Types.Double, 'eq', Types.Double, Types.Boolean, false));
-        this.addOperator(new BinaryOperator(Types.String, 'eq', Types.String, Types.Boolean, false));
-        this.addOperator(new BinaryOperator(Types.Integer, 'neq', Types.Integer, Types.Boolean, false));
-        this.addOperator(new BinaryOperator(Types.Double, 'neq', Types.Double, Types.Boolean, false));
-        this.addOperator(new BinaryOperator(Types.String, 'neq', Types.String, Types.Boolean, false));
-        this.addOperator(new BinaryOperator(Types.Integer, 'lt', Types.Integer, Types.Boolean, false));
-        this.addOperator(new BinaryOperator(Types.Double, 'lt', Types.Double, Types.Boolean, false));
-        this.addOperator(new BinaryOperator(Types.String, 'lt', Types.String, Types.Boolean, false));
-        this.addOperator(new BinaryOperator(Types.Integer, 'lte', Types.Integer, Types.Boolean, false));
-        this.addOperator(new BinaryOperator(Types.Double, 'lte', Types.Double, Types.Boolean, false));
-        this.addOperator(new BinaryOperator(Types.String, 'lte', Types.String, Types.Boolean, false));
-        this.addOperator(new BinaryOperator(Types.Integer, 'gt', Types.Integer, Types.Boolean, false));
-        this.addOperator(new BinaryOperator(Types.Double, 'gt', Types.Double, Types.Boolean, false));
-        this.addOperator(new BinaryOperator(Types.String, 'gt', Types.String, Types.Boolean, false));
-        this.addOperator(new BinaryOperator(Types.Integer, 'gte', Types.Integer, Types.Boolean, false));
-        this.addOperator(new BinaryOperator(Types.Double, 'gte', Types.Double, Types.Boolean, false));
-        this.addOperator(new BinaryOperator(Types.String, 'gte', Types.String, Types.Boolean, false));
+        var operators = {
+            'eq': '==',
+            'neq': '!=',
+            'lt': '<',
+            'lte': '<=',
+            'gt': '>',
+            'gte': '>='
+        };
+        for (var op in operators) {
+            if (operators.hasOwnProperty(op)) {
+                this.addOperator(new BinaryOperator(Types.Integer, op, Types.Integer, Types.Boolean,
+                    new BinaryOperatorCompiler(operators[op], Types.Integer, Types.Integer, Types.Boolean, true)));
+
+                this.addOperator(new BinaryOperator(Types.Double, op, Types.Double, Types.Boolean,
+                    new BinaryOperatorCompiler(operators[op], Types.Double, Types.Double, Types.Boolean, true)));
+
+                this.addOperator(new BinaryOperator(Types.String, op, Types.String, Types.Boolean,
+                    new BinaryOperatorCompiler(operators[op], Types.String, Types.String, Types.Boolean, true)));
+            }
+        }
+        //this.addOperator(new BinaryOperator(Types.Integer, 'eq', Types.Integer, Types.Boolean));
+        //this.addOperator(new BinaryOperator(Types.Double, 'eq', Types.Double, Types.Boolean));
+        //this.addOperator(new BinaryOperator(Types.String, 'eq', Types.String, Types.Boolean));
+        //this.addOperator(new BinaryOperator(Types.Integer, 'neq', Types.Integer, Types.Boolean));
+        //this.addOperator(new BinaryOperator(Types.Double, 'neq', Types.Double, Types.Boolean));
+        //this.addOperator(new BinaryOperator(Types.String, 'neq', Types.String, Types.Boolean));
+        //this.addOperator(new BinaryOperator(Types.Integer, 'lt', Types.Integer, Types.Boolean));
+        //this.addOperator(new BinaryOperator(Types.Double, 'lt', Types.Double, Types.Boolean));
+        //this.addOperator(new BinaryOperator(Types.String, 'lt', Types.String, Types.Boolean));
+        //this.addOperator(new BinaryOperator(Types.Integer, 'lte', Types.Integer, Types.Boolean));
+        //this.addOperator(new BinaryOperator(Types.Double, 'lte', Types.Double, Types.Boolean));
+        //this.addOperator(new BinaryOperator(Types.String, 'lte', Types.String, Types.Boolean));
+        //this.addOperator(new BinaryOperator(Types.Integer, 'gt', Types.Integer, Types.Boolean));
+        //this.addOperator(new BinaryOperator(Types.Double, 'gt', Types.Double, Types.Boolean));
+        //this.addOperator(new BinaryOperator(Types.String, 'gt', Types.String, Types.Boolean));
+        //this.addOperator(new BinaryOperator(Types.Integer, 'gte', Types.Integer, Types.Boolean));
+        //this.addOperator(new BinaryOperator(Types.Double, 'gte', Types.Double, Types.Boolean));
+        //this.addOperator(new BinaryOperator(Types.String, 'gte', Types.String, Types.Boolean));
 
         // String concatenation
-        this.addOperator(new BinaryOperator(Types.String, 'concat', Types.String, Types.String, true));
-        this.addOperator(new BinaryOperator(Types.Integer, 'concat', Types.String, Types.String, true));
-        this.addOperator(new BinaryOperator(Types.String, 'concat', Types.Integer, Types.String, true));
-        this.addOperator(new BinaryOperator(Types.Integer, 'concat', Types.Integer, Types.String, true));
-        this.addOperator(new BinaryOperator(Types.Double, 'concat', Types.String, Types.String, true));
-        this.addOperator(new BinaryOperator(Types.String, 'concat', Types.Double, Types.String, true));
-        this.addOperator(new BinaryOperator(Types.Double, 'concat', Types.Double, Types.String, true));
+        // TODO Add back string concatenation
+        //this.addOperator(new BinaryOperator(Types.String, 'concat', Types.String, Types.String));
+        //this.addOperator(new BinaryOperator(Types.Integer, 'concat', Types.String, Types.String));
+        //this.addOperator(new BinaryOperator(Types.String, 'concat', Types.Integer, Types.String));
+        //this.addOperator(new BinaryOperator(Types.Integer, 'concat', Types.Integer, Types.String));
+        //this.addOperator(new BinaryOperator(Types.Double, 'concat', Types.String, Types.String));
+        //this.addOperator(new BinaryOperator(Types.String, 'concat', Types.Double, Types.String));
+        //this.addOperator(new BinaryOperator(Types.Double, 'concat', Types.Double, Types.String));
 
-        // Plus and minus operators
-        this.addOperator(new BinaryOperator(Types.Integer, 'plus', Types.Integer, Types.Integer, true));
-        this.addOperator(new BinaryOperator(Types.Double, 'plus', Types.Integer, Types.Double, true));
-        this.addOperator(new BinaryOperator(Types.Integer, 'plus', Types.Double, Types.Double, true));
-        this.addOperator(new BinaryOperator(Types.Double, 'plus', Types.Double, Types.Double, true));
-        this.addOperator(new BinaryOperator(Types.Integer, 'minus', Types.Integer, Types.Integer, true));
-        this.addOperator(new BinaryOperator(Types.Double, 'minus', Types.Integer, Types.Double, true));
-        this.addOperator(new BinaryOperator(Types.Integer, 'minus', Types.Double, Types.Double, true));
-        this.addOperator(new BinaryOperator(Types.Double, 'minus', Types.Double, Types.Double, true));
+        // Mathematical operators
+        var operators = {
+            'plus': '+',
+            'minus': '-',
+            'div': '/',
+            'mod': '%'
+        };
+        for (var op in operators) {
+            if (operators.hasOwnProperty(op)) {
+                this.addOperator(new BinaryOperator(Types.Integer, op, Types.Integer, Types.Integer,
+                    new BinaryOperatorCompiler(operators[op], Types.Integer, Types.Integer, Types.Integer, true)));
+
+                this.addOperator(new BinaryOperator(Types.Double, op, Types.Integer, Types.Double,
+                    new BinaryOperatorCompiler(operators[op], Types.Double, Types.Double, Types.Double, true)));
+
+                this.addOperator(new BinaryOperator(Types.Integer, op, Types.Double, Types.Double,
+                    new BinaryOperatorCompiler(operators[op], Types.Double, Types.Double, Types.Double, true)));
+
+                this.addOperator(new BinaryOperator(Types.Double, op, Types.Double, Types.Double,
+                    new BinaryOperatorCompiler(operators[op], Types.Double, Types.Double, Types.Double, true)));
+            }
+        }
+        // Multiplication
+        this.addOperator(new BinaryOperator(Types.Integer, 'mul', Types.Integer, Types.Integer,
+            new BinaryOperatorCompiler('imul', Types.Integer, Types.Integer, Types.Integer, false)));
+
+        this.addOperator(new BinaryOperator(Types.Double, 'mul', Types.Integer, Types.Double,
+            new BinaryOperatorCompiler('*', Types.Double, Types.Double, Types.Double, true)));
+
+        this.addOperator(new BinaryOperator(Types.Integer, 'mul', Types.Double, Types.Double,
+            new BinaryOperatorCompiler('*', Types.Double, Types.Double, Types.Double, true)));
+
+        this.addOperator(new BinaryOperator(Types.Double, 'mul', Types.Double, Types.Double,
+            new BinaryOperatorCompiler('*', Types.Double, Types.Double, Types.Double, true)));
+        // Power
+        this.addOperator(new BinaryOperator(Types.Integer, 'pow', Types.Integer, Types.Double,
+            new BinaryOperatorCompiler('pow', Types.Double, Types.Double, Types.Double, false)));
+
+        this.addOperator(new BinaryOperator(Types.Double, 'pow', Types.Integer, Types.Double,
+            new BinaryOperatorCompiler('pow', Types.Double, Types.Double, Types.Double, false)));
+
+        this.addOperator(new BinaryOperator(Types.Integer, 'pow', Types.Double, Types.Double,
+            new BinaryOperatorCompiler('pow', Types.Double, Types.Double, Types.Double, false)));
+
+        this.addOperator(new BinaryOperator(Types.Double, 'pow', Types.Double, Types.Double,
+            new BinaryOperatorCompiler('pow', Types.Double, Types.Double, Types.Double, false)));
+
+        //this.addOperator(new BinaryOperator(Types.Integer, 'plus', Types.Integer, Types.Integer));
+        //this.addOperator(new BinaryOperator(Types.Double, 'plus', Types.Integer, Types.Double));
+        //this.addOperator(new BinaryOperator(Types.Integer, 'plus', Types.Double, Types.Double));
+        //this.addOperator(new BinaryOperator(Types.Double, 'plus', Types.Double, Types.Double));
+        //this.addOperator(new BinaryOperator(Types.Integer, 'minus', Types.Integer, Types.Integer));
+        //this.addOperator(new BinaryOperator(Types.Double, 'minus', Types.Integer, Types.Double));
+        //this.addOperator(new BinaryOperator(Types.Integer, 'minus', Types.Double, Types.Double));
+        //this.addOperator(new BinaryOperator(Types.Double, 'minus', Types.Double, Types.Double));
 
         // Multiplicative operators
-        this.addOperator(new BinaryOperator(Types.Integer, 'mul', Types.Integer, Types.Integer, true));
-        this.addOperator(new BinaryOperator(Types.Double, 'mul', Types.Integer, Types.Double, true));
-        this.addOperator(new BinaryOperator(Types.Integer, 'mul', Types.Double, Types.Double, true));
-        this.addOperator(new BinaryOperator(Types.Double, 'mul', Types.Double, Types.Double, true));
-        this.addOperator(new BinaryOperator(Types.Integer, 'div', Types.Integer, Types.Integer, true));
-        this.addOperator(new BinaryOperator(Types.Double, 'div', Types.Integer, Types.Double, true));
-        this.addOperator(new BinaryOperator(Types.Integer, 'div', Types.Double, Types.Double, true));
-        this.addOperator(new BinaryOperator(Types.Double, 'div', Types.Double, Types.Double, true));
-        this.addOperator(new BinaryOperator(Types.Integer, 'mod', Types.Integer, Types.Integer, true));
-        this.addOperator(new BinaryOperator(Types.Double, 'mod', Types.Integer, Types.Double, true));
-        this.addOperator(new BinaryOperator(Types.Integer, 'mod', Types.Double, Types.Double, true));
-        this.addOperator(new BinaryOperator(Types.Double, 'mod', Types.Double, Types.Double, true));
-        this.addOperator(new BinaryOperator(Types.Integer, 'pow', Types.Integer, Types.Integer, true));
-        this.addOperator(new BinaryOperator(Types.Double, 'pow', Types.Integer, Types.Double, true));
-        this.addOperator(new BinaryOperator(Types.Integer, 'pow', Types.Double, Types.Double, true));
-        this.addOperator(new BinaryOperator(Types.Double, 'pow', Types.Double, Types.Double, true));
+        //this.addOperator(new BinaryOperator(Types.Integer, 'mul', Types.Integer, Types.Integer));
+        //this.addOperator(new BinaryOperator(Types.Double, 'mul', Types.Integer, Types.Double));
+        //this.addOperator(new BinaryOperator(Types.Integer, 'mul', Types.Double, Types.Double));
+        //this.addOperator(new BinaryOperator(Types.Double, 'mul', Types.Double, Types.Double));
+        //this.addOperator(new BinaryOperator(Types.Integer, 'div', Types.Integer, Types.Integer));
+        //this.addOperator(new BinaryOperator(Types.Double, 'div', Types.Integer, Types.Double));
+        //this.addOperator(new BinaryOperator(Types.Integer, 'div', Types.Double, Types.Double));
+        //this.addOperator(new BinaryOperator(Types.Double, 'div', Types.Double, Types.Double));
+        //this.addOperator(new BinaryOperator(Types.Integer, 'mod', Types.Integer, Types.Integer));
+        //this.addOperator(new BinaryOperator(Types.Double, 'mod', Types.Integer, Types.Double));
+        //this.addOperator(new BinaryOperator(Types.Integer, 'mod', Types.Double, Types.Double));
+        //this.addOperator(new BinaryOperator(Types.Double, 'mod', Types.Double, Types.Double));
+        //this.addOperator(new BinaryOperator(Types.Integer, 'pow', Types.Integer, Types.Integer));
+        //this.addOperator(new BinaryOperator(Types.Double, 'pow', Types.Integer, Types.Double));
+        //this.addOperator(new BinaryOperator(Types.Integer, 'pow', Types.Double, Types.Double));
+        //this.addOperator(new BinaryOperator(Types.Double, 'pow', Types.Double, Types.Double));
     },
 
     getTokensByPriority: function getTokensByPriority(priority) {
         /// <returns type='Array' elementType='String'>
         return this.tokensByPriority[priority];
+    },
+
+    getOperatorByType: function getOperatorByType(leftType, opTokenType, rightType) {
+        /// <returns type='BinaryOperator' />
+        return this.operators.find(function find(operator) {
+            /// <param name='operator' type='BinaryOperator' />
+            return leftType.canCastImplicitlyTo(operator.leftType)
+                && opTokenType == operator.opTokenType
+                && rightType.canCastImplicitlyTo(operator.rightType);
+        });
     }
 };
 
-function BinaryOperator(leftType, opTokenType, rightType, returnType) {
+function BinaryOperator(leftType, opTokenType, rightType, returnType, compiler) {
     this.leftType = leftType;
     this.opTokenType = opTokenType;
     this.rightType = rightType;
     this.returnType = returnType;
+    this.compiler = compiler;
 }
 BinaryOperator.prototype = {
 
 };
+
+function BinaryOperatorCompiler(func, leftType, rightType, returnType, infix) {
+    this.func = func;
+    this.leftType = leftType;
+    this.rightType = rightType;
+    this.returnType = returnType;
+    this.infix = infix;
+}

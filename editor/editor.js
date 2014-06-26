@@ -31,7 +31,7 @@ Editor.prototype = {
         }
     },
     compile: function compile() {
-        var compiler = new Compiler(this.ast);
+        var compiler = new Compiler(this.ast, this.operators);
 
         // Drawing functions
         compiler.defineJsFunction('CLEARCOLOR', [Types.Integer, Types.Integer, Types.Integer], 'clearColor');

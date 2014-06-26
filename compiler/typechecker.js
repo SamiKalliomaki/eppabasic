@@ -1,8 +1,13 @@
-﻿/// <reference path="types.js" />
+﻿/// <reference path="operators.js" />
+/// <reference path="types.js" />
 
-function Typechecker(ast, functions) {
+function Typechecker(ast, functions, operators) {
+    /// <param name='ast' type='Nodes.Block' />
+    /// <param name='functions' type='Array' />
+    /// <param name='operators' type='OperatorContainer' />
     this.ast = ast;
     this.functions = functions;
+    this.operators = operators;
 }
 
 Typechecker.prototype = {
@@ -216,7 +221,13 @@ Typechecker.prototype = {
             case 'BinaryOp':
                 var leftType = this.resolveExprType(expr.left, context);
                 var rightType = this.resolveExprType(expr.right, context);
-                switch (expr.op) {
+                var operator = this.operators.getOperatorByType(leftType, expr.op, rightType);
+                if (!operator)
+                    throw new Error('Failed to find operator \'' + expr.op + '\' for \'' + leftType + '\' and \'' + rightType + '\'');
+
+                expr.operator = operator;
+                return expr.type = operator.returnType;
+                /*switch (expr.op) {
                     case 'lt':
                     case 'lte':
                     case 'gt':
@@ -238,7 +249,7 @@ Typechecker.prototype = {
                         break;
                     case 'concat':
                         return expr.type = Types.String;
-                }
+                }*/
                 throw new Error('Unresolvable return type of a binary operator "' + expr.op + '"');
             case 'Range':
                 var startType = this.resolveExprType(expr.start, context);
