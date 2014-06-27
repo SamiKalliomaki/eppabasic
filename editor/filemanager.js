@@ -63,6 +63,7 @@ function fileDialog(save, callback) {
 	openDirectory('root');
 	$('#file-dialog-filename').val('');
 	$('#file-dialog-wrapper').show();
+	$('#file-dialog-submit').val(save ? 'Save' : 'Open');
 }
 
 function getFormFile() {
