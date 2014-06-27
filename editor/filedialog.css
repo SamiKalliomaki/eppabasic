@@ -44,7 +44,7 @@
 	min-height: 200px;
 }
 
-#file-list li a
+#file-list li, #file-list li a
 {
 	color: white;
 }
