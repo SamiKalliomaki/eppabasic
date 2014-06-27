@@ -23,6 +23,8 @@ $(function() {
 
 		var userControls = $('#user-controls');
 
+		$('#loading-controls').show();
+
 		userControls.removeClass('logged-out');
 		userControls.removeClass('pending');
 
@@ -35,6 +37,8 @@ $(function() {
 
 		var userControls = $('#user-controls');
 
+		$('#loading-controls').hide();
+
 		userControls.removeClass('logged-in');
 		userControls.removeClass('pending');
 
@@ -46,6 +50,8 @@ $(function() {
 
 		var userControls = $('#user-controls');
 
+		$('#loading-controls').hide();
+
 		userControls.removeClass('logged-in');
 		userControls.removeClass('logged-out');
 
@@ -54,6 +60,7 @@ $(function() {
 
 	$('#login-box').hide();
 	$('#register-form').hide();
+	$('#loading-controls').hide();
 	clearLoginBox();
 
 	$.ajax(
