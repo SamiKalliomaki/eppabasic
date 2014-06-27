@@ -9,7 +9,6 @@ window.addEventListener('load', function init() {
         handles: "e"
     });
 
-    var filemanager = new Filemanager();
     var openedFile = null;
 
     document.getElementById('new').addEventListener('click', function() {
@@ -17,30 +16,32 @@ window.addEventListener('load', function init() {
         openedFile = null;
     });
     document.getElementById('load').addEventListener('click', function() {
-        var file = filemanager.fileDialog(false);
-        if(file !== null) {
-            editor.setCode(filemanager.loadFile(file));
-            openedFile = file;
-        }
+        fileDialog(false, function(form) {
+            submitForm(form, 'eb/fs/open/', function(data) {
+                editor.setCode(data['content']);
+            });
+
+            openedFile = getFormFile();
+        });
     });
     document.getElementById('save').addEventListener('click', function() {
-        if(openedFile === null) {
-            openedFile = filemanager.fileDialog(true);
-
-            if(openedFile === null) {
-                return;
-            }
+        function callback(form) {
+            submitForm(form, 'eb/fs/save/', function(data) {}, { 'content': editor.getCode() });
+            openedFile = getFormFile();
         }
 
-        filemanager.saveFile(openedFile, editor.getCode());
+        if(openedFile === null) {
+            fileDialog(true, callback);
+        } else {
+            setFormFile(openedFile);
+            callback($('#file-dialog form'));
+        }
     });
     document.getElementById('save-as').addEventListener('click', function() {
-        var file = filemanager.fileDialog(true);
-
-        if(file !== null) {
-            openedFile = file;
-            filemanager.saveFile(openedFile, editor.getCode());
-        }        
+        fileDialog(true, function callback(form) {
+            submitForm(form, 'eb/fs/save/', function(data) {}, { 'content': editor.getCode() });
+            openedFile = getFormFile();
+        });
     });
 
     function compilerun() {

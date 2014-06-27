@@ -6,6 +6,7 @@
 
     <link rel="stylesheet" href="editor/style.css">
     <link rel="stylesheet" href="editor/users.css">
+    <link rel="stylesheet" href="editor/filedialog.css">
     
     <!-- Libraries -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
@@ -40,7 +41,6 @@
             <button class="header-ui-element header-button" id="compileview">Source</button>
         </div>
         <div class="header-block" id="loading-controls">
-            <select class="header-ui-element header-select" id="filelist"></select>
             <button class="header-ui-element header-button" id="new">New</button>
             <button class="header-ui-element header-button" id="load">Load</button>
             <button class="header-ui-element header-button" id="save">Save</button>
@@ -115,6 +115,21 @@ NEXT i
         </div>
         <iframe src="manual/index.html" id="manual" class="panel">
         </iframe>
+    </div>
+    <div id="file-dialog-wrapper">
+        <div id="file-dialog">
+            <div id="file-dialog-header">
+                <div id="current-directory"></div>
+            </div>
+            <div id="file-list-area">
+                <ul id="file-list"></ul>
+            </div>
+            <form id="file-dialog-footer">
+                <input type="hidden" name="directory" id="file-dialog-directory">
+                <input type="text" name="filename" id="file-dialog-filename">
+                <input type="submit" value="Open" id="file-dialog-submit">
+            </form>
+        </div>
     </div>
 </body>
 </html>

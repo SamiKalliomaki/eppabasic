@@ -132,7 +132,8 @@ INSTALLED_APPS = (
     # 'django.contrib.admindocs',
 
     # Own apps
-    'users'
+    'users',
+    'filesystem',
 )
 
 AUTH_USER_MODEL = 'users.CustomUser'

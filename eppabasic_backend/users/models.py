@@ -1,7 +1,9 @@
 from django.db.models import BooleanField, CharField, DateTimeField, EmailField
+from django.db.models.signals import post_save
 from django.utils import timezone
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, UserManager
 from django.contrib import admin
+from filesystem.models import Directory
 
 # Create your models here.
 class CustomUser(AbstractBaseUser, PermissionsMixin):
@@ -21,3 +23,12 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
 	def get_full_name(self):
 		return self.get_username()
+
+def create_root_directory(sender, instance, created, **kwargs):
+	if created:
+		directory = Directory()
+		directory.owner = instance
+		directory.name = 'root'
+		directory.save()
+
+post_save.connect(create_root_directory, sender=CustomUser)

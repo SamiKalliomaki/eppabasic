@@ -1,5 +1,5 @@
-function submitForm(form, url, callback) {
-	data = {}
+function submitForm(form, url, callback, additional_data) {
+	data = additional_data || {};
 
 	$('*', form).filter(':input').each(function() {
 		var name = $(this).attr('name');
@@ -12,10 +12,8 @@ function submitForm(form, url, callback) {
 
 	$.post(url, data, callback)
 	.fail(function(xhr, status, error) {
-		if(xhr.status === 500) {
-			var errorPopup = window.open('');
-			errorPopup.document.write('<pre>' + xhr.responseText + '</pre>');
-		}
+		var errorPopup = window.open('');
+		errorPopup.document.write('<pre>' + xhr.responseText + '</pre>');
 	});
 }
 
