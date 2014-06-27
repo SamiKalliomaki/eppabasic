@@ -52,8 +52,11 @@ $(function() {
 
 	$('#file-dialog form').on('submit', function(e) {
 		e.preventDefault();
-		fileDialogCallback(this);
-		$('#file-dialog-wrapper').hide();
+
+		if($('#file-dialog-filename').val() !== '') {
+			fileDialogCallback(this);
+			$('#file-dialog-wrapper').hide();
+		}
 	});
 });
 
