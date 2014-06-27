@@ -2,6 +2,7 @@
 {
 	margin: 0;
 	padding: 0;
+	border: 0;
 }
 
 html, body
@@ -17,16 +18,22 @@ body
 
 input, button, select
 {
-	color: #AAAAAA;
-	border: 2px solid #031E29;
-	background-color: #046184;
+	color: #A8CEDA;
+	background-color: #3C7386;
 	padding: 5px 10px;
+	border-radius: 3px;
 }
 
 input:disabled
 {
 	border: 2px solid #333333;
 	background-color: #555555;
+}
+
+.good-button
+{
+	background-color: #439D62;
+	color: #AEE5C0;
 }
 
 .clear
@@ -38,7 +45,7 @@ input:disabled
 {
 	flex: 0 0 50px;
 	background-color: black;
-	border-bottom: 3px solid #410C02;
+	border-bottom: 1px solid #495692;
 	padding-left: 160px;
 	vertical-align: middle;
 	line-height: 50px;
@@ -85,15 +92,15 @@ input:disabled
 
 #editor
 {
-	flex: 0 0 50%;
+	flex: 0 0 66%;
 
-	border-right: 2px solid #410C02;
+	border-right: 2px solid #495692;
 	width: 0px;
 }
 
 #manual
 {
-	background-color: black;
+	background-color: #111111;
 	
 	flex: 1 1 auto;
 
