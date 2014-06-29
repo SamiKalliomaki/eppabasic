@@ -129,6 +129,7 @@ UserControlsController.prototype = {
         this.status = 'logged-in';
 
         this.hideLoginBox();
+        this.unfreeze();
 
         this.userControls.addClass('logged-in');
         this.userControls.removeClass('logged-out');

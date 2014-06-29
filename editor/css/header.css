@@ -128,11 +128,6 @@
 	display: inline;
 }
 
-#user-controls.logged-out .login-box
-{
-	display: block;
-}
-
 #user-controls.pending .pending-link
 {
 	display: inline;
