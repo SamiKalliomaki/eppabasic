@@ -34,7 +34,7 @@ function FileControlsController(fileControls, editor, userControlsController, fi
 
     function save() {
         submitForm(
-            form,
+            fileDialogController.fileForm,
             'eb/fs/save/',
             function(data) {
                 // TODO Display some message
@@ -42,7 +42,7 @@ function FileControlsController(fileControls, editor, userControlsController, fi
             { 'content': editor.getCode() }
         );
 
-        openedFile = getSelectedFile();
+        openedFile = fileDialogController.getSelectedFile();
     }
 
     this.saveButton.click(function() {

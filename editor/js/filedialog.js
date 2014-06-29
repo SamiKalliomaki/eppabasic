@@ -50,15 +50,15 @@ FileDialogController.prototype = {
 
     getSelectedFile: function() {
         return { 
-            'directory': $('#file-dialog-directory').val(),
-            'filename': $('#file-dialog-filename').val()
+            'directory': this.formDirectory.val(),
+            'filename': this.formFilename.val()
         };
     },
 
     setSelectedFile: function(file) {
         this.formDirectory.val(file['directory']);
-        this.formFile.val(file['filename']);
-        openDirectory(this.formDirectory);
+        this.formFilename.val(file['filename']);
+        this.openDirectory(file['directory']);
     },
 
     resetDialog: function() {
