@@ -4,9 +4,10 @@
     <meta charset="UTF-8">
     <title>EppaBasic</title>
 
-    <link rel="stylesheet" href="editor/style.css">
-    <link rel="stylesheet" href="editor/users.css">
-    <link rel="stylesheet" href="editor/filedialog.css">
+    <link rel="stylesheet" href="editor/css/main.css">
+    <link rel="stylesheet" href="editor/css/header.css">
+    <link rel="stylesheet" href="editor/css/content.css">
+    <link rel="stylesheet" href="editor/css/filedialog.css">
     
     <!-- Libraries -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
@@ -27,32 +28,34 @@
     <script src="compiler/atomicchecker.js"></script>
     <script src="compiler/compiler.js"></script>
     <!--Editor-->
-    <script src="editor/framework.js"></script>
-    <script src="editor/editor.js"></script>
-    <script src="editor/filemanager.js"></script>
-    <script src="editor/main.js"></script>
-    <script src="editor/users.js"></script>
+    <script src="editor/js/framework.js"></script>
+    <script src="editor/js/editor.js"></script>
+    <script src="editor/js/filedialog.js"></script>
+    <script src="editor/js/codecontrols.js"></script>
+    <script src="editor/js/filecontrols.js"></script>
+    <script src="editor/js/usercontrols.js"></script>
+    <script src="editor/js/main.js"></script>
 </head>
 <body>
     <div id="header">
-        <img src="editor/logo.png" id="logo">
+        <img src="editor/img/logo.png" id="logo">
         <div class="header-block" id="code-controls">
-            <button class="header-ui-element header-button" id="compilerun">Run</button>
+            <button class="header-ui-element header-button run">Run</button>
         </div>
-        <div class="header-block" id="loading-controls">
-            <button class="header-ui-element header-button" id="new">New</button>
-            <button class="header-ui-element header-button" id="load">Load</button>
-            <button class="header-ui-element header-button" id="save">Save</button>
-            <button class="header-ui-element header-button" id="save-as">Save as</button>
+        <div class="header-block" id="file-controls">
+            <button class="header-ui-element header-button new">New</button>
+            <button class="header-ui-element header-button load">Load</button>
+            <button class="header-ui-element header-button save">Save</button>
+            <button class="header-ui-element header-button save-as">Save as</button>
         </div>
         <div class="header-block pending" id="user-controls">
-            <div id="user-status">
-                <a id="login-link" href="#">Login</a>
-                <a id="logout-link" href="#"><span id="current-user"></span>, logout</a>
-                <a id="pending-link" href="#">...</a>
+            <div class="user-status">
+                <a class="login-link" href="#">Login</a>
+                <a class="logout-link" href="#"><span class="current-user"></span>, logout</a>
+                <a class="pending-link" href="#">...</a>
             </div>
-            <div id="login-box" class="top-right-box">
-                <form id="login-form">
+            <div class="login-box top-right-box">
+                <form class="login-form">
                     <div class="error-box"></div>
                     <div class="input-field">
                         <label for="login-username">Username:</label>
@@ -63,11 +66,11 @@
                         <input type="password" name="password" id="login-password">
                     </div>
                     <div class="submit-box">
-                        <input type="submit" value="Login" id="login">
+                        <input type="submit" value="Login">
                     </div>
-                    <a href="#" id="register-link">No account? Register</a>
+                    <a href="#" class="register-link">No account? Register</a>
                 </form>
-                <form id="register-form">
+                <form class="register-form">
                     <div class="error-box"></div>
                     <div class="input-field">
                         <label for="register-username">Username:</label>
@@ -86,9 +89,9 @@
                         <input type="password" name="password2" id="register-password2"><br>
                     </div>
                     <div class="submit-box">
-                        <input type="submit" value="Register" id="register">
+                        <input type="submit" value="Register">
                     </div>
-                    <a href="#" id="already-registered-link">Already registered? Login</a>
+                    <a href="#" class="already-registered-link">Already registered? Login</a>
                 </form>
             </div>
         </div>
@@ -116,17 +119,17 @@ NEXT i
         </iframe>
     </div>
     <div id="file-dialog-wrapper">
-        <div id="file-dialog">
-            <div id="file-dialog-header">
-                <div id="current-directory"></div>
+        <div class="file-dialog">
+            <div class="header">
+                <div class="current-directory"></div>
             </div>
-            <div id="file-list-area">
-                <ul id="file-list"></ul>
+            <div class="list-area">
+                <ul class="file-list"></ul>
             </div>
-            <form id="file-dialog-footer">
-                <input type="hidden" name="directory" id="file-dialog-directory">
-                <input type="text" name="filename" id="file-dialog-filename">
-                <input type="submit" id="file-dialog-submit">
+            <form class="footer">
+                <input type="hidden" name="directory">
+                <input type="text" name="filename">
+                <input type="submit">
             </form>
         </div>
     </div>

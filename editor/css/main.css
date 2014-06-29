@@ -1,0 +1,36 @@
+*
+{
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+
+html, body
+{
+	height: 100%;
+}
+
+body
+{
+	display: flex;
+	flex-flow: column;
+}
+
+input, button, select
+{
+	color: #A8CEDA;
+	background-color: #3C7386;
+	padding: 5px 10px;
+	border-radius: 3px;
+}
+
+input:disabled
+{
+	border: 2px solid #333333;
+	background-color: #555555;
+}
+
+.clear
+{
+	clear: both;
+}

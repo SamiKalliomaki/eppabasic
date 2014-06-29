@@ -11,12 +11,12 @@
 	background-color: black;
 	opacity: 0.9;
 
-	display: flex;
+	display: none;
 	justify-content: center;
 	align-items: center;
 }
 
-#file-dialog
+#file-dialog-wrapper .file-dialog
 {
 	flex: 0 0 auto;
 
@@ -27,46 +27,46 @@
 	background-color: #090909;
 }
 
-#file-dialog-header
+#file-dialog-wrapper .header
 {
 	border-bottom: 1px dotted #495692;
 	padding: 5px;
 }
 
-#file-list-area
+#file-dialog-wrapper .list-area
 {
 	padding: 5px;
 }
 
-#file-list
+#file-dialog-wrapper .file-list
 {
 	list-style-position: inside;
 	min-height: 200px;
 }
 
-#file-list li, #file-list li a
+#file-dialog-wrapper .file-list li, #file-dialog-wrapper .file-list li a
 {
 	color: white;
 }
 
-#current-directory, #current-directory a
+#file-dialog-wrapper .current-directory, #file-dialog-wrapper .current-directory a
 {
 	color: white;
 }
 
-#file-dialog-footer
+#file-dialog-wrapper .footer
 {
 	display: flex;
 	padding: 5px;
 	border-top: 1px dotted #495692;
 }
 
-#file-dialog-filename
+#file-dialog-wrapper input[name="filename"]
 {
 	flex: 1 1 auto;
 }
 
-#file-dialog-submit
+#file-dialog-wrapper input[type="submit"]
 {
 	flex: 0 0 auto;
 	margin-left: 5px;

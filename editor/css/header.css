@@ -1,0 +1,149 @@
+#header
+{
+	flex: 0 0 50px;
+	background-color: black;
+	border-bottom: 1px solid #495692;
+	padding-left: 160px;
+	vertical-align: middle;
+	line-height: 50px;
+}
+
+#logo
+{
+	height: 40px;
+	position: absolute;
+	left: 5px;
+	top: 5px;
+}
+
+.header-block
+{
+	display: inline-block;
+	margin-right: 20px;
+}
+
+.header-ui-element
+{
+	height: 30px;
+	margin-right: 5px;
+}
+
+.header-button
+{
+	width: 100px;
+	vertical-align: middle;
+	line-height: 100%;
+}
+
+#file-controls
+{
+	display: none;
+}
+
+.top-right-box
+{
+	position: absolute;
+	right: 0;
+	top: 50px;
+	padding: 0 10px 20px 10px;
+
+	width: 318px;
+
+	border-left: 1px solid #495692;
+	border-bottom: 1px solid #495692;
+	background-color: black;
+
+	line-height: normal;
+}
+
+.top-right-box form a
+{
+	color: white;
+	margin-left: 20px;
+}
+
+.top-right-box form label
+{
+	box-sizing: border-box;
+	display: inline-block;
+	color: white;
+	text-align: right;
+
+	width: 40%;
+}
+
+.top-right-box form input
+{
+	box-sizing: border-box;
+	width: 58%;
+}
+
+.top-right-box form .input-field
+{
+	margin: 10px 0;
+}
+
+.top-right-box form .submit-box
+{
+	text-align: right;
+}
+
+.top-right-box form input[type="submit"]
+{
+	width: 100px;
+}
+
+.top-right-box form .error-box
+{
+	color: white;
+	border: 1px solid #660000;
+	padding: 10px;
+	background-color: #220000;
+}
+
+.top-right-box form .field-error
+{
+	text-align: right;
+	color: #FFAAAA;
+	font-size: 12px;
+}
+
+#user-controls
+{
+	float: right;
+}
+
+#user-controls .login-link, #user-controls .logout-link, #user-controls .pending-link
+{
+	display: none;
+}
+
+#user-controls.logged-in .logout-link
+{
+	display: inline;
+}
+
+#user-controls.logged-out .login-link
+{
+	display: inline;
+}
+
+#user-controls.logged-out .login-box
+{
+	display: block;
+}
+
+#user-controls.pending .pending-link
+{
+	display: inline;
+}
+
+#user-controls .user-status a
+{
+	color: white;
+}
+
+#user-controls .login-box
+{
+	display: none;
+}
