@@ -1,0 +1,29 @@
+#manual
+{
+	color: white;
+}
+
+#manual h1
+{
+	margin: 15px 0;
+}
+
+#manual h2
+{
+	margin: 10px 0;
+}
+
+#manual a
+{
+	color: #3C7386;
+}
+
+#manual :first-child
+{
+	margin-top: 0;
+}
+
+#manual :last-child
+{
+	margin-bottom: 0;
+}

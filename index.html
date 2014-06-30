@@ -8,12 +8,14 @@
     <link rel="stylesheet" href="editor/css/header.css">
     <link rel="stylesheet" href="editor/css/content.css">
     <link rel="stylesheet" href="editor/css/filedialog.css">
+    <link rel="stylesheet" href="editor/css/manual.css">
     
     <!-- Libraries -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
     <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/themes/smoothness/jquery-ui.css" />
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
     <script src="ace/ace.js" type="text/javascript" charset="utf-8"></script>
+    <script src="libs/marked.js" type="text/javascript" charset="utf-8"></script>
     <!--Compiler recources-->
     <script src="compiler/static/math.js"></script>
     <script src="compiler/static/memory.js"></script>
@@ -34,6 +36,7 @@
     <script src="editor/js/codecontrols.js"></script>
     <script src="editor/js/filecontrols.js"></script>
     <script src="editor/js/usercontrols.js"></script>
+    <script src="editor/js/manual.js"></script>
     <script src="editor/js/main.js"></script>
 </head>
 <body>
@@ -114,8 +117,6 @@ FOR i = 0 TO 255
     FILLCIRCLE 300, 300, (255-i)/3
 NEXT i</div>
     <div id="manual">
-        <iframe src="manual/index.html">
-        </iframe>
     </div>
     <div id="file-dialog-wrapper">
         <div class="file-dialog dialog">

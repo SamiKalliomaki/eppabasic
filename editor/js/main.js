@@ -4,6 +4,10 @@ $(function() {
     var fileDialogController = new FileDialogController('#file-dialog-wrapper');
     var fileControlsController = new FileControlsController('#file-controls', editor, userControlsController, fileDialogController);
     var codeControlsController = new CodeControlsController('#code-controls', editor);
+    var manual = new Manual('#manual', 'fi');
+
+    manual.openPage('index');
+
     window.ebeditor = editor;
 
     $('#editor').resizable({
