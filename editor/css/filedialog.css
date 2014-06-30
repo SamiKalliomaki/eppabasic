@@ -1,3 +1,14 @@
+.dialog
+{
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translateX(-50%) translateY(-50%);
+	-webkit-transform: translateX(-50%) translateY(-50%);
+	-moz-transform: translateX(-50%) translateY(-50%);
+	-ms-transform: translateX(-50%) translateY(-50%);
+}
+
 #file-dialog-wrapper
 {
 	z-index: 100;
@@ -10,19 +21,10 @@
 
 	background-color: black;
 	opacity: 0.9;
-
-	display: none;
-	justify-content: center;
-	-webkit-justify-content: center;
-	align-items: center;
-	-webkit-align-items: center;
 }
 
 #file-dialog-wrapper .file-dialog
 {
-	flex: 0 0 auto;
-	-webkit-flex: 0 0 auto;
-
 	min-width: 400px;
 
 	border: 1px solid #495692;
@@ -59,21 +61,25 @@
 
 #file-dialog-wrapper .footer
 {
-	display: flex;
-	display: -webkit-flex;
 	padding: 5px;
 	border-top: 1px dotted #495692;
 }
 
+#file-dialog-wrapper .input-helper
+{
+	margin-right: 105px;
+}
+
 #file-dialog-wrapper input[name="filename"]
 {
-	flex: 1 1 auto;
-	-webkit-flex: 1 1 auto;
+	box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	width: 100%;
 }
 
 #file-dialog-wrapper input[type="submit"]
 {
-	flex: 0 0 auto;
-	-webkit-flex: 0 0 auto;
-	margin-left: 5px;
+	float: right;
+	width: 100px;
 }

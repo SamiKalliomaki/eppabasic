@@ -41,7 +41,7 @@ FileDialogController.prototype = {
     show: function(submitButton) {
         this.resetDialog();
         this.formSubmit.val(submitButton);
-        this.fileDialogWrapper.css('display', 'flex');
+        this.fileDialogWrapper.show();
     },
 
     hide: function() {

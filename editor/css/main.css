@@ -10,14 +10,6 @@ html, body
 	height: 100%;
 }
 
-body
-{
-	display: flex;
-	display: -webkit-flex;
-	flex-flow: column;
-	-webkit-flex-flow: column;
-}
-
 input, button, select
 {
 	color: #A8CEDA;

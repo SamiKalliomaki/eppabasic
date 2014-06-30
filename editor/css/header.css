@@ -1,7 +1,11 @@
 #header
 {
-	flex: 0 0 50px;
-	-webkit-flex: 0 0 50px;
+	box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	height: 51px;
+	width: 100%;
+
 	background-color: black;
 	border-bottom: 1px solid #495692;
 	padding-left: 160px;
@@ -43,6 +47,8 @@
 
 .top-right-box
 {
+	z-index: 50;
+
 	position: absolute;
 	right: 0;
 	top: 50px;
@@ -66,6 +72,8 @@
 .top-right-box form label
 {
 	box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
 	display: inline-block;
 	color: white;
 	text-align: right;
@@ -76,6 +84,8 @@
 .top-right-box form input
 {
 	box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
 	width: 58%;
 }
 

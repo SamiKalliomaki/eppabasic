@@ -97,8 +97,7 @@
         </div>
         <div class="clear"></div>
     </div>
-    <div id="main-container">
-        <div id="editor" class="panel">CLEAR
+    <div id="editor">CLEAR
 
 FOR i = 0 TO 255
     FILLCOLOR i, 0, 0
@@ -113,13 +112,13 @@ NEXT i
 FOR i = 0 TO 255
     FILLCOLOR 0, i, 0
     FILLCIRCLE 300, 300, (255-i)/3
-NEXT i
-        </div>
-        <iframe src="manual/index.html" id="manual" class="panel">
+NEXT i</div>
+    <div id="manual">
+        <iframe src="manual/index.html">
         </iframe>
     </div>
     <div id="file-dialog-wrapper">
-        <div class="file-dialog">
+        <div class="file-dialog dialog">
             <div class="header">
                 <div class="current-directory"></div>
             </div>
@@ -128,8 +127,11 @@ NEXT i
             </div>
             <form class="footer">
                 <input type="hidden" name="directory">
-                <input type="text" name="filename">
                 <input type="submit">
+                <div class="input-helper">
+                    <input type="text" name="filename">
+                </div>
+                <div class="clear"></div>
             </form>
         </div>
     </div>

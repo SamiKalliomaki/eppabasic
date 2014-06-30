@@ -8,7 +8,7 @@ $(function() {
 
     $('#editor').resizable({
         resize: function(e, ui) {
-            ui.element.css("flex-basis", ui.size.width);
+            $('#manual').css('margin-left', ui.size.width + 2);
         },
         handles: "e"
     });
