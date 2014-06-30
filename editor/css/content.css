@@ -1,15 +1,20 @@
 #main-container
 {
 	flex: 1 1 auto;
+	-webkit-flex: 1 1 auto;
 
 	display: flex;
+	display: -webkit-flex;
 	flex-flow: row;
+	-webkit-flex-flow: row;
 	align-items: stretch;
+	-webkit-align-items: stretch;
 }
 
 #editor
 {
 	flex: 0 0 66%;
+	-webkit-flex: 0 0 66%;
 
 	border-right: 2px solid #495692;
 	width: 0px;
@@ -18,6 +23,7 @@
 #manual
 {
 	flex: 1 1 auto;
+	-webkit-flex: 1 1 auto;
 
 	padding: 5px;
 	max-height: 100%;

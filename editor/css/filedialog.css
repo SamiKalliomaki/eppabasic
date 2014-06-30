@@ -19,6 +19,7 @@
 #file-dialog-wrapper .file-dialog
 {
 	flex: 0 0 auto;
+	-webkit-flex: 0 0 auto;
 
 	min-width: 400px;
 
@@ -57,6 +58,7 @@
 #file-dialog-wrapper .footer
 {
 	display: flex;
+	display: -webkit-flex;
 	padding: 5px;
 	border-top: 1px dotted #495692;
 }
@@ -64,10 +66,12 @@
 #file-dialog-wrapper input[name="filename"]
 {
 	flex: 1 1 auto;
+	-webkit-flex: 1 1 auto;
 }
 
 #file-dialog-wrapper input[type="submit"]
 {
 	flex: 0 0 auto;
+	-webkit-flex: 0 0 auto;
 	margin-left: 5px;
 }

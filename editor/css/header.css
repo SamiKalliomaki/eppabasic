@@ -1,6 +1,7 @@
 #header
 {
 	flex: 0 0 50px;
+	-webkit-flex: 0 0 50px;
 	background-color: black;
 	border-bottom: 1px solid #495692;
 	padding-left: 160px;

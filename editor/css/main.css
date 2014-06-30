@@ -13,7 +13,9 @@ html, body
 body
 {
 	display: flex;
+	display: -webkit-flex;
 	flex-flow: column;
+	-webkit-flex-flow: column;
 }
 
 input, button, select
