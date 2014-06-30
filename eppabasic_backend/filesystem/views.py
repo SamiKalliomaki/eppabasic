@@ -18,6 +18,8 @@ def has_rights(user, directory, edit=True):
 	if shares.count() != 0:
 		return True
 
+	return False
+
 class GetDirectoryView(View):
 	def get(self, request, directory_id=None, *args, **kwargs):
 		if directory_id == None:
