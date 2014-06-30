@@ -6,7 +6,7 @@ function Editor(editorName, errBox) {
     this.errBox = errBox;
 
     this.ace = ace.edit(editorName);
-    this.ace.setTheme('ace/theme/terminal');
+    this.ace.setTheme('ace/theme/idle_fingers');
     this.ace.getSession().setMode('mode/eppabasic');
     this.ace.setShowPrintMargin(false);
 

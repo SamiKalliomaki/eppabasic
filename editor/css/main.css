@@ -1,0 +1,29 @@
+*
+{
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+
+html, body
+{
+	height: 100%;
+}
+
+input, button, select
+{
+	color: #A8CEDA;
+	background-color: #3C7386;
+	padding: 5px 10px;
+	border-radius: 3px;
+}
+
+input:disabled
+{
+	background-color: #555555;
+}
+
+.clear
+{
+	clear: both;
+}

@@ -4,13 +4,18 @@
     <meta charset="UTF-8">
     <title>EppaBasic</title>
 
-    <link rel="stylesheet" href="editor/style.css">
+    <link rel="stylesheet" href="editor/css/main.css">
+    <link rel="stylesheet" href="editor/css/header.css">
+    <link rel="stylesheet" href="editor/css/content.css">
+    <link rel="stylesheet" href="editor/css/filedialog.css">
+    <link rel="stylesheet" href="editor/css/manual.css">
     
     <!-- Libraries -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
     <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/themes/smoothness/jquery-ui.css" />
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
     <script src="ace/ace.js" type="text/javascript" charset="utf-8"></script>
+    <script src="libs/marked.js" type="text/javascript" charset="utf-8"></script>
     <!--Compiler recources-->
     <script src="compiler/static/math.js"></script>
     <script src="compiler/static/memory.js"></script>
@@ -25,27 +30,77 @@
     <script src="compiler/atomicchecker.js"></script>
     <script src="compiler/compiler.js"></script>
     <!--Editor-->
-    <script src="editor/editor.js"></script>
-    <script src="editor/filemanager.js"></script>
-    <script src="editor/main.js"></script>
+    <script src="editor/js/framework.js"></script>
+    <script src="editor/js/editor.js"></script>
+    <script src="editor/js/filedialog.js"></script>
+    <script src="editor/js/codecontrols.js"></script>
+    <script src="editor/js/filecontrols.js"></script>
+    <script src="editor/js/usercontrols.js"></script>
+    <script src="editor/js/manual.js"></script>
+    <script src="editor/js/main.js"></script>
 </head>
 <body>
     <div id="header">
-        <img src="editor/logo.png" id="logo">
+        <img src="editor/img/logo.png" id="logo">
         <div class="header-block" id="code-controls">
-            <button class="header-ui-element header-button" id="compilerun">Run</button>
-            <button class="header-ui-element header-button" id="compileview">Source</button>
+            <button class="header-ui-element header-button run">Run</button>
         </div>
-        <div class="header-block" id="loading-controls">
-            <select class="header-ui-element header-select" id="filelist"></select>
-            <button class="header-ui-element header-button" id="new">New</button>
-            <button class="header-ui-element header-button" id="load">Load</button>
-            <button class="header-ui-element header-button" id="save">Save</button>
-            <button class="header-ui-element header-button" id="save-as">Save as</button>
+        <div class="header-block" id="file-controls">
+            <button class="header-ui-element header-button new">New</button>
+            <button class="header-ui-element header-button load">Load</button>
+            <button class="header-ui-element header-button save">Save</button>
+            <button class="header-ui-element header-button save-as">Save as</button>
         </div>
+        <div class="header-block pending" id="user-controls">
+            <div class="user-status">
+                <a class="login-link" href="#">Login</a>
+                <a class="logout-link" href="#"><span class="current-user"></span>, logout</a>
+                <a class="pending-link" href="#">...</a>
+            </div>
+            <div class="login-box top-right-box">
+                <form class="login-form">
+                    <div class="error-box"></div>
+                    <div class="input-field">
+                        <label for="login-username">Username:</label>
+                        <input type="text" name="username" id="login-username">
+                    </div>
+                    <div class="input-field">
+                        <label for="login-password">Password:</label>
+                        <input type="password" name="password" id="login-password">
+                    </div>
+                    <div class="submit-box">
+                        <input type="submit" value="Login">
+                    </div>
+                    <a href="#" class="register-link">No account? Register</a>
+                </form>
+                <form class="register-form">
+                    <div class="error-box"></div>
+                    <div class="input-field">
+                        <label for="register-username">Username:</label>
+                        <input type="text" name="username" id="register-username">
+                    </div>
+                    <div class="input-field">
+                        <label for="register-email">Email:</label>
+                        <input type="email" name="email" id="register-email">
+                    </div>
+                    <div class="input-field">
+                        <label for="register-password1">Password:</label>
+                        <input type="password" name="password1" id="register-password1">
+                    </div>
+                    <div class="input-field">
+                        <label for="register-password2">Password again:</label>
+                        <input type="password" name="password2" id="register-password2"><br>
+                    </div>
+                    <div class="submit-box">
+                        <input type="submit" value="Register">
+                    </div>
+                    <a href="#" class="already-registered-link">Already registered? Login</a>
+                </form>
+            </div>
+        </div>
+        <div class="clear"></div>
     </div>
-    <div id="main-container">
-        <div id="editor" class="panel">CLEAR
+    <div id="editor">CLEAR
 
 FOR i = 0 TO 255
     FILLCOLOR i, 0, 0
@@ -60,10 +115,26 @@ NEXT i
 FOR i = 0 TO 255
     FILLCOLOR 0, i, 0
     FILLCIRCLE 300, 300, (255-i)/3
-NEXT i
+NEXT i</div>
+    <div id="manual">
+    </div>
+    <div id="file-dialog-wrapper">
+        <div class="file-dialog dialog">
+            <div class="header">
+                <div class="current-directory"></div>
+            </div>
+            <div class="list-area">
+                <ul class="file-list"></ul>
+            </div>
+            <form class="footer">
+                <input type="hidden" name="directory">
+                <input type="submit">
+                <div class="input-helper">
+                    <input type="text" name="filename">
+                </div>
+                <div class="clear"></div>
+            </form>
         </div>
-        <iframe src="manual/index.html" id="manual" class="panel">
-        </iframe>
     </div>
 </body>
 </html>

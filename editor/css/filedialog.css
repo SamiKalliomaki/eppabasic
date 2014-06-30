@@ -1,0 +1,85 @@
+.dialog
+{
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translateX(-50%) translateY(-50%);
+	-webkit-transform: translateX(-50%) translateY(-50%);
+	-moz-transform: translateX(-50%) translateY(-50%);
+	-ms-transform: translateX(-50%) translateY(-50%);
+}
+
+#file-dialog-wrapper
+{
+	z-index: 100;
+
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+
+	background-color: black;
+	opacity: 0.9;
+}
+
+#file-dialog-wrapper .file-dialog
+{
+	min-width: 400px;
+
+	border: 1px solid #495692;
+	border-radius: 5px;
+	background-color: #090909;
+}
+
+#file-dialog-wrapper .header
+{
+	border-bottom: 1px dotted #495692;
+	padding: 5px;
+}
+
+#file-dialog-wrapper .list-area
+{
+	padding: 5px;
+}
+
+#file-dialog-wrapper .file-list
+{
+	list-style-position: inside;
+	min-height: 200px;
+}
+
+#file-dialog-wrapper .file-list li, #file-dialog-wrapper .file-list li a
+{
+	color: white;
+}
+
+#file-dialog-wrapper .current-directory, #file-dialog-wrapper .current-directory a
+{
+	color: white;
+}
+
+#file-dialog-wrapper .footer
+{
+	padding: 5px;
+	border-top: 1px dotted #495692;
+}
+
+#file-dialog-wrapper .input-helper
+{
+	margin-right: 105px;
+}
+
+#file-dialog-wrapper input[name="filename"]
+{
+	box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	width: 100%;
+}
+
+#file-dialog-wrapper input[type="submit"]
+{
+	float: right;
+	width: 100px;
+}
