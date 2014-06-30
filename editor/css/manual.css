@@ -5,10 +5,17 @@
 
 #manual h1
 {
-	margin: 15px 0;
+	margin: 30px 0 15px 0;
+	border-bottom: 1px solid #444444;
 }
 
 #manual h2
+{
+	margin: 20px 0 10px 0;
+	border-bottom: 1px solid #222222;
+}
+
+#manual p
 {
 	margin: 10px 0;
 }
@@ -16,6 +23,19 @@
 #manual a
 {
 	color: #3C7386;
+}
+
+#manual ul
+{
+	list-style: none;
+	padding-left: 0.5em;
+}
+
+#manual li:before
+{
+	content: "• ";
+	color: #555555;
+	padding-right: 0.2em;
 }
 
 #manual :first-child
