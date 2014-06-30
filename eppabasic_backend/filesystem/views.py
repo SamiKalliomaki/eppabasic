@@ -5,6 +5,8 @@ from eppabasic_backend.views import AjaxView
 from filesystem.models import Directory
 from filesystem.forms import FileForm, SaveFileForm
 
+max_dir_depth = 10
+
 def has_rights(user, directory, edit=True):
 	if directory.owner == user:
 		return True
@@ -32,7 +34,7 @@ class GetDirectoryView(View):
 		parent = directory
 		parents = []
 
-		while parent != None:
+		while parent != None and len(parents) < max_dir_depth:
 			parents.append({ 'id': parent.pk, 'name': parent.name })
 			parent = parent.parent
 		parents.reverse()
