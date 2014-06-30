@@ -13,7 +13,9 @@
 
 	display: none;
 	justify-content: center;
+	-webkit-justify-content: center;
 	align-items: center;
+	-webkit-align-items: center;
 }
 
 #file-dialog-wrapper .file-dialog
