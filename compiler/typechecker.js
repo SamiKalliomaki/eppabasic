@@ -218,6 +218,7 @@ Typechecker.prototype = {
 
             case 'String':
                 return expr.type = Types.String;
+
             case 'BinaryOp':
                 var leftType = this.resolveExprType(expr.left, context);
                 var rightType = this.resolveExprType(expr.right, context);
@@ -227,30 +228,7 @@ Typechecker.prototype = {
 
                 expr.operator = operator;
                 return expr.type = operator.returnType;
-                /*switch (expr.op) {
-                    case 'lt':
-                    case 'lte':
-                    case 'gt':
-                    case 'gte':
-                    case 'eq':
-                    case 'neq':
-                        return expr.type = Types.Integer;
-                        break;
-                    case 'plus':
-                    case 'minus':
-                    case 'mul':
-                    case 'div':
-                    case 'pow':
-                    case 'mod':
-                        if (leftType === Types.Double || rightType === Types.Double)
-                            return expr.type = Types.Double;
-                        if (leftType === rightType)
-                            return expr.type = leftType;
-                        break;
-                    case 'concat':
-                        return expr.type = Types.String;
-                }*/
-                throw new Error('Unresolvable return type of a binary operator "' + expr.op + '"');
+
             case 'Range':
                 var startType = this.resolveExprType(expr.start, context);
                 var endType = this.resolveExprType(expr.end, context);

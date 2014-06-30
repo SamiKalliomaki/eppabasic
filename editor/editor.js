@@ -33,54 +33,62 @@ Editor.prototype = {
     compile: function compile() {
         var compiler = new Compiler(this.ast, this.operators);
 
-        // Drawing functions
-        compiler.defineJsFunction('CLEARCOLOR', [Types.Integer, Types.Integer, Types.Integer], 'clearColor');
-        compiler.defineJsFunction('LINECOLOR', [Types.Integer, Types.Integer, Types.Integer], 'lineColor');
-        compiler.defineJsFunction('FILLCOLOR', [Types.Integer, Types.Integer, Types.Integer], 'fillColor');
-        compiler.defineJsFunction('LINE', [Types.Integer, Types.Integer, Types.Integer, Types.Integer], 'line');
-        compiler.defineJsFunction('CIRCLE', [Types.Integer, Types.Integer, Types.Integer], 'circle');
-        compiler.defineJsFunction('FILLCIRCLE', [Types.Integer, Types.Integer, Types.Integer], 'fillCircle');
-        compiler.defineJsFunction('RECT', [Types.Integer, Types.Integer, Types.Integer, Types.Integer], 'rect');
-        compiler.defineJsFunction('FILLRECT', [Types.Integer, Types.Integer, Types.Integer, Types.Integer], 'fillRect');
-        compiler.defineJsFunction('DOT', [Types.Integer, Types.Integer], 'dot');
-        compiler.defineJsFunction('CLEAR', [], 'clear');
-        compiler.defineJsFunction('DRAWSCREEN', [], 'drawScreen', undefined, false);
+        compiler.defineJsFunction('DrawScreen', [], 'drawScreen', undefined, false);
 
-        compiler.defineJsFunction('TEXT', [Types.Integer, Types.Integer, Types.String], 'text');
+        //// Drawing functions
+        //compiler.defineJsFunction('CLEARCOLOR', [Types.Integer, Types.Integer, Types.Integer], 'clearColor');
+        //compiler.defineJsFunction('LINECOLOR', [Types.Integer, Types.Integer, Types.Integer], 'lineColor');
+        //compiler.defineJsFunction('FILLCOLOR', [Types.Integer, Types.Integer, Types.Integer], 'fillColor');
+        //compiler.defineJsFunction('LINE', [Types.Integer, Types.Integer, Types.Integer, Types.Integer], 'line');
+        //compiler.defineJsFunction('CIRCLE', [Types.Integer, Types.Integer, Types.Integer], 'circle');
+        //compiler.defineJsFunction('FILLCIRCLE', [Types.Integer, Types.Integer, Types.Integer], 'fillCircle');
+        //compiler.defineJsFunction('RECT', [Types.Integer, Types.Integer, Types.Integer, Types.Integer], 'rect');
+        //compiler.defineJsFunction('FILLRECT', [Types.Integer, Types.Integer, Types.Integer, Types.Integer], 'fillRect');
+        //compiler.defineJsFunction('DOT', [Types.Integer, Types.Integer], 'dot');
+        //compiler.defineJsFunction('CLEAR', [], 'clear');
+        //compiler.defineJsFunction('DRAWSCREEN', [], 'drawScreen', undefined, false);
 
-        //compiler.defineJsFunction('SHOWCONSOLE', [], 'showConsole');
-        //compiler.defineJsFunction('HIDECONSOLE', [], 'hideConsole');
+        //compiler.defineJsFunction('TEXT', [Types.Integer, Types.Integer, Types.String], 'text');
 
-        // Mathematical functions
-        compiler.defineJsFunction('DBL', [Types.Integer], 'dbl', Types.Double);
-        compiler.defineJsFunction('INT', [Types.Double], 'int', Types.Integer);
-        compiler.defineJsFunction('SIN', [Types.Double], 'sin', Types.Double);
-        compiler.defineJsFunction('COS', [Types.Double], 'cos', Types.Double);
+        ////compiler.defineJsFunction('SHOWCONSOLE', [], 'showConsole');
+        ////compiler.defineJsFunction('HIDECONSOLE', [], 'hideConsole');
 
-        compiler.defineJsFunction('SQRT', [Types.Double], 'sqrt', Types.Double);
+        //// Mathematical functions
+        //compiler.defineJsFunction('DBL', [Types.Integer], 'dbl', Types.Double);
+        //compiler.defineJsFunction('INT', [Types.Double], 'int', Types.Integer);
+        //compiler.defineJsFunction('SIN', [Types.Double], 'sin', Types.Double);
+        //compiler.defineJsFunction('COS', [Types.Double], 'cos', Types.Double);
 
-        compiler.defineJsFunction('RANDOM', [], 'random', Types.Double);
-        compiler.defineJsFunction('RANDINT', [Types.Integer, Types.Integer], 'randint', Types.Integer);
+        //compiler.defineJsFunction('SQRT', [Types.Double], 'sqrt', Types.Double);
+
+        //compiler.defineJsFunction('RANDOM', [], 'random', Types.Double);
+        //compiler.defineJsFunction('RANDINT', [Types.Integer, Types.Integer], 'randint', Types.Integer);
 
 
-        // Time functions
-        compiler.defineJsFunction('HOURS', [], 'hours', Types.Integer);
-        compiler.defineJsFunction('MINUTES', [], 'minutes', Types.Integer);
-        compiler.defineJsFunction('SECONDS', [], 'seconds', Types.Integer);
-        compiler.defineJsFunction('MILLISECONDS', [], 'milliseconds', Types.Integer);
+        //// Time functions
+        //compiler.defineJsFunction('HOURS', [], 'hours', Types.Integer);
+        //compiler.defineJsFunction('MINUTES', [], 'minutes', Types.Integer);
+        //compiler.defineJsFunction('SECONDS', [], 'seconds', Types.Integer);
+        //compiler.defineJsFunction('MILLISECONDS', [], 'milliseconds', Types.Integer);
 
-        // Input
-        compiler.defineJsFunction('KEYDOWN', [Types.Integer], 'keyDown', Types.Integer);
-        compiler.defineJsFunction('KEYUP', [Types.Integer], 'keyUp', Types.Integer);
-        compiler.defineJsFunction('KEYHIT', [Types.Integer], 'keyHit', Types.Integer);
-        compiler.defineJsFunction('MOUSEX', [], 'mouseX', Types.Integer);
-        compiler.defineJsFunction('MOUSEY', [], 'mouseY', Types.Integer);
-        compiler.defineJsFunction('MOUSEDOWN', [Types.Integer], 'mouseDown', Types.Integer);
+        //// Input
+        //compiler.defineJsFunction('KEYDOWN', [Types.Integer], 'keyDown', Types.Integer);
+        //compiler.defineJsFunction('KEYUP', [Types.Integer], 'keyUp', Types.Integer);
+        //compiler.defineJsFunction('KEYHIT', [Types.Integer], 'keyHit', Types.Integer);
+        //compiler.defineJsFunction('MOUSEX', [], 'mouseX', Types.Integer);
+        //compiler.defineJsFunction('MOUSEY', [], 'mouseY', Types.Integer);
+        //compiler.defineJsFunction('MOUSEDOWN', [Types.Integer], 'mouseDown', Types.Integer);
 
-        // Output
-        compiler.defineJsFunction('PRINT', [Types.String], 'print');
-        compiler.defineJsFunction('PRINT', [Types.Double], 'printDbl');
-        compiler.defineJsFunction('PRINT', [Types.Integer], 'printInt');
+        //// Output
+        //compiler.defineJsFunction('PRINT', [Types.String], 'print');
+        //compiler.defineJsFunction('PRINT', [Types.Double], 'printDbl');
+        //compiler.defineJsFunction('PRINT', [Types.Integer], 'printInt');
+
+
+        // Do checkings here
+        // TODO Move elsewhere
+        new Typechecker(this.ast, compiler.functions).check();
+        new Atomicchecker(this.ast, compiler.functions).check();
 
 
         try {

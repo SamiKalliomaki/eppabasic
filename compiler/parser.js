@@ -38,7 +38,7 @@ Parser.prototype = {
      * Parses the whole input
      */
     parse: function parse() {
-        var block = new Nodes.Block();
+        var block = new Nodes.Block(0);
         while (this.peek().type !== 'eos') {
             var next = this.peek();
             if (next.type === 'newline') {
@@ -121,14 +121,14 @@ Parser.prototype = {
         var start = this.parseExpr();
         this.expect('to');
         var end = this.parseExpr();
-        return new Nodes.Range(start, end);
+        return new Nodes.Range(start, end, start.line);
     },
 
     /*
      * Parse block
      */
     parseBlock: function parseBlock() {
-        var block = new Nodes.Block();
+        var block = new Nodes.Block(this.peek().line);
 
         // Comment can be at the end of the last
         if (this.peek().type === 'comment') {
@@ -160,9 +160,6 @@ Parser.prototype = {
                 block.nodes.push(this.parseComment());
             }
             this.expect('newline');     // Expect newline after every statement
-            //do {
-            //    this.expect('newline');
-            //} while (this.peek().type === 'newline')
         }
     },
 
@@ -170,16 +167,14 @@ Parser.prototype = {
      * Parses a for statement
      */
     parseFor: function parseFor() {
-        this.expect('for');
+        var line = this.expect('for').line;
 
-        var variable = new Nodes.VariableDefinition(this.expect('identifier').val);
-        //if (this.peek().type !== 'binop' || this.peek().val !== '=')
-        //    throw new Error('For statement must have an equal siqn before range');
+        var variable = new Nodes.VariableDefinition(this.expect('identifier').val, line);
         this.expect('eq');
         var start = this.parseExpr();
         this.expect('to');
         var stop = this.parseExpr();
-        var step = new Nodes.Number('1');
+        var step = new Nodes.Number('1', line);
         if (this.peek().type === 'step') {
             this.advance();
             step = this.parseExpr();
@@ -191,7 +186,7 @@ Parser.prototype = {
         if (variable.name !== this.expect('identifier').val)
             throw new Error('Next statement must have same variable as the original for statement');
 
-        return new Nodes.For(variable, block, start, stop, step);
+        return new Nodes.For(variable, block, start, stop, step, line);
     },
     /*
      * Parses an if statement
@@ -202,7 +197,7 @@ Parser.prototype = {
         var expr = this.parseExpr()
         this.expect('then');
         var trueStatement = this.parseBlock();
-        var res = new Nodes.If(expr, trueStatement);
+        var res = new Nodes.If(expr, trueStatement, expr.line);
         var cur = res;
 
         while (this.peek().type !== 'endif') {
@@ -215,7 +210,7 @@ Parser.prototype = {
                 expr = this.parseExpr();
                 this.expect('then');
                 trueStatement = this.parseBlock();
-                cur = cur.falseStatement = new Nodes.If(expr, trueStatement);
+                cur = cur.falseStatement = new Nodes.If(expr, trueStatement, expr.line);
             } else {
                 this.expect('else/elseif/endif');           // Throws an error with appropriate error message
             }
@@ -239,12 +234,10 @@ Parser.prototype = {
             }
             this.expect('eq');
             var expr = this.parseExpr();
-            return new Nodes.VariableAssignment(tok.val, expr, dimensions);
+            return new Nodes.VariableAssignment(tok.val, expr, dimensions, tok.line);
         } else {
             var params = this.parseParams();
-            return new Nodes.FunctionCall(tok.val, params);
-            //throw new Error('Function calls not yet supported');
-            throw new Error('Unexpected token "identifier" at line ' + this.peek().line);
+            return new Nodes.FunctionCall(tok.val, params, tok.line);
         }
     },
     /*
@@ -279,7 +272,7 @@ Parser.prototype = {
      * Parses a variable definition
      */
     parseVariableDefinition: function parseVariableDefinition() {
-        this.expect('dim');
+        var line = this.expect('dim').line;
         var name = this.expect('identifier').val;
         var type;
         var initial;
@@ -295,14 +288,14 @@ Parser.prototype = {
             this.advance();
             initial = this.parseExpr();
         }
-        return new Nodes.VariableDefinition(name, type, initial, dimensions);
+        return new Nodes.VariableDefinition(name, type, initial, dimensions, line);
     },
 
     /*
      * Parses a function definition
      */
     parseFunctionDefinition: function parseFunctionDefinition() {
-        this.expect('function');
+        var line = this.expect('function').line;
         var name = this.expect('identifier').val;
         var params = [];
 
@@ -336,21 +329,21 @@ Parser.prototype = {
 
         this.expect('endfunction');
 
-        return new Nodes.FunctionDefinition(name, params, type, block);
+        return new Nodes.FunctionDefinition(name, params, type, block, line);
     },
     /*
      * Parses a return statement
      */
     parseReturn: function parseReturn(ret, parent) {
-        this.expect('return');
-        return new Nodes.Return(this.parseExpr());
+        var line = this.expect('return').line;
+        return new Nodes.Return(this.parseExpr(), line);
     },
 
     /*
      * Parses a subprogram definition
      */
     parseSubDefinition: function parseSubDefinition() {
-        this.expect('sub');
+        var line = this.expect('sub').line;
         var name = this.expect('identifier').val;
         var params = [];
 
@@ -382,29 +375,29 @@ Parser.prototype = {
 
         this.expect('endsub');
 
-        return new Nodes.FunctionDefinition(name, params, undefined, block);
+        return new Nodes.FunctionDefinition(name, params, undefined, block, line);
     },
 
     /*
      * Parses an repeat-forever/until/while statement
      */
     parseRepeat: function parseRepeat() {
-        this.expect('repeat');
+        var line = this.expect('repeat').line;
 
         var block = this.parseBlock();
 
         switch (this.peek().type) {
             case 'forever':
                 this.advance();
-                return new Nodes.RepeatForever(block);
+                return new Nodes.RepeatForever(block, line);
             case 'until':
                 this.advance();
                 var expr = this.parseExpr();
-                return new Nodes.RepeatUntil(block, expr);
+                return new Nodes.RepeatUntil(block, expr, line);
             case 'while':
                 this.advance();
                 var expr = this.parseExpr();
-                return new Nodes.RepeatWhile(block, expr);
+                return new Nodes.RepeatWhile(block, expr, line);
             default:
                 this.expect('forever/until/while');
         }
@@ -431,25 +424,26 @@ Parser.prototype = {
             switch (t.type) {
                 // TODO Move unary operators away from parseExpr
                 case 'minus':
-                    return new Nodes.UnaryOp('neg', this.parseExpr(level));
+                    return new Nodes.UnaryOp('neg', this.parseExpr(level), t.line);
                 case 'number':
                     return new Nodes.Number(t.val, t.line);
                 case 'string':
                     return new Nodes.String(t.val, t.line);
                 case 'identifier':
                     // An identifier! Then it must be either function call or variable
+                    var node;
                     if (this.peek().type === 'lparen') {
                         // It's function call!
                         var params = this.parseParams();
-                        return new Nodes.FunctionCall(t.val, params, t.line);
+                        var node = new Nodes.FunctionCall(t.val, params, t.line);
+                    } else {
+                        // Ok, it's just variable
+                        node = new Nodes.Variable(t.val, t.line);
                     }
-                    var dimensions;
-                    if (this.peek().type === 'lbracket') {
-                        // An array
-                        dimensions = this.parseDimensions();
-                    }
-                    // Ok, it's just variable
-                    return new Nodes.Variable(t.val, dimensions, t.line);
+                    // If it is an array, get the returned item
+                    if (this.peek().type === 'lbracket')
+                        node = new Nodes.IndexOp(node, this.parseDimensions(), this.peek().line);
+                    return node;
                     break;
                 default:
                     throw new Error('Number or variable expected instead of "' + t.type + '" at line ' + t.line);
@@ -486,10 +480,16 @@ Parser.prototype = {
     },
 
     parseDimensions: function parseDimensions() {
+        var dims = [];
         this.expect('lbracket');
-        var expr = this.parseExpr();
+        while (1) {
+            dims.push(this.parseExpr());
+            if (this.peek().type === 'rbracket')
+                break;
+            this.expect('comma');
+        }
         this.expect('rbracket');
-        return expr;
+        return dims;
     },
 
     /*
@@ -497,6 +497,6 @@ Parser.prototype = {
      */
     parseComment: function parseComment() {
         var tok = this.expect('comment');
-        return new Nodes.Comment(tok.val);
+        return new Nodes.Comment(tok.val, tok.line);
     }
 };
