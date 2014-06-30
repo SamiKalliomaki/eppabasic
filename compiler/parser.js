@@ -1,12 +1,15 @@
 ﻿/// <reference path="lexer.js" />
 /// <reference path="operators.js" />
+/// <reference path="types.js" />
 /// <reference path="nodes.js" />
 
-function Parser(input, operators) {
+function Parser(input, operators, types) {
     /// <param name='input' type='String' />
     /// <param name='operators' type='OperatorContainer' />
+    /// <param name='types' type='TypeContainer' />
     this.lexer = new Lexer(input);
     this.operators = operators;
+    this.types = types;
 }
 
 Parser.prototype = {
@@ -282,12 +285,14 @@ Parser.prototype = {
         }
         if (this.peek().type === 'as') {
             this.advance();
-            type = Types.toType(this.expect('identifier').val);
+            type = this.types.getTypeByName(this.expect('identifier').val);
         }
         if (this.peek().type === 'eq') {
             this.advance();
             initial = this.parseExpr();
         }
+        if (dimensions)
+            type = this.types.getArrayType(type, dimensions.length);
         return new Nodes.VariableDefinition(name, type, initial, dimensions, line);
     },
 
@@ -304,7 +309,7 @@ Parser.prototype = {
         paramloop: while (this.peek().type !== 'rparen') {
             var paramname = this.expect('identifier').val;
             this.expect('as');
-            var paramtype = Types.toType(this.expect('identifier').val);
+            var paramtype = this.types.getTypeByName(this.expect('identifier').val);
 
             params.push({
                 name: paramname,
@@ -323,7 +328,7 @@ Parser.prototype = {
         }
         this.expect('rparen');
         this.expect('as');
-        var type = Types.toType(this.expect('identifier').val);
+        var type = this.types.getTypeByName(this.expect('identifier').val);
 
         var block = this.parseBlock();
 
@@ -352,7 +357,7 @@ Parser.prototype = {
         paramloop: while (this.peek().type !== 'rparen') {
             var paramname = this.expect('identifier').val;
             this.expect('as');
-            var paramtype = Types.toType(this.expect('identifier').val);
+            var paramtype = this.types.getTypeByName(this.expect('identifier').val);
 
             params.push({
                 name: paramname,

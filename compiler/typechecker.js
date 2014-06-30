@@ -1,13 +1,16 @@
 ﻿/// <reference path="operators.js" />
 /// <reference path="types.js" />
+/// <reference path="types.js" />
 
-function Typechecker(ast, functions, operators) {
+function Typechecker(ast, functions, operators, types) {
     /// <param name='ast' type='Nodes.Block' />
     /// <param name='functions' type='Array' />
     /// <param name='operators' type='OperatorContainer' />
+    /// <param name='types' type='Type' />
     this.ast = ast;
     this.functions = functions;
     this.operators = operators;
+    this.types = types;
 }
 
 Typechecker.prototype = {
@@ -35,20 +38,20 @@ Typechecker.prototype = {
         block.defineVariable = function defineVariable(def) {
             if (block.variables.some(
                 function some(elem) {
-                    return elem.name === def.name;
+                    return elem.name.toLowerCase() === def.name.toLowerCase();
             })) {
                 throw new Error('Redefinition of variable "' + name + '"');
             }
             block.variables.push(def);
         }
         block.getVariable = function getVariable(name) {
+            // First try to find if the variable is defined here
             var variable = block.variables.find(function find(elem) {
-                return elem.name === name;
+                return elem.name.toLowerCase() === name.toLowerCase();
             });
             if (variable)
                 return variable;
-            //if (block.variables[name])
-            //    return block.variables[name];
+            // Then try to find it from somewhere higher in the tree
             if (parent)
                 return parent.getVariable(name);
         }
@@ -69,17 +72,27 @@ Typechecker.prototype = {
      */
     visitVariableDefinition: function visitVariableDefinition(definition, parent) {
         if (!definition.type) {
+            // No type defined -> initial value has to be defined
             if (!definition.initial)
                 throw new Error('Variable "' + definition.name + '" definition must have either type or initializer');
+            // Just resolve the type
             definition.type = this.resolveExprType(definition.initial, parent);
         }
+        if (definition.dimensions) {
+            //definition.type = this.types.getArrayType(definition.type, definition.dimensions.length);
+            // This is an array -> for every dimesion, check type
+            definition.dimensions.forEach(function each(dim) {
+                dim.type = this.resolveExprType(dim, parent);
+                if (!dim.type.canCastTo(this.types.Integer))
+                    throw new Error('Array dimensions must be type of "Integer"');
+            }.bind(this));
+        }
         if (definition.initial) {
-            if (!this.resolveExprType(definition.initial, parent).canCastImplicitlyTo(definition.type))
+            // Initial is defined -> must not conflict with the type specified
+            if (!this.resolveExprType(definition.initial, parent).canCastTo(definition.type))
                 throw new Error('Can not cast type "' + this.resolveExprType(definition.initial, parent) + '" to "' + definition.type + '"');
         }
-        if (definition.dimensions) {
-            definition.dimensions.type = this.resolveExprType(definition.dimensions, parent);
-        }
+        // Tell the parent about this variable
         parent.defineVariable(definition);
     },
 
@@ -87,15 +100,32 @@ Typechecker.prototype = {
      * Visits a variable definition
      */
     visitVariableAssignment: function visitVariableAssignment(assignemnt, parent) {
+        // Get reference to the variable
         var variable = parent.getVariable(assignemnt.name);
+        // Check that it exists
         if (!variable)
             throw new Error('No variable called "' + assignemnt.name + '" exists in scope');
-        if (assignemnt.dimensions) {
-            assignemnt.dimensions.type = this.resolveExprType(assignemnt.dimensions, parent);
+
+        var type = variable.type;
+        // Test types for every index
+        if (assignemnt.index) {
+            assignemnt.index.forEach(function each(index) {
+                index.type = this.resolveExprType(index, parent);
+                if (!index.type.canCastTo(this.types.Integer))
+                    throw new Error('Array indices must be type of "Integer"');
+            }.bind(this));
+            type = type.itemType;
         }
-        assignemnt.definition = variable;
+
+        // Save the reference
+        assignemnt.ref = variable;
+
+        // Resolve expression type
         this.resolveExprType(assignemnt.expr, parent);
-        assignemnt.type = variable.type;
+
+        // Check that it matches the type of the variable it is assigned to
+        if (!assignemnt.expr.type.canCastTo(type))
+            throw new Error('Can not assign value of type "' + assignemnt.expr.type + '" to a variable of type "' + type + '"');
     },
 
     /*
@@ -105,12 +135,12 @@ Typechecker.prototype = {
         loop.variable.type = this.resolveExprType(loop.start, parent);
         if (this.resolveExprType(loop.stop, parent) !== loop.variable.type)
             throw new Error('Loop end and start types must be same');
-        if (!this.resolveExprType(loop.step, parent).canCastImplicitlyTo(loop.variable.type))
+        if (!this.resolveExprType(loop.step, parent).canCastTo(loop.variable.type))
             throw new Error('Loop step type must match the iterator type');
 
         // Adds a custom get variable for loop iterator
         loop.getVariable = function getVariable(name) {
-            if (name === loop.variable.name)
+            if (name.toLowerCase() === loop.variable.name.toLowerCase())
                 return loop.variable;
             if (parent)
                 return parent.getVariable(name);
@@ -211,13 +241,13 @@ Typechecker.prototype = {
         switch (expr.nodeType) {
             case 'Number':
                 if (+expr.val === (expr.val | 0) && expr.val.indexOf('.') === -1) {
-                    return expr.type = Types.Integer;
+                    return expr.type = this.types.Integer;
                 } else {
-                    return expr.type = Types.Double;
+                    return expr.type = this.types.Double;
                 }
 
             case 'String':
-                return expr.type = Types.String;
+                return expr.type = this.types.String;
 
             case 'BinaryOp':
                 var leftType = this.resolveExprType(expr.left, context);
@@ -240,8 +270,6 @@ Typechecker.prototype = {
                 var variable = context.getVariable(expr.val);
                 if (!variable)
                     throw new Error('No variable called "' + expr.val + '" exists in scope');
-                if (expr.dimensions)
-                    expr.dimensions.type = this.resolveExprType(expr.dimensions, context);
                 expr.definition = variable;
                 return expr.type = variable.type;
 
@@ -257,6 +285,7 @@ Typechecker.prototype = {
      * Gets the function definition
      */
     getFunctionHandle: function getFunctionHandle(name, params) {
+        // TODO First try to get with exact types, then with converted
         var i = this.functions.length;
         funcloop: while (i--) {
             if (this.functions[i].name.toLowerCase() === name.toLowerCase()
@@ -264,7 +293,7 @@ Typechecker.prototype = {
                 // Check all parameters one by one
                 var j = params.length;
                 while (j--) {
-                    if (!params[j].type.canCastImplicitlyTo(this.functions[i].paramTypes[j]))
+                    if (!params[j].type.canCastTo(this.functions[i].paramTypes[j]))
                         continue funcloop;
                 }
                 return this.functions[i];

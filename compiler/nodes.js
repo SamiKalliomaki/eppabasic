@@ -53,9 +53,8 @@ Nodes.String.prototype = {
 /*
  * Creates a new ast variable node
  */
-Nodes.Variable = function Variable(val, dimensions, line) {
+Nodes.Variable = function Variable(val, line) {
     this.val = val;
-    this.dimensions = dimensions;
     this.line = line;
 };
 Nodes.Variable.prototype = {
@@ -154,10 +153,10 @@ Nodes.VariableDefinition.prototype = {
 /*
  * Creates a new ast variable assignment node 
  */
-Nodes.VariableAssignment = function VariableAssignment(name, expr, dimensions, line) {
+Nodes.VariableAssignment = function VariableAssignment(name, expr, index, line) {
     this.name = name;
     this.expr = expr;
-    this.dimensions = dimensions;
+    this.index = index;
     this.line = line;
 }
 Nodes.VariableAssignment.prototype = {

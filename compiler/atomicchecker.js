@@ -144,8 +144,12 @@ Atomicchecker.prototype = {
     /*
      * Visits array dimensions
      */
-    visitDimensions: function visitDimensions(dim) {
-        return dim.atomic = this.visitExpr(dim);
+    visitDimensions: function visitDimensions(dims) {
+        var atomic = true;
+        dims.forEach(function each(dim) {
+            atomic = this.visitExpr(dim) ? atomic : false;
+        }.bind(this));
+        return dims.atomic = atomic;
     },
 
     visitExpr: function visitExpr(expr) {

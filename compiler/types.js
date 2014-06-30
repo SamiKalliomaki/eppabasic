@@ -1,145 +1,62 @@
-﻿Types = {};
+﻿
 
-(function initTypes() {
+function TypeContainer() {
+    this.types = [];
+    this.arrayTypes = [];
 
-    function Integer() { };
-    Integer.prototype = {
-        canCastImplicitlyTo: function canCastImplicitlyTo(type) {
-            switch (type) {
-                case Types.Integer:
-                case Types.Double:
-                    return true;
-            }
-            return false;
-        },
-        cast: function cast(expr) {
-            return '((' + expr + ')|0)';
-        },
-        castTo: function castTo(expr, type) {
-            switch (type) {
-                case Types.Integer:
-                    return '((' + expr + ')|0)';
-                case Types.Double:
-                    return '(+(' + expr + '))';
-            }
-            throw new Error('Failed to perform type casting');
-        },
-        memoryType: 'MEMS32',
-        shift: 2,
-        size: 4,
-        toString: function toString() {
-            return 'Integer';
-        }
-    };
+    // Make common singletones easily available
+    this.Integer = new IntegerType();
 
-    function Boolean() { };
-    Boolean.prototype = {
-        canCastImplicitlyTo: function canCastImplicitlyTo(type) {
-            switch (type) {
-                case Types.Integer:
-                case Types.Double:
-                    return true;
-            }
-            return false;
-        },
-        cast: function cast(expr) {
-            return '((' + expr + ')|0)';
-        },
-        memoryType: 'MEMS32',
-        shift: 2,
-        size: 4,
-        toString: function toString() {
-            return 'Boolean';
-        }
-    };
-
-    function Double() { };
-    Double.prototype = {
-        canCastImplicitlyTo: function canCastImplicitlyTo(type) {
-            switch (type) {
-                case Types.Double:
-                    return true;
-            }
-            return false;
-        },
-        cast: function cast(expr) {
-            return '(+(' + expr + '))';
-        },
-        castTo: function castTo(expr, type) {
-            switch (type) {
-                case Types.Integer:
-                    return '(~~(' + expr + '))';
-                case Types.Double:
-                    return '(+(' + expr + '))';
-            }
-            throw new Error('Failed to perform type casting');
-        },
-        memoryType: 'MEMF32',
-        shift: 2,
-        size: 4,
-        toString: function toString() {
-            return 'Double';
-        }
-    };
-
-    function String() { }
-    String.prototype = {
-        canCastImplicitlyTo: function canCastImplicitlyTo(type) {
-            switch (type) {
-                case Types.String:
-                    return true;
-            }
-            return false;
-        },
-        cast: function (expr) {
-            return '((' + expr + ')|0)';
-        },
-        pointer: true,
-
-        memoryType: 'MEMU32',
-        shift: 2,
-        size: 4,
-        toString: function toString() {
-            return 'String';
-        }
-    };
-
-    function Char() { }
-    Char.prototype = {
-        canCastImplicitlyTo: function canCastImplicitlyTo(type) {
-            switch (type) {
-                case Types.Integer:
-                case Types.Double:
-                    return true;
-            }
-            return false;
-        },
-        cast: function cast(expr) {
-            return '((' + expr + ')|0)';
-        },
-        memoryType: 'MEMU8',
-        shift: 0,
-        size: 1,
-        toString: function toString() {
-            return 'Char';
-        }
-    }
-
-    // Make singletones from types
-    Types.Integer = new Integer();
-    Types.Boolean = new Boolean();
-    Types.Double = new Double();
-    Types.String = new String();
-    Types.Char = new Char();
-})();
-
-Types.toType = function toType(type) {
-    for (ownType in this) {
-        if (this.hasOwnProperty(ownType)) {
-            if (type.toLowerCase() === ownType.toLowerCase())
-                return this[ownType];
-        }
-    }
-
-    throw new Error('Unknown type: "' + type + '"');
+    // Add singletones to known types
+    this.types.push(this.Integer);
 }
+TypeContainer.prototype = {
+    getTypeByName: function getTypeByName(name) {
+        return this.types.find(function find(type) {
+            return type.name.toLowerCase() === name.toLowerCase();
+        }.bind(this));
+    },
+    getArrayType: function getArrayType(type, dimensionCount) {
+        var array = this.arrayTypes.find(function find(arr) {
+            return arr.itemType === type && arr.dimensionCount === dimensionCount;
+        })
+        if (array)
+            return array;
+        array = new ArrayType(type, dimensionCount);
+        this.types.push(array);
+        this.arrayTypes.push(array);
+        return array;
+    }
+};
+
+function BaseType() {
+}
+BaseType.prototype = {
+    canCastTo: function canCastTo(type) {
+        if (this === type)
+            return true;
+        return this.castTargets.some(function some(val) {
+            return type === val;
+        });
+    },
+    castTargets: [],
+    toString: function toString() {
+        return this.name;
+    }
+};
+
+
+function IntegerType() {
+
+}
+extend(IntegerType.prototype, BaseType.prototype);
+IntegerType.prototype.castTargets = [];
+IntegerType.prototype.name = 'Integer';
+
+
+function ArrayType(itemType, dimensionCount) {
+    this.itemType = itemType;
+    this.dimensionCount = dimensionCount;
+    this.name = itemType + '(' + dimensionCount + ')';
+}
+extend(ArrayType.prototype, BaseType.prototype);

@@ -1,12 +1,14 @@
 ﻿/// <reference path="../compiler/parser.js" />
 /// <reference path="../compiler/operators.js" />
+/// <reference path="../compiler/types.js" />
 /// <reference path="../compiler/compiler.js" />
 
 function Editor(editorName, errBox) {
     this.editorName = editorName;
     this.errBox = errBox;
 
-    this.operators = new OperatorContainer();
+    this.types = new TypeContainer();
+    this.operators = new OperatorContainer(this.types);
     this.operators.addDefaultOperators();
 
     this.ace = ace.edit(editorName);
@@ -21,8 +23,7 @@ Editor.prototype = {
         this.ace.setValue(code);
     },
     parse: function parse() {
-        //         var parser = new Parser(this.codeBox.value);
-        var parser = new Parser(this.ace.getValue(), this.operators);
+        var parser = new Parser(this.ace.getValue(), this.operators, this.types);
         try {
             this.ast = parser.parse();
         } catch (e) {
@@ -31,7 +32,7 @@ Editor.prototype = {
         }
     },
     compile: function compile() {
-        var compiler = new Compiler(this.ast, this.operators);
+        var compiler = new Compiler(this.ast, this.operators, this.types);
 
         compiler.defineJsFunction('DrawScreen', [], 'drawScreen', undefined, false);
 
@@ -87,7 +88,7 @@ Editor.prototype = {
 
         // Do checkings here
         // TODO Move elsewhere
-        new Typechecker(this.ast, compiler.functions).check();
+        new Typechecker(this.ast, compiler.functions, this.operators, this.types).check();
         new Atomicchecker(this.ast, compiler.functions).check();
 
 
@@ -103,8 +104,8 @@ Editor.prototype = {
     },
 
     openRuntime: function openRuntime() {
-        if (!this.compiled)
-            this.compile();
+        //if (!this.compiled)
+        //    this.compile();
 
         // Close opened window
         this.closeRuntime();
