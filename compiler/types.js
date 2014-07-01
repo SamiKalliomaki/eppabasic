@@ -39,6 +39,9 @@ BaseType.prototype = {
             return type === val;
         });
     },
+    isArray: function isArray() {
+        return false;
+    },
     castTargets: [],
     toString: function toString() {
         return this.name;
@@ -52,6 +55,15 @@ function IntegerType() {
 extend(IntegerType.prototype, BaseType.prototype);
 IntegerType.prototype.castTargets = [];
 IntegerType.prototype.name = 'Integer';
+IntegerType.prototype.castTo = function castTo(expr, type) {
+    /// <param name='expr' type='String' />
+    /// <param name='type' type='BaseType' />
+    switch (type) {
+        case this:
+            return expr;
+    }
+    throw new Error('Failed to cast "' + this + '" to "' + type + '"');
+}
 
 
 function ArrayType(itemType, dimensionCount) {
@@ -60,3 +72,6 @@ function ArrayType(itemType, dimensionCount) {
     this.name = itemType + '(' + dimensionCount + ')';
 }
 extend(ArrayType.prototype, BaseType.prototype);
+ArrayType.prototype.isArray = function isArray() {
+    return true;
+};

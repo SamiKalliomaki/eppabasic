@@ -1,4 +1,6 @@
-﻿Nodes = {};
+﻿/// <reference path="types.js" />
+
+Nodes = {};
 
 /*
  * Creates a new ast for node
@@ -32,6 +34,8 @@ Nodes.If.prototype = {
  * Creates a new ast number node
  */
 Nodes.Number = function Number(val, line) {
+    /// <field name='line' type='window.Number' />
+    /// <field name='type' type='BaseType' />
     this.val = val;
     this.line = line;
 };
@@ -65,14 +69,37 @@ Nodes.Variable.prototype = {
  * Creates a new ast block node
  */
 Nodes.Block = function Block(nodes, line) {
+    /// <field name='nodes' type='Array' />
+    /// <field name='line' type='Number' />
+    /// <field name='type' type='BaseType' />
     if (typeof nodes === 'number') {
         line = nodes;
         nodes = [];
     }
     this.nodes = nodes;
     this.line = line;
+
+    this.variables = [];
+    this.parent = undefined;
 };
 Nodes.Block.prototype = {
+    defineVariable: function defineVariable(def) {
+        if (this.variables.some(function some(elem) { return elem.name.toLowerCase() === def.name.toLowerCase(); })) {
+            throw new Error('Redefinition of variable "' + name + '"');
+        }
+        this.variables.push(def);
+    },
+    getVariable: function getVariable(name) {
+        // First try to find if the variable is defined here
+        var variable = this.variables.find(function find(elem) {
+            return elem.name.toLowerCase() === name.toLowerCase();
+        });
+        if (variable)
+            return variable;
+        // Then try to find it from somewhere higher in the tree
+        if (this.parent)
+            return this.parent.getVariable(name);
+    },
     nodeType: 'Block'
 };
 

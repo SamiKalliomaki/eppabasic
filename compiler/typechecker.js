@@ -34,27 +34,7 @@ Typechecker.prototype = {
      * Visits a block. Basically just visits all children nodes.
      */
     visitBlock: function visitBlock(block, parent) {
-        block.variables = [];
-        block.defineVariable = function defineVariable(def) {
-            if (block.variables.some(
-                function some(elem) {
-                    return elem.name.toLowerCase() === def.name.toLowerCase();
-            })) {
-                throw new Error('Redefinition of variable "' + name + '"');
-            }
-            block.variables.push(def);
-        }
-        block.getVariable = function getVariable(name) {
-            // First try to find if the variable is defined here
-            var variable = block.variables.find(function find(elem) {
-                return elem.name.toLowerCase() === name.toLowerCase();
-            });
-            if (variable)
-                return variable;
-            // Then try to find it from somewhere higher in the tree
-            if (parent)
-                return parent.getVariable(name);
-        }
+        block.parent = parent;
 
         block.nodes.forEach(function each(val) {
             this.visit(val, block);
