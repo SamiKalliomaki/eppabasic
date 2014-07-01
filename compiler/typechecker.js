@@ -294,27 +294,6 @@ Typechecker.prototype = {
      * Gets the function definition
      */
     getFunctionHandle: function getFunctionHandle(name, params) {
-        // TODO First try to get with exact types, then with converted
-
-        //// First try to get exact match
-        //var i = this.functions.length;
-        //funcloop: while (i--) {
-        //    // First test that the names and parameter count matches
-        //    if (this.functions[i].name.toLowerCase() === name.toLowerCase()
-        //        && this.functions[i].paramTypes.length === params.length) {
-        //        // Then that all parameters are equal with each other
-        //        var j = params.length;
-        //        while (j--)
-        //            if (params[j].type !== this.functions[i].paramTypes[j])
-        //                continue funcloop;      // Didn't match -> try next function
-
-        //        // Found it!
-        //        return this.functions[i];
-        //    }
-        //}
-
-        // Didn't find anything with exact match
-        // -> try that the parameters can be casted once
         var bestCastCount = ~0;
         var candidates = [];
         var i = this.functions.length;
