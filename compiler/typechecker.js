@@ -259,6 +259,15 @@ Typechecker.prototype = {
                 expr.operator = operator;
                 return expr.type = operator.returnType;
 
+            case 'IndexOp':
+                var arrayType = this.resolveExprType(expr.expr, context);
+                expr.index.forEach(function each(index) {
+                    this.resolveExprType(index);
+                    if (!index.type.canCastTo(this.types.Integer))
+                        throw new Error('Array indices must be type of "Integer"');
+                }.bind(this));
+                return expr.type = arrayType.itemType;
+
             case 'Range':
                 var startType = this.resolveExprType(expr.start, context);
                 var endType = this.resolveExprType(expr.end, context);
@@ -286,18 +295,67 @@ Typechecker.prototype = {
      */
     getFunctionHandle: function getFunctionHandle(name, params) {
         // TODO First try to get with exact types, then with converted
+
+        //// First try to get exact match
+        //var i = this.functions.length;
+        //funcloop: while (i--) {
+        //    // First test that the names and parameter count matches
+        //    if (this.functions[i].name.toLowerCase() === name.toLowerCase()
+        //        && this.functions[i].paramTypes.length === params.length) {
+        //        // Then that all parameters are equal with each other
+        //        var j = params.length;
+        //        while (j--)
+        //            if (params[j].type !== this.functions[i].paramTypes[j])
+        //                continue funcloop;      // Didn't match -> try next function
+
+        //        // Found it!
+        //        return this.functions[i];
+        //    }
+        //}
+
+        // Didn't find anything with exact match
+        // -> try that the parameters can be casted once
+        var bestCastCount = ~0;
+        var candidates = [];
         var i = this.functions.length;
         funcloop: while (i--) {
+            // First test that the names and parameter count matches
             if (this.functions[i].name.toLowerCase() === name.toLowerCase()
                 && this.functions[i].paramTypes.length === params.length) {
-                // Check all parameters one by one
+                // Then that all parameters can be casted 
+                var castCount = 0;
                 var j = params.length;
                 while (j--) {
-                    if (!params[j].type.canCastTo(this.functions[i].paramTypes[j]))
-                        continue funcloop;
+                    if (params[j].type === this.functions[i].paramTypes[j])
+                        continue;                   // Good, exact match
+                    if (params[j].type.canCastTo(this.functions[i].paramTypes[j])) {
+                        castCount++;
+                        continue;                   // Good, can be casted
+                    }
+                    continue funcloop;              // Ok, this ones parameters didn't match at all
                 }
-                return this.functions[i];
+
+                if (castCount < bestCastCount) {
+                    // Set the new record and clear candidates
+                    bestCastCount = castCount;
+                    candidates = [];
+                }
+                if (castCount === bestCastCount) {
+                    // Save this for later use
+                    candidates.push(this.functions[i]);
+                }
             }
         }
+
+        if (!candidates.length) {
+            var paramStr = params.map(function map(param) { return param.type; }).join(', ');
+            throw new Error('No function matches a call "' + name + '(' + paramStr + ')"');
+        }
+        if (candidates.length > 1) {
+            var candidateStr = '\t' + candidates.map(function map(cand) { return cand.paramTypes.join(', '); }).join('\t\n');
+            var paramStr = params.map(function map(param) { return param.type; }).join(', ');
+            throw new Error('Ambiguous function call: "' + name + '(' + paramStr + ')" Candidates are:' + candidateStr)
+        }
+        return candidates[0];
     },
 };
