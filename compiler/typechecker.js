@@ -274,7 +274,7 @@ Typechecker.prototype = {
      * Gets the function definition
      */
     getFunctionHandle: function getFunctionHandle(name, params) {
-        var bestCastCount = ~0;
+        var bestCastCount = 4294967295;         // Int max
         var candidates = [];
         var i = this.functions.length;
         funcloop: while (i--) {

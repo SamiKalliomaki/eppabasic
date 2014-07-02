@@ -34,7 +34,7 @@ Editor.prototype = {
     compile: function compile() {
         var compiler = new Compiler(this.ast, this.operators, this.types);
 
-        compiler.defineJsFunction('DrawScreen', [], 'drawScreen', undefined, false);
+        compiler.defineJsFunction('drawScreen', true, 'DrawScreen', [], undefined, false);
 
         //// Drawing functions
         //compiler.defineJsFunction('CLEARCOLOR', [Types.Integer, Types.Integer, Types.Integer], 'clearColor');

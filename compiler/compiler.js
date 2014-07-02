@@ -74,7 +74,7 @@ CompilerContext.prototype = {
         // Push it to the stack
         var offset = this.stackOffset;
         this.stackOffset += size;
-        this.push('SP=(SP+' + size + ')|0;');
+        this.push('SP=(SP+' + reserved + ')|0;');
         return new CompilerStackReference(type, offset, reserved, this);
     },
 
@@ -82,6 +82,21 @@ CompilerContext.prototype = {
         /// <param name='type' type='BaseType' />
         /// <returns type='CompilerConstantReference' />
         return new CompilerConstantReference(type, this);
+    },
+
+    alignStack: function alignStack() {
+        // Fill stack with nothing till next multiple of 8
+        var reserved = 0;
+        while (this.stackOffset % 8 != 0) {
+            reserved++;
+            this.stackOffset++;
+        }
+        this.push('SP=(SP+' + reserved + ')|0;');
+        return reserved;
+    },
+    revertAlign: function revertAlign(reserved) {
+        this.stackOffset -= reserved;
+        this.push('SP=(SP-' + reserved + ')|0;');
     },
 
     push: function push(str) {
@@ -111,7 +126,8 @@ CompilerTemporaryReference.prototype = {
     },
     free: function free() {
         this.used = false;
-    }
+    },
+    refType: 'temp'
 };
 function CompilerStackReference(type, offset, reserved, context) {
     /// <param name='type' type='BaseType' />
@@ -122,7 +138,39 @@ function CompilerStackReference(type, offset, reserved, context) {
     this.offset = offset;
     this.reserved = reserved;
     this.context = context;
+    this.types = this.context.types;
 }
+CompilerStackReference.prototype = {
+    setValue: function setValue(value) {
+        var mem = 'MEMS32';
+        var shift = 2;
+        if (this.type === this.types.Double) {
+            mem = 'MEMF64';
+            shift = 3;
+        }
+        this.context.push(mem + '[((SP-' + (this.context.stackOffset - this.offset) + ')|0)>>' + shift + ']=' + value.type.castTo(value.getValue(), this.type) + ';');
+    },
+    getValue: function getValue() {
+        var mem = 'MEMS32';
+        var shift = 2;
+        if (this.type === this.types.Double) {
+            mem = 'MEMF64';
+            shift = 3;
+        }
+        return mem + '[((SP-' + (this.context.stackOffset - this.offset) + ')|0)>>' + shift + ']';
+    },
+    free: function free() {
+        // TODO Free the type
+        var size = 4;
+        if (this.type === this.types.Double)
+            size = 8;
+        if (this.context.stackOffset - size !== this.offset)
+            throw new Error('Stack popped in wrong order!');
+        this.context.push('SP=(SP-' + this.reserved + ')|0;');
+        this.context.stackOffset -= this.reserved;
+    },
+    refType: 'stack'
+};
 function CompilerAbsoluteReference() { }
 function CompilerConstantReference(type, context) {
     /// <param name='type' type='BaseType' />
@@ -132,12 +180,15 @@ function CompilerConstantReference(type, context) {
 }
 CompilerConstantReference.prototype = {
     setValue: function setValue(value) {
+        if (typeof value !== "string")
+            value = value.getValue();
         this.value = value;
     },
     getValue: function getValue() {
-        return this.value;
+        return this.type.cast(this.value);
     },
-    free: function free() { }
+    free: function free() { },
+    refType: 'const'
 };
 
 function CompilerFunctionEntry() {
@@ -162,25 +213,51 @@ function Compiler(ast, operators, types) {
     this.operators = operators;
     this.types = types;
 
+    this.env = [];
     this.functions = [];
+
+    this.lastFunctionName = 0;
 }
 
 Compiler.prototype = {
     defineFunction: function defineFunction(name, parameterTypes, returnType, entryName, atomic) {
         if (atomic !== false)
             atomic = true;
-        var entry;
-        if (!atomic) {
-            // Non atomic function needs entry
-            // Others can be without because they are called with their names
-            entry = this.createEntry();
-        }
+
     },
-    defineJsFunction: function defineJsFunction() {
+    defineJsFunction: function defineJsFunction(jsName, env, name, parameterTypes, returnType, atomic) {
+        if (env) {
+            // The implementation is found in env
+            // Let's copy it to a new function name
+            var entry = this.createEntry(this.generateFunctionName);
+        } else {
+            // The implementation is in a module so do nothing
+            var entry = this.createEntry(jsName);
+        }
+
+        // TODO!!!
+
+        this.functions.push({
+            name: name,
+            paramTypes: parameterTypes,
+            returnType: returnType,
+            atomic: atomic
+        });
     },
 
-    createEntry: function createEntry() {
+    createEntry: function createEntry(name) {
         /// <returns type='CompilerFunctionEntry' />
+    },
+    generateFunctionName: function generateFunctionName() {
+        // Let's create a function name
+        var i = this.lastFunctionName++;
+        tmp = [];
+        do {
+            tmp.push(String.fromCharCode(97 + i % 26));
+            i = (i / 26) | 0;
+        } while (i > 0);
+        tmp = tmp.join('');
+        return '$' + tmp;       // Every function name begins with $ to prevent confusion with temporaries
     },
 
 
@@ -227,6 +304,14 @@ Compiler.prototype = {
                 case 'VariableDefinition':
                     this.compileVariableDefinition(node, context);
                     break;
+                case 'FunctionCall':
+                    var ret = this.compileFunctionCall(node, context);
+                    if (ret)
+                        ret.free();
+                    break;
+                case 'Comment':
+                    context.push('/*' + node.val + '*/')
+                    break;
                 default:
                     throw new Error('Unsupported node type "' + node.nodeType + '"');
             }
@@ -251,19 +336,63 @@ Compiler.prototype = {
             variable.location.setValue(this.compileExpr(variable.initial, context));
         }
     },
+    compileFunctionCall: function compileFunctionCall(call, context) {
+        /// <param name='call' type='Nodes.FunctionCall' />
+        /// <param name='context' type='CompilerContext' />
+
+        // Compile parameters
+        var params = [];
+        call.params.forEach(function each(param) {
+            if (!param.atomic) {
+                // This param is not atomic so push every earlier parameter to the stack if it is not there already
+                params = params.map(function each(param) {
+                    if (param.refType !== 'stack' && param.refType !== 'const') {
+                        // Push this to the top of the stack
+                        var stackRef = context.reserveStack(param.type);
+                        stackRef.setValue(param);
+                        param.free();
+                        param = stackRef;
+                    }
+                    return param;
+                }.bind(this));
+            }
+            // Don't forget to push this to the stack
+            params.push(this.compileExpr(param, context));
+        }.bind(this));
+
+        // Align the stack
+        var align = context.alignStack();
+
+        context.push('// Calling function ' + call.name);
+        if (call.handle.atomic) {
+            // Ok, this is a simple and nice atomic function call
+            // TODO!!!
+        } else {
+            // Set return function
+            // TODO!!!
+        }
+
+        // Revert the stack alignment
+        context.revertAlign(align);
+        // And free parameters
+        params.reverse().forEach(function each(param) {
+            param.free();
+        }.bind(this));
+    },
 
     compileExpr: function compileExpr(expr, context) {
         /// <param name='context' type='CompilerContext' />
         switch (expr.nodeType) {
             case 'Number':
                 return this.compileNumberExpr(expr, context);
+            case 'Variable':
+                return this.compileVariableExpr(expr, context);
             case 'BinaryOp':
                 return this.compileBinaryExpr(expr, context);
             default:
                 throw new Error('Unsupported node type "' + expr.nodeType + '"');
         }
     },
-
     compileNumberExpr: function compileNumberExpr(num, context) {
         /// <param name='num' type='Nodes.Number' />
         /// <param name='context' type='CompilerContext' />
@@ -271,30 +400,53 @@ Compiler.prototype = {
         ref.setValue(num.val);
         return ref;
     },
+    compileVariableExpr: function compileVariableExpr(variable, context) {
+        /// <param name='num' type='Nodes.Variable' />
+        /// <param name='context' type='CompilerContext' />
+        // Return the value as a constant expression so that the original
+        // value won't be freed by accident
+        var ref = context.reserveConstant(variable.type);
+        ref.setValue(variable.definition.location);
+        return ref;
+    },
     compileBinaryExpr: function compileBinaryExpr(expr, context) {
         /// <param name='expr' type='Nodes.BinaryOp' />
         /// <param name='context' type='CompilerContext' />
+
+        // Get the operator compilation object
+        var comp = expr.operator.compiler;
+        // Reserve result here first so that if it goes to the stack,
+        // operands can still be popped from above
+        if (expr.atomic)
+            var res = context.reserveTemporary(comp.returnType);
+        else
+            var res = context.reserveStack(comp.returnType);
+        // Compile left and right operands
         var leftRef = this.compileExpr(expr.left, context);
         var rightRef = this.compileExpr(expr.right, context);
-        var comp = expr.operator.compiler;
+        // Get values as string with the right kind of casting for the operator
         var left = leftRef.type.castTo(leftRef.getValue(), comp.leftType);
         var right = rightRef.type.castTo(rightRef.getValue(), comp.rightType);
 
         var src;
+        // Compile operator depending on if it is infix or not
         if (comp.infix) {
             src = left + comp.func + right;
         } else {
             src = comp.func + '(' + left + ',' + right + ')';
         }
+        // Save the expression as constant so that it can then be set to the return object
         var cnt = context.reserveConstant(comp.returnType);
         cnt.setValue(src);
 
-        var res = context.reserveTemporary(comp.returnType);
         res.setValue(cnt);
 
-        // Also free the references
+        // And last but not least, return all the memory we have reserved
         rightRef.free();
         leftRef.free();
         return res;
-    }
+    },
+
+
+
 };

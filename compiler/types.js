@@ -4,9 +4,6 @@ function TypeContainer() {
     this.types = [];
     this.arrayTypes = [];
 
-    // Make common singletones easily available
-    this.Integer = new IntegerType();
-
     // Add singletones to known types
     this.types.push(this.Integer);
 }
@@ -26,7 +23,11 @@ TypeContainer.prototype = {
         this.types.push(array);
         this.arrayTypes.push(array);
         return array;
-    }
+    },
+
+    // Make common singletones easily available
+    Integer: new IntegerType(),
+    Double: new DoubleType()
 };
 
 function BaseType() {
@@ -38,6 +39,9 @@ BaseType.prototype = {
         return this.castTargets.some(function some(val) {
             return type === val;
         });
+    },
+    cast: function cast(expr) {
+        return '((' + expr + ')|0)';
     },
     isArray: function isArray() {
         return false;
@@ -61,9 +65,32 @@ IntegerType.prototype.castTo = function castTo(expr, type) {
     switch (type) {
         case this:
             return expr;
+        case TypeContainer.prototype.Double:
+            return '(+(' + expr + '))';
     }
     throw new Error('Failed to cast "' + this + '" to "' + type + '"');
 }
+
+function DoubleType() {
+
+}
+extend(DoubleType.prototype, BaseType.prototype);
+DoubleType.prototype.castTargets = [];
+DoubleType.prototype.name = 'Double';
+DoubleType.prototype.castTo = function castTo(expr, type) {
+    /// <param name='expr' type='String' />
+    /// <param name='type' type='BaseType' />
+    switch (type) {
+        case this:
+            return expr;
+        case TypeContainer.prototype.Integer:
+            return '((~~+(' + expr + '))|0)';
+    }
+    throw new Error('Failed to cast "' + this + '" to "' + type + '"');
+}
+DoubleType.prototype.cast = function cast(expr) {
+    return '(+(' + expr + '))';
+};
 
 
 function ArrayType(itemType, dimensionCount) {
