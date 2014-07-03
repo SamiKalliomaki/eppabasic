@@ -191,14 +191,29 @@ CompilerConstantReference.prototype = {
     refType: 'const'
 };
 
-function CompilerFunctionEntry() {
-    this.buf = [];
+function CompilerFunctionEntry(name, hasBody, paramTypes) {
+    if (hasBody !== false)
+        hasBody = true;
+    if (!paramTypes)
+        paramTypes = [];
+    this.name = name;
+    this.hasBody = hasBody;
+    this.paramTypes = paramTypes;
+
+    if (hasBody) {
+        this.buf = [];
+        this.buf.push('function ' + name + '(){');      // TODO Add parameters... Maybe in function definition?
+    }
 }
 CompilerFunctionEntry.prototype = {
     push: function push(str) {
+        if (!this.hasBody)
+            throw new Error('Non-body function entry can not be added body');
         this.buf.push(str);
     },
     unshift: function unshift(str) {
+        if (!this.hasBody)
+            throw new Error('Non-body function entry can not be added body');
         this.buf.unshift(str);
     },
     toString: function toString() {
@@ -215,6 +230,8 @@ function Compiler(ast, operators, types) {
 
     this.env = [];
     this.functions = [];
+    this.entryTypes = [];
+    this.lastEntryName = 0;
 
     this.lastFunctionName = 0;
 }
@@ -229,10 +246,12 @@ Compiler.prototype = {
         if (env) {
             // The implementation is found in env
             // Let's copy it to a new function name
-            var entry = this.createEntry(this.generateFunctionName);
+            var asmname = this.generateFunctionName();
+            var entry = this.createEntry(asmname, true, parameterTypes);
+            this.env.push('var ' + asmname + '=env.' + jsName + ';');
         } else {
-            // The implementation is in a module so do nothing
-            var entry = this.createEntry(jsName);
+            // The implementation is in a module so do nothing but create an entry
+            var entry = this.createEntry(jsName, true, parameterTypes);
         }
 
         // TODO!!!
@@ -241,23 +260,42 @@ Compiler.prototype = {
             name: name,
             paramTypes: parameterTypes,
             returnType: returnType,
-            atomic: atomic
+            atomic: atomic,
+            entry: entry
         });
     },
 
-    createEntry: function createEntry(name) {
+    createEntry: function createEntry(name, native, paramTypes) {
         /// <returns type='CompilerFunctionEntry' />
+        if (native !== true)
+            native = false;
+        if (!paramTypes)
+            paramTypes = [];
+        var entry = new CompilerFunctionEntry(name, !native, paramTypes);
+        var entryList = this.entryTypes.find(function find(entryList) {
+            // Test that param type lists are the same
+            if (entryList.paramTypes.length !== paramTypes.length)
+                return false;
+            for (var i = 0; i < entryList.paramTypes.length; i++) {
+                if (entryList.paramTypes[i] !== paramTypes[i])
+                    return false;
+            }
+            return true;
+        }.bind(this));
+
+        if (!entryList) {
+            entryList = [];
+            entryList.paramTypes = paramTypes;
+            entryList.name = '_' + CreateIthName(this.lastEntryName++);
+            this.entryTypes.push(entryList);
+        }
+
+        entryList.push(entry);
+
+        return entry;
     },
     generateFunctionName: function generateFunctionName() {
-        // Let's create a function name
-        var i = this.lastFunctionName++;
-        tmp = [];
-        do {
-            tmp.push(String.fromCharCode(97 + i % 26));
-            i = (i / 26) | 0;
-        } while (i > 0);
-        tmp = tmp.join('');
-        return '$' + tmp;       // Every function name begins with $ to prevent confusion with temporaries
+        return '$' + CreateIthName(this.lastFunctionName++);       // Every function name begins with $ to prevent confusion with temporaries
     },
 
 
@@ -273,11 +311,27 @@ Compiler.prototype = {
     compile: function compile() {
         this.findUserDefinedFunctions();
 
-        var mainEntry = new CompilerFunctionEntry();
+        var mainEntry = this.createEntry('MAIN');//new CompilerFunctionEntry();
         var mainContext = new CompilerContext(this.types, mainEntry);
         this.compileBlock(this.ast, mainContext);
 
+        var buf = [];
+        buf.push('function Program(stdlib,env,heap){');
+        buf.push('var MEMS32=new stdlib.Uint32Array(heap);');
+        buf.push('var MEMF64=new stdlib.Float64Array(heap);');
+        buf.push('var SP=0;');
+        buf.push('var CP=0;');
+        // Add compiler defined environmental variables
+        buf.push(this.env.join('\n'));
+        // Compile all the other functions
+        buf.push(this.entryTypes.reduce(function flatten(a, b) { return a.concat(b); }).filter(function filter(entry) { return entry.hasBody; }).map(function map(entry) { return entry.buf.join('\n') + '\n}'; }));
+        // Compile f-tables in the end
+        buf.push(this.entryTypes.map(function (entryList) { return 'var ' + entryList.name + '=[' + entryList.map(function (entry) { return entry.name; }).join(',') + '];' }).join('\n'));
+        buf.push('}');
+
+        alert(buf.join('\n'));
         console.log('' + mainEntry);
+        console.log(this.entryTypes);
     },
 
     // Compiles a block
@@ -446,7 +500,15 @@ Compiler.prototype = {
         leftRef.free();
         return res;
     },
-
-
-
 };
+
+
+
+function CreateIthName(i) {
+    buf = [];
+    do {
+        buf.push(String.fromCharCode(97 + i % 26));
+        i = (i / 26) | 0;
+    } while (i > 0);
+    return buf.join('');
+}
