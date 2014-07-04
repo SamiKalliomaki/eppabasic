@@ -473,16 +473,19 @@ Compiler.prototype = {
         // Now just compile all nodes
         block.nodes.forEach(function each(node) {
             switch (node.nodeType) {
-                case 'VariableDefinition':
-                    this.compileVariableDefinition(node, context);
+                case 'Comment':
+                    context.push('/*' + node.val + '*/')
+                    break;
+                case 'For':
+                    this.compileFor(node, context);
                     break;
                 case 'FunctionCall':
                     var ret = this.compileFunctionCall(node, context);
                     if (ret)
                         ret.free();
                     break;
-                case 'Comment':
-                    context.push('/*' + node.val + '*/')
+                case 'VariableDefinition':
+                    this.compileVariableDefinition(node, context);
                     break;
                 default:
                     throw new Error('Unsupported node type "' + node.nodeType + '"');
@@ -496,16 +499,37 @@ Compiler.prototype = {
         }.bind(this));
     },
 
-    compileVariableDefinition: function compileVariableDefinition(variable, context) {
-        /// <param name='variable' type='Nodes.VariableDefinition' />
+    compileFor: function compileFor(loop, context) {
+        /// <param name='loop' type='Nodes.For' />
         /// <param name='context' type='CompilerContext' />
-        var type = variable.type;
-        if (type.isArray()) {
-            throw new Error('Arrays not supported, yet');
-        }
+        if (loop.atomic) {
+            // Reserve a variable for the loop
+            loop.variable.location = context.reserveTemporary(loop.variable.type);
+            var start = this.compileExpr(loop.start, context);
+            loop.variable.location.setValue(start);
+            start.free();
+            var stop = this.compileExpr(loop.stop, context);
+            var step = this.compileExpr(loop.step, context);
 
-        if (variable.initial) {
-            variable.location.setValue(this.compileExpr(variable.initial, context));
+            '(((' + step.getValue() + '>0)|0)&((' + loop.variable.location.getValue() + '<=' + stop.getValue() + ')|0))';
+            '(((' + step.getValue() + '<0)|0)&((' + loop.variable.location.getValue() + '<=' + stop.getValue() + ')|0))';
+            context.push('while('
+                + '(((' + step.getValue() + '>0)|0)&((' + loop.variable.location.getValue() + '<=' + stop.getValue() + ')|0))'
+                + '|(((' + step.getValue() + '<0)|0)&((' + loop.variable.location.getValue() + '>=' + stop.getValue() + ')|0))'
+                + '){');
+            this.compileBlock(loop.block, context);
+            // Increase the index
+            var newIndex = context.reserveConstant(loop.variable.type);
+            newIndex.setValue(loop.variable.location.getValue() + '+' + step.getValue());
+            loop.variable.location.setValue(newIndex);
+            newIndex.free();
+            context.push('}');
+
+            step.free();
+            stop.free();
+            loop.variable.location.free();
+        } else {
+            throw new Error('Non-atomic for loops not supported yet');
         }
     },
     compileFunctionCall: function compileFunctionCall(call, context) {
@@ -603,6 +627,18 @@ Compiler.prototype = {
         }.bind(this));
 
         return retVal;
+    },
+    compileVariableDefinition: function compileVariableDefinition(variable, context) {
+        /// <param name='variable' type='Nodes.VariableDefinition' />
+        /// <param name='context' type='CompilerContext' />
+        var type = variable.type;
+        if (type.isArray()) {
+            throw new Error('Arrays not supported, yet');
+        }
+
+        if (variable.initial) {
+            variable.location.setValue(this.compileExpr(variable.initial, context));
+        }
     },
 
     compileExpr: function compileExpr(expr, context) {

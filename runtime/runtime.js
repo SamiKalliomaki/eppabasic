@@ -53,11 +53,7 @@ Runtime.prototype = {
     },
 
     init: function init() {
-        try {
-            this.program = Program(this.stdlib, this.env, this.heap);
-        } catch (e) {
-            console.log(e);
-        }
+        this.program = Program(this.stdlib, this.env, this.heap);
         this.program.init();
     },
 
