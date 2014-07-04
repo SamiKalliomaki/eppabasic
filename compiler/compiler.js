@@ -99,11 +99,23 @@ CompilerContext.prototype = {
         this.push('SP=(SP-' + reserved + ')|0;');
     },
 
+    setCallStack: function setCallStack(entry) {
+        this.push('MEMU32[CP>>2]=' + entry.index + ';');
+    },
+
     push: function push(str) {
         this.func.push(str);
     },
     unshift: function unshift(str) {
         this.func.unshift(str);
+    },
+    setCurrentFunction: function setCurrentFunction(entry) {
+        this.func = entry;
+        if (this.temporaries.some(function every(temp) { return !temp.used; }))
+            throw new Error('Not all temporaries are freed');
+        this.temporaries = [];
+        this.lastTemporary = 0;
+        this.func = entry;
     }
 };
 
@@ -157,7 +169,7 @@ CompilerStackReference.prototype = {
             mem = 'MEMF64';
             shift = 3;
         }
-        return mem + '[((SP-' + (this.context.stackOffset - this.offset) + ')|0)>>' + shift + ']';
+        return this.type.cast(mem + '[((SP-' + (this.context.stackOffset - this.offset) + ')|0)>>' + shift + ']');
     },
     free: function free() {
         // TODO Free the type
@@ -200,9 +212,24 @@ function CompilerFunctionEntry(name, hasBody, paramTypes) {
     this.hasBody = hasBody;
     this.paramTypes = paramTypes;
 
+    var paramStr = [];
+    var paramCastStr = [];
+    var paramI = 0;
+    paramTypes.forEach(function each(param) {
+        var name = CreateIthName(paramI++);
+        paramStr.push(name);
+        if (param.toString() === 'Double')
+            paramCastStr.push(name + '=+' + name + ';');
+        else
+            paramCastStr.push(name + '=' + name + '|0;');
+    }.bind(this));
+    this.paramStr = paramStr.join(',');
+    this.paramCastStr = paramCastStr.join('\n');
+    this.nextFreeTemporary = paramI;
+    this.paramNames = paramStr;
+
     if (hasBody) {
         this.buf = [];
-        this.buf.push('function ' + name + '(){');      // TODO Add parameters... Maybe in function definition?
     }
 }
 CompilerFunctionEntry.prototype = {
@@ -243,18 +270,34 @@ Compiler.prototype = {
 
     },
     defineJsFunction: function defineJsFunction(jsName, env, name, parameterTypes, returnType, atomic) {
+        if (atomic !== false)
+            atomic = true;
+
         if (env) {
             // The implementation is found in env
             // Let's copy it to a new function name
             var asmname = this.generateFunctionName();
-            var entry = this.createEntry(asmname, true, parameterTypes);
+            var entry = this.createEntry(asmname, false, parameterTypes, false);
             this.env.push('var ' + asmname + '=env.' + jsName + ';');
+            // And also create an native, alternative entry
+            var altname = this.generateFunctionName();
+            var altEntry = this.createEntry(altname, true, parameterTypes, true);
+            // Set the index of the original to this alternative one
+            entry.index = altEntry.index;
+
+            // Create a string for calling parameters
+            var callStr = altEntry.paramNames.map(function map(name, index) {
+                if (parameterTypes[index] === this.types.Double)
+                    return '+' + name;
+                else
+                    return name + '|0';
+            }.bind(this)).join(',');
+            // And call the original function
+            altEntry.push(asmname + '(' + callStr + ');');
         } else {
             // The implementation is in a module so do nothing but create an entry
             var entry = this.createEntry(jsName, true, parameterTypes);
         }
-
-        // TODO!!!
 
         this.functions.push({
             name: name,
@@ -265,13 +308,15 @@ Compiler.prototype = {
         });
     },
 
-    createEntry: function createEntry(name, native, paramTypes) {
+    createEntry: function createEntry(name, native, paramTypes, hasBody) {
         /// <returns type='CompilerFunctionEntry' />
-        if (native !== true)
-            native = false;
+        if (native !== false)
+            native = true;
         if (!paramTypes)
             paramTypes = [];
-        var entry = new CompilerFunctionEntry(name, !native, paramTypes);
+        if (hasBody !== false)
+            hasBody = true;
+        var entry = new CompilerFunctionEntry(name, hasBody, paramTypes);
         var entryList = this.entryTypes.find(function find(entryList) {
             // Test that param type lists are the same
             if (entryList.paramTypes.length !== paramTypes.length)
@@ -290,7 +335,10 @@ Compiler.prototype = {
             this.entryTypes.push(entryList);
         }
 
-        entryList.push(entry);
+        if (native) {
+            entryList.push(entry);
+            entry.index = entryList.length - 1;
+        }
 
         return entry;
     },
@@ -311,27 +359,35 @@ Compiler.prototype = {
     compile: function compile() {
         this.findUserDefinedFunctions();
 
-        var mainEntry = this.createEntry('MAIN');//new CompilerFunctionEntry();
+        var mainEntry = this.createEntry('MAIN');
         var mainContext = new CompilerContext(this.types, mainEntry);
         this.compileBlock(this.ast, mainContext);
 
         var buf = [];
         buf.push('function Program(stdlib,env,heap){');
-        buf.push('var MEMS32=new stdlib.Uint32Array(heap);');
+        buf.push('"use asm";');
+        buf.push('var MEMS32=new stdlib.Int32Array(heap);');
+        buf.push('var MEMU32=new stdlib.Uint32Array(heap);');
         buf.push('var MEMF64=new stdlib.Float64Array(heap);');
+        buf.push('var imul=stdlib.Math.imul;');
         buf.push('var SP=0;');
         buf.push('var CP=0;');
         // Add compiler defined environmental variables
         buf.push(this.env.join('\n'));
         // Compile all the other functions
-        buf.push(this.entryTypes.reduce(function flatten(a, b) { return a.concat(b); }).filter(function filter(entry) { return entry.hasBody; }).map(function map(entry) { return entry.buf.join('\n') + '\n}'; }));
+        buf.push('function __popCallStack(){CP=(CP-4)|0;}');
+        buf.push(this.entryTypes.reduce(function flatten(a, b) { return a.concat(b); }).filter(function filter(entry) { return entry.hasBody; }).map(function map(entry) { return 'function ' + entry.name + '(' + entry.paramStr + '){\n' + entry.paramCastStr + entry.buf.join('\n') + '\n}'; }).join('\n'));
         // Compile f-tables in the end
         buf.push(this.entryTypes.map(function (entryList) { return 'var ' + entryList.name + '=[' + entryList.map(function (entry) { return entry.name; }).join(',') + '];' }).join('\n'));
+        // Return functions
+        buf.push('return {popCallStack: __popCallStack, init:MAIN, next:MAIN};');
         buf.push('}');
 
         alert(buf.join('\n'));
         console.log('' + mainEntry);
         console.log(this.entryTypes);
+
+        return buf.join('\n');
     },
 
     // Compiles a block
@@ -417,14 +473,63 @@ Compiler.prototype = {
         // Align the stack
         var align = context.alignStack();
 
-        context.push('// Calling function ' + call.name);
-        if (call.handle.atomic) {
-            // Ok, this is a simple and nice atomic function call
-            // TODO!!!
+        context.push('/* Calling function ' + call.name + '*/');
+
+        var paramStr = [];
+        params.forEach(function each(param, i) {
+            var type = call.handle.entry.paramTypes[i];
+            paramStr.push(type.cast(param.type.castTo(param.getValue(), type)));
+        }.bind(this));
+        var buf = [];
+        buf.push(call.handle.entry.name);
+        buf.push('(');
+        buf.push(paramStr.join(','));
+        buf.push(')');
+
+        var retType = call.handle.returnType;
+        var retVal;
+        if (retType) {
+            if (call.handle.returnType === this.types.Double)
+                buf.unshift('+');
+            else
+                buf.push('|0');
+
+            if (call.handle.atomic) {
+                var cnt = context.reserveConstant(retType);
+                cnt.setValue(buf.join(''));
+                retVal = context.reserveTemporary(retType);
+                retVal.setValue(cnt);
+            } else {
+                // For non-atomic functions, first set the return function
+                var retFunc = this.createEntry(this.generateFunctionName(), true);
+                context.setCallStack(retFunc);
+                // ...Then call the function...
+                context.push(buf.join(''));
+                // ...Change the context to use the return function...
+                context.setCurrentFunction(retFunc);
+                // ...And finally the returned value is found from the top of the stack
+                var stackTop = context.reserveStack(retType);
+                retVal = context.reserveTemporary(retType);
+                retVal.setValue(stackTop);
+                stackTop.free();
+            }
         } else {
-            // Set return function
-            // TODO!!!
+            if (call.handle.atomic) {
+                context.push(buf.join(''));
+            } else {
+                // For non-atomic functions, first set the return function
+                var retFunc = this.createEntry(this.generateFunctionName(), true);
+                context.setCallStack(retFunc);
+                // ...Then call the function...
+                context.push(buf.join(''));
+                // ...And change the context to use the return function
+                context.setCurrentFunction(retFunc);
+            }
         }
+
+
+
+        //context.push(buf.join(''));
 
         // Revert the stack alignment
         context.revertAlign(align);
@@ -432,6 +537,8 @@ Compiler.prototype = {
         params.reverse().forEach(function each(param) {
             param.free();
         }.bind(this));
+
+        return retVal;
     },
 
     compileExpr: function compileExpr(expr, context) {
@@ -443,6 +550,8 @@ Compiler.prototype = {
                 return this.compileVariableExpr(expr, context);
             case 'BinaryOp':
                 return this.compileBinaryExpr(expr, context);
+            case 'FunctionCall':
+                return this.compileFunctionCall(expr, context);
             default:
                 throw new Error('Unsupported node type "' + expr.nodeType + '"');
         }

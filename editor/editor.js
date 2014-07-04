@@ -35,6 +35,9 @@ Editor.prototype = {
         var compiler = new Compiler(this.ast, this.operators, this.types);
 
         compiler.defineJsFunction('drawScreen', true, 'DrawScreen', [], undefined, false);
+        compiler.defineJsFunction('line', true, 'Line', [this.types.Integer, this.types.Integer, this.types.Integer, this.types.Integer]);
+        compiler.defineJsFunction('atomic', true, 'atom', [this.types.Integer], this.types.Integer, true);
+        compiler.defineJsFunction('nonAtomic', true, 'ntom', [this.types.Integer], this.types.Integer, false);
 
         //// Drawing functions
         //compiler.defineJsFunction('CLEARCOLOR', [Types.Integer, Types.Integer, Types.Integer], 'clearColor');
