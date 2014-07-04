@@ -111,8 +111,10 @@ CompilerContext.prototype = {
     },
     setCurrentFunction: function setCurrentFunction(entry) {
         this.func = entry;
-        if (this.temporaries.some(function every(temp) { return !temp.used; }))
+        if (this.temporaries.some(function every(temp) { return temp.used; })) {
+            console.error(this.temporaries);
             throw new Error('Not all temporaries are freed');
+        }
         this.temporaries = [];
         this.lastTemporary = 0;
         this.func = entry;
@@ -261,6 +263,8 @@ function Compiler(ast, operators, types) {
     this.lastEntryName = 0;
 
     this.lastFunctionName = 0;
+
+    this.findUserDefinedFunctions();
 }
 
 Compiler.prototype = {
@@ -277,11 +281,11 @@ Compiler.prototype = {
             // The implementation is found in env
             // Let's copy it to a new function name
             var asmname = this.generateFunctionName();
-            var entry = this.createEntry(asmname, false, parameterTypes, false);
+            var entry = this.createEntry(asmname, false, parameterTypes, returnType, false);
             this.env.push('var ' + asmname + '=env.' + jsName + ';');
             // And also create an native, alternative entry
             var altname = this.generateFunctionName();
-            var altEntry = this.createEntry(altname, true, parameterTypes, true);
+            var altEntry = this.createEntry(altname, true, parameterTypes, returnType, true);
             // Set the index of the original to this alternative one
             entry.index = altEntry.index;
 
@@ -293,10 +297,17 @@ Compiler.prototype = {
                     return name + '|0';
             }.bind(this)).join(',');
             // And call the original function
-            altEntry.push(asmname + '(' + callStr + ');');
+            if (returnType) {
+                if (returnType === this.types.Double)
+                    altEntry.push('return +' + asmname + '(' + callStr + ');');
+                else
+                    altEntry.push('return ' + asmname + '(' + callStr + ')|0;');
+            } else {
+                altEntry.push(asmname + '(' + callStr + ');');
+            }
         } else {
             // The implementation is in a module so do nothing but create an entry
-            var entry = this.createEntry(jsName, true, parameterTypes);
+            var entry = this.createEntry(jsName, true, parameterTypes, returnType);
         }
 
         this.functions.push({
@@ -308,7 +319,7 @@ Compiler.prototype = {
         });
     },
 
-    createEntry: function createEntry(name, native, paramTypes, hasBody) {
+    createEntry: function createEntry(name, native, paramTypes, returnType, hasBody) {
         /// <returns type='CompilerFunctionEntry' />
         if (native !== false)
             native = true;
@@ -317,9 +328,30 @@ Compiler.prototype = {
         if (hasBody !== false)
             hasBody = true;
         var entry = new CompilerFunctionEntry(name, hasBody, paramTypes);
-        var entryList = this.entryTypes.find(function find(entryList) {
+
+        if (native) {
+            var entryList = this.findEntryList(paramTypes, returnType);
+
+            if (!entryList) {
+                entryList = [];
+                entryList.paramTypes = paramTypes;
+                entryList.returnType = returnType;
+                entryList.name = '_' + CreateIthName(this.lastEntryName++);
+                this.entryTypes.push(entryList);
+            }
+
+            entryList.push(entry);
+            entry.index = entryList.length - 1;
+        }
+
+        return entry;
+    },
+    findEntryList: function findEntryLis(paramTypes, returnType) {
+        return this.entryTypes.find(function find(entryList) {
             // Test that param type lists are the same
             if (entryList.paramTypes.length !== paramTypes.length)
+                return false;
+            if (entryList.returnType !== returnType)
                 return false;
             for (var i = 0; i < entryList.paramTypes.length; i++) {
                 if (entryList.paramTypes[i] !== paramTypes[i])
@@ -327,23 +359,36 @@ Compiler.prototype = {
             }
             return true;
         }.bind(this));
-
-        if (!entryList) {
-            entryList = [];
-            entryList.paramTypes = paramTypes;
-            entryList.name = '_' + CreateIthName(this.lastEntryName++);
-            this.entryTypes.push(entryList);
-        }
-
-        if (native) {
-            entryList.push(entry);
-            entry.index = entryList.length - 1;
-        }
-
-        return entry;
     },
     generateFunctionName: function generateFunctionName() {
         return '$' + CreateIthName(this.lastFunctionName++);       // Every function name begins with $ to prevent confusion with temporaries
+    },
+    alignEntryLists: function alignEntryLists() {
+        this.entryTypes.find(function find(entryList) {
+            var mask = nextPowerOfTwo(entryList.length);
+            while (entryList.length < mask)
+                entryList.push(entryList[0]);       // Append with the first element as it doesn't really matter which function we use
+            entryList.mask = mask ? mask - 1 : 0;
+        }.bind(this));
+    },
+    generateFTable: function generateFTable() {
+        return this.entryTypes.map(function (entryList) {
+            return 'var ' + entryList.name + '=[' + entryList.map(
+                function (entry) {
+                    return entry.name;
+                }).join(',') + '];'
+        }).join('\n');
+    },
+    generateFunctions: function generateFunctions() {
+        return this.entryTypes
+            .reduce(function flatten(a, b) { return a.concat(b); })         // Flatten array
+            .filter(function hasBody(entry) { return entry.hasBody; })      // Filter only ones with body
+            .filter(function removeDoublicates(entry, i, array) {
+                return i === array.length - 1 || array.indexOf(entry, i + 1) === -1;
+            })
+            .map(function map(entry) {
+                return 'function ' + entry.name + '(' + entry.paramStr + '){\n' + entry.paramCastStr + entry.buf.join('\n') + '\n}';
+            }).join('\n')
     },
 
 
@@ -357,11 +402,24 @@ Compiler.prototype = {
 
     // Actual code compilation
     compile: function compile() {
-        this.findUserDefinedFunctions();
+        // Create a special function which is used to break execution
+        var breakEntry = this.createEntry('__break', undefined, undefined, this.types.Integer);
+        breakEntry.push('CP=(CP-4)|0;');
+        breakEntry.push('return 0;');
+        // Create another special function which is used when execution is finished
+        var endEntry = this.createEntry(this.generateFunctionName(), undefined, undefined, this.types.Integer);
+        endEntry.push('return 0;');
 
-        var mainEntry = this.createEntry('MAIN');
+
+        var mainEntry = this.createEntry('MAIN', undefined, undefined, this.types.Integer);
         var mainContext = new CompilerContext(this.types, mainEntry);
         this.compileBlock(this.ast, mainContext);
+        // Push end entry to call stack to signal that program has ended
+        mainContext.push('MEMU32[CP>>2]=' + endEntry.index + ';');
+        mainContext.push('return 1;');
+
+        // No that everything is compiled we can align entry lists
+        this.alignEntryLists();
 
         var buf = [];
         buf.push('function Program(stdlib,env,heap){');
@@ -376,16 +434,20 @@ Compiler.prototype = {
         buf.push(this.env.join('\n'));
         // Compile all the other functions
         buf.push('function __popCallStack(){CP=(CP-4)|0;}');
-        buf.push(this.entryTypes.reduce(function flatten(a, b) { return a.concat(b); }).filter(function filter(entry) { return entry.hasBody; }).map(function map(entry) { return 'function ' + entry.name + '(' + entry.paramStr + '){\n' + entry.paramCastStr + entry.buf.join('\n') + '\n}'; }).join('\n'));
+        buf.push('function __init(){SP=1024;CP=0;MEMU32[CP>>2]=' + mainEntry.index + ';}');
+        var mainEntryList = this.findEntryList([], this.types.Integer);
+        buf.push('function __next(){while(' + mainEntryList.name + '[MEMU32[CP>>2]&' + mainEntryList.mask + ']()|0);}');
+        buf.push('function __breakExec(){CP=(CP+4)|0;MEMU32[CP>>2]=' + breakEntry.index + ';}');
+        buf.push(this.generateFunctions());
         // Compile f-tables in the end
-        buf.push(this.entryTypes.map(function (entryList) { return 'var ' + entryList.name + '=[' + entryList.map(function (entry) { return entry.name; }).join(',') + '];' }).join('\n'));
+        buf.push(this.generateFTable());
         // Return functions
-        buf.push('return {popCallStack: __popCallStack, init:MAIN, next:MAIN};');
+        buf.push('return {popCallStack: __popCallStack,init:__init,next:__next,breakExec:__breakExec};');
         buf.push('}');
 
         alert(buf.join('\n'));
-        console.log('' + mainEntry);
-        console.log(this.entryTypes);
+        //console.log('' + mainEntry);
+        //console.log(this.entryTypes);
 
         return buf.join('\n');
     },
@@ -501,11 +563,12 @@ Compiler.prototype = {
                 retVal.setValue(cnt);
             } else {
                 // For non-atomic functions, first set the return function
-                var retFunc = this.createEntry(this.generateFunctionName(), true);
+                var retFunc = this.createEntry(this.generateFunctionName(), true, undefined, this.types.Integer);
                 context.setCallStack(retFunc);
                 // ...Then call the function...
                 context.push(buf.join(''));
                 // ...Change the context to use the return function...
+                context.push('return 1;');
                 context.setCurrentFunction(retFunc);
                 // ...And finally the returned value is found from the top of the stack
                 var stackTop = context.reserveStack(retType);
@@ -518,9 +581,10 @@ Compiler.prototype = {
                 context.push(buf.join(''));
             } else {
                 // For non-atomic functions, first set the return function
-                var retFunc = this.createEntry(this.generateFunctionName(), true);
+                var retFunc = this.createEntry(this.generateFunctionName(), true, undefined, this.types.Integer);
                 context.setCallStack(retFunc);
                 // ...Then call the function...
+                context.push('return 1;');
                 context.push(buf.join(''));
                 // ...And change the context to use the return function
                 context.setCurrentFunction(retFunc);
@@ -617,7 +681,19 @@ function CreateIthName(i) {
     buf = [];
     do {
         buf.push(String.fromCharCode(97 + i % 26));
-        i = (i / 26) | 0;
+        i = Math.floor(i / 26);
     } while (i > 0);
     return buf.join('');
+}
+function nextPowerOfTwo(x) {
+    if (x <= 0)
+        return 0;
+    x--;
+    x |= x >> 1;
+    x |= x >> 2;
+    x |= x >> 4;
+    x |= x >> 8;
+    x |= x >> 16;
+    x++;
+    return x;
 }

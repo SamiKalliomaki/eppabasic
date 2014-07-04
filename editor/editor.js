@@ -34,23 +34,22 @@ Editor.prototype = {
     compile: function compile() {
         var compiler = new Compiler(this.ast, this.operators, this.types);
 
-        compiler.defineJsFunction('drawScreen', true, 'DrawScreen', [], undefined, false);
-        compiler.defineJsFunction('line', true, 'Line', [this.types.Integer, this.types.Integer, this.types.Integer, this.types.Integer]);
-        compiler.defineJsFunction('atomic', true, 'atom', [this.types.Integer], this.types.Integer, true);
-        compiler.defineJsFunction('nonAtomic', true, 'ntom', [this.types.Integer], this.types.Integer, false);
+        //compiler.defineJsFunction('line', true, 'Line', [this.types.Integer, this.types.Integer, this.types.Integer, this.types.Integer]);
+        //compiler.defineJsFunction('atomic', true, 'atom', [this.types.Integer], this.types.Integer, true);
+        //compiler.defineJsFunction('nonAtomic', true, 'ntom', [this.types.Integer], this.types.Integer, false);
 
         //// Drawing functions
-        //compiler.defineJsFunction('CLEARCOLOR', [Types.Integer, Types.Integer, Types.Integer], 'clearColor');
-        //compiler.defineJsFunction('LINECOLOR', [Types.Integer, Types.Integer, Types.Integer], 'lineColor');
-        //compiler.defineJsFunction('FILLCOLOR', [Types.Integer, Types.Integer, Types.Integer], 'fillColor');
-        //compiler.defineJsFunction('LINE', [Types.Integer, Types.Integer, Types.Integer, Types.Integer], 'line');
-        //compiler.defineJsFunction('CIRCLE', [Types.Integer, Types.Integer, Types.Integer], 'circle');
-        //compiler.defineJsFunction('FILLCIRCLE', [Types.Integer, Types.Integer, Types.Integer], 'fillCircle');
-        //compiler.defineJsFunction('RECT', [Types.Integer, Types.Integer, Types.Integer, Types.Integer], 'rect');
-        //compiler.defineJsFunction('FILLRECT', [Types.Integer, Types.Integer, Types.Integer, Types.Integer], 'fillRect');
-        //compiler.defineJsFunction('DOT', [Types.Integer, Types.Integer], 'dot');
-        //compiler.defineJsFunction('CLEAR', [], 'clear');
-        //compiler.defineJsFunction('DRAWSCREEN', [], 'drawScreen', undefined, false);
+        compiler.defineJsFunction('clearColor', true, 'ClearColor', [this.types.Integer, this.types.Integer, this.types.Integer]);
+        compiler.defineJsFunction('lineColor', true, 'LineColor', [this.types.Integer, this.types.Integer, this.types.Integer]);
+        compiler.defineJsFunction('fillColor', true, 'FillColor', [this.types.Integer, this.types.Integer, this.types.Integer]);
+        compiler.defineJsFunction('line', true, 'Line', [this.types.Integer, this.types.Integer, this.types.Integer, this.types.Integer]);
+        compiler.defineJsFunction('circle', true, 'Circle', [this.types.Integer, this.types.Integer, this.types.Integer]);
+        compiler.defineJsFunction('fillCircle', true, 'FillCircle', [this.types.Integer, this.types.Integer, this.types.Integer]);
+        compiler.defineJsFunction('rect', true, 'Rect', [this.types.Integer, this.types.Integer, this.types.Integer, this.types.Integer]);
+        compiler.defineJsFunction('fillRect', true, 'FillRect', [this.types.Integer, this.types.Integer, this.types.Integer, this.types.Integer]);
+        compiler.defineJsFunction('dot', true, 'Dot', [this.types.Integer, this.types.Integer]);
+        compiler.defineJsFunction('clear', true, 'Clear', []);
+        compiler.defineJsFunction('drawScreen', true, 'DrawScreen', [], undefined, false);
 
         //compiler.defineJsFunction('TEXT', [Types.Integer, Types.Integer, Types.String], 'text');
 
@@ -89,13 +88,13 @@ Editor.prototype = {
         //compiler.defineJsFunction('PRINT', [Types.Integer], 'printInt');
 
 
-        // Do checkings here
-        // TODO Move elsewhere
-        new Typechecker(this.ast, compiler.functions, this.operators, this.types).check();
-        new Atomicchecker(this.ast, compiler.functions).check();
-
-
         try {
+            // Do checkings here
+            // TODO Move elsewhere
+            new Typechecker(this.ast, compiler.functions, this.operators, this.types).check();
+            new Atomicchecker(this.ast, compiler.functions).check();
+
+
             this.compiled = compiler.compile();
 
             //document.getElementById('codeBox').innerHTML = this.compiled;

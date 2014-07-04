@@ -24,78 +24,43 @@ Graphics2D.prototype = {
      * Functions for the program
      */
     env: {
-        clearColor: function clearColor(sp) {
-            var r = this.MEMS32[(sp - 12) >> 2];
-            var g = this.MEMS32[(sp - 8) >> 2];
-            var b = this.MEMS32[(sp - 4) >> 2];
+        clearColor: function clearColor(r, g, b) {
             this.clearColor = 'rgb(' + r + ',' + g + ',' + b + ')';
         },
-        lineColor: function lineColor(sp) {
-            var r = this.MEMS32[(sp - 12) >> 2];
-            var g = this.MEMS32[(sp - 8) >> 2];
-            var b = this.MEMS32[(sp - 4) >> 2];
+        lineColor: function lineColor(r, g, b) {
             this.ctx.strokeStyle = 'rgb(' + r + ',' + g + ',' + b + ')';
         },
-        fillColor: function fillColor(sp) {
-            var r = this.MEMS32[(sp - 12) >> 2];
-            var g = this.MEMS32[(sp - 8) >> 2];
-            var b = this.MEMS32[(sp - 4) >> 2];
+        fillColor: function fillColor(r, g, b) {
             this.ctx.fillStyle = 'rgb(' + r + ',' + g + ',' + b + ')';
         },
-        rect: function rect(sp) {
-            var x = this.MEMS32[(sp - 16) >> 2];
-            var y = this.MEMS32[(sp - 12) >> 2];
-            var w = this.MEMS32[(sp - 8) >> 2];
-            var h = this.MEMS32[(sp - 4) >> 2];
-
+        rect: function rect(x, y, w, h) {
             this.ctx.beginPath();
             this.ctx.rect(x, y, w, h);
             this.ctx.stroke();
         },
-        fillRect: function fillRect(sp) {
-            var x = this.MEMS32[(sp - 16) >> 2];
-            var y = this.MEMS32[(sp - 12) >> 2];
-            var w = this.MEMS32[(sp - 8) >> 2];
-            var h = this.MEMS32[(sp - 4) >> 2];
-
+        fillRect: function fillRect(x, y, w, h) {
             this.ctx.fillRect(x, y, w, h);
         },
-        circle: function circle(sp) {
-            var x = this.MEMS32[(sp - 12) >> 2];
-            var y = this.MEMS32[(sp - 8) >> 2];
-            var r = this.MEMS32[(sp - 4) >> 2];
-
+        circle: function circle(x, y, r) {
             this.ctx.beginPath();
             this.ctx.arc(x, y, r, 0, 2 * Math.PI, false);
             this.ctx.stroke();
         },
-        fillCircle: function fillCircle(sp) {
-            var x = this.MEMS32[(sp - 12) >> 2];
-            var y = this.MEMS32[(sp - 8) >> 2];
-            var r = this.MEMS32[(sp - 4) >> 2];
-
+        fillCircle: function fillCircle(x, y, r) {
             this.ctx.beginPath();
             this.ctx.arc(x, y, r, 0, 2 * Math.PI, false);
             this.ctx.fill();
         },
-        line: function line(sp) {
-            var x1 = this.MEMS32[(sp - 16) >> 2];
-            var y1 = this.MEMS32[(sp - 12) >> 2];
-            var x2 = this.MEMS32[(sp - 8) >> 2];
-            var y2 = this.MEMS32[(sp - 4) >> 2];
-
+        line: function line(x1, y1, x2, y2) {
             this.ctx.beginPath();
             this.ctx.moveTo(x1, y1);
             this.ctx.lineTo(x2, y2);
             this.ctx.stroke();
         },
-        dot: function dot(sp) {
-            var x = this.MEMS32[(sp - 8) >> 2];
-            var y = this.MEMS32[(sp - 4) >> 2];
+        dot: function dot(x, y) {
             this.ctx.fillRect(x, y, 1, 1);
         },
-        text: function text(sp) {
-            var ptr = this.MEMS32[(sp - 4) >> 2];
+        text: function text(x, y, ptr) {
             var len = this.MEMS32[ptr >> 2];
             var buf = [];
             for (var i = 0; i < len; i++) {
@@ -108,14 +73,13 @@ Graphics2D.prototype = {
 
             this.ctx.fillText(str, x, y);
         },
-        clear: function clear(sp) {
+        clear: function clear() {
             var origStyle = this.ctx.fillStyle;
             this.ctx.fillStyle = this.clearColor;
             this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
             this.ctx.fillStyle = origStyle;
         },
-        drawScreen: function drawScreen(sp) {
-            this.canvas.style.visibility = "visible";
+        drawScreen: function drawScreen() {
         }
     },
     stdlib: {}
