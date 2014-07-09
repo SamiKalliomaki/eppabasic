@@ -136,7 +136,7 @@ CompilerTemporaryReference.prototype = {
         this.context.push(code);
     },
     getValue: function getValue() {
-        return this.name;
+        return this.type.cast(this.name);
     },
     free: function free() {
         this.used = false;
