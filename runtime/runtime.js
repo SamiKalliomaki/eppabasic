@@ -35,9 +35,9 @@ function Runtime() {
 
 Runtime.prototype = {
     loadLibraries: function loadLibraries() {
-        var g2d = new Graphics2D(this.canvasHolder, this.heap);
-        g2d.setSize(640, 480);
-        mixin(this.env, g2d.env);
+        this.g2d = new Graphics2D(this.canvasHolder, this.heap);
+        this.g2d.setSize(640, 480);
+        mixin(this.env, this.g2d.env);
 
         var gtext = new GraphicsText(this.canvasHolder, this.heap);
         mixin(this.env, gtext.env);
@@ -54,6 +54,7 @@ Runtime.prototype = {
 
     init: function init() {
         this.program = Program(this.stdlib, this.env, this.heap);
+        this.g2d.setProgram(this.program);
         this.program.init();
     },
 

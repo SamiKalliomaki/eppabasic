@@ -204,6 +204,10 @@ CompilerConstantReference.prototype = {
     free: function free() { },
     refType: 'const'
 };
+function CompilerNoFreeReference(ref) {
+    extend(this, ref);
+    this.free = function () { };        // Replace free by a dummy function
+}
 
 function CompilerFunctionEntry(name, hasBody, paramTypes) {
     if (hasBody !== false)
@@ -529,12 +533,65 @@ Compiler.prototype = {
             stop.free();
             loop.variable.location.free();
         } else {
-            throw new Error('Non-atomic for loops not supported yet');
+            // Reserve a variable for the loop
+            loop.variable.location = context.reserveStack(loop.variable.type);
+            var start = this.compileExpr(loop.start, context);
+            loop.variable.location.setValue(start);
+            start.free();
+            var stop = this.compileExpr(loop.stop, context);
+            var tmp = context.reserveStack(stop.type);
+            tmp.setValue(stop);
+            stop.free();
+            stop = tmp;
+            var step = this.compileExpr(loop.step, context);
+            tmp = context.reserveStack(step.type);
+            tmp.setValue(step);
+            step.free();
+            step = tmp;
+
+            // TODO Loop and return
+            // Go to loop function
+            var endFunc = this.createEntry(this.generateFunctionName(), true, undefined, this.types.Integer);
+            var loopFunc = this.createEntry(this.generateFunctionName(), true, undefined, this.types.Integer);
+            context.setCallStack(loopFunc);
+            context.push('return 1;');
+            // ...Begin loop function with checks
+            context.setCurrentFunction(loopFunc);
+            // Do break checking
+            context.push('if('
+                + '(((' + step.getValue() + '>0)|0)&((' + loop.variable.location.getValue() + '>' + stop.getValue() + ')|0))'
+                + '|(((' + step.getValue() + '<0)|0)&((' + loop.variable.location.getValue() + '<' + stop.getValue() + ')|0))'
+                + '){');
+            // Break out
+            context.setCallStack(endFunc);
+            context.push('return 1;');
+            context.push('}');
+
+            // Compile block
+            this.compileBlock(loop.block, context);
+            // Increase the index
+            var newIndex = context.reserveConstant(loop.variable.type);
+            newIndex.setValue(loop.variable.location.getValue() + '+' + step.getValue());
+            loop.variable.location.setValue(newIndex);
+            newIndex.free();
+            // Jump to the begining
+            context.setCallStack(loopFunc);
+            context.push('return 1;');
+
+            // Set context to the return func
+            context.setCurrentFunction(endFunc);
+
+            // Free memory
+            step.free();
+            stop.free();
+            loop.variable.location.free();
+            //throw new Error('Non-atomic for loops not supported yet');
         }
     },
     compileFunctionCall: function compileFunctionCall(call, context) {
         /// <param name='call' type='Nodes.FunctionCall' />
         /// <param name='context' type='CompilerContext' />
+
 
         // Compile parameters
         var params = [];
@@ -556,10 +613,10 @@ Compiler.prototype = {
             params.push(this.compileExpr(param, context));
         }.bind(this));
 
-        // Align the stack
-        var align = context.alignStack();
 
         context.push('/* Calling function ' + call.name + '*/');
+        // Align the stack
+        var align = context.alignStack();
 
         var paramStr = [];
         params.forEach(function each(param, i) {
@@ -608,8 +665,8 @@ Compiler.prototype = {
                 var retFunc = this.createEntry(this.generateFunctionName(), true, undefined, this.types.Integer);
                 context.setCallStack(retFunc);
                 // ...Then call the function...
-                context.push('return 1;');
                 context.push(buf.join(''));
+                context.push('return 1;');
                 // ...And change the context to use the return function
                 context.setCurrentFunction(retFunc);
             }
@@ -668,8 +725,8 @@ Compiler.prototype = {
         /// <param name='context' type='CompilerContext' />
         // Return the value as a constant expression so that the original
         // value won't be freed by accident
-        var ref = context.reserveConstant(variable.type);
-        ref.setValue(variable.definition.location);
+        var ref = new CompilerNoFreeReference(variable.definition.location);
+        //ref.setValue(variable.definition.location);
         return ref;
     },
     compileBinaryExpr: function compileBinaryExpr(expr, context) {

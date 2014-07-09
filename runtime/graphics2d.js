@@ -19,6 +19,9 @@ Graphics2D.prototype = {
         this.canvas.width = widht;
         this.canvas.height = height;
     },
+    setProgram: function setProgram(program) {
+        this.program = program;
+    },
 
     /*
      * Functions for the program
@@ -80,6 +83,7 @@ Graphics2D.prototype = {
             this.ctx.fillStyle = origStyle;
         },
         drawScreen: function drawScreen() {
+            this.program.breakExec();
         }
     },
     stdlib: {}
