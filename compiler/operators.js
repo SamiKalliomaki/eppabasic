@@ -78,11 +78,11 @@ OperatorContainer.prototype = {
         };
         for (var op in operators) {
             if (operators.hasOwnProperty(op)) {
-                this.addOperator(new BinaryOperator(this.types.Integer, op, this.types.Integer, this.types.Boolean,
-                    new BinaryOperatorCompiler(operators[op], this.types.Integer, this.types.Integer, this.types.Boolean, true)));
-
                 this.addOperator(new BinaryOperator(this.types.Double, op, this.types.Double, this.types.Boolean,
                     new BinaryOperatorCompiler(operators[op], this.types.Double, this.types.Double, this.types.Boolean, true)));
+
+                this.addOperator(new BinaryOperator(this.types.Integer, op, this.types.Integer, this.types.Boolean,
+                    new BinaryOperatorCompiler(operators[op], this.types.Integer, this.types.Integer, this.types.Boolean, true)));
 
                 this.addOperator(new BinaryOperator(this.types.String, op, this.types.String, this.types.Boolean,
                     new BinaryOperatorCompiler(operators[op], this.types.String, this.types.String, this.types.Boolean, true)));
@@ -199,10 +199,20 @@ OperatorContainer.prototype = {
 
     getOperatorByType: function getOperatorByType(leftType, opTokenType, rightType) {
         /// <returns type='BinaryOperator' />
+        // First try exact match
+        var op = this.operators.find(function find(operator) {
+            /// <param name='operator' type='BinaryOperator' />
+            return leftType === operator.leftType
+                && opTokenType === operator.opTokenType
+                && rightType === operator.rightType;
+        });
+        if (op)
+            return op;
+        // If not found, try with casting
         return this.operators.find(function find(operator) {
             /// <param name='operator' type='BinaryOperator' />
             return leftType.canCastTo(operator.leftType)
-                && opTokenType == operator.opTokenType
+                && opTokenType === operator.opTokenType
                 && rightType.canCastTo(operator.rightType);
         });
     }

@@ -200,7 +200,7 @@ Parser.prototype = {
         var expr = this.parseExpr()
         this.expect('then');
         var trueStatement = this.parseBlock();
-        var res = new Nodes.If(expr, trueStatement, expr.line);
+        var res = new Nodes.If(expr, trueStatement, undefined, expr.line);
         var cur = res;
 
         while (this.peek().type !== 'endif') {
@@ -213,7 +213,7 @@ Parser.prototype = {
                 expr = this.parseExpr();
                 this.expect('then');
                 trueStatement = this.parseBlock();
-                cur = cur.falseStatement = new Nodes.If(expr, trueStatement, expr.line);
+                cur = cur.falseStatement = new Nodes.If(expr, trueStatement, undefined, expr.line);
             } else {
                 this.expect('else/elseif/endif');           // Throws an error with appropriate error message
             }

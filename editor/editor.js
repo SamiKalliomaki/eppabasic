@@ -39,17 +39,17 @@ Editor.prototype = {
         //compiler.defineJsFunction('nonAtomic', true, 'ntom', [this.types.Integer], this.types.Integer, false);
 
         //// Drawing functions
-        compiler.defineJsFunction('clearColor', true, 'ClearColor', [this.types.Integer, this.types.Integer, this.types.Integer]);
-        compiler.defineJsFunction('lineColor', true, 'LineColor', [this.types.Integer, this.types.Integer, this.types.Integer]);
-        compiler.defineJsFunction('fillColor', true, 'FillColor', [this.types.Integer, this.types.Integer, this.types.Integer]);
-        compiler.defineJsFunction('line', true, 'Line', [this.types.Integer, this.types.Integer, this.types.Integer, this.types.Integer]);
-        compiler.defineJsFunction('circle', true, 'Circle', [this.types.Integer, this.types.Integer, this.types.Integer]);
-        compiler.defineJsFunction('fillCircle', true, 'FillCircle', [this.types.Integer, this.types.Integer, this.types.Integer]);
-        compiler.defineJsFunction('rect', true, 'Rect', [this.types.Integer, this.types.Integer, this.types.Integer, this.types.Integer]);
-        compiler.defineJsFunction('fillRect', true, 'FillRect', [this.types.Integer, this.types.Integer, this.types.Integer, this.types.Integer]);
-        compiler.defineJsFunction('dot', true, 'Dot', [this.types.Integer, this.types.Integer]);
-        compiler.defineJsFunction('clear', true, 'Clear', []);
-        compiler.defineJsFunction('drawScreen', true, 'DrawScreen', [], undefined, false);
+        compiler.defineJsFunction('env.clearColor', true, 'ClearColor', [this.types.Integer, this.types.Integer, this.types.Integer]);
+        compiler.defineJsFunction('env.lineColor', true, 'LineColor', [this.types.Integer, this.types.Integer, this.types.Integer]);
+        compiler.defineJsFunction('env.fillColor', true, 'FillColor', [this.types.Integer, this.types.Integer, this.types.Integer]);
+        compiler.defineJsFunction('env.line', true, 'Line', [this.types.Integer, this.types.Integer, this.types.Integer, this.types.Integer]);
+        compiler.defineJsFunction('env.circle', true, 'Circle', [this.types.Integer, this.types.Integer, this.types.Integer]);
+        compiler.defineJsFunction('env.fillCircle', true, 'FillCircle', [this.types.Integer, this.types.Integer, this.types.Integer]);
+        compiler.defineJsFunction('env.rect', true, 'Rect', [this.types.Integer, this.types.Integer, this.types.Integer, this.types.Integer]);
+        compiler.defineJsFunction('env.fillRect', true, 'FillRect', [this.types.Integer, this.types.Integer, this.types.Integer, this.types.Integer]);
+        compiler.defineJsFunction('env.dot', true, 'Dot', [this.types.Integer, this.types.Integer]);
+        compiler.defineJsFunction('env.clear', true, 'Clear', []);
+        compiler.defineJsFunction('env.drawScreen', true, 'DrawScreen', [], undefined, false);
 
         //compiler.defineJsFunction('TEXT', [Types.Integer, Types.Integer, Types.String], 'text');
 
@@ -57,10 +57,8 @@ Editor.prototype = {
         ////compiler.defineJsFunction('HIDECONSOLE', [], 'hideConsole');
 
         //// Mathematical functions
-        //compiler.defineJsFunction('DBL', [Types.Integer], 'dbl', Types.Double);
-        //compiler.defineJsFunction('INT', [Types.Double], 'int', Types.Integer);
-        //compiler.defineJsFunction('SIN', [Types.Double], 'sin', Types.Double);
-        //compiler.defineJsFunction('COS', [Types.Double], 'cos', Types.Double);
+        compiler.defineJsFunction('stdlib.Math.sin', true, 'Sin', [this.types.Double], this.types.Double);
+        compiler.defineJsFunction('stdlib.Math.cos', true, 'Cos', [this.types.Double], this.types.Double);
 
         //compiler.defineJsFunction('SQRT', [Types.Double], 'sqrt', Types.Double);
 
@@ -69,6 +67,10 @@ Editor.prototype = {
 
 
         //// Time functions
+        compiler.defineJsFunction('env.hours', true, 'Hours', [], this.types.Integer);
+        compiler.defineJsFunction('env.minutes', true, 'Minutes', [], this.types.Integer);
+        compiler.defineJsFunction('env.seconds', true, 'Seconds', [], this.types.Integer);
+        compiler.defineJsFunction('env.milliseconds', true, 'MilliSeconds', [], this.types.Integer);
         //compiler.defineJsFunction('HOURS', [], 'hours', Types.Integer);
         //compiler.defineJsFunction('MINUTES', [], 'minutes', Types.Integer);
         //compiler.defineJsFunction('SECONDS', [], 'seconds', Types.Integer);

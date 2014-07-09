@@ -113,7 +113,7 @@ CompilerContext.prototype = {
         this.func = entry;
         if (this.temporaries.some(function every(temp) { return temp.used; })) {
             console.error(this.temporaries);
-            throw new Error('Not all temporaries are freed');
+            throw new Error('Not all temporaries are freed: ' + this.temporaries.map(function (tmp) { return tmp.name; }).join(', '));
         }
         this.temporaries = [];
         this.lastTemporary = 0;
@@ -286,7 +286,7 @@ Compiler.prototype = {
             // Let's copy it to a new function name
             var asmname = this.generateFunctionName();
             var entry = this.createEntry(asmname, false, parameterTypes, returnType, false);
-            this.env.push('var ' + asmname + '=env.' + jsName + ';');
+            this.env.push('var ' + asmname + '=' + jsName + ';');
             // And also create an native, alternative entry
             var altname = this.generateFunctionName();
             var altEntry = this.createEntry(altname, true, parameterTypes, returnType, true);
@@ -488,6 +488,12 @@ Compiler.prototype = {
                     if (ret)
                         ret.free();
                     break;
+                case 'RepeatForever':
+                    this.compileRepeatForever(node, context);
+                    break;
+                case 'VariableAssignment':
+                    this.compileVariableAssignment(node, context);
+                    break;
                 case 'VariableDefinition':
                     this.compileVariableDefinition(node, context);
                     break;
@@ -685,6 +691,43 @@ Compiler.prototype = {
 
         return retVal;
     },
+    compileRepeatForever: function compileRepeatForever(loop, context) {
+        /// <param name='loop' type='Nodes.For' />
+        /// <param name='context' type='CompilerContext' />
+        if (loop.atomic) {
+            context.push('while(1){');
+            this.compileBlock(loop.block, context);
+            context.push('}');
+        } else {
+            // Go to loop function
+            var endFunc = this.createEntry(this.generateFunctionName(), true, undefined, this.types.Integer);
+            var loopFunc = this.createEntry(this.generateFunctionName(), true, undefined, this.types.Integer);
+            context.setCallStack(loopFunc);
+            context.push('return 1;');
+
+            // Compile block
+            context.setCurrentFunction(loopFunc);
+            this.compileBlock(loop.block, context);
+            // Jump to the begining
+            context.setCallStack(loopFunc);
+            context.push('return 1;');
+
+            // Set context to the return func
+            context.setCurrentFunction(endFunc);
+        }
+    },
+    compileVariableAssignment: function compileVariableAssignment(variable, context) {
+        /// <param name='variable' type='Nodes.VariableAssignment' />
+        /// <param name='context' type='CompilerContext' />
+        var type = variable.ref.type;
+        if (type.isArray()) {
+            throw new Error('Arrays not supported, yet');
+        }
+
+        var ref = this.compileExpr(variable.expr, context);
+        variable.ref.location.setValue(ref);
+        ref.free();
+    },
     compileVariableDefinition: function compileVariableDefinition(variable, context) {
         /// <param name='variable' type='Nodes.VariableDefinition' />
         /// <param name='context' type='CompilerContext' />
@@ -694,7 +737,9 @@ Compiler.prototype = {
         }
 
         if (variable.initial) {
-            variable.location.setValue(this.compileExpr(variable.initial, context));
+            var ref = this.compileExpr(variable.initial, context);
+            variable.location.setValue(ref);
+            ref.free();
         }
     },
 
