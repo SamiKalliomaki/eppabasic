@@ -4,8 +4,9 @@ function TypeContainer() {
     this.types = [];
     this.arrayTypes = [];
 
-    // Add singletones to known types
     this.types.push(this.Integer);
+    this.types.push(this.Double);
+    this.types.push(this.Boolean);
 }
 TypeContainer.prototype = {
     getTypeByName: function getTypeByName(name) {
@@ -27,7 +28,8 @@ TypeContainer.prototype = {
 
     // Make common singletones easily available
     Integer: new IntegerType(),
-    Double: new DoubleType()
+    Double: new DoubleType,
+    Boolean: new BooleanType(),
 };
 
 function BaseType() {
@@ -92,6 +94,22 @@ DoubleType.prototype.cast = function cast(expr) {
     return '(+(' + expr + '))';
 };
 
+
+function BooleanType() {
+
+}
+extend(BooleanType.prototype, BaseType.prototype);
+BooleanType.prototype.castTargets = [];
+BooleanType.prototype.name = 'Boolean';
+BooleanType.prototype.castTo = function castTo(expr, type) {
+    /// <param name='expr' type='String' />
+    /// <param name='type' type='BaseType' />
+    switch (type) {
+        case this:
+            return expr;
+    }
+    throw new Error('Failed to cast "' + this + '" to "' + type + '"');
+}
 
 function ArrayType(itemType, dimensionCount) {
     this.itemType = itemType;

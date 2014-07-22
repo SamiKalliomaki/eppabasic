@@ -51,6 +51,8 @@ CompilerContext.prototype = {
 
         // This temporary is ofcourse in use...
         tmp.used = true;
+        // ...and it must be of right type
+        tmp.type = type;            // This is safe because it is either double or not
 
         return tmp;
     },
@@ -488,6 +490,9 @@ Compiler.prototype = {
                     if (ret)
                         ret.free();
                     break;
+                case 'If':
+                    this.compileIf(node, context);
+                    break;
                 case 'RepeatForever':
                     this.compileRepeatForever(node, context);
                     break;
@@ -509,6 +514,78 @@ Compiler.prototype = {
         }.bind(this));
     },
 
+    compileIf: function compileIf(statement, context) {
+        /// <param name='statement' type='Nodes.If' />
+        /// <param name='context' type='CompilerContext' />
+        if (statement.trueStatement.atomic && (!statement.falseStatement || statement.falseStatement.atomic)) {
+            var testValue = this.compileExpr(statement.expr, context);
+
+            context.push('if(' + testValue.getValue() + '){');
+
+            this.compileBlock(statement.trueStatement, context);
+
+            if (statement.falseStatement) {
+                context.push('}else{');
+                if (statement.falseStatement.nodeType === 'If')
+                    this.compileIf(statement.falseStatement, context);
+                else
+                    this.compileBlock(statement.falseStatement, context);
+            }
+
+            context.push('}');
+
+            testValue.free();
+        } else {
+            // First compute the test value
+            var testValue = this.compileExpr(statement.expr, context);
+            if (testValue.refType === 'temp') {
+                var tmp = context.reserveStack(testValue.type);
+                tmp.setValue(testValue);
+                testValue.free();
+                testValue = tmp;
+            }
+
+            // Then create functions
+            var endFunc = this.createEntry(this.generateFunctionName(), true, undefined, this.types.Integer);
+            var trueFunc = this.createEntry(this.generateFunctionName(), true, undefined, this.types.Integer);
+            var falseFunc = endFunc;
+            if (statement.falseStatement)
+                var falseFunc = this.createEntry(this.generateFunctionName(), true, undefined, this.types.Integer);
+
+            // Do testing
+            context.push('if(' + testValue.getValue() + '){');
+            // Go to the true branch if needed
+            context.setCallStack(trueFunc);
+            context.push('return 1;');
+            context.push('}');
+
+            // Otherwice go to the false statement (or end if false doesn't exist)
+            context.setCallStack(falseFunc);
+            context.push('return 1;');
+
+            // Compile true and false blocks
+            context.setCurrentFunction(trueFunc);
+            this.compileBlock(statement.trueStatement, context);
+            context.setCallStack(endFunc);
+            context.push('return 1;');
+
+            if (statement.falseStatement) {
+                context.setCurrentFunction(falseFunc);
+                if (statement.falseStatement.nodeType === 'If')
+                    this.compileIf(statement.falseStatement, context);
+                else
+                    this.compileBlock(statement.falseStatement, context);
+                context.setCallStack(endFunc);
+                context.push('return 1;');
+            }
+
+            // Continue compiling to the end of if statement
+            context.setCurrentFunction(endFunc);
+
+            testValue.free();
+            //throw new Error('Non-atomic if statements not supported yet');
+        }
+    },
     compileFor: function compileFor(loop, context) {
         /// <param name='loop' type='Nodes.For' />
         /// <param name='context' type='CompilerContext' />
@@ -555,7 +632,6 @@ Compiler.prototype = {
             step.free();
             step = tmp;
 
-            // TODO Loop and return
             // Go to loop function
             var endFunc = this.createEntry(this.generateFunctionName(), true, undefined, this.types.Integer);
             var loopFunc = this.createEntry(this.generateFunctionName(), true, undefined, this.types.Integer);
@@ -591,7 +667,6 @@ Compiler.prototype = {
             step.free();
             stop.free();
             loop.variable.location.free();
-            //throw new Error('Non-atomic for loops not supported yet');
         }
     },
     compileFunctionCall: function compileFunctionCall(call, context) {
@@ -605,7 +680,7 @@ Compiler.prototype = {
             if (!param.atomic) {
                 // This param is not atomic so push every earlier parameter to the stack if it is not there already
                 params = params.map(function each(param) {
-                    if (param.refType !== 'stack' && param.refType !== 'const') {
+                    if (param.refType !== 'stack' && param.refType !== 'const') {           // TODO Check that works with no-free
                         // Push this to the top of the stack
                         var stackRef = context.reserveStack(param.type);
                         stackRef.setValue(param);
