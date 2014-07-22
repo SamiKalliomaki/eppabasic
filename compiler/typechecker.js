@@ -154,12 +154,6 @@ Typechecker.prototype = {
         if (!handle)
             throw new Error('Call of an undefined function "' + call.name + '"');
 
-        // Redefine parameter types to match function call so that the compiler can cast them
-        var i = call.params.length;
-        while (i--) {
-            call.params[i].type = handle.paramTypes[i];
-        }
-
         call.handle = handle;
         call.type = handle.returnType;
     },
@@ -242,7 +236,7 @@ Typechecker.prototype = {
             case 'IndexOp':
                 var arrayType = this.resolveExprType(expr.expr, context);
                 expr.index.forEach(function each(index) {
-                    this.resolveExprType(index);
+                    this.resolveExprType(index, context);
                     if (!index.type.canCastTo(this.types.Integer))
                         throw new Error('Array indices must be type of "Integer"');
                 }.bind(this));

@@ -313,7 +313,7 @@ Compiler.prototype = {
             }
         } else {
             // The implementation is in a module so do nothing but create an entry
-            var entry = this.createEntry(jsName, true, parameterTypes, returnType);
+            var entry = this.createEntry(jsName, true, parameterTypes, returnType, false);
         }
 
         this.functions.push({
@@ -444,6 +444,7 @@ Compiler.prototype = {
         var mainEntryList = this.findEntryList([], this.types.Integer);
         buf.push('function __next(){while(' + mainEntryList.name + '[MEMU32[CP>>2]&' + mainEntryList.mask + ']()|0);}');
         buf.push('function __breakExec(){CP=(CP+4)|0;MEMU32[CP>>2]=' + breakEntry.index + ';}');
+        buf.push('function __int(a){a=a|0;return a|0;}');
         buf.push(this.generateFunctions());
         // Compile f-tables in the end
         buf.push(this.generateFTable());
@@ -699,9 +700,11 @@ Compiler.prototype = {
         // Align the stack
         var align = context.alignStack();
 
+        // Create parameter string
         var paramStr = [];
         params.forEach(function each(param, i) {
             var type = call.handle.entry.paramTypes[i];
+            // Cast parameter to right type
             paramStr.push(type.cast(param.type.castTo(param.getValue(), type)));
         }.bind(this));
         var buf = [];

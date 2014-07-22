@@ -26,26 +26,26 @@
 
 Input.prototype = {
     env: {
-        keyDown: function keyDown(sp) {
-            this.MEMS32[(sp - 4) >> 2] = this.keysDown[this.MEMS32[(sp - 4) >> 2]] | 0;
+        keyDown: function keyDown(key) {
+            return this.keysDown[key];
         },
-        keyUp: function keyUp(sp) {
-            this.MEMS32[(sp - 4) >> 2] = (!this.keysDown[this.MEMS32[(sp - 4) >> 2]]) | 0;
+        keyUp: function keyUp(key) {
+            return !this.keysDown[key];
         },
-        keyHit: function keyHit(sp) {
-            var key = this.MEMS32[(sp - 4) >> 2];
-            this.MEMS32[(sp - 4) >> 2] = this.keysHit[key] | 0;
+        keyHit: function keyHit(key) {
+            var val = this.keysHit[key];
             this.keysHit[key] = false;
+            return val;
         },
 
-        mouseX: function mouseX(sp) {
-            this.MEMS32[sp >> 2] = this.mouseX;
+        mouseX: function mouseX() {
+            return this.mouseX;
         },
-        mouseY: function mouseY(sp) {
-            this.MEMS32[sp >> 2] = this.mouseY;
+        mouseY: function mouseY() {
+            return this.mouseY;
         },
-        mouseDown: function mouseDown(sp) {
-            this.MEMS32[(sp - 4) >> 2] = this.mousePressed[this.MEMS32[(sp - 4) >> 2] - 1] | 0;
+        mouseDown: function mouseDown(key) {
+            return this.mousePressed[key - 1];
         }
     },
 

@@ -34,10 +34,6 @@ Editor.prototype = {
     compile: function compile() {
         var compiler = new Compiler(this.ast, this.operators, this.types);
 
-        //compiler.defineJsFunction('line', true, 'Line', [this.types.Integer, this.types.Integer, this.types.Integer, this.types.Integer]);
-        //compiler.defineJsFunction('atomic', true, 'atom', [this.types.Integer], this.types.Integer, true);
-        //compiler.defineJsFunction('nonAtomic', true, 'ntom', [this.types.Integer], this.types.Integer, false);
-
         //// Drawing functions
         compiler.defineJsFunction('env.clearColor', true, 'ClearColor', [this.types.Integer, this.types.Integer, this.types.Integer]);
         compiler.defineJsFunction('env.lineColor', true, 'LineColor', [this.types.Integer, this.types.Integer, this.types.Integer]);
@@ -71,23 +67,22 @@ Editor.prototype = {
         compiler.defineJsFunction('env.minutes', true, 'Minutes', [], this.types.Integer);
         compiler.defineJsFunction('env.seconds', true, 'Seconds', [], this.types.Integer);
         compiler.defineJsFunction('env.milliseconds', true, 'MilliSeconds', [], this.types.Integer);
-        //compiler.defineJsFunction('HOURS', [], 'hours', Types.Integer);
-        //compiler.defineJsFunction('MINUTES', [], 'minutes', Types.Integer);
-        //compiler.defineJsFunction('SECONDS', [], 'seconds', Types.Integer);
-        //compiler.defineJsFunction('MILLISECONDS', [], 'milliseconds', Types.Integer);
 
         //// Input
-        //compiler.defineJsFunction('KEYDOWN', [Types.Integer], 'keyDown', Types.Integer);
-        //compiler.defineJsFunction('KEYUP', [Types.Integer], 'keyUp', Types.Integer);
-        //compiler.defineJsFunction('KEYHIT', [Types.Integer], 'keyHit', Types.Integer);
-        //compiler.defineJsFunction('MOUSEX', [], 'mouseX', Types.Integer);
-        //compiler.defineJsFunction('MOUSEY', [], 'mouseY', Types.Integer);
-        //compiler.defineJsFunction('MOUSEDOWN', [Types.Integer], 'mouseDown', Types.Integer);
+        compiler.defineJsFunction('env.keyDown', true, 'KeyDown', [this.types.Integer], this.types.Boolean);
+        compiler.defineJsFunction('env.keyUp', true, 'KeyUp', [this.types.Integer], this.types.Boolean);
+        compiler.defineJsFunction('env.keyHit', true, 'KeyHit', [this.types.Integer], this.types.Boolean);
+        compiler.defineJsFunction('env.mouseX', true, 'MouseX', [], this.types.Integer);
+        compiler.defineJsFunction('env.mouseY', true, 'MouseY', [], this.types.Integer);
+        compiler.defineJsFunction('env.mouseDown', true, 'MouseDown', [this.types.Integer], this.types.Boolean);
 
         //// Output
         //compiler.defineJsFunction('PRINT', [Types.String], 'print');
         //compiler.defineJsFunction('PRINT', [Types.Double], 'printDbl');
         //compiler.defineJsFunction('PRINT', [Types.Integer], 'printInt');
+
+        //// Casting
+        compiler.defineJsFunction('__int', false, 'Int', [this.types.Integer], this.types.Integer);
 
 
         try {
