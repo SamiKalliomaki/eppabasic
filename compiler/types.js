@@ -115,6 +115,13 @@ function ArrayType(itemType, dimensionCount) {
     this.itemType = itemType;
     this.dimensionCount = dimensionCount;
     this.name = itemType + '(' + dimensionCount + ')';
+
+    this.elementShift = 2;
+    this.dataOffset = 4 * dimensionCount;
+    if (itemType === TypeContainer.prototype.Double) {
+        this.elementShift = 3;
+        while (this.dataOffset % 8 !== 0) this.dataOffset++;
+    }
 }
 extend(ArrayType.prototype, BaseType.prototype);
 ArrayType.prototype.isArray = function isArray() {

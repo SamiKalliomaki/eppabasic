@@ -481,7 +481,7 @@ Compiler.prototype = {
         buf.push('function __breakExec(){CP=(CP+4)|0;MEMU32[CP>>2]=' + breakEntry.index + ';}');
         buf.push('function __int(a){a=a|0;return a|0;}');
 
-        buf.push('function __memreserve(a){a=a|0;NEXT_FREE=(NEXT_FREE+a)|0;return (NEXT_FREE-a)|0;}');
+        buf.push('function __memreserve(a){a=a|0;while(NEXT_FREE&7)NEXT_FREE=(NEXT_FREE+1)|0;NEXT_FREE=(NEXT_FREE+a)|0;return (NEXT_FREE-a)|0;}');
 
         buf.push(this.generateFunctions());
         // Compile f-tables in the end
@@ -839,7 +839,7 @@ Compiler.prototype = {
 
             // The offset of the referenced index
             var offset = context.reserveConstant(this.types.Integer);
-            offset.setValue(variable.ref.location.getValue() + '+' + (dimensions.length * 4) + '+((' + indexStr + ')<<2)');
+            offset.setValue(variable.ref.location.getValue() + '+' + type.dataOffset + '+((' + indexStr + ')<<' + type.elementShift + ')');
             // And the reference
             var ref = new CompilerAbsoluteReference(variable.ref.type.itemType, offset, context);
 
@@ -868,8 +868,8 @@ Compiler.prototype = {
         if (type.isArray()) {
             if (variable.initial)
                 throw new Error('Variables with initial values not supported');
-            if (type.itemType === this.types.Double)
-                throw new Error('Double typed arrays not supported. Yet');
+            //if (type.itemType === this.types.Double)
+            //    throw new Error('Double typed arrays not supported. Yet');
 
             // Compile the expressions for size
             var dimensions = this.compileExprList(variable.dimensions, context);
@@ -887,7 +887,7 @@ Compiler.prototype = {
 
             // Reserve memory
             var cnt = context.reserveConstant(type);
-            cnt.setValue('__memreserve(((((' + sizeStr + ')<<2)|0)+' + (4 * dimensions.length) + ')|0)|0');
+            cnt.setValue('__memreserve(((((' + sizeStr + ')<<' + type.elementShift + ')|0)+' + type.dataOffset + ')|0)|0');
 
             // Save value to variable
             variable.location.setValue(cnt);
@@ -1023,7 +1023,6 @@ Compiler.prototype = {
         // First find out the index
         var dimensions = this.compileExprList(variable.index, context, variable.expr.atomic);
 
-        console.log(variable);
         if (dimensions.length !== variable.expr.type.dimensionCount)
             throw new Error('Trying to access ' + variable.expr.type.dimensionCount + '-dimensional array with ' + dimensions.length + ' dimensions');
 
@@ -1043,7 +1042,7 @@ Compiler.prototype = {
 
         // Then get offset to the item
         var offset = context.reserveConstant(this.types.Integer);
-        offset.setValue(base.getValue() + '+' + (dimensions.length * 4) + '+((' + indexStr + ')<<2)');
+        offset.setValue(base.getValue() + '+' + variable.expr.type.dataOffset + '+((' + indexStr + ')<<' + variable.expr.type.elementShift + ')');
         // And a reference to it
         var ref = new CompilerAbsoluteReference(variable.expr.type.itemType, offset, context);
 
