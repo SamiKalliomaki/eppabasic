@@ -120,3 +120,8 @@ extend(ArrayType.prototype, BaseType.prototype);
 ArrayType.prototype.isArray = function isArray() {
     return true;
 };
+ArrayType.prototype.castTo = function castTo(expr, type) {
+    if (type === this)
+        return expr;
+    throw new Error('Failed to cast "' + this + '" to "' + type + '"');
+};

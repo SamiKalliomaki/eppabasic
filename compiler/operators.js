@@ -153,16 +153,16 @@ OperatorContainer.prototype = {
             new BinaryOperatorCompiler('*', this.types.Double, this.types.Double, this.types.Double, true)));
         // Power
         this.addOperator(new BinaryOperator(this.types.Integer, 'pow', this.types.Integer, this.types.Double,
-            new BinaryOperatorCompiler('pow', this.types.Double, this.types.Double, this.types.Double, false)));
+            new BinaryOperatorCompiler('__pow', this.types.Double, this.types.Double, this.types.Double, false)));
 
         this.addOperator(new BinaryOperator(this.types.Double, 'pow', this.types.Integer, this.types.Double,
-            new BinaryOperatorCompiler('pow', this.types.Double, this.types.Double, this.types.Double, false)));
+            new BinaryOperatorCompiler('__pow', this.types.Double, this.types.Double, this.types.Double, false)));
 
         this.addOperator(new BinaryOperator(this.types.Integer, 'pow', this.types.Double, this.types.Double,
-            new BinaryOperatorCompiler('pow', this.types.Double, this.types.Double, this.types.Double, false)));
+            new BinaryOperatorCompiler('__pow', this.types.Double, this.types.Double, this.types.Double, false)));
 
         this.addOperator(new BinaryOperator(this.types.Double, 'pow', this.types.Double, this.types.Double,
-            new BinaryOperatorCompiler('pow', this.types.Double, this.types.Double, this.types.Double, false)));
+            new BinaryOperatorCompiler('__pow', this.types.Double, this.types.Double, this.types.Double, false)));
 
         //this.addOperator(new BinaryOperator(Types.Integer, 'plus', Types.Integer, Types.Integer));
         //this.addOperator(new BinaryOperator(Types.Double, 'plus', Types.Integer, Types.Double));

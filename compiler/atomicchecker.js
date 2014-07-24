@@ -59,8 +59,8 @@ Atomicchecker.prototype = {
      */
     visitVariableAssignment: function visitVariableAssignment(assignment) {
         assignment.atomic = this.visitExpr(assignment.expr);
-        if (assignment.dimensions)
-            assignment.atomic = this.visitDimensions(assignment.dimensions) ? assignment.atomic : false;
+        if (assignment.index)
+            assignment.atomic = this.visitDimensions(assignment.index) ? assignment.atomic : false;
         return assignment.atomic;
     },
 

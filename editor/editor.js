@@ -55,6 +55,7 @@ Editor.prototype = {
         //// Mathematical functions
         compiler.defineJsFunction('stdlib.Math.sin', true, 'Sin', [this.types.Double], this.types.Double);
         compiler.defineJsFunction('stdlib.Math.cos', true, 'Cos', [this.types.Double], this.types.Double);
+        compiler.defineJsFunction('stdlib.Math.sqrt', true, 'Sqrt', [this.types.Double], this.types.Double);
 
         //compiler.defineJsFunction('SQRT', [Types.Double], 'sqrt', Types.Double);
 
@@ -77,6 +78,7 @@ Editor.prototype = {
         compiler.defineJsFunction('env.mouseDown', true, 'MouseDown', [this.types.Integer], this.types.Boolean);
 
         //// Output
+        compiler.defineJsFunction('env.printInt', true, 'Print', [this.types.Integer]);
         //compiler.defineJsFunction('PRINT', [Types.String], 'print');
         //compiler.defineJsFunction('PRINT', [Types.Double], 'printDbl');
         //compiler.defineJsFunction('PRINT', [Types.Integer], 'printInt');

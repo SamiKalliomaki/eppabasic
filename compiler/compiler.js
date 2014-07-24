@@ -187,7 +187,40 @@ CompilerStackReference.prototype = {
     },
     refType: 'stack'
 };
-function CompilerAbsoluteReference() { }
+function CompilerAbsoluteReference(type, offset, context) {
+    /// <param name='type' type='BaseType' />
+    /////// <param name='offset' type='Number' />
+    /// <param name='context' type='CompilerContext' />
+    this.type = type;
+    this.offset = offset;
+    this.context = context;
+    this.types = this.context.types;
+}
+CompilerAbsoluteReference.prototype = {
+    setValue: function setValue(value) {
+        var mem = 'MEMS32';
+        var shift = 2;
+        if (this.type === this.types.Double) {
+            mem = 'MEMF64';
+            shift = 3;
+        }
+        this.context.push(mem + '[((' + this.offset.getValue() + ')|0)>>' + shift + ']=' + value.type.castTo(value.getValue(), this.type) + ';');
+    },
+    getValue: function getValue() {
+        var mem = 'MEMS32';
+        var shift = 2;
+        if (this.type === this.types.Double) {
+            mem = 'MEMF64';
+            shift = 3;
+        }
+        return this.type.cast(mem + '[((' + this.offset.getValue() + ')|0)>>' + shift + ']');
+    },
+    free: function free() {
+        // TODO Free the type
+    },
+    refType: 'abs'
+};
+
 function CompilerConstantReference(type, context) {
     /// <param name='type' type='BaseType' />
     /// <param name='context' type='CompilerContext' />
@@ -434,8 +467,10 @@ Compiler.prototype = {
         buf.push('var MEMU32=new stdlib.Uint32Array(heap);');
         buf.push('var MEMF64=new stdlib.Float64Array(heap);');
         buf.push('var imul=stdlib.Math.imul;');
+        buf.push('var __pow=stdlib.Math.pow;');
         buf.push('var SP=0;');
         buf.push('var CP=0;');
+        buf.push('var NEXT_FREE=2048;')
         // Add compiler defined environmental variables
         buf.push(this.env.join('\n'));
         // Compile all the other functions
@@ -445,6 +480,9 @@ Compiler.prototype = {
         buf.push('function __next(){while(' + mainEntryList.name + '[MEMU32[CP>>2]&' + mainEntryList.mask + ']()|0);}');
         buf.push('function __breakExec(){CP=(CP+4)|0;MEMU32[CP>>2]=' + breakEntry.index + ';}');
         buf.push('function __int(a){a=a|0;return a|0;}');
+
+        buf.push('function __memreserve(a){a=a|0;NEXT_FREE=(NEXT_FREE+a)|0;return (NEXT_FREE-a)|0;}');
+
         buf.push(this.generateFunctions());
         // Compile f-tables in the end
         buf.push(this.generateFTable());
@@ -676,24 +714,7 @@ Compiler.prototype = {
 
 
         // Compile parameters
-        var params = [];
-        call.params.forEach(function each(param) {
-            if (!param.atomic) {
-                // This param is not atomic so push every earlier parameter to the stack if it is not there already
-                params = params.map(function each(param) {
-                    if (param.refType !== 'stack' && param.refType !== 'const') {           // TODO Check that works with no-free
-                        // Push this to the top of the stack
-                        var stackRef = context.reserveStack(param.type);
-                        stackRef.setValue(param);
-                        param.free();
-                        param = stackRef;
-                    }
-                    return param;
-                }.bind(this));
-            }
-            // Don't forget to push this to the stack
-            params.push(this.compileExpr(param, context));
-        }.bind(this));
+        var params = this.compileExprList(call.params, context);
 
 
         context.push('/* Calling function ' + call.name + '*/');
@@ -799,7 +820,41 @@ Compiler.prototype = {
         /// <param name='context' type='CompilerContext' />
         var type = variable.ref.type;
         if (type.isArray()) {
-            throw new Error('Arrays not supported, yet');
+            // Compute the index
+            var dimensions = this.compileExprList(variable.index, context, variable.expr.atomic);
+
+            if (dimensions.length !== type.dimensionCount)
+                throw new Error('Trying to access ' + type.dimensionCount + '-dimensional array with ' + dimensions.length + ' dimensions');
+
+            // Then compute the location of the variable
+            var indexStr = dimensions[0].getValue();
+            for (var i = 1; i < dimensions.length; i++) {
+                // A reference to the size of the current dimension
+                var offset = context.reserveConstant(this.types.Integer);
+                offset.setValue(variable.ref.location.getValue() + '+' + (4 * i));
+                var ref = new CompilerAbsoluteReference(this.types.Integer, offset, context);
+
+                indexStr = '(((imul(' + indexStr + ',' + ref.getValue() + ')|0)+' + dimensions[i].getValue() + ')|0)';
+            }
+
+            // The offset of the referenced index
+            var offset = context.reserveConstant(this.types.Integer);
+            offset.setValue(variable.ref.location.getValue() + '+' + (dimensions.length * 4) + '+((' + indexStr + ')<<2)');
+            // And the reference
+            var ref = new CompilerAbsoluteReference(variable.ref.type.itemType, offset, context);
+
+            // Finally compute the value and push it to the array
+            var val = this.compileExpr(variable.expr, context);
+            ref.setValue(val);
+            val.free();
+
+            var i = dimensions.length;
+            while (i--) {
+                dimensions[i].free();
+            }
+
+            //throw new Error('Arrays not supported, yet');
+            return;
         }
 
         var ref = this.compileExpr(variable.expr, context);
@@ -811,7 +866,53 @@ Compiler.prototype = {
         /// <param name='context' type='CompilerContext' />
         var type = variable.type;
         if (type.isArray()) {
-            throw new Error('Arrays not supported, yet');
+            if (variable.initial)
+                throw new Error('Variables with initial values not supported');
+            if (type.itemType === this.types.Double)
+                throw new Error('Double typed arrays not supported. Yet');
+
+            // Compile the expressions for size
+            var dimensions = this.compileExprList(variable.dimensions, context);
+
+            // Compute the actual size of the string
+            var sizeStr = dimensions[0].getValue();
+            for (var i = 1; i < dimensions.length; i++) {
+                sizeStr = 'imul(' + sizeStr + ',' + dimensions[i].getValue() + ')|0';
+            }
+            /*var sizeStr = [];
+            dimensions.forEach(function each(dim) {
+                sizeStr.push(dim.getValue());
+            }.bind(this));
+            sizeStr = sizeStr.join('*');*/
+
+            // Reserve memory
+            var cnt = context.reserveConstant(type);
+            cnt.setValue('__memreserve(((((' + sizeStr + ')<<2)|0)+' + (4 * dimensions.length) + ')|0)|0');
+
+            // Save value to variable
+            variable.location.setValue(cnt);
+            cnt.free();
+
+            // Finally fill in array dimensions to the begining of the reserved area
+            for (var i = 0; i < dimensions.length; i++) {
+                var offset = context.reserveConstant(this.types.Integer);
+                offset.setValue(variable.location.getValue() + '+' + (4 * i));
+
+                var value = context.reserveConstant(this.types.Integer);
+                value.setValue(dimensions[i]);
+
+                var ref = new CompilerAbsoluteReference(this.types.Integer, offset, context);
+                ref.setValue(value);
+            }
+
+            // Free the dimensions
+            var i = dimensions.length;
+            while (i--) {
+                dimensions[i].free();
+            }
+
+            //throw new Error('Arrays not supported, yet');
+            return;
         }
 
         if (variable.initial) {
@@ -819,6 +920,30 @@ Compiler.prototype = {
             variable.location.setValue(ref);
             ref.free();
         }
+    },
+
+    compileExprList: function compileExprList(list, context, atomic) {
+        if (atomic !== false)
+            atomic = true;
+        var res = [];
+        list.forEach(function each(expr) {
+            if (!expr.atomic || !atomic) {
+                // This expr is not atomic so push every earlier expression to the stack if it is not there already
+                res = res.map(function each(ref) {
+                    if (ref.refType !== 'stack' && ref.refType !== 'const') {           // TODO Check that works with no-free
+                        // Push this to the top of the stack
+                        var stackRef = context.reserveStack(ref.type);
+                        stackRef.setValue(ref);
+                        ref.free();
+                        ref = stackRef;
+                    }
+                    return expr;
+                }.bind(this));
+            }
+            // Don't forget to push this to the stack
+            res.push(this.compileExpr(expr, context));
+        }.bind(this));
+        return res;
     },
 
     compileExpr: function compileExpr(expr, context) {
@@ -832,6 +957,8 @@ Compiler.prototype = {
                 return this.compileBinaryExpr(expr, context);
             case 'FunctionCall':
                 return this.compileFunctionCall(expr, context);
+            case 'IndexOp':
+                return this.compileIndexExpr(expr, context);
             default:
                 throw new Error('Unsupported node type "' + expr.nodeType + '"');
         }
@@ -888,6 +1015,46 @@ Compiler.prototype = {
         rightRef.free();
         leftRef.free();
         return res;
+    },
+    compileIndexExpr: function compileIndexExpr(variable, context) {
+        /// <param name='variable' type='Nodes.IndexOp' />
+        /// <param name='context' type='CompilerContext' />
+
+        // First find out the index
+        var dimensions = this.compileExprList(variable.index, context, variable.expr.atomic);
+
+        console.log(variable);
+        if (dimensions.length !== variable.expr.type.dimensionCount)
+            throw new Error('Trying to access ' + variable.expr.type.dimensionCount + '-dimensional array with ' + dimensions.length + ' dimensions');
+
+        // Get the array location
+        var base = this.compileExpr(variable.expr, context);
+
+        // Then compute the location of the variable
+        var indexStr = dimensions[0].getValue();
+        for (var i = 1; i < dimensions.length; i++) {
+            // A reference to the size of the current dimension
+            var offset = context.reserveConstant(this.types.Integer);
+            offset.setValue(base.getValue() + '+' + (4 * i));
+            var ref = new CompilerAbsoluteReference(this.types.Integer, offset, context);
+
+            indexStr = '(((imul(' + indexStr + ',' + ref.getValue() + ')|0)+' + dimensions[i].getValue() + ')|0)';
+        }
+
+        // Then get offset to the item
+        var offset = context.reserveConstant(this.types.Integer);
+        offset.setValue(base.getValue() + '+' + (dimensions.length * 4) + '+((' + indexStr + ')<<2)');
+        // And a reference to it
+        var ref = new CompilerAbsoluteReference(variable.expr.type.itemType, offset, context);
+
+        // Get rid of the trash
+        var i = dimensions.length;
+        while (i--) {
+            dimensions[i].free();
+        }
+
+        return ref;
+        //throw new Error('Arrays not supported, yet');
     },
 };
 
