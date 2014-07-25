@@ -8,14 +8,14 @@ from filesystem.forms import FileForm, SaveFileForm, CreateDirectoryForm, Delete
 
 max_dir_depth = 10
 
-def has_rights_dir(user, directory, edit=True):
+def has_rights_dir(user, directory, edit=False):
     if directory.owner == user:
         return True
 
     p = directory
 
     while p != None:
-        shares = p.directory_shares.filter(Q(shared_with=user.pk) | Q(shared_with=None))
+        shares = p.directory_shares.filter(Q(shared_with=user) | Q(shared_with=None))
         if edit:
             shares = shares.filter(can_edit=True)
 
@@ -44,6 +44,7 @@ class GetDirectoryView(View):
             'id': directory.pk,
             'name': directory.name,
             'deletable': directory.parent != None and has_rights_dir(request.user, directory, edit=True),
+            'editable': has_rights_dir(request.user, directory, edit=True),
 
             'content': {
                 'subdirs': subdirs,

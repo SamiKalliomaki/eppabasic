@@ -22,7 +22,7 @@ function FileControlsController(fileControls, editor, userControlsController, fi
     });
 
     this.loadButton.click(function() {
-        fileDialogController.show('Open');
+        fileDialogController.show(false);
         fileDialogController.onSelect = function() {
             submitForm(fileDialogController.fileForm, 'eb/fs/open/', function(data) {
                 if(data['result'] === 'success') {
@@ -56,7 +56,7 @@ function FileControlsController(fileControls, editor, userControlsController, fi
 
     this.saveButton.click(function() {
         if(me.openedFile == null) {
-            fileDialogController.show('Save');
+            fileDialogController.show(true);
             fileDialogController.onSelect = save;
         } else {
             fileDialogController.setSelectedFile(me.openedFile);

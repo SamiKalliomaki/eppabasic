@@ -9,6 +9,7 @@ function FileDialogController(fileDialogWrapper, notificationSystem) {
     this.formDirectory = $('input[name="directory"]', this.fileForm);
     this.formFilename = $('input[name="filename"]', this.fileForm);
     this.formSubmit = $('input[type="submit"]', this.fileForm);
+    this.createDirectory = $('.create-directory', this.fileDialog);
     this.deleteDirectory = $('.delete-directory', this.fileDialog);
     this.onSelect = function() {}
 
@@ -34,7 +35,7 @@ function FileDialogController(fileDialogWrapper, notificationSystem) {
         me.openDirectory($(this).data('dir'), $(this).data('parents'));
     });
 
-    $('.create-directory', this.fileDialog).click(function(e) {
+    this.createDirectory.click(function(e) {
         e.preventDefault();
 
         var name = window.prompt('Enter name for the new directory.');
@@ -82,9 +83,11 @@ function FileDialogController(fileDialogWrapper, notificationSystem) {
 }
 
 FileDialogController.prototype = {
-    show: function(submitButton) {
+    show: function(editMode) {
+        this.editMode = editMode;
+
         this.resetDialog();
-        this.formSubmit.val(submitButton);
+        this.formSubmit.val(editMode ? 'Save' : 'Open');
         this.fileDialogWrapper.show();
     },
 
@@ -129,6 +132,17 @@ FileDialogController.prototype = {
 
                     me.currentDirectory.empty();
                     me.formDirectory.val(data['id']);
+                    $('input', me.fileForm).prop('disabled', false);
+
+                    if(data['editable']) {
+                        me.createDirectory.parent().show();
+                    } else {
+                        me.createDirectory.parent().hide();
+
+                        if(me.editMode) {
+                            $('input', me.fileForm).prop('disabled', true);
+                        }
+                    }
 
                     if(data['deletable']) {
                         me.deleteDirectory.parent().show();
