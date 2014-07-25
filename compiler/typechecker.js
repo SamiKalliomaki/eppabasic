@@ -179,6 +179,7 @@ Typechecker.prototype = {
      * Visits a return statement
      */
     visitReturn: function visitReturn(ret, parent) {
+        // TODO Find out the real type of the function encapsulated in
         ret.type = this.resolveExprType(ret.expr, parent);
     },
 

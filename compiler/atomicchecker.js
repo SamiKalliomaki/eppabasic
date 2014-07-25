@@ -104,7 +104,7 @@ Atomicchecker.prototype = {
      * Visits a function definition
      */
     visitFunctionDefinition: function visitFunctionDefinition(func) {
-        func.handle.atomic = func.atomic = this.visit(func.block);
+        func.handle.entry.atomic = func.handle.atomic = func.atomic = this.visit(func.block);
         return func.atomic;
     },
     /*

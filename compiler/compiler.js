@@ -12,6 +12,8 @@ function CompilerContext(types, entry) {
     this.stackOffset = 0;
     this.temporaries = [];
     this.lastTemporary = 0;
+
+    this.registeredVariables = [];
 }
 CompilerContext.prototype = {
 
@@ -105,6 +107,27 @@ CompilerContext.prototype = {
         this.push('MEMU32[CP>>2]=' + entry.index + ';');
     },
 
+    registerVariable: function registerVariable(ref) {
+        this.registeredVariables.push(ref);
+    },
+    freeVariable: function freeVariable(ref) {
+        if (this.registeredVariables.pop() !== ref)
+            throw new Error('Registered variables freed in wrong order.');
+        //ref.freeType();
+        ref.free();
+    },
+    freeAll: function freeAll(release) {
+        if (release) {
+            while (this.registeredVariables.length)
+                this.freeVariable(this.registeredVariables[this.registeredVariables.length - 1]);
+        } else {
+            var i = this.registeredVariables.length;
+            while (i--) {
+                this.registeredVariables[i].freeType();
+            }
+        }
+    },
+
     push: function push(str) {
         this.func.push(str);
     },
@@ -114,6 +137,7 @@ CompilerContext.prototype = {
     setCurrentFunction: function setCurrentFunction(entry) {
         this.func = entry;
         if (this.temporaries.some(function every(temp) { return temp.used; })) {
+            console.log(this);
             console.error(this.temporaries);
             throw new Error('Not all temporaries are freed: ' + this.temporaries.map(function (tmp) { return tmp.name; }).join(', '));
         }
@@ -307,10 +331,18 @@ function Compiler(ast, operators, types) {
 }
 
 Compiler.prototype = {
-    defineFunction: function defineFunction(name, parameterTypes, returnType, entryName, atomic) {
-        if (atomic !== false)
-            atomic = true;
+    defineFunction: function defineFunction(jsName, name, parameterTypes, returnType) {
+        var entry = this.createEntry(jsName, true, parameterTypes, returnType, true);
 
+        var handle = {
+            name: name,
+            paramTypes: parameterTypes,
+            returnType: returnType,
+            atomic: true,
+            entry: entry
+        };
+        this.functions.push(handle);
+        return handle;
     },
     defineJsFunction: function defineJsFunction(jsName, env, name, parameterTypes, returnType, atomic) {
         if (atomic !== false)
@@ -349,13 +381,15 @@ Compiler.prototype = {
             var entry = this.createEntry(jsName, true, parameterTypes, returnType, false);
         }
 
-        this.functions.push({
+        var handle = {
             name: name,
             paramTypes: parameterTypes,
             returnType: returnType,
             atomic: atomic,
             entry: entry
-        });
+        };
+        this.functions.push(handle);
+        return handle;
     },
 
     createEntry: function createEntry(name, native, paramTypes, returnType, hasBody) {
@@ -434,7 +468,10 @@ Compiler.prototype = {
     findUserDefinedFunctions: function findUserDefinedFunctions() {
         this.ast.nodes.forEach(function each(def) {
             if (def.nodeType === 'FunctionDefinition') {
-                throw new Error('User defined functions not supported yet');
+                console.log(def);
+                var paramTypes = def.params.map(function map(param) { return param.type; });
+                def.handle = this.defineFunction(this.generateFunctionName(), def.name, paramTypes, def.type);
+                //throw new Error('User defined functions not supported yet');
             }
         }.bind(this));
     },
@@ -456,6 +493,51 @@ Compiler.prototype = {
         // Push end entry to call stack to signal that program has ended
         mainContext.push('MEMU32[CP>>2]=' + endEntry.index + ';');
         mainContext.push('return 1;');
+
+        // Compile user defined functions
+        this.ast.nodes.forEach(function each(def) {
+            if (def.nodeType === 'FunctionDefinition') {
+                var entry = def.handle.entry;
+                var context = new CompilerContext(this.types, def.handle.entry);
+                context.atomic = def.atomic;
+                context.lastTemporary = entry.nextFreeTemporary;
+
+                // Add parameter references
+                for (var i = 0; i < def.params.length; i++) {
+                    def.params[i].location = new CompilerTemporaryReference(def.params[i].type, CreateIthName(i), context);
+                    if (!def.atomic) {
+                        var stack = context.reserveStack(def.params[i].type);
+                        stack.setValue(def.params[i].location);
+                        def.params[i].location = stack;
+                    }
+                }
+
+                if (!entry.atomic)
+                    context.push('CP=(CP+4)|0;');
+
+                this.compileBlock(def.block, context);
+
+                // Just an emergency return if no user defined
+                if (def.type) {
+                    if (entry.atomic) {
+                        if (def.type === this.types.Double)
+                            context.push('return 0.0;');
+                        else
+                            context.push('return 0;');
+                    } else {
+                        var topref = new CompilerStackReference(def.type, 0, 0, context);
+                        var val = context.reserveConstant(def.type);
+                        if (def.type === this.types.Double)
+                            val.setValue('0.0');
+                        else
+                            val.setValue('0');
+                        topref.setValue(val);
+                        context.push('CP=(CP-4)|0;');
+                        //throw new Error('Non-atomic user defined functions not supported');
+                    }
+                }
+            }
+        }.bind(this));
 
         // No that everything is compiled we can align entry lists
         this.alignEntryLists();
@@ -507,11 +589,13 @@ Compiler.prototype = {
             // Atomic blocks can have variables stored in temporary space
             block.variables.forEach(function each(variable) {
                 variable.location = context.reserveTemporary(variable.type);
+                context.registerVariable(variable.location);
             }.bind(this));
         } else {
             // Non-atomic blocks must have variables stored in stack
             block.variables.forEach(function each(variable) {
                 variable.location = context.reserveStack(variable.type);
+                context.registerVariable(variable.location);
             }.bind(this));
         }
 
@@ -529,11 +613,16 @@ Compiler.prototype = {
                     if (ret)
                         ret.free();
                     break;
+                case 'FunctionDefinition':
+                    break;      // TODO Add warning to non-global context
                 case 'If':
                     this.compileIf(node, context);
                     break;
                 case 'RepeatForever':
                     this.compileRepeatForever(node, context);
+                    break;
+                case 'Return':
+                    this.compileReturn(node, context);
                     break;
                 case 'VariableAssignment':
                     this.compileVariableAssignment(node, context);
@@ -549,7 +638,8 @@ Compiler.prototype = {
 
         // And finally free the reserved variables in reverse order
         block.variables.reverse().forEach(function each(variable) {
-            variable.location.free();
+            context.freeVariable(variable.location);
+            //variable.location.free();
         }.bind(this));
     },
 
@@ -712,6 +802,7 @@ Compiler.prototype = {
         /// <param name='call' type='Nodes.FunctionCall' />
         /// <param name='context' type='CompilerContext' />
 
+        console.log(call);
 
         // Compile parameters
         var params = this.compileExprList(call.params, context);
@@ -814,6 +905,30 @@ Compiler.prototype = {
             // Set context to the return func
             context.setCurrentFunction(endFunc);
         }
+    },
+    compileReturn: function compileReturn(statement, context) {
+        /// <param name='statement' type='Nodes.Return' />
+        /// <param name='context' type='CompilerContext' />
+
+        // First compute the value to be returned
+        var val = this.compileExpr(statement.expr, context);
+        // Then free all reserved values
+        context.freeAll(false);
+        // TODO Free parameters
+
+        if (context.atomic) {
+            context.push('return ' + val.getValue() + ';');
+        } else {
+            context.push('SP=(SP-' + context.stackOffset + ')|0;');
+            var topref = new CompilerStackReference(statement.type, context.stackOffset, 0, context);
+            topref.setValue(val);
+            context.push('CP=(CP-4)|0;');
+            context.push('return 1;');
+            //throw new Error('Non-atomic returning functions not supported yet');
+        }
+
+        // After everything free the returned value (though this code will never be executed)
+        val.free();
     },
     compileVariableAssignment: function compileVariableAssignment(variable, context) {
         /// <param name='variable' type='Nodes.VariableAssignment' />

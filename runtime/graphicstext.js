@@ -46,8 +46,8 @@ GraphicsText.prototype = {
         printInt: function printInt(a) {
             alert(a);
         },
-        printDbl: function printDbl(sp) {
-            this.console.innerHTML = this.console.innerHTML + this.MEMF32[(sp - 4) >> 2] + "<br />";
+        printDbl: function printDbl(a) {
+            alert(a);
         }
     },
     stdlib: {}
