@@ -1,0 +1,31 @@
+#notification-box
+{
+	position: absolute;
+	top: 50px;
+	left: 50%;
+	transform: translateX(-50%);
+	-webkit-transform: translateX(-50%);
+	-moz-transform: translateX(-50%);
+	-ms-transform: translateX(-50%);
+
+	-webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: moz-none;
+    -ms-user-select: none;
+    user-select: none;
+
+	z-index: 200;
+
+	width: 400px;
+}
+
+.notification
+{
+	background-color: rgb(255, 255, 175);
+	border-radius: 3px;
+	padding: 2px;
+	width: 100%;
+
+	margin-bottom: 5px;
+}

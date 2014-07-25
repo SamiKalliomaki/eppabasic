@@ -1,4 +1,4 @@
-function FileControlsController(fileControls, editor, userControlsController, fileDialogController) {
+function FileControlsController(fileControls, editor, userControlsController, fileDialogController, notificationSystem) {
     this.fileControls = $(fileControls);
     this.openedFile = null;
 
@@ -37,12 +37,16 @@ function FileControlsController(fileControls, editor, userControlsController, fi
             fileDialogController.fileForm,
             'eb/fs/save/',
             function(data) {
-                // TODO Display some message
+                if(data['result'] === 'success') {
+                    notificationSystem.notify('File saved successfully.');
+                } else {
+                    notificationSystem.notify('Saving file failed. Please try again later.');
+                }
             },
             { 'content': editor.getCode() }
         );
 
-        openedFile = fileDialogController.getSelectedFile();
+        me.openedFile = fileDialogController.getSelectedFile();
     }
 
     this.saveButton.click(function() {

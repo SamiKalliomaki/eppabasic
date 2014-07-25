@@ -1,8 +1,9 @@
 $(function() {
+    var notificationSystem = new NotificationSystem('#notification-box');
     var editor = new Editor('editor', document.getElementById('manual'));
     var userControlsController = new UserControlsController('#user-controls');
-    var fileDialogController = new FileDialogController('#file-dialog-wrapper');
-    var fileControlsController = new FileControlsController('#file-controls', editor, userControlsController, fileDialogController);
+    var fileDialogController = new FileDialogController('#file-dialog-wrapper', notificationSystem);
+    var fileControlsController = new FileControlsController('#file-controls', editor, userControlsController, fileDialogController, notificationSystem);
     var codeControlsController = new CodeControlsController('#code-controls', editor);
     var manual = new Manual('#manual', 'fi');
 

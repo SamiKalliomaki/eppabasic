@@ -1,4 +1,4 @@
-function FileDialogController(fileDialogWrapper) {
+function FileDialogController(fileDialogWrapper, notificationSystem) {
     this.fileDialogWrapper = $(fileDialogWrapper);
     this.fileDialog = $('.file-dialog', fileDialogWrapper);
     this.currentDirectory = $('.current-directory', this.fileDialog);
@@ -7,21 +7,63 @@ function FileDialogController(fileDialogWrapper) {
     this.formDirectory = $('input[name="directory"]', this.fileForm);
     this.formFilename = $('input[name="filename"]', this.fileForm);
     this.formSubmit = $('input[type="submit"]', this.fileForm);
+    this.deleteDirectory = $('.delete-directory', this.fileDialog);
     this.onSelect = function() {}
 
     var me = this;
 
     // Event handlers
+    this.fileDialogWrapper.click(function(e) {
+        if(e.target !== this)
+            return;
+
+        me.hide();
+    });
+
     this.fileDialog.on('click', '.file-link', function(e) {
         e.preventDefault();
 
-        me.formFilename.val($(this).attr('data-file'));
+        me.formFilename.val($(this).data('file'));
     });
 
     this.fileDialog.on('click', '.directory-link', function(e) {
         e.preventDefault();
 
-        me.openDirectory($(this).attr('data-dir'));
+        me.openDirectory($(this).data('dir'));
+    });
+
+    $('.create-directory', this.fileDialog).click(function(e) {
+        e.preventDefault();
+
+        var name = window.prompt('Enter name for the new directory.');
+        if(name !== null) {
+            simplePost('eb/fs/create_directory/', {
+                'name': name,
+                'directory':  me.formDirectory.val()
+            }, function(data) {
+                if(data['result'] === 'success') {
+                    me.openDirectory(me.formDirectory.val());
+                } else {
+                    notificationSystem.showErrors(data['errors'])
+                }
+            });
+        }
+    });
+
+    this.deleteDirectory.click(function(e) {
+        e.preventDefault();
+
+        if(confirm('Are you sure you want to delete this directory and everything inside it? This cannot be undone.')) {
+            simplePost('eb/fs/delete_directory/', {
+                'directory':  me.formDirectory.val()
+            }, function(data) {
+                if(data['result'] === 'success') {
+                    me.openDirectory(data['next']);
+                } else {
+                    notificationSystem.showErrors(data['errors'])
+                }
+            });
+        }
     });
 
     this.fileForm.on('submit', function(e) {
@@ -79,6 +121,13 @@ FileDialogController.prototype = {
                     me.currentDirectory.empty();
 
                     me.formDirectory.val(data['id']);
+
+                    // Root directory cannot be deleted
+                    if(data['parents'].length <= 1) {
+                        me.deleteDirectory.parent().hide();
+                    } else {
+                        me.deleteDirectory.parent().show();
+                    }
 
                     for(var i in data['parents']) {
                         me.currentDirectory.append('<a href="#" data-dir="' + data['parents'][i].id + '" class="directory-link">' + data['parents'][i].name + '/ </a>');

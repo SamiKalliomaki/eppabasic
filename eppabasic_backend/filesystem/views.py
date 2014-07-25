@@ -3,11 +3,11 @@ from django.views.generic import View
 from django.shortcuts import get_object_or_404
 from eppabasic_backend.views import AjaxView
 from filesystem.models import Directory
-from filesystem.forms import FileForm, SaveFileForm
+from filesystem.forms import FileForm, SaveFileForm, CreateDirectoryForm, DeleteDirectoryForm
 
 max_dir_depth = 10
 
-def has_rights(user, directory, edit=True):
+def has_rights_dir(user, directory, edit=True):
 	if directory.owner == user:
 		return True
 
@@ -15,10 +15,7 @@ def has_rights(user, directory, edit=True):
 	if edit:
 		shares = shares.filter(can_edit=True)
 
-	if shares.count() != 0:
-		return True
-
-	return False
+	return shares.count() != 0
 
 class GetDirectoryView(View):
 	def get(self, request, directory_id=None, *args, **kwargs):
@@ -27,7 +24,7 @@ class GetDirectoryView(View):
 		else:
 			directory = get_object_or_404(Directory.objects, pk=int(directory_id))
 
-		if not has_rights(request.user, directory):
+		if not has_rights_dir(request.user, directory):
 			return HttpResponse('Unauthorized', status=401)
 
 		subdirs = [{ 'id': child.pk, 'name': child.name } for child in directory.subdirs.all()]
@@ -47,7 +44,7 @@ class SaveFileView(AjaxView):
 	form_class = SaveFileForm
 
 	def form_valid(self, form):
-		if not has_rights(self.request.user, form.cleaned_data['directory'], edit=True):
+		if not has_rights_dir(self.request.user, form.cleaned_data['directory'], edit=True):
 			return HttpResponse('Unauthorized', status=401)
 
 		form.save()
@@ -58,7 +55,31 @@ class OpenFileView(AjaxView):
 	form_class = FileForm
 
 	def form_valid(self, form):
-		if not has_rights(self.request.user, form.cleaned_data['directory']):
+		if not has_rights_dir(self.request.user, form.cleaned_data['directory']):
 			return HttpResponse('Unauthorized', status=401)
 
 		return JsonResponse({'result': 'success', 'content': form.file_cache.content})
+
+class CreateDirectoryView(AjaxView):
+	form_class = CreateDirectoryForm
+
+	def form_valid(self, form):
+		if not has_rights_dir(self.request.user, form.cleaned_data['directory'], edit=True):
+			return HttpResponse('Unauthorized', status=401)
+
+		form.save()
+		return JsonResponse({'result': 'success'})
+
+class DeleteDirectoryView(AjaxView):
+	form_class = DeleteDirectoryForm
+
+	def form_valid(self, form):
+		if not has_rights_dir(self.request.user, form.cleaned_data['directory'], edit=True):
+			return HttpResponse('Unauthorized', status=401)
+
+		next_dir = form.cleaned_data['directory'].parent
+		if not has_rights_dir(self.request.user, next_dir):
+			next_dir = Directory.objects.get(owner=request.user, parent=None)
+
+		form.delete()
+		return JsonResponse({'result': 'success', 'next': next_dir.pk })

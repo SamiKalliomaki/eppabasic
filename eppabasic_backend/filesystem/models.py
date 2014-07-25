@@ -1,4 +1,5 @@
 from django.db.models import Model, BooleanField, CharField, DateTimeField, ForeignKey, TextField
+from django.db.models.signals import post_delete
 
 class Directory(Model):
 	owner = ForeignKey('users.CustomUser')
@@ -24,4 +25,17 @@ class File(Model):
 class DirectoryShare(Model):
 	directory = ForeignKey(Directory, related_name='directory_shares')
 	shared_with = ForeignKey('users.CustomUser')
-	can_edit = BooleanField()
+	can_edit = BooleanField(default=None)
+
+def delete_files(sender, instance, **kwargs):
+	File.objects.filter(directory=instance).delete()
+
+def delete_shares(sender, instance, **kwargs):
+	DirectoryShare.objects.filter(directory=instance).delete()
+
+def delete_subdirs(sender, instance, **kwargs):
+	Directory.objects.filter(parent=instance).delete()
+
+post_delete.connect(delete_files, sender=Directory)
+post_delete.connect(delete_shares, sender=Directory)
+post_delete.connect(delete_subdirs, sender=Directory)

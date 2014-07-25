@@ -25,11 +25,31 @@
 
 #file-dialog-wrapper .file-dialog
 {
-	min-width: 400px;
-
 	border: 1px solid #495692;
 	border-radius: 5px;
 	background-color: #090909;
+	width: 575px;
+}
+
+#file-dialog-wrapper .main
+{
+	float: left;
+	border-right: 1px solid #495692;
+}
+
+#file-dialog-wrapper .tools
+{
+	/* http://colinaarts.com/articles/the-magic-of-overflow-hidden/ */
+	overflow: hidden; 
+	padding: 5px;
+
+	color: white;
+	list-style-position: inside;
+}
+
+#file-dialog-wrapper .tools a
+{
+	color: white;
 }
 
 #file-dialog-wrapper .header
@@ -40,6 +60,7 @@
 
 #file-dialog-wrapper .list-area
 {
+
 	padding: 5px;
 }
 
@@ -47,6 +68,7 @@
 {
 	list-style-position: inside;
 	min-height: 200px;
+	width: 400px;
 }
 
 #file-dialog-wrapper .file-list li, #file-dialog-wrapper .file-list li a

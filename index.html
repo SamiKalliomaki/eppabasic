@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="editor/css/content.css">
     <link rel="stylesheet" href="editor/css/filedialog.css">
     <link rel="stylesheet" href="editor/css/manual.css">
+    <link rel="stylesheet" href="editor/css/notifications.css">
     
     <!-- Libraries -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
@@ -35,6 +36,7 @@
     <script src="editor/js/filedialog.js"></script>
     <script src="editor/js/codecontrols.js"></script>
     <script src="editor/js/filecontrols.js"></script>
+    <script src="editor/js/notifications.js"></script>
     <script src="editor/js/usercontrols.js"></script>
     <script src="editor/js/manual.js"></script>
     <script src="editor/js/main.js"></script>
@@ -120,21 +122,32 @@ NEXT i</div>
     </div>
     <div id="file-dialog-wrapper">
         <div class="file-dialog dialog">
-            <div class="header">
-                <div class="current-directory"></div>
-            </div>
-            <div class="list-area">
-                <ul class="file-list"></ul>
-            </div>
-            <form class="footer">
-                <input type="hidden" name="directory">
-                <input type="submit">
-                <div class="input-helper">
-                    <input type="text" name="filename">
+            <div class="main">
+                <div class="header">
+                    <div class="current-directory"></div>
                 </div>
-                <div class="clear"></div>
-            </form>
+                <div class="list-area">
+                    <ul class="file-list"></ul>
+                </div>
+                <form class="footer">
+                    <input type="hidden" name="directory">
+                    <input type="submit">
+                    <div class="input-helper">
+                        <input type="text" name="filename">
+                    </div>
+                    <div class="clear-right"></div>
+                </form>
+            </div>
+            <div class="tools">
+                <ul>
+                    <li><a href="#" class="create-directory">Create directory</a></li>
+                    <li><a href="#" class="delete-directory">Delete this directory</a></li>
+                </ul>
+            </div>
+            <div class="clear-left"></div>
         </div>
+    </div>
+    <div id="notification-box">
     </div>
 </body>
 </html>
