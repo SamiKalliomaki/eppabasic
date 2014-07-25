@@ -25,7 +25,11 @@ function FileControlsController(fileControls, editor, userControlsController, fi
         fileDialogController.show('Open');
         fileDialogController.onSelect = function() {
             submitForm(fileDialogController.fileForm, 'eb/fs/open/', function(data) {
-                editor.setCode(data['content']);
+                if(data['result'] === 'success') {
+                    notificationSystem.notify('File opened successfully.');
+                } else {
+                    notificationSystem.showErrors(data['errors']);
+                }
             });
 
             me.openedFile = fileDialogController.getSelectedFile();
@@ -40,7 +44,7 @@ function FileControlsController(fileControls, editor, userControlsController, fi
                 if(data['result'] === 'success') {
                     notificationSystem.notify('File saved successfully.');
                 } else {
-                    notificationSystem.notify('Saving file failed. Please try again later.');
+                    notificationSystem.showErrors(data['errors']);
                 }
             },
             { 'content': editor.getCode() }
