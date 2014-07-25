@@ -1,0 +1,61 @@
+*
+{
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+
+html, body
+{
+	height: 100%;
+}
+
+@font-face
+{
+	font-family: Batch;
+	src: url('../img/batch.eot');
+	src: url('../img/batch.eot?#iefix') format('embedded-opentype'),
+		url('../img/batch.woff') format('woff'),
+		url('../img/batch.ttf') format('truetype'),
+		url('../img/batch.svg#batchregular') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+.batch
+{
+	font-family: "Batch";
+}
+
+.batch:before
+{
+	content: attr(data-icon);
+}
+
+input, button, select
+{
+	color: #A8CEDA;
+	background-color: #3C7386;
+	padding: 5px 10px;
+	border-radius: 3px;
+}
+
+input:disabled
+{
+	background-color: #555555;
+}
+
+.clear
+{
+	clear: both;
+}
+
+.clear-left
+{
+	clear: left;
+}
+
+.clear-right
+{
+	clear: right;
+}

@@ -12,7 +12,10 @@ function Editor(editorName, errBox) {
     this.operators.addDefaultOperators();
 
     this.ace = ace.edit(editorName);
-    this.ace.getSession().setMode("mode/eppabasic");
+    this.ace.setTheme('ace/theme/idle_fingers');
+    this.ace.getSession().setMode('mode/eppabasic');
+    this.ace.setShowPrintMargin(false);
+
 }
 
 Editor.prototype = {

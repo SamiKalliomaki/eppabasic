@@ -1,0 +1,141 @@
+.dialog
+{
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translateX(-50%) translateY(-50%);
+	-webkit-transform: translateX(-50%) translateY(-50%);
+	-moz-transform: translateX(-50%) translateY(-50%);
+	-ms-transform: translateX(-50%) translateY(-50%);
+}
+
+#file-dialog-wrapper
+{
+	z-index: 100;
+
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+
+	background-color: black;
+	opacity: 0.9;
+	display: none;
+}
+
+#file-dialog-wrapper .file-dialog
+{
+	border: 1px solid #495692;
+	border-radius: 5px;
+	background-color: #090909;
+	width: 575px;
+}
+
+#file-dialog-wrapper .main
+{
+	float: left;
+	border-right: 1px solid #495692;
+}
+
+#file-dialog-wrapper .tools
+{
+	/* http://colinaarts.com/articles/the-magic-of-overflow-hidden/ */
+	overflow: hidden; 
+	padding: 5px;
+
+	color: white;
+	list-style-position: inside;
+}
+
+#file-dialog-wrapper .tools a
+{
+	color: white;
+}
+
+#file-dialog-wrapper .header
+{
+	border-bottom: 1px dotted #495692;
+	padding: 5px;
+}
+
+#file-dialog-wrapper .list-area
+{
+	padding: 5px;
+	min-height: 200px;
+	width: 400px;
+}
+
+#file-dialog-wrapper .file-list
+{
+	list-style-type: none;
+}
+
+#file-dialog-wrapper .file-list li, #file-dialog-wrapper .file-list li a
+{
+	color: white;
+}
+
+#file-dialog-wrapper .file-list li:before, #file-dialog-wrapper .tools li:before
+{
+	font-family: "Batch";
+	padding-right: 0.3em;
+}
+
+#file-dialog-wrapper .file-list li.directory:before
+{
+	content: "\F0E0";
+}
+
+#file-dialog-wrapper .file-list li.file:before
+{
+	content: "\F10A";
+}
+
+#file-dialog-wrapper .share-box h2
+{
+	margin-top: 10px;
+
+	color: white;
+	font-size: 20px;
+}
+
+#file-dialog-wrapper .current-directory, #file-dialog-wrapper .current-directory a
+{
+	color: white;
+}
+
+#file-dialog-wrapper .tools ul
+{
+	list-style-type: none;
+}
+
+#file-dialog-wrapper .tools li:before
+{
+	content: attr(data-icon);
+}
+
+#file-dialog-wrapper .footer
+{
+	padding: 5px;
+	border-top: 1px dotted #495692;
+}
+
+#file-dialog-wrapper .input-helper
+{
+	margin-right: 105px;
+}
+
+#file-dialog-wrapper input[name="filename"]
+{
+	box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	width: 100%;
+}
+
+#file-dialog-wrapper input[type="submit"]
+{
+	float: right;
+	width: 100px;
+}
