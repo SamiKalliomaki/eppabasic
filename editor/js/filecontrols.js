@@ -26,6 +26,7 @@ function FileControlsController(fileControls, editor, userControlsController, fi
         fileDialogController.onSelect = function() {
             submitForm(fileDialogController.fileForm, 'eb/fs/open/', function(data) {
                 if(data['result'] === 'success') {
+                    editor.setCode(data['content']);
                     notificationSystem.notify('File opened successfully.');
                 } else {
                     notificationSystem.showErrors(data['errors']);
