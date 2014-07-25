@@ -43,11 +43,11 @@ GraphicsText.prototype = {
 
             this.console.innerHTML = this.console.innerHTML + str + "<br />";
         },
-        printInt: function printInt(sp) {
-            this.console.innerHTML = this.console.innerHTML + this.MEMS32[(sp - 4) >> 2] + "<br />";
+        printInt: function printInt(a) {
+            alert(a);
         },
-        printDbl: function printDbl(sp) {
-            this.console.innerHTML = this.console.innerHTML + this.MEMF32[(sp - 4) >> 2] + "<br />";
+        printDbl: function printDbl(a) {
+            alert(a);
         }
     },
     stdlib: {}

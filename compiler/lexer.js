@@ -197,7 +197,7 @@ Lexer.prototype = {
      * Parses a newline from the input
      */
     newlineToken: function newlineToken() {
-        var res = this.scan(/^ *\n/, 'newline');
+        var res = this.scan(/^\s*?\n/, 'newline');
         if (res) {
             ++this.lineno;
             return res;

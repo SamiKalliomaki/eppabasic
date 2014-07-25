@@ -59,8 +59,8 @@ Atomicchecker.prototype = {
      */
     visitVariableAssignment: function visitVariableAssignment(assignment) {
         assignment.atomic = this.visitExpr(assignment.expr);
-        if (assignment.dimensions)
-            assignment.atomic = this.visitDimensions(assignment.dimensions) ? assignment.atomic : false;
+        if (assignment.index)
+            assignment.atomic = this.visitDimensions(assignment.index) ? assignment.atomic : false;
         return assignment.atomic;
     },
 
@@ -68,12 +68,10 @@ Atomicchecker.prototype = {
      * Visits a for loop
      */
     visitFor: function visitFor(loop) {
-        loop.atomic = false;
-
-        this.visitExpr(loop.start);
-        this.visitExpr(loop.stop);
-        this.visitExpr(loop.step);
-        this.visit(loop.block);
+        loop.atomic = this.visitExpr(loop.start);
+        loop.atomic = this.visitExpr(loop.stop) ? loop.atomic : false;
+        loop.atomic = this.visitExpr(loop.step) ? loop.atomic : false;
+        loop.atomic = this.visit(loop.block) ? loop.atomic : false;
 
         return loop.atomic;
     },
@@ -81,11 +79,10 @@ Atomicchecker.prototype = {
      * Visits an if statement
      */
     visitIf: function visitIf(statement) {
-        statement.atomic = false;
-        this.visitExpr(statement.expr);
-        this.visit(statement.trueStatement)
+        statement.atomic = this.visitExpr(statement.expr);
+        statement.atomic = this.visit(statement.trueStatement) ? statement.atomic : false;
         if (statement.falseStatement)
-            this.visit(statement.falseStatement);
+            statement.atomic = this.visit(statement.falseStatement) ? statement.atomic : false;
         return statement.atomic;
     },
 
@@ -93,9 +90,6 @@ Atomicchecker.prototype = {
      * Visits a function call
      */
     visitFunctionCall: function visitFunctionCall(call) {
-        /*if (typeof call.definition.atomic === 'undefined') {
-            console.log(call);
-        }*/
         call.atomic = call.handle.atomic;
 
         call.params.forEach(function each(param) {
@@ -111,9 +105,6 @@ Atomicchecker.prototype = {
      */
     visitFunctionDefinition: function visitFunctionDefinition(func) {
         func.handle.atomic = func.atomic = this.visit(func.block);
-        /*if (!func.atomic) {
-            this.getFunctionDefinition(func.name, func.params).atomic = func.atomic;
-        }*/
         return func.atomic;
     },
     /*
@@ -127,9 +118,7 @@ Atomicchecker.prototype = {
      * Visits a repeat-forever statement
      */
     visitRepeatForever: function visitRepeatForever(loop) {
-        loop.atomic = false;
-
-        this.visit(loop.block);
+        loop.atomic = this.visit(loop.block);
 
         return loop.atomic;
     },
@@ -137,10 +126,8 @@ Atomicchecker.prototype = {
      * Visits a repeat-until statement
      */
     visitRepeatUntil: function visitRepeatUntil(loop) {
-        loop.atomic = false;
-
-        this.visit(loop.block);
-        this.visitExpr(loop.expr);
+        loop.atomic = this.visit(loop.block);
+        loop.atomic = this.visitExpr(loop.expr) ? loop.atomic : false;
 
         return loop.atomic;
     },
@@ -148,10 +135,8 @@ Atomicchecker.prototype = {
      * Visits a repeat-forever statement
      */
     visitRepeatWhile: function visitRepeatWhile(loop) {
-        loop.atomic = false;
-
-        this.visit(loop.block);
-        this.visitExpr(loop.expr);
+        loop.atomic = this.visit(loop.block);
+        loop.atomic = this.visitExpr(loop.expr) ? loop.atomic : false;
 
         return loop.atomic;
     },
@@ -159,8 +144,12 @@ Atomicchecker.prototype = {
     /*
      * Visits array dimensions
      */
-    visitDimensions: function visitDimensions(dim) {
-        this.visitExpr(dim);
+    visitDimensions: function visitDimensions(dims) {
+        var atomic = true;
+        dims.forEach(function each(dim) {
+            atomic = this.visitExpr(dim) ? atomic : false;
+        }.bind(this));
+        return dims.atomic = atomic;
     },
 
     visitExpr: function visitExpr(expr) {
@@ -180,6 +169,11 @@ Atomicchecker.prototype = {
                 res = this.visitExpr(expr.right);
                 if (!res)
                     expr.atomic = false;
+                return expr.atomic;
+            case 'IndexOp':
+                expr.atomic = true;
+                expr.atomic = this.visitExpr(expr.expr) ? expr.atomic : false;
+                expr.atomic = this.visitDimensions(expr.index) ? expr.atomic : false;
                 return expr.atomic;
             case 'FunctionCall':
                 return expr.atomic = this.visitFunctionCall(expr);
