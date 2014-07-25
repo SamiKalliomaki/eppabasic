@@ -134,11 +134,11 @@ FileDialogController.prototype = {
                     }
 
                     for(var i in data['subdirs']) {
-                        me.fileList.append('<li><a href="#" data-dir="' + data['subdirs'][i].id + '" class="directory-link">' + data['subdirs'][i].name + '/</a></li>');
+                        me.fileList.append('<li class="directory"><a href="#" data-dir="' + data['subdirs'][i].id + '" class="directory-link">' + data['subdirs'][i].name + '/</a></li>');
                     }
 
                     for(var i in data['files']) {
-                        me.fileList.append('<li><a href="#" data-file="' + data['files'][i] + '" class="file-link">' + data['files'][i] + '</a></li>');
+                        me.fileList.append('<li class="file"><a href="#" data-file="' + data['files'][i] + '" class="file-link">' + data['files'][i] + '</a></li>');
                     }
 
                     if(data['subdirs'].length === 0 && data['files'].length === 0) {

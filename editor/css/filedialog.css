@@ -60,13 +60,12 @@
 
 #file-dialog-wrapper .list-area
 {
-
 	padding: 5px;
 }
 
 #file-dialog-wrapper .file-list
 {
-	list-style-position: inside;
+	list-style-type: none;
 	min-height: 200px;
 	width: 400px;
 }
@@ -76,9 +75,35 @@
 	color: white;
 }
 
+#file-dialog-wrapper .file-list li:before, #file-dialog-wrapper .tools li:before
+{
+	font-family: "Batch";
+	padding-right: 0.3em;
+}
+
+#file-dialog-wrapper .file-list li.directory:before
+{
+	content: "\F0E0";
+}
+
+#file-dialog-wrapper .file-list li.file:before
+{
+	content: "\F10A";
+}
+
 #file-dialog-wrapper .current-directory, #file-dialog-wrapper .current-directory a
 {
 	color: white;
+}
+
+#file-dialog-wrapper .tools ul
+{
+	list-style-type: none;
+}
+
+#file-dialog-wrapper .tools li:before
+{
+	content: attr(data-icon);
 }
 
 #file-dialog-wrapper .footer
