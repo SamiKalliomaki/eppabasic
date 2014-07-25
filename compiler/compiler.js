@@ -507,14 +507,14 @@ Compiler.prototype = {
                     }
                 }
 
-                if (!entry.atomic)
+                if (!def.atomic)
                     context.push('CP=(CP+4)|0;');
 
                 this.compileBlock(def.block, context);
 
                 // Just an emergency return if no user defined
                 if (def.type) {
-                    if (entry.atomic) {
+                    if (def.atomic) {
                         if (def.type === this.types.Double)
                             context.push('return 0.0;');
                         else
@@ -532,7 +532,7 @@ Compiler.prototype = {
                         //throw new Error('Non-atomic user defined functions not supported');
                     }
                 } else {
-                    if (!entry.atomic) {
+                    if (!def.atomic) {
                         context.push('CP=(CP-4)|0;');
                         context.push('return 1;');
                     }
@@ -571,6 +571,8 @@ Compiler.prototype = {
         buf.push('function __next(){while(' + mainEntryList.name + '[MEMU32[CP>>2]&' + mainEntryList.mask + ']()|0);}');
         buf.push('function __breakExec(){CP=(CP+4)|0;MEMU32[CP>>2]=' + breakEntry.index + ';}');
         buf.push('function __int(a){a=a|0;return a|0;}');
+        buf.push('function __sp(){return SP|0;}');
+        buf.push('function __cp(){return CP|0;}');
 
         buf.push('function __memreserve(a){a=a|0;while(NEXT_FREE&7)NEXT_FREE=(NEXT_FREE+1)|0;NEXT_FREE=(NEXT_FREE+a)|0;return (NEXT_FREE-a)|0;}');
 
@@ -578,12 +580,8 @@ Compiler.prototype = {
         // Compile f-tables in the end
         buf.push(this.generateFTable());
         // Return functions
-        buf.push('return {popCallStack: __popCallStack,init:__init,next:__next,breakExec:__breakExec};');
+        buf.push('return {popCallStack: __popCallStack,init:__init,next:__next,breakExec:__breakExec,sp:__sp,cp:__cp};');
         buf.push('}');
-
-        alert(buf.join('\n'));
-        //console.log('' + mainEntry);
-        //console.log(this.entryTypes);
 
         return buf.join('\n');
     },
@@ -810,8 +808,6 @@ Compiler.prototype = {
     compileFunctionCall: function compileFunctionCall(call, context) {
         /// <param name='call' type='Nodes.FunctionCall' />
         /// <param name='context' type='CompilerContext' />
-
-        console.log(call);
 
         // Compile parameters
         var params = this.compileExprList(call.params, context);
