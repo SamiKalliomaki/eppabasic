@@ -24,7 +24,7 @@ class File(Model):
 
 class DirectoryShare(Model):
 	directory = ForeignKey(Directory, related_name='directory_shares')
-	shared_with = ForeignKey('users.CustomUser')
+	shared_with = ForeignKey('users.CustomUser', null=True, blank=True)
 	can_edit = BooleanField(default=None)
 
 def delete_files(sender, instance, **kwargs):

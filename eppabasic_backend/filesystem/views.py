@@ -1,4 +1,5 @@
 from django.http import HttpResponse, JsonResponse
+from django.db.models import Q
 from django.views.generic import View
 from django.shortcuts import get_object_or_404
 from eppabasic_backend.views import AjaxView
@@ -14,7 +15,7 @@ def has_rights_dir(user, directory, edit=True):
     p = directory
 
     while p != None:
-        shares = p.directory_shares.filter(shared_with=user.pk)
+        shares = p.directory_shares.filter(Q(shared_with=user.pk) | Q(shared_with=None))
         if edit:
             shares = shares.filter(can_edit=True)
 
@@ -35,8 +36,8 @@ class GetDirectoryView(View):
         if not has_rights_dir(request.user, directory):
             return HttpResponse('Unauthorized', status=401)
 
-        subdirs = [{ 'id': child.pk, 'name': child.name } for child in directory.subdirs.all()]
-        files = [f.name for f in directory.files.all()]
+        subdirs = [{ 'id': child.pk, 'name': child.name } for child in directory.subdirs.order_by('name').all()]
+        files = [f.name for f in directory.files.order_by('name').all()]
 
         response = {
             'result': 'success',
@@ -51,7 +52,7 @@ class GetDirectoryView(View):
         }
 
         if directory.parent == None and directory.owner == request.user:
-            shared_directories = [ share.directory for share in DirectoryShare.objects.filter(shared_with=request.user).all() ]
+            shared_directories = [ share.directory for share in DirectoryShare.objects.filter(Q(shared_with=request.user) | Q(shared_with=None)).order_by('directory__name').all() ]
 
             response['shared'] = {
                 'subdirs': [{ 'id': directory.pk, 'name': directory.name } for directory in shared_directories ],
