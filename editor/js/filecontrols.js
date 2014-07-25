@@ -1,4 +1,4 @@
-function FileControlsController(fileControls, editor, userControlsController, fileDialogController) {
+function FileControlsController(fileControls, editor, userControlsController, fileDialogController, notificationSystem) {
     this.fileControls = $(fileControls);
     this.openedFile = null;
 
@@ -22,10 +22,15 @@ function FileControlsController(fileControls, editor, userControlsController, fi
     });
 
     this.loadButton.click(function() {
-        fileDialogController.show('Open');
+        fileDialogController.show(false);
         fileDialogController.onSelect = function() {
             submitForm(fileDialogController.fileForm, 'eb/fs/open/', function(data) {
-                editor.setCode(data['content']);
+                if(data['result'] === 'success') {
+                    editor.setCode(data['content']);
+                    notificationSystem.notify('File opened successfully.');
+                } else {
+                    notificationSystem.showErrors(data['errors']);
+                }
             });
 
             me.openedFile = fileDialogController.getSelectedFile();
@@ -37,17 +42,21 @@ function FileControlsController(fileControls, editor, userControlsController, fi
             fileDialogController.fileForm,
             'eb/fs/save/',
             function(data) {
-                // TODO Display some message
+                if(data['result'] === 'success') {
+                    notificationSystem.notify('File saved successfully.');
+                } else {
+                    notificationSystem.showErrors(data['errors']);
+                }
             },
             { 'content': editor.getCode() }
         );
 
-        openedFile = fileDialogController.getSelectedFile();
+        me.openedFile = fileDialogController.getSelectedFile();
     }
 
     this.saveButton.click(function() {
         if(me.openedFile == null) {
-            fileDialogController.show('Save');
+            fileDialogController.show(true);
             fileDialogController.onSelect = save;
         } else {
             fileDialogController.setSelectedFile(me.openedFile);

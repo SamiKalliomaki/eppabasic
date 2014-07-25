@@ -10,7 +10,11 @@ function submitForm(form, url, callback, additional_data) {
 		}
 	});
 
-	$.post(url, data, callback)
+	simplePost(url, data, callback);
+}
+
+function simplePost(url, data, callback) {
+	return $.post(url, data, callback)
 	.fail(function(xhr, status, error) {
 		var errorPopup = window.open('');
 		errorPopup.document.write('<pre>' + xhr.responseText + '</pre>');
@@ -19,7 +23,7 @@ function submitForm(form, url, callback, additional_data) {
 
 function fillFormErrors(form, errors) {
 	$('.error-box', form).hide();
-	$('.field-error').remove();
+	$('.field-error', form).remove();
 
 	if('__all__' in errors) {
 		var text = errors['__all__'].join(' ');

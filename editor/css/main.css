@@ -10,6 +10,28 @@ html, body
 	height: 100%;
 }
 
+@font-face
+{
+	font-family: Batch;
+	src: url('../img/batch.eot');
+	src: url('../img/batch.eot?#iefix') format('embedded-opentype'),
+		url('../img/batch.woff') format('woff'),
+		url('../img/batch.ttf') format('truetype'),
+		url('../img/batch.svg#batchregular') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+.batch
+{
+	font-family: "Batch";
+}
+
+.batch:before
+{
+	content: attr(data-icon);
+}
+
 input, button, select
 {
 	color: #A8CEDA;
@@ -26,4 +48,14 @@ input:disabled
 .clear
 {
 	clear: both;
+}
+
+.clear-left
+{
+	clear: left;
+}
+
+.clear-right
+{
+	clear: right;
 }
