@@ -21,6 +21,7 @@
 
 	background-color: black;
 	opacity: 0.9;
+	display: none;
 }
 
 #file-dialog-wrapper .file-dialog
@@ -61,13 +62,13 @@
 #file-dialog-wrapper .list-area
 {
 	padding: 5px;
+	min-height: 200px;
+	width: 400px;
 }
 
 #file-dialog-wrapper .file-list
 {
 	list-style-type: none;
-	min-height: 200px;
-	width: 400px;
 }
 
 #file-dialog-wrapper .file-list li, #file-dialog-wrapper .file-list li a
@@ -89,6 +90,14 @@
 #file-dialog-wrapper .file-list li.file:before
 {
 	content: "\F10A";
+}
+
+#file-dialog-wrapper .share-box h2
+{
+	margin-top: 10px;
+
+	color: white;
+	font-size: 20px;
 }
 
 #file-dialog-wrapper .current-directory, #file-dialog-wrapper .current-directory a

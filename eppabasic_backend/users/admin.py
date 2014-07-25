@@ -16,7 +16,7 @@ from users.models import CustomUser
 csrf_protect_m = method_decorator(csrf_protect)
 sensitive_post_parameters_m = method_decorator(sensitive_post_parameters())
 
-# Forked from Django built-in UserAdmin
+# Forked from Django built-in CustomUserAdmin
 class CustomUserAdmin(admin.ModelAdmin):
     add_form_template = 'admin/auth/user/add_form.html'
     change_user_password_template = None
@@ -53,10 +53,7 @@ class CustomUserAdmin(admin.ModelAdmin):
         """
         defaults = {}
         if obj is None:
-            defaults.update({
-                'form': self.add_form,
-                'fields': admin.util.flatten_fieldsets(self.add_fieldsets),
-            })
+            defaults['form'] = self.add_form
         defaults.update(kwargs)
         return super(CustomUserAdmin, self).get_form(request, obj, **defaults)
 
@@ -117,6 +114,7 @@ class CustomUserAdmin(admin.ModelAdmin):
                 self.log_change(request, user, change_message)
                 msg = ugettext('Password changed successfully.')
                 messages.success(request, msg)
+                update_session_auth_hash(request, form.user)
                 return HttpResponseRedirect('..')
         else:
             form = self.change_password_form(user)
@@ -129,7 +127,8 @@ class CustomUserAdmin(admin.ModelAdmin):
             'adminForm': adminForm,
             'form_url': form_url,
             'form': form,
-            'is_popup': IS_POPUP_VAR in request.REQUEST,
+            'is_popup': (IS_POPUP_VAR in request.POST or
+                         IS_POPUP_VAR in request.GET),
             'add': True,
             'change': False,
             'has_delete_permission': False,
@@ -140,6 +139,7 @@ class CustomUserAdmin(admin.ModelAdmin):
             'save_as': False,
             'show_save': True,
         }
+        context.update(admin.site.each_context())
         return TemplateResponse(request,
             self.change_user_password_template or
             'admin/auth/user/change_password.html',
@@ -148,7 +148,7 @@ class CustomUserAdmin(admin.ModelAdmin):
     def response_add(self, request, obj, post_url_continue=None):
         """
         Determines the HttpResponse for the add_view stage. It mostly defers to
-        its superclass implementation but is customized because the CustomUser model
+        its superclass implementation but is customized because the User model
         has a slightly different workflow.
         """
         # We should allow further modification of the user just added i.e. the
@@ -160,5 +160,6 @@ class CustomUserAdmin(admin.ModelAdmin):
             request.POST['_continue'] = 1
         return super(CustomUserAdmin, self).response_add(request, obj,
                                                    post_url_continue)
+
 
 admin.site.register(CustomUser, CustomUserAdmin)

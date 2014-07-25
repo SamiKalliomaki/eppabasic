@@ -32,7 +32,6 @@ html, body
 	content: attr(data-icon);
 }
 
-
 input, button, select
 {
 	color: #A8CEDA;
