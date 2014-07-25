@@ -533,6 +533,7 @@ Compiler.prototype = {
                             val.setValue('0');
                         topref.setValue(val);
                         context.push('CP=(CP-4)|0;');
+                        context.push('return 1;');
                         //throw new Error('Non-atomic user defined functions not supported');
                     }
                 }
@@ -828,12 +829,12 @@ Compiler.prototype = {
         var retType = call.handle.returnType;
         var retVal;
         if (retType) {
-            if (call.handle.returnType === this.types.Double)
-                buf.unshift('+');
-            else
-                buf.push('|0');
 
             if (call.handle.atomic) {
+                if (call.handle.returnType === this.types.Double)
+                    buf.unshift('+');
+                else
+                    buf.push('|0');
                 var cnt = context.reserveConstant(retType);
                 cnt.setValue(buf.join(''));
                 retVal = context.reserveTemporary(retType);
@@ -843,7 +844,7 @@ Compiler.prototype = {
                 var retFunc = this.createEntry(this.generateFunctionName(), true, undefined, this.types.Integer);
                 context.setCallStack(retFunc);
                 // ...Then call the function...
-                context.push(buf.join(''));
+                context.push(buf.join('') + '|0;');
                 // ...Change the context to use the return function...
                 context.push('return 1;');
                 context.setCurrentFunction(retFunc);
@@ -855,13 +856,13 @@ Compiler.prototype = {
             }
         } else {
             if (call.handle.atomic) {
-                context.push(buf.join(''));
+                context.push(buf.join('') + ';');
             } else {
                 // For non-atomic functions, first set the return function
                 var retFunc = this.createEntry(this.generateFunctionName(), true, undefined, this.types.Integer);
                 context.setCallStack(retFunc);
                 // ...Then call the function...
-                context.push(buf.join(''));
+                context.push(buf.join('') + '|0;');
                 context.push('return 1;');
                 // ...And change the context to use the return function
                 context.setCurrentFunction(retFunc);
