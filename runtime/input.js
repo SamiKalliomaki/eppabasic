@@ -74,7 +74,6 @@ Input.prototype = {
                 case 3: e.buttons = 2; break;
             }
         }
-        console.log(e.buttons);
         this.mouseButtons = e.buttons;
         e.preventDefault();
         return false;
