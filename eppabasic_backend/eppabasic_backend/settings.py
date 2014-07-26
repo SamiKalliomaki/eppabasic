@@ -134,6 +134,7 @@ INSTALLED_APPS = (
     # Own apps
     'users',
     'filesystem',
+    'pastebin',
 )
 
 AUTH_USER_MODEL = 'users.CustomUser'

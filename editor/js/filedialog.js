@@ -16,13 +16,6 @@ function FileDialogController(fileDialogWrapper, notificationSystem) {
     var me = this;
 
     // Event handlers
-    this.fileDialogWrapper.click(function(e) {
-        if(e.target !== this)
-            return;
-
-        me.hide();
-    });
-
     this.fileDialog.on('click', '.file-link', function(e) {
         e.preventDefault();
 

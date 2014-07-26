@@ -21,6 +21,14 @@ function simplePost(url, data, callback) {
 	});
 }
 
+function simpleGet(url, data, callback) {
+	return $.get(url, data, callback)
+	.fail(function(xhr, status, error) {
+		var errorPopup = window.open('');
+		errorPopup.document.write('<pre>' + xhr.responseText + '</pre>');
+	});
+}
+
 function fillFormErrors(form, errors) {
 	$('.error-box', form).hide();
 	$('.field-error', form).remove();

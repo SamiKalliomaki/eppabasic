@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="editor/css/header.css">
     <link rel="stylesheet" href="editor/css/content.css">
     <link rel="stylesheet" href="editor/css/filedialog.css">
+    <link rel="stylesheet" href="editor/css/pastebin.css">
     <link rel="stylesheet" href="editor/css/manual.css">
     <link rel="stylesheet" href="editor/css/notifications.css">
     
@@ -39,7 +40,8 @@
     <script src="editor/js/filecontrols.js"></script>
     <script src="editor/js/notifications.js"></script>
     <script src="editor/js/usercontrols.js"></script>
-    <script src="editor/js/manual.js"></script>
+    <script src="editor/js/pastebin.js"></script>
+    <script src="editor/js/manual.js"></script> 
     <script src="editor/js/main.js"></script>
 </head>
 <body>
@@ -53,6 +55,9 @@
             <button class="header-ui-element header-button load">Load</button>
             <button class="header-ui-element header-button save">Save</button>
             <button class="header-ui-element header-button save-as">Save as</button>
+        </div>
+        <div class="header-block" id="paste-controls">
+            <button class="header-ui-element header-button share">Share</button>
         </div>
         <div class="header-block pending" id="user-controls">
             <div class="user-status">
@@ -121,7 +126,7 @@ FOR i = 0 TO 255
 NEXT i</div>
     <div id="manual">
     </div>
-    <div id="file-dialog-wrapper">
+    <div id="file-dialog-wrapper" class="dialog-wrapper">
         <div class="file-dialog dialog">
             <div class="main">
                 <div class="header">
@@ -154,7 +159,12 @@ NEXT i</div>
             <div class="clear-left"></div>
         </div>
     </div>
-    <div id="notification-box">
+    <div id="share-dialog-wrapper" class="dialog-wrapper">
+        <div class="share-dialog dialog">
+            <p>You can use link below to share the code to a friend.</p>
+            <input class="share-link" type="text" />
+        </div>
     </div>
+    <div id="notification-box"></div>
 </body>
 </html>

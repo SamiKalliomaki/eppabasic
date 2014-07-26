@@ -1,0 +1,22 @@
+#share-dialog-wrapper
+{
+	display: none;
+}
+
+#share-dialog-wrapper .share-dialog
+{
+	padding: 5px;
+	width: 400px;
+}
+
+#share-dialog-wrapper p
+{
+	color: white;
+	margin-bottom: 5px;
+}
+
+#share-dialog-wrapper input
+{
+	box-sizing: border-box;
+	width: 100%;
+}

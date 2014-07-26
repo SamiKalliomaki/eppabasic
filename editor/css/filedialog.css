@@ -7,9 +7,13 @@
 	-webkit-transform: translateX(-50%) translateY(-50%);
 	-moz-transform: translateX(-50%) translateY(-50%);
 	-ms-transform: translateX(-50%) translateY(-50%);
+
+	border: 1px solid #495692;
+	border-radius: 5px;
+	background-color: #090909;
 }
 
-#file-dialog-wrapper
+.dialog-wrapper
 {
 	z-index: 100;
 
@@ -24,11 +28,13 @@
 	display: none;
 }
 
+.dialog
+{
+	
+}
+
 #file-dialog-wrapper .file-dialog
 {
-	border: 1px solid #495692;
-	border-radius: 5px;
-	background-color: #090909;
 	width: 575px;
 }
 
