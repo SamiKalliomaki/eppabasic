@@ -27,7 +27,7 @@ class RegistrationForm(ModelForm):
     def clean_username(self):
         username = self.cleaned_data['username']
         try:
-            CustomUser._default_manager.get(username=username)
+            CustomUser._default_manager.get(username__iexact=username)
         except CustomUser.DoesNotExist:
             return username
         raise ValidationError(
@@ -124,7 +124,7 @@ class CustomUserCreationForm(ModelForm):
         # but it sets a nicer error message than the ORM. See #13147.
         username = self.cleaned_data['username']
         try:
-            CustomUser._default_manager.get(username=username)
+            CustomUser._default_manager.get(username__iexact=username)
         except CustomUser.DoesNotExist:
             return username
         raise ValidationError(
