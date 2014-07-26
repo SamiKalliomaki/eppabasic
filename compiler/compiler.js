@@ -137,7 +137,6 @@ CompilerContext.prototype = {
     setCurrentFunction: function setCurrentFunction(entry) {
         this.func = entry;
         if (this.temporaries.some(function every(temp) { return temp.used; })) {
-            console.log(this);
             console.error(this.temporaries);
             throw new Error('Not all temporaries are freed: ' + this.temporaries.map(function (tmp) { return tmp.name; }).join(', '));
         }
@@ -500,7 +499,7 @@ Compiler.prototype = {
                 var retType = def.type;
                 if (!def.atomic)
                     retType = this.types.Integer;
-                console.log(def);
+
                 var entry = def.handle.entry = this.createEntry(this.generateFunctionName(), true, paramTypes, retType, true);
                 var context = new CompilerContext(this.types, def.handle.entry);
                 context.atomic = def.atomic;
