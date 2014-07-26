@@ -919,8 +919,6 @@ Compiler.prototype = {
             }
             context.push('}');
         } else {
-            if (loop.beginCondition || loop.endCondition)
-                throw new Error('Non-atomic do-loops not supported with conditions');
             // Go to loop function
             var endFunc = this.createEntry(this.generateFunctionName(), true, undefined, this.types.Integer);
             var loopFunc = this.createEntry(this.generateFunctionName(), true, undefined, this.types.Integer);
@@ -929,7 +927,25 @@ Compiler.prototype = {
 
             // Compile block
             context.setCurrentFunction(loopFunc);
+            if (loop.beginCondition) {
+                var testValue = this.compileExpr(loop.beginCondition, context);
+                context.push('if((!(' + testValue.getValue() + '))|0){');
+                testValue.free(false);
+                context.setCallStack(endFunc);
+                context.push('return 1;');
+                context.push('}');
+                testValue.free();
+            }
             this.compileBlock(loop.block, context);
+            if (loop.endCondition) {
+                var testValue = this.compileExpr(loop.endCondition, context);
+                context.push('if((!(' + testValue.getValue() + '))|0){');
+                testValue.free(false);
+                context.setCallStack(endFunc);
+                context.push('return 1;');
+                context.push('}');
+                testValue.free();
+            }
             // Jump to the begining
             context.setCallStack(loopFunc);
             context.push('return 1;');

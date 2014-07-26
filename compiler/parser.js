@@ -388,7 +388,7 @@ Parser.prototype = {
         var line = this.expect('do').line;
 
         if (this.peek().type === 'while' || this.peek().type === 'until') {
-            var unitl = this.advance().type === 'until';
+            var until = this.advance().type === 'until';
             var beginCondition = this.parseExpr();
             if (until)
                 beginCondition = new Nodes.UnaryOp('not', beginCondition, beginCondition.line);
@@ -398,7 +398,7 @@ Parser.prototype = {
 
         this.expect('loop');
         if (this.peek().type === 'while' || this.peek().type === 'until') {
-            var unitl = this.advance().type === 'until';
+            var until = this.advance().type === 'until';
             var endCondition = this.parseExpr();
             if (until)
                 endCondition = new Nodes.UnaryOp('not', endCondition, endCondition.line);
