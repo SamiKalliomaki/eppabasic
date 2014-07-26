@@ -1118,6 +1118,8 @@ Compiler.prototype = {
                 return this.compileVariableExpr(expr, context);
             case 'BinaryOp':
                 return this.compileBinaryExpr(expr, context);
+            case 'UnaryOp':
+                return this.compileUnaryExpr(expr, context);
             case 'FunctionCall':
                 return this.compileFunctionCall(expr, context);
             case 'IndexOp':
@@ -1177,6 +1179,40 @@ Compiler.prototype = {
         // And last but not least, return all the memory we have reserved
         rightRef.free();
         leftRef.free();
+        return res;
+    },
+    compileUnaryExpr: function compileUnaryExpr(expr, context) {
+        /// <param name='expr' type='Nodes.UnaryOp' />
+        /// <param name='context' type='CompilerContext' />
+
+        // Get the operator compilation object
+        var comp = expr.operator.compiler;
+        // Reserve result here first so that if it goes to the stack,
+        // operands can still be popped from above
+        if (expr.atomic)
+            var res = context.reserveTemporary(comp.returnType);
+        else
+            var res = context.reserveStack(comp.returnType);
+        // Compile the operamd
+        var inputRef = this.compileExpr(expr.expr, context);
+        // Get value as string with the right kind of casting for the operator
+        var inpt = inputRef.type.castTo(inputRef.getValue(), comp.inputType);
+
+        var src;
+        // Compile operator depending on if it is call or not
+        if (comp.call) {
+            src = comp.func + '(' + input + ')';
+        } else {
+            src = comp.func + inpt;
+        }
+        // Save the expression as constant so that it can then be set to the return object
+        var cnt = context.reserveConstant(comp.returnType);
+        cnt.setValue(src);
+
+        res.setValue(cnt);
+
+        // And last but not least, return all the memory we have reserved
+        inputRef.free();
         return res;
     },
     compileIndexExpr: function compileIndexExpr(variable, context) {
