@@ -7,6 +7,7 @@ function TypeContainer() {
     this.types.push(this.Integer);
     this.types.push(this.Double);
     this.types.push(this.Boolean);
+    this.types.push(this.String);
 }
 TypeContainer.prototype = {
     getTypeByName: function getTypeByName(name) {
@@ -33,6 +34,7 @@ TypeContainer.prototype = {
     Integer: new IntegerType(),
     Double: new DoubleType,
     Boolean: new BooleanType(),
+    String: new StringType()
 };
 
 function BaseType() {
@@ -58,9 +60,7 @@ BaseType.prototype = {
 };
 
 
-function IntegerType() {
-
-}
+function IntegerType() { }
 extend(IntegerType.prototype, BaseType.prototype);
 IntegerType.prototype.castTargets = [TypeContainer.prototype.Double];
 IntegerType.prototype.name = 'Integer';
@@ -76,9 +76,7 @@ IntegerType.prototype.castTo = function castTo(expr, type) {
     throw new Error('Failed to cast "' + this + '" to "' + type + '"');
 }
 
-function DoubleType() {
-
-}
+function DoubleType() { }
 extend(DoubleType.prototype, BaseType.prototype);
 DoubleType.prototype.castTargets = [TypeContainer.prototype.Integer];
 DoubleType.prototype.name = 'Double';
@@ -98,13 +96,25 @@ DoubleType.prototype.cast = function cast(expr) {
 };
 
 
-function BooleanType() {
-
-}
+function BooleanType() { }
 extend(BooleanType.prototype, BaseType.prototype);
 BooleanType.prototype.castTargets = [];
 BooleanType.prototype.name = 'Boolean';
 BooleanType.prototype.castTo = function castTo(expr, type) {
+    /// <param name='expr' type='String' />
+    /// <param name='type' type='BaseType' />
+    switch (type) {
+        case this:
+            return expr;
+    }
+    throw new Error('Failed to cast "' + this + '" to "' + type + '"');
+}
+
+function StringType() { }
+extend(StringType.prototype, BaseType.prototype);
+StringType.prototype.castTargets = [];
+StringType.prototype.name = 'String';
+StringType.prototype.castTo = function castTo(expr, type) {
     /// <param name='expr' type='String' />
     /// <param name='type' type='BaseType' />
     switch (type) {
