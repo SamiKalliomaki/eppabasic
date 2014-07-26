@@ -10,6 +10,9 @@ function TypeContainer() {
 }
 TypeContainer.prototype = {
     getTypeByName: function getTypeByName(name) {
+        if (name.toLowerCase() === 'number')
+            return this.Double;             // Number is an alias for Double
+
         return this.types.find(function find(type) {
             return type.name.toLowerCase() === name.toLowerCase();
         }.bind(this));
