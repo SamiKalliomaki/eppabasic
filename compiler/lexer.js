@@ -1,7 +1,8 @@
-﻿function Lexer(input) {
+﻿function Lexer(input, produceWhitespaceTokens) {
     this.input = input.trim() || "";
     this.stash = [];
     this.lineno = 1;
+    this.produceWhitespaceTokens = produceWhitespaceTokens;
 }
 
 Lexer.prototype = {
@@ -50,7 +51,7 @@ Lexer.prototype = {
         var captures;
         if (captures = regex.exec(this.input)) {
             this.consume(captures[0].length);
-            return this.tok(type, captures[1]);
+            return this.tok(type, captures[0]);
         }
     },
 
@@ -66,12 +67,12 @@ Lexer.prototype = {
             || this.opToken()
             || this.commaToken()
             || this.parenthesisToken()
-            || this.toToken()
 
             // For loops
             || this.forToken()
-            || this.nextToken()
+            || this.toToken()
             || this.stepToken()
+            || this.nextToken()
 
             // Do loops
             || this.doToken()
@@ -105,6 +106,7 @@ Lexer.prototype = {
             // Other, unspecified tokens
             || this.identifierToken()
             || this.newlineToken()
+            || this.whitespaceToken()
             || this.fail();
     },
 
@@ -121,7 +123,7 @@ Lexer.prototype = {
      * Parses a comment token from the input
      */
     commentToken: function commentToken() {
-        return this.scan(/^ *'([^\n]*)/, 'comment');
+        return this.scan(/^('[^\n]*)/, 'comment');
     },
 
     /*
@@ -129,7 +131,7 @@ Lexer.prototype = {
      */
     opToken: function opToken() {
         var captures;
-        if (captures = /^ *(<>|<=?|>=?|=|\+|-|\*|\/|\^|&|MOD\b|AND\b|OR\b|XOR\b)/i.exec(this.input)) {
+        if (captures = /^(<>|<=?|>=?|=|\+|-|\*|\/|\^|&|MOD\b|AND\b|OR\b|XOR\b)/i.exec(this.input)) {
             this.consume(captures[0].length);
             var map = {
                 '<': 'lt',
@@ -151,7 +153,7 @@ Lexer.prototype = {
                 'mod': 'mod',
                 '&': 'concat',
             };
-            return this.tok(map[captures[1].toLowerCase()], captures[1].toLowerCase());
+            return this.tok(map[captures[1].toLowerCase()], captures[0].toLowerCase());
         }
     },
     /*
@@ -159,39 +161,39 @@ Lexer.prototype = {
      */
     parenthesisToken: function parenthesisToken() {
         var captures;
-        if (captures = /^ *(\(|\))/i.exec(this.input)) {
+        if (captures = /^(\(|\))/i.exec(this.input)) {
             this.consume(captures[0].length);
             var map = {
                 '(': 'lparen',
                 ')': 'rparen',
             };
-            return this.tok(map[captures[1].toLowerCase()]);
+            return this.tok(map[captures[1].toLowerCase()], captures[0]);
         }
     },
     /*
      * Parses a "TO" token from the input
      */
     toToken: function toToken() {
-        return this.scan(/^ *(TO)\b/i, 'to');
+        return this.scan(/^TO\b/i, 'to');
     },
 
     /*
      * Parses a identifier (ie. variable names) token
      */
     identifierToken: function ideintifierToken() {
-        return this.scan(/^ *([A-Za-z][_\w]*)/, 'identifier');
+        return this.scan(/^[A-Za-z][_\w]*/, 'identifier');
     },
     /*
      * Parses a number from the input
      */
     numberToken: function numberToken() {
-        return this.scan(/^ *(-?\d*\.?\d+)/, 'number')
+        return this.scan(/^-?\d*\.?\d+/, 'number')
     },
     /*
      * Parses a string from the input
      */
     stringToken: function stringToken() {
-        return this.scan(/^ *"(.*?)"/, 'string')            // TODO More sophisticated string lexer
+        return this.scan(/^".*?"/, 'string')            // TODO More sophisticated string lexer
     },
     /*
      * Parses a newline from the input
@@ -203,131 +205,147 @@ Lexer.prototype = {
             return res;
         }
     },
+
+    /*
+     * Parses whitespace token
+     */
+    whitespaceToken: function whitespaceToken() {
+        var res = this.scan(/^\s+/i, 'whitespace');
+
+        if(res) {
+            if(this.produceWhitespaceTokens) {
+                return res;
+            } else {
+                return this.next();
+            }
+        }
+    },
+
     /*
      * Parses a comma from the input
      */
     commaToken: function commaToken() {
-        return this.scan(/^ *(,)/, 'comma');
+        return this.scan(/^,/, 'comma');
     },
 
     /*
      * Parses for token
      */
     forToken: function forToken() {
-        return this.scan(/^ *(FOR)\b/i, 'for');
+        return this.scan(/^FOR\b/i, 'for');
     },
     /*
      * Parses a "NEXT" token from the input
      */
     nextToken: function nextToken() {
-        return this.scan(/^ *(NEXT)\b/i, 'next');
+        return this.scan(/^NEXT\b/i, 'next');
     },
     /*
      * Parses a "STEP" token from the input
      */
     stepToken: function stepToken() {
-        return this.scan(/^ *(STEP)\b/i, 'step');
+        return this.scan(/^STEP\b/i, 'step');
     },
 
     /*
     * Parses a "DO" token from the input
     */
     doToken: function doToken() {
-        return this.scan(/^ *(DO)\b/i, 'do');
+        return this.scan(/^DO\b/i, 'do');
     },
     /*
     * Parses a "LOOP" token from the input
     */
     loopToken: function loopToken() {
-        return this.scan(/^ *(LOOP)\b/i, 'loop');
+        return this.scan(/^LOOP\b/i, 'loop');
     },
     /*
     * Parses a "UNTIL" token from the input
     */
     untilToken: function untilToken() {
-        return this.scan(/^ *(UNTIL)\b/i, 'until');
+        return this.scan(/^UNTIL\b/i, 'until');
     },
     /*
     * Parses a "WHILE" token from the input
     */
     whileToken: function whileToken() {
-        return this.scan(/^ *(WHILE)\b/i, 'while');
+        return this.scan(/^WHILE\b/i, 'while');
     },
 
     /*
      * Parses a "IF" token from the input
      */
     ifToken: function ifToken() {
-        return this.scan(/^ *(IF)\b/i, 'if');
+        return this.scan(/^IF\b/i, 'if');
     },
     /*
      * Parses a "THEN" token from the input
      */
     thenToken: function thenToken() {
-        return this.scan(/^ *(THEN)\b/i, 'then');
+        return this.scan(/^THEN\b/i, 'then');
     },
     /*
      * Parses a "ELSEIF" token from the input
      */
     elseIfToken: function elseIfToken() {
-        return this.scan(/^ *(ELSEIF)\b/i, 'elseif');
+        return this.scan(/^ELSEIF\b/i, 'elseif');
     },
     /*
      * Parses a "ELSE" token from the input
      */
     elseToken: function elseToken() {
-        return this.scan(/^ *(ELSE)\b/i, 'else');
+        return this.scan(/^ELSE\b/i, 'else');
     },
     /*
      * Parses a "ENDIF" token from the input
      */
     endIfToken: function endIfToken() {
-        return this.scan(/^ *(END +IF)\b/i, 'endif');
+        return this.scan(/^END +IF\b/i, 'endif');
     },
 
     /*
      * Parses a "DIM" token from the input
      */
     dimToken: function dimToken() {
-        return this.scan(/^ *(DIM)\b/i, 'dim');
+        return this.scan(/^DIM\b/i, 'dim');
     },
     /*
      * Parses a "AS" token from the input
      */
     asToken: function asToken() {
-        return this.scan(/^ *(AS)\b/i, 'as');
+        return this.scan(/^AS\b/i, 'as');
     },
 
     /*
      * Parses a "FUNCTION" token from the input
      */
     functionToken: function functionToken() {
-        return this.scan(/^ *(FUNCTION)\b/i, 'function');
+        return this.scan(/^FUNCTION\b/i, 'function');
     },
     /*
      * Parses a "RETURN" token from the input
      */
     returnToken: function returnToken() {
-        return this.scan(/^ *(RETURN)\b/i, 'return');
+        return this.scan(/^RETURN\b/i, 'return');
     },
     /*
      * Parses a "END FUNCTION" token from the input
      */
     endFunctionToken: function endFunctionToken() {
-        return this.scan(/^ *(END +FUNCTION)\b/i, 'endfunction');
+        return this.scan(/^END +FUNCTION\b/i, 'endfunction');
     },
 
     /*
      * Parses a "SUB" token from the input
      */
     subToken: function subToken() {
-        return this.scan(/^ *(SUB)\b/i, 'sub');
+        return this.scan(/^SUB\b/i, 'sub');
     },
     /*
      * Parses a "END SUB" token from the input
      */
     endSubToken: function endSubToken() {
-        return this.scan(/^ *(END +SUB)\b/i, 'endsub');
+        return this.scan(/^END +SUB\b/i, 'endsub');
     },
 
     /*
@@ -335,13 +353,13 @@ Lexer.prototype = {
      */
     bracketToken: function bracketToken() {
         var captures;
-        if (captures = /^ *(\[|\])/i.exec(this.input)) {
+        if (captures = /^(\[|\])/i.exec(this.input)) {
             this.consume(captures[0].length);
             var map = {
                 '[': 'lbracket',
                 ']': 'rbracket',
             };
-            return this.tok(map[captures[1].toLowerCase()]);
+            return this.tok(map[captures[1].toLowerCase()], captures[0]);
         }
     },
 
