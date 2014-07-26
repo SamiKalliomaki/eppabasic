@@ -184,24 +184,16 @@ Typechecker.prototype = {
     },
 
     /*
-     * Visits a repeat-forever statement
+     * Visits a do-loop statement
      */
-    visitRepeatForever: function visitRepeatForever(loop, parent) {
+    visitDoLoop: function visitDoLoop(loop, parent) {
+        if (loop.beginCondition && loop.endCondition)
+            throw new Error('Condition is allowed only at the begining of the loop or at the end, not at both places');
+        if (loop.beginCondition)
+            this.resolveExprType(loop.beginCondition, parent);
+        if (loop.endCondition)
+            this.resolveExprType(loop.endCondition, parent);
         this.visit(loop.block, parent);
-    },
-    /*
-     * Visits a repeat-until statement
-     */
-    visitRepeatUntil: function visitRepeatUntil(loop, parent) {
-        this.visit(loop.block, parent);
-        this.resolveExprType(loop.expr, parent);
-    },
-    /*
-     * Visits a repeat-while statement
-     */
-    visitRepeatWhile: function visitRepeatWhile(loop, parent) {
-        this.visit(loop.block, parent);
-        this.resolveExprType(loop.expr, parent);
     },
 
 

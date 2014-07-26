@@ -164,8 +164,11 @@ CompilerTemporaryReference.prototype = {
     getValue: function getValue() {
         return this.type.cast(this.name);
     },
-    free: function free() {
-        this.used = false;
+    free: function free(real) {
+        if (real !== false)
+            real = true;
+        if (real)
+            this.used = false;
     },
     refType: 'temp'
 };
@@ -199,15 +202,18 @@ CompilerStackReference.prototype = {
         }
         return this.type.cast(mem + '[((SP-' + (this.context.stackOffset - this.offset) + ')|0)>>' + shift + ']');
     },
-    free: function free() {
+    free: function free(real) {
+        if (real !== false)
+            real = true;
         // TODO Free the type
         var size = 4;
         if (this.type === this.types.Double)
             size = 8;
-        if (this.context.stackOffset - size !== this.offset)
+        if (real && this.context.stackOffset - size !== this.offset)
             throw new Error('Stack popped in wrong order!');
         this.context.push('SP=(SP-' + this.reserved + ')|0;');
-        this.context.stackOffset -= this.reserved;
+        if (real)
+            this.context.stackOffset -= this.reserved;
     },
     refType: 'stack'
 };
@@ -239,7 +245,9 @@ CompilerAbsoluteReference.prototype = {
         }
         return this.type.cast(mem + '[((' + this.offset.getValue() + ')|0)>>' + shift + ']');
     },
-    free: function free() {
+    free: function free(real) {
+        if (real !== false)
+            real = true;
         // TODO Free the type
     },
     refType: 'abs'
@@ -260,7 +268,7 @@ CompilerConstantReference.prototype = {
     getValue: function getValue() {
         return this.type.cast(this.value);
     },
-    free: function free() { },
+    free: function free(real) { },
     refType: 'const'
 };
 function CompilerNoFreeReference(ref) {
@@ -626,8 +634,8 @@ Compiler.prototype = {
                 case 'If':
                     this.compileIf(node, context);
                     break;
-                case 'RepeatForever':
-                    this.compileRepeatForever(node, context);
+                case 'DoLoop':
+                    this.compileDoLoop(node, context);
                     break;
                 case 'Return':
                     this.compileReturn(node, context);
@@ -887,14 +895,32 @@ Compiler.prototype = {
 
         return retVal;
     },
-    compileRepeatForever: function compileRepeatForever(loop, context) {
-        /// <param name='loop' type='Nodes.For' />
+    compileDoLoop: function compileDoLoop(loop, context) {
+        /// <param name='loop' type='Nodes.DoLoop' />
         /// <param name='context' type='CompilerContext' />
         if (loop.atomic) {
             context.push('while(1){');
+            if (loop.beginCondition) {
+                var testValue = this.compileExpr(loop.beginCondition, context);
+                context.push('if((!(' + testValue.getValue() + '))|0){');
+                testValue.free(false);
+                context.push('break;');
+                context.push('}');
+                testValue.free();
+            }
             this.compileBlock(loop.block, context);
+            if (loop.endCondition) {
+                var testValue = this.compileExpr(loop.endCondition, context);
+                context.push('if((!(' + testValue.getValue() + '))|0){');
+                testValue.free(false);
+                context.push('break;');
+                context.push('}');
+                testValue.free();
+            }
             context.push('}');
         } else {
+            if (loop.beginCondition || loop.endCondition)
+                throw new Error('Non-atomic do-loops not supported with conditions');
             // Go to loop function
             var endFunc = this.createEntry(this.generateFunctionName(), true, undefined, this.types.Integer);
             var loopFunc = this.createEntry(this.generateFunctionName(), true, undefined, this.types.Integer);

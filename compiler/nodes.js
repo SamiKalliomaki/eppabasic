@@ -218,34 +218,13 @@ Nodes.Return.prototype = {
 /*
  * Creates a new ast repeat-forever node 
  */
-Nodes.RepeatForever = function RepeatForever(block, line) {
+Nodes.DoLoop = function DoLoop(beginCondition, endCondition, block, line) {
+    this.beginCondition = beginCondition;
+    this.endCondition = endCondition;
     this.block = block;
     this.line = line;
 }
-Nodes.RepeatForever.prototype = {
-    nodeType: 'RepeatForever'
-};
-/*
- * Creates a new ast repeat-while node 
- */
-Nodes.RepeatWhile = function RepeatWhile(block, expr, line) {
-    this.block = block;
-    this.expr = expr;
-    this.line = line;
-}
-Nodes.RepeatWhile.prototype = {
-    nodeType: 'RepeatWhile'
-};
-
-/*
- * Creates a new ast repeat-until node 
- */
-Nodes.RepeatUntil = function RepeatUntil(block, expr, line) {
-    this.block = block;
-    this.expr = expr;
-    this.line = line;
-}
-Nodes.RepeatUntil.prototype = {
-    nodeType: 'RepeatUntil'
+Nodes.DoLoop.prototype = {
+    nodeType: 'DoLoop'
 };
 
