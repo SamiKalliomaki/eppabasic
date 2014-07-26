@@ -1,8 +1,9 @@
-﻿function Lexer(input, produceWhitespaceTokens) {
+﻿function Lexer(input, produceWhitespaceTokens, produceUnexpectedTokens) {
     this.input = input.trim() || "";
     this.stash = [];
     this.lineno = 1;
     this.produceWhitespaceTokens = produceWhitespaceTokens;
+    this.produceUnexpectedTokens = produceUnexpectedTokens;
 }
 
 Lexer.prototype = {
@@ -367,6 +368,10 @@ Lexer.prototype = {
      * Indicates failure in the lexer
      */
     fail: function fail() {
-        throw new Error('Unexpected text: "' + this.input.substr(0, 10) + '"');
+        if(this.produceUnexpectedTokens) {
+            return this.scan(/^./i, 'unexpected');
+        } else {
+            throw new Error('Unexpected text: "' + this.input.substr(0, 10) + '"');
+        }
     }
 };

@@ -7,7 +7,7 @@ var TextMode = require("./text").Mode;
 //var EppaBasicFoldMode = require("./folding/mynew").EppaBasicFoldMode;
 
 function CustomTokenizer() {
-    this.lexer = new Lexer('', true);
+    this.lexer = new Lexer('', true, true);
     this.tokenTypes = {
         'comment': 'comment',
         'number': 'constant.numeric',
@@ -31,7 +31,6 @@ function CustomTokenizer() {
         'comma': 'punctuation.operator',
         'lparen': 'paren.lparen',
         'rparen': 'paren.rparen',
-
 
         // For loops
         'for': 'keyword.control',
@@ -84,7 +83,6 @@ CustomTokenizer.prototype = {
                 tokens.push({ type: this.tokenTypes[token.type] || '', value: token.val });
             }
         } while(token.type != 'eos' && token !== null);
-
 
         return {
             tokens: tokens,
