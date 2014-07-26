@@ -73,9 +73,9 @@ Lexer.prototype = {
             || this.nextToken()
             || this.stepToken()
 
-            // Repeat loops
-            || this.repeatToken()
-            || this.foreverToken()
+            // Do loops
+            || this.doToken()
+            || this.loopToken()
             || this.untilToken()
             || this.whileToken()
 
@@ -230,16 +230,16 @@ Lexer.prototype = {
     },
 
     /*
-    * Parses a "REPEAT" token from the input
+    * Parses a "DO" token from the input
     */
-    repeatToken: function repeatToken() {
-        return this.scan(/^ *(REPEAT)\b/i, 'repeat');
+    doToken: function doToken() {
+        return this.scan(/^ *(DO)\b/i, 'do');
     },
     /*
-    * Parses a "REPEAT" token from the input
+    * Parses a "LOOP" token from the input
     */
-    foreverToken: function foreverToken() {
-        return this.scan(/^ *(FOREVER)\b/i, 'forever');
+    loopToken: function loopToken() {
+        return this.scan(/^ *(LOOP)\b/i, 'loop');
     },
     /*
     * Parses a "UNTIL" token from the input

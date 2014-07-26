@@ -115,28 +115,15 @@ Atomicchecker.prototype = {
     },
 
     /*
-     * Visits a repeat-forever statement
+     * Visits a do-loop statement
      */
-    visitRepeatForever: function visitRepeatForever(loop) {
+    visitDoLoop: function visitDoLoop(loop) {
         loop.atomic = this.visit(loop.block);
 
-        return loop.atomic;
-    },
-    /*
-     * Visits a repeat-until statement
-     */
-    visitRepeatUntil: function visitRepeatUntil(loop) {
-        loop.atomic = this.visit(loop.block);
-        loop.atomic = this.visitExpr(loop.expr) ? loop.atomic : false;
-
-        return loop.atomic;
-    },
-    /*
-     * Visits a repeat-forever statement
-     */
-    visitRepeatWhile: function visitRepeatWhile(loop) {
-        loop.atomic = this.visit(loop.block);
-        loop.atomic = this.visitExpr(loop.expr) ? loop.atomic : false;
+        if (loop.beginCondition)
+            loop.atomic = this.visitExpr(loop.beginCondition) ? loop.atomic : false;
+        if (loop.endCondition)
+            loop.atomic = this.visitExpr(loop.endCondition) ? loop.atomic : false;
 
         return loop.atomic;
     },
@@ -169,6 +156,10 @@ Atomicchecker.prototype = {
                 res = this.visitExpr(expr.right);
                 if (!res)
                     expr.atomic = false;
+                return expr.atomic;
+            case 'UnaryOp':
+                expr.atomic = true;
+                expr.atomic = this.visitExpr(expr.expr) ? expr.atomic : false;
                 return expr.atomic;
             case 'IndexOp':
                 expr.atomic = true;

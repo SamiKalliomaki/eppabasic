@@ -81,8 +81,8 @@ Parser.prototype = {
                 return this.parseIdentifier();
             case 'if':
                 return this.parseIf();
-            case 'repeat':
-                return this.parseRepeat();
+            case 'do':
+                return this.parseDoLoop();
             case 'sub':
                 return this.parseSubDefinition();
             default:
@@ -107,8 +107,8 @@ Parser.prototype = {
                 return this.parseIdentifier();
             case 'if':
                 return this.parseIf();
-            case 'repeat':
-                return this.parseRepeat();
+            case 'do':
+                return this.parseDoLoop();
             case 'return':
                 return this.parseReturn();
             default:
@@ -151,9 +151,7 @@ Parser.prototype = {
                 case 'endif':
                 case 'endfunction':
                 case 'endsub':
-                case 'forever':
-                case 'until':
-                case 'while':
+                case 'loop':
                     return block;
             }
             block.nodes.push(this.parseStatement());
@@ -384,28 +382,29 @@ Parser.prototype = {
     },
 
     /*
-     * Parses an repeat-forever/until/while statement
+     * Parses a do-loop statement statement
      */
-    parseRepeat: function parseRepeat() {
-        var line = this.expect('repeat').line;
+    parseDoLoop: function parseDoLoop() {
+        var line = this.expect('do').line;
+
+        if (this.peek().type === 'while' || this.peek().type === 'until') {
+            var until = this.advance().type === 'until';
+            var beginCondition = this.parseExpr();
+            if (until)
+                beginCondition = new Nodes.UnaryOp('not', beginCondition, beginCondition.line);
+        }
 
         var block = this.parseBlock();
 
-        switch (this.peek().type) {
-            case 'forever':
-                this.advance();
-                return new Nodes.RepeatForever(block, line);
-            case 'until':
-                this.advance();
-                var expr = this.parseExpr();
-                return new Nodes.RepeatUntil(block, expr, line);
-            case 'while':
-                this.advance();
-                var expr = this.parseExpr();
-                return new Nodes.RepeatWhile(block, expr, line);
-            default:
-                this.expect('forever/until/while');
+        this.expect('loop');
+        if (this.peek().type === 'while' || this.peek().type === 'until') {
+            var until = this.advance().type === 'until';
+            var endCondition = this.parseExpr();
+            if (until)
+                endCondition = new Nodes.UnaryOp('not', endCondition, endCondition.line);
         }
+
+        return new Nodes.DoLoop(beginCondition, endCondition, block, line);
     },
 
     /*
@@ -429,7 +428,8 @@ Parser.prototype = {
             switch (t.type) {
                 // TODO Move unary operators away from parseExpr
                 case 'minus':
-                    return new Nodes.UnaryOp('neg', this.parseExpr(level), t.line);
+                    return new Nodes.UnaryOp('minus', this.parseExpr(level), t.line);
+
                 case 'number':
                     return new Nodes.Number(t.val, t.line);
                 case 'string':
