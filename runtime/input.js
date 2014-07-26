@@ -2,7 +2,7 @@
     this.MEMS32 = new Int32Array(heap);
     this.keysDown = new Array(256);
     this.keysHit = new Array(256);
-    this.mousePressed = new Array(16);
+    this.mouseButtons = 0;
     this.mouseX = this.mouseY = -1;
 
     // Make all functions to use right this
@@ -45,7 +45,7 @@ Input.prototype = {
             return this.mouseY;
         },
         mouseDown: function mouseDown(key) {
-            return this.mousePressed[key - 1];
+            return (this.mouseButtons & (1 << (key - 1))) !== 0;
         }
     },
 
@@ -66,8 +66,16 @@ Input.prototype = {
         this.mouseX = e.clientX;
         this.mouseY = e.clientY;
         // Buttons
-        for (var i = 0; i < 16; i++)
-            this.mousePressed[i] = e.buttons & (1 << i);
+        if (!e.buttons) {
+            switch (e.which) {
+                case 0: break;
+                case 1: e.buttons = 1; break;
+                case 2: e.buttons = 4; break;
+                case 3: e.buttons = 2; break;
+            }
+        }
+        console.log(e.buttons);
+        this.mouseButtons = e.buttons;
         e.preventDefault();
         return false;
     },
