@@ -83,6 +83,7 @@ Graphics2D.prototype = {
             this.ctx.fillStyle = origStyle;
         },
         drawScreen: function drawScreen() {
+            console.log('sp=' + this.program.sp() + ', cp=' + this.program.cp());
             this.program.breakExec();
         }
     },
