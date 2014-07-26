@@ -53,10 +53,19 @@ class GetDirectoryView(View):
         }
 
         if directory.parent == None and directory.owner == request.user:
-            shared_directories = [ share.directory for share in DirectoryShare.objects.filter(Q(shared_with=request.user) | Q(shared_with=None)).order_by('directory__name').all() ]
+            shared_directories = DirectoryShare.objects \
+                .filter(Q(shared_with=request.user) | Q(shared_with=None)) \
+                .exclude(directory__owner=request.user) \
+                .order_by('directory__name') \
+                .values('directory', 'directory__name')
 
             response['shared'] = {
-                'subdirs': [{ 'id': directory.pk, 'name': directory.name } for directory in shared_directories ],
+                'subdirs': [
+                    {
+                        'id': directory['directory'],
+                        'name': directory['directory__name']
+                    } for directory in shared_directories
+                ],
                 'files': []
             }
 
