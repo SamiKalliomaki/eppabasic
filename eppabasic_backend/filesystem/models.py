@@ -1,5 +1,4 @@
 from django.db.models import Model, BooleanField, CharField, DateTimeField, ForeignKey, TextField
-from django.db.models.signals import post_delete
 
 class Directory(Model):
 	owner = ForeignKey('users.CustomUser')
