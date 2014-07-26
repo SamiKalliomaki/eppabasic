@@ -6,10 +6,6 @@
     this.MEMS32 = new Int32Array(heap);
     this.MEMF32 = new Float32Array(heap);
 
-    this.console.addEventListener('keyup', (function (e) {
-        alert('Moi');
-    }).bind(this), true);
-
     // Make all functions to use right this
     for (func in this.env) {
         if (this.env.hasOwnProperty(func))
@@ -32,16 +28,27 @@ GraphicsText.prototype = {
             //this.canvas.style.visibility = "visible";
         },
 
-        print: function print(sp) {
-            var ptr = this.MEMS32[(sp - 4) >> 2];
-            var len = this.MEMS32[ptr >> 2];
+        printStr: function print(str) {
+            var len = this.MEMS32[str >> 2];
+            var i = 0;
             var buf = [];
-            for (var i = 0; i < len; i++) {
-                buf.push(String.fromCharCode(this.MEMU8[ptr + i + 8]));
+            while (i < len) {
+                var charcode = this.MEMU8[str + 4 + i];
+                for (var j = 7; j >= 0; j--) {
+                    if (!(charcode & (1 << j)))
+                        break;
+                    charcode ^= 1 << j;
+                }
+                i++;
+                while ((this.MEMU8[str + 4 + i] & 0x80) && !(this.MEMU8[str + 4 + i] & 0x40) && i < len) {
+                    charcode = (charcode << 6) | (0x3f & this.MEMU8[str + 4 + i]);
+                    i++;
+                }
+                buf.push(String.fromCodePoint(charcode));
             }
-            var str = buf.join('');
+            str = buf.join('');
 
-            this.console.innerHTML = this.console.innerHTML + str + "<br />";
+            alert(str);
         },
         printInt: function printInt(a) {
             alert(a);
