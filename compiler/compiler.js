@@ -1172,7 +1172,10 @@ Compiler.prototype = {
             dimensions[i].free();
         }
 
-        return ref;
+        var tmpref = context.reserveTemporary(variable.expr.type.itemType);
+        tmpref.setValue(ref);
+
+        return tmpref;
         //throw new Error('Arrays not supported, yet');
     },
 };
