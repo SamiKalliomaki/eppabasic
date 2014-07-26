@@ -331,7 +331,7 @@ function Compiler(ast, operators, types) {
 }
 
 Compiler.prototype = {
-    defineFunction: function defineFunction(jsName, name, parameterTypes, returnType) {
+    defineFunction: function defineFunction(name, parameterTypes, returnType) {
         //var entry = this.createEntry(jsName, true, parameterTypes, returnType, true);
 
         var handle = {
@@ -469,7 +469,7 @@ Compiler.prototype = {
         this.ast.nodes.forEach(function each(def) {
             if (def.nodeType === 'FunctionDefinition') {
                 var paramTypes = def.params.map(function map(param) { return param.type; });
-                def.handle = this.defineFunction(this.generateFunctionName(), def.name, paramTypes, def.type);
+                def.handle = this.defineFunction(def.name, paramTypes, def.type);
                 //throw new Error('User defined functions not supported yet');
             }
         }.bind(this));
@@ -492,7 +492,8 @@ Compiler.prototype = {
                 var retType = def.type;
                 if (!def.atomic)
                     retType = this.types.Integer;
-                var entry = def.handle.entry = this.createEntry(def.handle.name, true, paramTypes, retType, true);
+                console.log(def);
+                var entry = def.handle.entry = this.createEntry(this.generateFunctionName(), true, paramTypes, retType, true);
                 var context = new CompilerContext(this.types, def.handle.entry);
                 context.atomic = def.atomic;
                 context.lastTemporary = entry.nextFreeTemporary;
