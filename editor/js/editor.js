@@ -83,6 +83,7 @@ Editor.prototype = {
         //// Output
         compiler.defineJsFunction('env.printInt', true, 'Print', [this.types.Integer]);
         compiler.defineJsFunction('env.printDbl', true, 'Print', [this.types.Double]);
+        compiler.defineJsFunction('env.printStr', true, 'Print', [this.types.String]);
         //compiler.defineJsFunction('PRINT', [Types.String], 'print');
         //compiler.defineJsFunction('PRINT', [Types.Double], 'printDbl');
         //compiler.defineJsFunction('PRINT', [Types.Integer], 'printInt');

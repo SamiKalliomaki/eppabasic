@@ -137,7 +137,6 @@ CompilerContext.prototype = {
     setCurrentFunction: function setCurrentFunction(entry) {
         this.func = entry;
         if (this.temporaries.some(function every(temp) { return temp.used; })) {
-            console.log(this);
             console.error(this.temporaries);
             throw new Error('Not all temporaries are freed: ' + this.temporaries.map(function (tmp) { return tmp.name; }).join(', '));
         }
@@ -500,7 +499,7 @@ Compiler.prototype = {
                 var retType = def.type;
                 if (!def.atomic)
                     retType = this.types.Integer;
-                console.log(def);
+
                 var entry = def.handle.entry = this.createEntry(this.generateFunctionName(), true, paramTypes, retType, true);
                 var context = new CompilerContext(this.types, def.handle.entry);
                 context.atomic = def.atomic;
@@ -563,6 +562,7 @@ Compiler.prototype = {
         var buf = [];
         buf.push('function Program(stdlib,env,heap){');
         buf.push('"use asm";');
+        buf.push('var MEMU8=new stdlib.Uint8Array(heap);');
         buf.push('var MEMS32=new stdlib.Int32Array(heap);');
         buf.push('var MEMU32=new stdlib.Uint32Array(heap);');
         buf.push('var MEMF64=new stdlib.Float64Array(heap);');
@@ -1114,6 +1114,8 @@ Compiler.prototype = {
         switch (expr.nodeType) {
             case 'Number':
                 return this.compileNumberExpr(expr, context);
+            case 'String':
+                return this.compileStringExpr(expr, context);
             case 'Variable':
                 return this.compileVariableExpr(expr, context);
             case 'BinaryOp':
@@ -1133,6 +1135,29 @@ Compiler.prototype = {
         /// <param name='context' type='CompilerContext' />
         var ref = context.reserveConstant(num.type);
         ref.setValue(num.val);
+        return ref;
+    },
+    compileStringExpr: function compileStringExpr(str, context) {
+        /// <param name='str' type='Nodes.String' />
+        /// <param name='context' type='CompilerContext' />
+        var ref = context.reserveTemporary(str.type);
+        // Convert string to utf8
+        var utf8 = toUTF8Array(str.val);
+        // Reserve space for the string
+        var cnt = context.reserveConstant(str.type);
+        cnt.setValue('__memreserve(' + (utf8.length + 4) + ')|0');
+        ref.setValue(cnt);
+        cnt.free();
+        // Save the length of the payload
+        var sizeRef = new CompilerAbsoluteReference(this.types.Integer, ref, context);
+        cnt = context.reserveConstant(this.types.Integer);
+        cnt.setValue('' + utf8.length);
+        sizeRef.setValue(cnt);
+        // And then finally save the payload
+        for (var i = 0; i < utf8.length; i++) {
+            context.push('MEMU8[(' + ref.getValue() + '+' + (4 + i) + ')>>0]=' + utf8[i] + ';');
+        }
+
         return ref;
     },
     compileVariableExpr: function compileVariableExpr(variable, context) {
@@ -1280,4 +1305,37 @@ function nextPowerOfTwo(x) {
     x |= x >> 16;
     x++;
     return x;
+}
+
+
+// From StackOverflow: http://stackoverflow.com/questions/18729405/how-to-convert-utf8-string-to-byte-array
+function toUTF8Array(str) {
+    var utf8 = [];
+    for (var i = 0; i < str.length; i++) {
+        var charcode = str.charCodeAt(i);
+        if (charcode < 0x80) utf8.push(charcode);
+        else if (charcode < 0x800) {
+            utf8.push(0xc0 | (charcode >> 6),
+                      0x80 | (charcode & 0x3f));
+        }
+        else if (charcode < 0xd800 || charcode >= 0xe000) {
+            utf8.push(0xe0 | (charcode >> 12),
+                      0x80 | ((charcode >> 6) & 0x3f),
+                      0x80 | (charcode & 0x3f));
+        }
+            // surrogate pair
+        else {
+            i++;
+            // UTF-16 encodes 0x10000-0x10FFFF by
+            // subtracting 0x10000 and splitting the
+            // 20 bits of 0x0-0xFFFFF into two halves
+            charcode = 0x10000 + (((charcode & 0x3ff) << 10)
+                      | (str.charCodeAt(i) & 0x3ff))
+            utf8.push(0xf0 | (charcode >> 18),
+                      0x80 | ((charcode >> 12) & 0x3f),
+                      0x80 | ((charcode >> 6) & 0x3f),
+                      0x80 | (charcode & 0x3f));
+        }
+    }
+    return utf8;
 }
