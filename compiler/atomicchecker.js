@@ -157,6 +157,10 @@ Atomicchecker.prototype = {
                 if (!res)
                     expr.atomic = false;
                 return expr.atomic;
+            case 'UnaryOp':
+                expr.atomic = true;
+                expr.atomic = this.visitExpr(expr.expr) ? expr.atomic : false;
+                return expr.atomic;
             case 'IndexOp':
                 expr.atomic = true;
                 expr.atomic = this.visitExpr(expr.expr) ? expr.atomic : false;

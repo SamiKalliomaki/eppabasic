@@ -226,6 +226,14 @@ Typechecker.prototype = {
                 expr.operator = operator;
                 return expr.type = operator.returnType;
 
+            case 'UnaryOp':
+                var type = this.resolveExprType(expr.expr, context);
+                var operator = this.operators.getOperatorByType(type, expr.op);
+                if (!operator)
+                    throw new Error('Failed to find operator \'' + expr.op + '\' for \'' + type + '\'');
+                expr.operator = operator;
+                return expr.type = operator.returnType;
+
             case 'IndexOp':
                 var arrayType = this.resolveExprType(expr.expr, context);
                 expr.index.forEach(function each(index) {
