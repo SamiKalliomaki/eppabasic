@@ -68,21 +68,27 @@ function CustomTokenizer() {
     };
     this.specialIdentifiers = {
         'clearcolor': 'support.function',
+        'drawcolor': 'support.function',
         'linecolor': 'support.function',
         'fillcolor': 'support.function',
+        'drawline': 'support.function',
         'line': 'support.function',
+        'drawcircle': 'support.function',
         'circle': 'support.function',
         'fillcircle': 'support.function',
+        'drawrect': 'support.function',
         'rect': 'support.function',
         'fillrect': 'support.function',
+        'drawdot': 'support.function',
         'dot': 'support.function',
+        'clearscreen': 'support.function',
         'clear': 'support.function',
         'drawscreen': 'support.function',
 
         'sin': 'support.function',
         'cos': 'support.function',
-        'sqr': 'support.function',
         'tan': 'support.function',
+        'sqr': 'support.function',
         'abs': 'support.function',
 
         'min': 'support.function',
