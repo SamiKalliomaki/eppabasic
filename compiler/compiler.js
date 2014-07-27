@@ -993,14 +993,14 @@ Compiler.prototype = {
                 throw new Error('Trying to access ' + type.dimensionCount + '-dimensional array with ' + dimensions.length + ' dimensions');
 
             // Then compute the location of the variable
-            var indexStr = dimensions[0].getValue();
+            var indexStr = dimensions[0].type.castTo(dimensions[0].getValue(), this.types.Integer);
             for (var i = 1; i < dimensions.length; i++) {
                 // A reference to the size of the current dimension
                 var offset = context.reserveConstant(this.types.Integer);
                 offset.setValue(variable.ref.location.getValue() + '+' + (4 * i));
                 var ref = new CompilerAbsoluteReference(this.types.Integer, offset, context);
 
-                indexStr = '(((imul(' + indexStr + ',' + ref.getValue() + ')|0)+' + dimensions[i].getValue() + ')|0)';
+                indexStr = '(((imul(' + indexStr + ',' + ref.getValue() + ')|0)+' + dimensions[i].type.castTo(dimensions[i].getValue(), this.types.Integer) + ')|0)';
             }
 
             // The offset of the referenced index
@@ -1041,9 +1041,9 @@ Compiler.prototype = {
             var dimensions = this.compileExprList(variable.dimensions, context);
 
             // Compute the actual size of the string
-            var sizeStr = dimensions[0].getValue();
+            var sizeStr = dimensions[0].type.castTo(dimensions[0].getValue(), this.types.Integer);
             for (var i = 1; i < dimensions.length; i++) {
-                sizeStr = 'imul(' + sizeStr + ',' + dimensions[i].getValue() + ')|0';
+                sizeStr = 'imul(' + sizeStr + ',' + dimensions[i].type.castTo(dimensions[i].getValue(), this.types.Integer) + ')|0';
             }
             /*var sizeStr = [];
             dimensions.forEach(function each(dim) {
@@ -1257,14 +1257,14 @@ Compiler.prototype = {
         var base = this.compileExpr(variable.expr, context);
 
         // Then compute the location of the variable
-        var indexStr = dimensions[0].getValue();
+        var indexStr = dimensions[0].type.castTo(dimensions[0].getValue(), this.types.Integer);
         for (var i = 1; i < dimensions.length; i++) {
             // A reference to the size of the current dimension
             var offset = context.reserveConstant(this.types.Integer);
             offset.setValue(base.getValue() + '+' + (4 * i));
             var ref = new CompilerAbsoluteReference(this.types.Integer, offset, context);
 
-            indexStr = '(((imul(' + indexStr + ',' + ref.getValue() + ')|0)+' + dimensions[i].getValue() + ')|0)';
+            indexStr = '(((imul(' + indexStr + ',' + ref.getValue() + ')|0)+' + dimensions[i].type.castTo(dimensions[i].getValue(), this.types.Integer) + ')|0)';
         }
 
         // Then get offset to the item
