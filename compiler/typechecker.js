@@ -54,7 +54,7 @@ Typechecker.prototype = {
         if (!definition.type) {
             // No type defined -> initial value has to be defined
             if (!definition.initial)
-                throw new Error('Variable "' + definition.name + '" definition must have either type or initializer');
+                throw new CompileError(definition.line, 'Variable "' + definition.name + '" definition must have either type or initializer');
             // Just resolve the type
             definition.type = this.resolveExprType(definition.initial, parent);
         }
@@ -64,13 +64,13 @@ Typechecker.prototype = {
             definition.dimensions.forEach(function each(dim) {
                 dim.type = this.resolveExprType(dim, parent);
                 if (!dim.type.canCastTo(this.types.Integer))
-                    throw new Error('Array dimensions must be type of "Integer"');
+                    throw new CompileError(definition.line, 'Array dimensions must be type of "Integer"');
             }.bind(this));
         }
         if (definition.initial) {
             // Initial is defined -> must not conflict with the type specified
             if (!this.resolveExprType(definition.initial, parent).canCastTo(definition.type))
-                throw new Error('Can not cast type "' + this.resolveExprType(definition.initial, parent) + '" to "' + definition.type + '"');
+                throw new CompileError(definition.line, 'Can not cast type "' + this.resolveExprType(definition.initial, parent) + '" to "' + definition.type + '"');
         }
         // Tell the parent about this variable
         parent.defineVariable(definition);
@@ -79,33 +79,33 @@ Typechecker.prototype = {
     /*
      * Visits a variable definition
      */
-    visitVariableAssignment: function visitVariableAssignment(assignemnt, parent) {
+    visitVariableAssignment: function visitVariableAssignment(assignment, parent) {
         // Get reference to the variable
-        var variable = parent.getVariable(assignemnt.name);
+        var variable = parent.getVariable(assignment.name);
         // Check that it exists
         if (!variable)
-            throw new Error('No variable called "' + assignemnt.name + '" exists in scope');
+            throw new CompileError(assignment.line, 'No variable called "' + assignment.name + '" exists in scope');
 
         var type = variable.type;
         // Test types for every index
-        if (assignemnt.index) {
-            assignemnt.index.forEach(function each(index) {
+        if (assignment.index) {
+            assignment.index.forEach(function each(index) {
                 index.type = this.resolveExprType(index, parent);
                 if (!index.type.canCastTo(this.types.Integer))
-                    throw new Error('Array indices must be type of "Integer"');
+                    throw new CompileError(assignment.line, 'Array indices must be type of "Integer"');
             }.bind(this));
             type = type.itemType;
         }
 
         // Save the reference
-        assignemnt.ref = variable;
+        assignment.ref = variable;
 
         // Resolve expression type
-        this.resolveExprType(assignemnt.expr, parent);
+        this.resolveExprType(assignment.expr, parent);
 
         // Check that it matches the type of the variable it is assigned to
-        if (!assignemnt.expr.type.canCastTo(type))
-            throw new Error('Can not assign value of type "' + assignemnt.expr.type + '" to a variable of type "' + type + '"');
+        if (!assignment.expr.type.canCastTo(type))
+            throw new CompileError(assignment.line, 'Can not assign value of type "' + assignment.expr.type + '" to a variable of type "' + type + '"');
     },
 
     /*
@@ -114,9 +114,9 @@ Typechecker.prototype = {
     visitFor: function visitFor(loop, parent) {
         loop.variable.type = this.resolveExprType(loop.start, parent);
         if (this.resolveExprType(loop.stop, parent) !== loop.variable.type)
-            throw new Error('Loop end and start types must be same');
+            throw new CompileError(loop.line, 'Loop end and start types must be same');
         if (!this.resolveExprType(loop.step, parent).canCastTo(loop.variable.type))
-            throw new Error('Loop step type must match the iterator type');
+            throw new CompileError(loop.line, 'Loop step type must match the iterator type');
 
         // Adds a custom get variable for loop iterator
         loop.getVariable = function getVariable(name) {
@@ -150,9 +150,9 @@ Typechecker.prototype = {
         }.bind(this));
 
         // Then try to find a function accepting those parameters
-        var handle = this.getFunctionHandle(call.name, call.params);
+        var handle = this.getFunctionHandle(call.name, call.params, call.line);
         if (!handle)
-            throw new Error('Call of an undefined function "' + call.name + '"');
+            throw new CompileError(call.line, 'Call of an undefined function "' + call.name + '"');
 
         call.handle = handle;
         call.type = handle.returnType;
@@ -188,7 +188,7 @@ Typechecker.prototype = {
      */
     visitDoLoop: function visitDoLoop(loop, parent) {
         if (loop.beginCondition && loop.endCondition)
-            throw new Error('Condition is allowed only at the begining of the loop or at the end, not at both places');
+            throw new CompileError(loop.line, 'Condition is allowed only at the begining of the loop or at the end, not at both places');
         if (loop.beginCondition)
             this.resolveExprType(loop.beginCondition, parent);
         if (loop.endCondition)
@@ -221,7 +221,7 @@ Typechecker.prototype = {
                 var rightType = this.resolveExprType(expr.right, context);
                 var operator = this.operators.getOperatorByType(leftType, expr.op, rightType);
                 if (!operator)
-                    throw new Error('Failed to find operator \'' + expr.op + '\' for \'' + leftType + '\' and \'' + rightType + '\'');
+                    throw new CompileError(expr.line, 'Failed to find operator \'' + expr.op + '\' for \'' + leftType + '\' and \'' + rightType + '\'');
 
                 expr.operator = operator;
                 return expr.type = operator.returnType;
@@ -230,7 +230,7 @@ Typechecker.prototype = {
                 var type = this.resolveExprType(expr.expr, context);
                 var operator = this.operators.getOperatorByType(type, expr.op);
                 if (!operator)
-                    throw new Error('Failed to find operator \'' + expr.op + '\' for \'' + type + '\'');
+                    throw new CompileError(expr.line, 'Failed to find operator \'' + expr.op + '\' for \'' + type + '\'');
                 expr.operator = operator;
                 return expr.type = operator.returnType;
 
@@ -239,7 +239,7 @@ Typechecker.prototype = {
                 expr.index.forEach(function each(index) {
                     this.resolveExprType(index, context);
                     if (!index.type.canCastTo(this.types.Integer))
-                        throw new Error('Array indices must be type of "Integer"');
+                        throw new CompileError(expr.line, 'Array indices must be type of "Integer"');
                 }.bind(this));
                 return expr.type = arrayType.itemType;
 
@@ -248,12 +248,12 @@ Typechecker.prototype = {
                 var endType = this.resolveExprType(expr.end, context);
                 if (startType === endType)
                     return expr.type = startType;
-                throw new Error('Unsolvable return type of a range operator');
+                throw new CompileError(expr.line, 'Unsolvable return type of a range operator');
 
             case 'Variable':
                 var variable = context.getVariable(expr.val);
                 if (!variable)
-                    throw new Error('No variable called "' + expr.val + '" exists in scope');
+                    throw new CompileError(expr.line, 'No variable called "' + expr.val + '" exists in scope');
                 expr.definition = variable;
                 return expr.type = variable.type;
 
@@ -268,7 +268,7 @@ Typechecker.prototype = {
     /*
      * Gets the function definition
      */
-    getFunctionHandle: function getFunctionHandle(name, params) {
+    getFunctionHandle: function getFunctionHandle(name, params, line) {
         var bestCastCount = 4294967295;         // Int max
         var candidates = [];
         var i = this.functions.length;
@@ -303,12 +303,12 @@ Typechecker.prototype = {
 
         if (!candidates.length) {
             var paramStr = params.map(function map(param) { return param.type; }).join(', ');
-            throw new Error('No function matches a call "' + name + '(' + paramStr + ')"');
+            throw new CompileError(line, 'No function matches a call "' + name + '(' + paramStr + ')"');
         }
         if (candidates.length > 1) {
             var candidateStr = '\t' + candidates.map(function map(cand) { return cand.paramTypes.join(', '); }).join('\t\n');
             var paramStr = params.map(function map(param) { return param.type; }).join(', ');
-            throw new Error('Ambiguous function call: "' + name + '(' + paramStr + ')" Candidates are:' + candidateStr)
+            throw new CompileError(line, 'Ambiguous function call: "' + name + '(' + paramStr + ')" Candidates are:' + candidateStr)
         }
         return candidates[0];
     },
