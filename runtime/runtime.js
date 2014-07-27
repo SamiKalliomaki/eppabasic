@@ -30,6 +30,7 @@ function Runtime() {
     this.env.heapSize = 1024 * 1024;
     this.heap = new ArrayBuffer(this.env.heapSize);
 
+    this.stringUtil = new StringUtils(this.heap);
     this.loadLibraries();
 }
 
@@ -44,7 +45,7 @@ Runtime.prototype = {
 
         mixin(this.env, this.g2d.env);
 
-        var gtext = new GraphicsText(this.canvasHolder, this.heap);
+        var gtext = new GraphicsText(this.canvasHolder, this.heap, this.stringUtil);
         mixin(this.env, gtext.env);
 
         var ebmath = new EbMath(this.heap);
@@ -60,6 +61,7 @@ Runtime.prototype = {
     init: function init() {
         this.program = Program(this.stdlib, this.env, this.heap);
         this.g2d.setProgram(this.program);
+        this.stringUtil.setProgram(this.program);
         this.program.init();
     },
 

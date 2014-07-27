@@ -23,3 +23,5 @@ Kirjasto
   * [Merkkijonot](manual:mer)
   * [Näppäimistö](manual:nap)
   * [Taulukot](manual:tau2)
+
+![Alt text](lumiukko.png)
