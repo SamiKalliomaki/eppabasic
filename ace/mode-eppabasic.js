@@ -2,9 +2,7 @@ ace.define('ace/mode/eppabasic', ['require', 'exports', 'module'], function(requ
 var oop = require("../lib/oop");
 var TextMode = require("./text").Mode;
 
-// defines the language specific highlighters and folding rules
-//var EppaBasicHighlightRules = require("./mynew_highlight_rules").EppaBasicHighlightRules;
-//var EppaBasicFoldMode = require("./folding/mynew").EppaBasicFoldMode;
+var Range = require("../range").Range;
 
 function CustomTokenizer() {
     this.lexer = new Lexer('', true, true);
@@ -67,10 +65,43 @@ function CustomTokenizer() {
         // Arrays
         'lbracket': 'paren.lparen',
         'rbracket': 'paren.rparen',
-    }
+    };
+    this.indentEffect = {
+        'for': 1,
+        'next': -1,
+
+        'do': 1,
+        'loop': -1,
+
+        'if': 1,
+        'endif': -1,
+
+        'function': 1,
+        'endfunction': -1,
+
+        'sub': 1,
+        'endsub': -1
+    };
 }
 
 CustomTokenizer.prototype = {
+    getIndent: function(line, state) {
+        var tokens = [];
+        this.lexer.input = line;
+
+        var total = 0;
+
+        do {
+            var token = this.lexer.next();
+
+            if(this.indentEffect[token.type] !== undefined) {
+                total += this.indentEffect[token.type];
+            }
+        } while(token.type != 'eos' && token !== null);
+
+        return total;
+    },
+
     getLineTokens: function(line, state, row) {
         var tokens = [];
         this.lexer.input = line;
@@ -97,10 +128,42 @@ var Mode = function() {
         return this.$tokenizer;
     };
 
-    // set everything up
-    //this.HighlightRules = EppaBasicHighlightRules;
-    //this.$outdent = new MatchingBraceOutdent();
-    //this.foldingRules = new EppaBasicFoldMode();
+    this.getNextLineIndent = function(state, line, tab) {
+        var tokenizer = this.getTokenizer();
+
+        var addition = '';
+        if(tokenizer.getIndent(line, state) > 0) {
+            addition = tab;
+        }
+
+        return this.$getIndent(line) + addition;
+    };
+
+    this.checkOutdent = function(line, input) {
+        return true;
+    };
+
+    this.autoOutdent = function(state, doc, row) {
+        if(row == 0) {
+            return;
+        }
+
+        var tokenizer = this.getTokenizer();
+
+        var line = doc.getLine(row);
+        var lastLine = doc.getLine(row - 1);
+        var indent = this.$getIndent(line);
+
+        if(tokenizer.getIndent(line, state) < 0) {
+            var newIndent = this.$getIndent(lastLine);
+            
+            if(tokenizer.getIndent(lastLine, 'start') <= 0) {
+                newIndent = newIndent.substr(4);
+            }
+
+            doc.replace(new Range(row, 0, row, indent.length), newIndent);
+        }
+    };
 };
 oop.inherits(Mode, TextMode);
 
