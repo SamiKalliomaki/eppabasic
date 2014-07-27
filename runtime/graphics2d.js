@@ -85,6 +85,12 @@ Graphics2D.prototype = {
         drawScreen: function drawScreen() {
             this.program.breakExec();
         },
+        width: function width() {
+            return this.canvas.width | 0;
+        },
+        height: function height() {
+            return this.canvas.height | 0;
+        },
         fullScreen: function fullScreen() {
             if (this.canvas.requestFullscreen)
                 this.canvas.requestFullscreen();

@@ -57,6 +57,10 @@ Editor.prototype = {
         compiler.defineJsFunction('env.drawScreen', true, 'DrawScreen', [], undefined, false);
         //compiler.defineJsFunction('env.fullScreen', true, 'FullScreen', []);                  // Reserved for a better day
 
+        /// Screen size
+        compiler.defineJsFunction('env.width', true, 'Width', [], this.types.Integer);
+        compiler.defineJsFunction('env.height', true, 'Height', [], this.types.Integer);
+
         //compiler.defineJsFunction('TEXT', [Types.Integer, Types.Integer, Types.String], 'text');
 
         ////compiler.defineJsFunction('SHOWCONSOLE', [], 'showConsole');
@@ -75,9 +79,9 @@ Editor.prototype = {
         compiler.defineJsFunction('stdlib.Math.max', true, 'Max', [this.types.Double, this.types.Double], this.types.Double);
         compiler.defineJsFunction('stdlib.Math.max', true, 'Max', [this.types.Integer, this.types.Integer], this.types.Integer);
 
-        
+
         compiler.defineJsFunction('env.rand', true, 'Rand', [this.types.Double, this.types.Double], this.types.Double);
-        
+
         //compiler.defineJsFunction('SQRT', [Types.Double], 'sqrt', Types.Double);
 
         //compiler.defineJsFunction('RANDOM', [], 'random', Types.Double);
