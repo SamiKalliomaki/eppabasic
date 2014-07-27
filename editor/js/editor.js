@@ -68,6 +68,7 @@ Editor.prototype = {
         compiler.defineJsFunction('env.clear', true, 'ClearScreen', []);
         compiler.defineJsFunction('env.clear', true, 'Clear', []);
         compiler.defineJsFunction('env.drawScreen', true, 'DrawScreen', [], undefined, false);
+        //compiler.defineJsFunction('env.fullScreen', true, 'FullScreen', []);                  // Reserved for a better day
 
         //compiler.defineJsFunction('TEXT', [Types.Integer, Types.Integer, Types.String], 'text');
 
