@@ -571,6 +571,7 @@ Compiler.prototype = {
         buf.push('var SP=0;');
         buf.push('var CP=0;');
         buf.push('var NEXT_FREE=2048;')
+        buf.push('var STRING_HEADER_LENGTH=4;')
         // Add compiler defined environmental variables
         buf.push(this.env.join('\n'));
         // Compile all the other functions
@@ -582,6 +583,8 @@ Compiler.prototype = {
         buf.push('function __int(a){a=a|0;return a|0;}');
         buf.push('function __sp(){return SP|0;}');
         buf.push('function __cp(){return CP|0;}');
+
+        buf.push('function __concat(n,t){n=n|0;t=t|0;var u=0,f=0,o=0,e=0,i=0,r=0;for(u=MEMS32[(n|0)>>2]|0,f=MEMS32[(t|0)>>2]|0,o=u+f|0,e=__memreserve(o+(STRING_HEADER_LENGTH|0)|0)|0,r=e+(STRING_HEADER_LENGTH|0)|0,i=n+(STRING_HEADER_LENGTH|0)|0;u|0;)MEMU8[(r|0)>>0]=MEMU8[(i|0)>>0],r=r+1|0,i=i+1|0,u=u-1|0;for(i=t+(STRING_HEADER_LENGTH|0)|0;f|0;)MEMU8[(r|0)>>0]=MEMU8[(i|0)>>0],r=r+1|0,i=i+1|0,f=f-1|0;return e|0}');
 
         buf.push('function __memreserve(a){a=a|0;while(NEXT_FREE&7)NEXT_FREE=(NEXT_FREE+1)|0;NEXT_FREE=(NEXT_FREE+a)|0;return (NEXT_FREE-a)|0;}');
 
