@@ -11,16 +11,12 @@
 
 EbMath.prototype = {
     env: {
-        // Powers and roots
-        sqrt: function sqrt(sp) {
-            this.MEMF32[(sp - 4) >> 2] = Math.sqrt(this.MEMF32[(sp - 4) >> 2]);
-        },
-
+        // Random functions
         rand: function rand(a, b) {
             return a + parseInt(Math.random() * (b - a + 1));
         },      
 
-        // Time function
+        // Time functions
         hours: function hours() {
             return new Date().getHours();
         },
