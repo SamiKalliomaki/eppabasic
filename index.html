@@ -18,6 +18,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
     <script src="ace/ace.js" type="text/javascript" charset="utf-8"></script>
     <script src="libs/marked.js" type="text/javascript" charset="utf-8"></script>
+    <script src="libs/i18next-1.7.3.min.js" type="text/javascript" charset="utf-8"></script>
     <!--Compiler recources-->
     <script src="compiler/static/math.js"></script>
     <script src="compiler/static/memory.js"></script>
@@ -48,61 +49,61 @@
     <div id="header">
         <img src="editor/img/logo.png" id="logo">
         <div class="header-block" id="code-controls">
-            <button class="header-ui-element header-button run">Run</button>
+            <button class="header-ui-element header-button run" data-i18n="header.run"></button>
         </div>
         <div class="header-block" id="file-controls">
-            <button class="header-ui-element header-button new">New</button>
-            <button class="header-ui-element header-button load">Load</button>
-            <button class="header-ui-element header-button save">Save</button>
-            <button class="header-ui-element header-button save-as">Save as</button>
+            <button class="header-ui-element header-button new" data-i18n="header.new"></button>
+            <button class="header-ui-element header-button load" data-i18n="header.load"></button>
+            <button class="header-ui-element header-button save" data-i18n="header.save"></button>
+            <button class="header-ui-element header-button save-as" data-i18n="header.save-as"></button>
         </div>
         <div class="header-block" id="paste-controls">
-            <button class="header-ui-element header-button share">Share</button>
+            <button class="header-ui-element header-button share" data-i18n="header.share"></button>
         </div>
         <div class="header-block pending" id="user-controls">
             <div class="user-status">
-                <a class="login-link" href="#">Login</a>
-                <a class="logout-link" href="#"><span class="current-user"></span>, logout</a>
+                <a class="login-link" href="#" data-i18n="header.login"></a>
+                <a class="logout-link" href="#"><span class="current-user"></span>, <span data-i18n="header.logout"></span></a>
                 <a class="pending-link" href="#">...</a>
             </div>
             <div class="login-box top-right-box">
                 <form class="login-form">
                     <div class="error-box"></div>
                     <div class="input-field">
-                        <label for="login-username">Username:</label>
+                        <label for="login-username" data-i18n="login.username"></label>
                         <input type="text" name="username" id="login-username">
                     </div>
                     <div class="input-field">
-                        <label for="login-password">Password:</label>
+                        <label for="login-password" data-i18n="login.password"></label>
                         <input type="password" name="password" id="login-password">
                     </div>
                     <div class="submit-box">
-                        <input type="submit" value="Login">
+                        <input type="submit" data-i18n="[value]login.submit">
                     </div>
-                    <a href="#" class="register-link">No account? Register</a>
+                    <a href="#" class="register-link" data-i18n="login.register-link"></a>
                 </form>
                 <form class="register-form">
                     <div class="error-box"></div>
                     <div class="input-field">
-                        <label for="register-username">Username:</label>
+                        <label for="register-username" data-i18n="register.username"></label>
                         <input type="text" name="username" id="register-username">
                     </div>
                     <div class="input-field">
-                        <label for="register-email">Email:</label>
+                        <label for="register-email" data-i18n="register.email"></label>
                         <input type="email" name="email" id="register-email">
                     </div>
                     <div class="input-field">
-                        <label for="register-password1">Password:</label>
+                        <label for="register-password1" data-i18n="register.password"></label>
                         <input type="password" name="password1" id="register-password1">
                     </div>
                     <div class="input-field">
-                        <label for="register-password2">Password again:</label>
+                        <label for="register-password2" data-i18n="register.password-again"></label>
                         <input type="password" name="password2" id="register-password2"><br>
                     </div>
                     <div class="submit-box">
-                        <input type="submit" value="Register">
+                        <input type="submit" data-i18n="[value]register.submit">
                     </div>
-                    <a href="#" class="already-registered-link">Already registered? Login</a>
+                    <a href="#" class="already-registered-link" data-i18n="register.already-registered-link"></a>
                 </form>
             </div>
         </div>
@@ -135,7 +136,7 @@ NEXT i</div>
                 <div class="list-area">
                     <ul class="file-list main-file-list"></ul>
                     <div class="share-box">
-                        <h2>Shared with me</h2>
+                        <h2 data-i18n="file-dialog.shared-with-me"></h2>
                         <ul class="file-list shared-file-list">
                             
                         </ul>
@@ -152,8 +153,8 @@ NEXT i</div>
             </div>
             <div class="tools">
                 <ul>
-                    <li data-icon="&#xF0E1;"><a href="#" class="create-directory">Create directory</a></li>
-                    <li data-icon="&#xF0E2;"><a href="#" class="delete-directory">Delete this directory</a></li>
+                    <li data-icon="&#xF0E1;"><a href="#" class="create-directory" data-i18n="file-dialog.create-directory"></a></li>
+                    <li data-icon="&#xF0E2;"><a href="#" class="delete-directory" data-i18n="file-dialog.delete-this-directory"></a></li>
                 </ul>
             </div>
             <div class="clear-left"></div>
@@ -161,7 +162,7 @@ NEXT i</div>
     </div>
     <div id="share-dialog-wrapper" class="dialog-wrapper">
         <div class="share-dialog dialog">
-            <p>You can use link below to share the code to a friend.</p>
+            <p data-i18n="share-dialog.link-help"></p>
             <input class="share-link" type="text" />
         </div>
     </div>

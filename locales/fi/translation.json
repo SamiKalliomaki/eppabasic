@@ -1,0 +1,35 @@
+{
+    "header": {
+        "run": "Aja",
+        "new": "Uusi",
+        "load": "Lataa",
+        "save": "Tallenna",
+        "save-as": "Tallenna nimellä",
+        "share": "Jaa",
+        "login": "Kirjaudu sisään",
+        "logout": "kirjaudu ulos"
+    },
+    "login": {
+        "username": "Käyttäjänimi:",
+        "password": "Salasana:",
+        "submit": "Kirjaudu",
+        "register-link": "Ei tiliä? Rekisteröidy"
+    },
+    "register": {
+        "username": "Käyttäjänimi:",
+        "email": "Sähköposti:",
+        "password": "Salasana:",
+        "password-again": "Salasana uudestaan:",
+        "submit": "Rekisteröidy",
+        "already-registered-link": "Oletko jo käyttäjä? Kirjaudu sisään"
+    },
+    "file-dialog": {
+        "shared-with-me": "Jaettu minulle",
+        "create-directory": "Luo kansio",
+        "delete-this-directory": "Poista tämä kansio"
+    },
+    "share-dialog": {
+        "link-help": "Voit käyttää linkkiä alapuolella jakaaksesi koodin ystävällesi."
+    },
+    "confirm-leave": "Haluatko varmasti poistua sivulta? Kaikki tallentamattomat muutokset tuhoutuvat."
+}

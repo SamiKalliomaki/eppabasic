@@ -12,6 +12,10 @@ $(function() {
 
     window.ebeditor = editor;
 
+    i18n.init(function(t) {
+      $('body').i18n();
+    });
+
     $('#editor').resizable({
         resize: function(e, ui) {
             $('#manual').css('margin-left', ui.size.width + 2);
@@ -28,9 +32,10 @@ $(function() {
 
     // Tell user about page reload
     window.onbeforeunload = function(e) {
-        var msg = "Are you sure you want to leave this page? All your code is lost.";
+        var msg = i18n.t('confirm-leave');
 
         e.returnValue = msg;
         return msg;
     };
 });
+

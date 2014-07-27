@@ -1,0 +1,35 @@
+{
+    "header": {
+        "run": "Run",
+        "new": "New",
+        "load": "Load",
+        "save": "Save",
+        "save-as": "Save as",
+        "share": "Share",
+        "login": "Login",
+        "logout": "logout"
+    },
+    "login": {
+        "username": "Username:",
+        "password": "Password:",
+        "submit": "Login",
+        "register-link": "No account? Register"
+    },
+    "register": {
+        "username": "Username:",
+        "email": "Email:",
+        "password": "Password:",
+        "password-again": "Password again:",
+        "submit": "Register",
+        "already-registered-link": "Already registered? Login"
+    },
+    "file-dialog": {
+        "shared-with-me": "Shared with me",
+        "create-directory": "Create directory",
+        "delete-this-directory": "Delete this directory"
+    },
+    "share-dialog": {
+        "link-help": "You can use the link below to share the code to a friend."
+    },
+    "confirm-leave": "Are you sure you want to leave this page? All unsaved changes will be lost."
+}
