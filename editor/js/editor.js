@@ -12,7 +12,7 @@ function Editor(editorName, errBox) {
     this.operators.addDefaultOperators();
 
     this.ace = ace.edit(editorName);
-    this.ace.setTheme('ace/theme/idle_fingers');
+    this.ace.setTheme('ace/theme/chaos');
     this.ace.getSession().setMode('ace/mode/eppabasic');
     this.ace.setShowPrintMargin(false);
 
@@ -64,8 +64,8 @@ Editor.prototype = {
         //// Mathematical functions
         compiler.defineJsFunction('stdlib.Math.sin', true, 'Sin', [this.types.Double], this.types.Double);
         compiler.defineJsFunction('stdlib.Math.cos', true, 'Cos', [this.types.Double], this.types.Double);
-        compiler.defineJsFunction('stdlib.Math.sqrt', true, 'Sqr', [this.types.Double], this.types.Double);
         compiler.defineJsFunction('stdlib.Math.tan', true, 'Tan', [this.types.Double], this.types.Double);
+        compiler.defineJsFunction('stdlib.Math.sqrt', true, 'Sqr', [this.types.Double], this.types.Double);
         compiler.defineJsFunction('stdlib.Math.abs', true, 'Abs', [this.types.Integer], this.types.Integer);
         compiler.defineJsFunction('stdlib.Math.abs', true, 'Abs', [this.types.Double], this.types.Double);
 

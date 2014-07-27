@@ -66,6 +66,51 @@ function CustomTokenizer() {
         'lbracket': 'paren.lparen',
         'rbracket': 'paren.rparen',
     };
+    this.specialIdentifiers = {
+        'clearcolor': 'support.function',
+        'linecolor': 'support.function',
+        'fillcolor': 'support.function',
+        'line': 'support.function',
+        'circle': 'support.function',
+        'fillcircle': 'support.function',
+        'rect': 'support.function',
+        'fillrect': 'support.function',
+        'dot': 'support.function',
+        'clear': 'support.function',
+        'drawscreen': 'support.function',
+
+        'sin': 'support.function',
+        'cos': 'support.function',
+        'sqr': 'support.function',
+        'tan': 'support.function',
+        'abs': 'support.function',
+
+        'min': 'support.function',
+        'max': 'support.function',
+
+        'hours': 'support.function',
+        'minutes': 'support.function',
+        'seconds': 'support.function',
+        'milliseconds': 'support.function',
+
+        'keydown': 'support.function',
+        'keyup': 'support.function',
+        'keyhit': 'support.function',
+        'mousex': 'support.function',
+        'mousey': 'support.function',
+        'mousedown': 'support.function',
+        
+        'print': 'support.function',
+
+        'int': 'support.function',
+
+
+        'integer': 'support.type',
+        'double': 'support.type',
+        'number': 'support.type',
+        'string': 'support.type',
+
+    };
     this.indentEffect = {
         'for': 1,
         'next': -1,
@@ -109,7 +154,13 @@ CustomTokenizer.prototype = {
         do {
             var token = this.lexer.next();
             if(token.code !== undefined) {
-                tokens.push({ type: this.tokenTypes[token.type] || '', value: token.code });
+                var type = this.tokenTypes[token.type];
+
+                if(token.type == 'identifier') {
+                    type = this.specialIdentifiers[token.val.toLowerCase()];
+                }
+
+                tokens.push({ type: type || '', value: token.code });
             }
         } while(token.type != 'eos' && token !== null);
 
