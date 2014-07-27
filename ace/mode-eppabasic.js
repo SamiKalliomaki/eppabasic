@@ -81,7 +81,12 @@ function CustomTokenizer() {
 
         'sin': 'support.function',
         'cos': 'support.function',
-        'sqrt': 'support.function',
+        'sqr': 'support.function',
+        'tan': 'support.function',
+        'abs': 'support.function',
+
+        'min': 'support.function',
+        'max': 'support.function',
 
         'hours': 'support.function',
         'minutes': 'support.function',
