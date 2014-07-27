@@ -37,6 +37,10 @@ Runtime.prototype = {
     loadLibraries: function loadLibraries() {
         this.g2d = new Graphics2D(this.canvasHolder, this.heap);
         this.g2d.setSize(640, 480);
+        this.g2d.ctx.strokeStyle = 'rgb(255, 255, 255)';
+        this.g2d.ctx.fillStyle = 'rgb(255, 255, 255)';
+        this.g2d.clearColor = 'rgb(0, 0, 0)';
+        this.g2d.env.clear();
 
         mixin(this.env, this.g2d.env);
 
