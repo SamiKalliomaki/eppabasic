@@ -64,9 +64,9 @@ Lexer.prototype = {
         return null
             || this.eosToken()
             || this.commentToken()
+            || this.opToken()
             || this.numberToken()
             || this.stringToken()
-            || this.opToken()
             || this.commaToken()
             || this.parenthesisToken()
 
@@ -370,8 +370,8 @@ Lexer.prototype = {
     whitespaceToken: function whitespaceToken() {
         var res = this.scan(/^\s+/i, 'whitespace');
 
-        if(res) {
-            if(this.produceWhitespaceTokens) {
+        if (res) {
+            if (this.produceWhitespaceTokens) {
                 return res;
             } else {
                 return this.next();
@@ -383,7 +383,7 @@ Lexer.prototype = {
      * Indicates failure in the lexer
      */
     fail: function fail() {
-        if(this.produceUnexpectedTokens) {
+        if (this.produceUnexpectedTokens) {
             return this.scan(/^./i, 'unexpected');
         } else {
             throw new Error('Unexpected text: "' + this.input.substr(0, 10) + '"');
