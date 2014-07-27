@@ -60,6 +60,8 @@ Editor.prototype = {
         compiler.defineJsFunction('stdlib.Math.cos', true, 'Cos', [this.types.Double], this.types.Double);
         compiler.defineJsFunction('stdlib.Math.sqrt', true, 'Sqrt', [this.types.Double], this.types.Double);
 
+        compiler.defineJsFunction('env.rand', true, 'Rand', [this.types.Double, this.types.Double], this.types.Double);
+        
         //compiler.defineJsFunction('SQRT', [Types.Double], 'sqrt', Types.Double);
 
         //compiler.defineJsFunction('RANDOM', [], 'random', Types.Double);
