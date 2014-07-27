@@ -1,10 +1,10 @@
 ﻿/// <reference path="utils/string.js" />
 
-function GraphicsText(canvasHolder, heap) {
+function GraphicsText(canvasHolder, heap, strUtil) {
     this.console = document.createElement('div');
     canvasHolder.appendChild(this.console);
 
-    this.strUtil = new StringUtils(heap);
+    this.strUtil = strUtil
 
     // Make all functions to use right this
     for (func in this.env) {
@@ -29,7 +29,7 @@ GraphicsText.prototype = {
         },
 
         printStr: function print(str) {
-            str = this.strUtil.toString(str);
+            str = this.strUtil.fromEppaBasic(str);
 
             alert(str);
         },

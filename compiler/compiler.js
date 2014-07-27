@@ -592,7 +592,7 @@ Compiler.prototype = {
         // Compile f-tables in the end
         buf.push(this.generateFTable());
         // Return functions
-        buf.push('return {popCallStack: __popCallStack,init:__init,next:__next,breakExec:__breakExec,sp:__sp,cp:__cp};');
+        buf.push('return {popCallStack: __popCallStack,init:__init,next:__next,breakExec:__breakExec,sp:__sp,cp:__cp,memreserve:__memreserve};');
         buf.push('}');
 
         return buf.join('\n');
