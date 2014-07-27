@@ -6,7 +6,7 @@
     this.MEMU8 = new Int8Array(heap);
     this.MEMS32 = new Int32Array(heap);
     this.MEMF32 = new Float32Array(heap);
-    
+
     // Make all functions to use right this
     for (func in this.env) {
         if (this.env.hasOwnProperty(func))
@@ -84,6 +84,16 @@ Graphics2D.prototype = {
         },
         drawScreen: function drawScreen() {
             this.program.breakExec();
+        },
+        fullScreen: function fullScreen() {
+            if (this.canvas.requestFullscreen)
+                this.canvas.requestFullscreen();
+            else if (this.canvas.mozRequestFullScreen)
+                this.canvas.mozRequestFullScreen();
+            else if (this.canvas.webkitRequestFullScreen)
+                this.canvas.webkitRequestFullScreen();
+            else if (this.canvas.msRequestFullScreen)
+                this.canvas.msRequestFullScreen();
         }
     },
     stdlib: {}
