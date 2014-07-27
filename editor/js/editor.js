@@ -21,7 +21,7 @@ Editor.prototype = {
         this.ace.setValue(code);
     },
 
-    runCode: function runCode() { 
+    runCode: function runCode() {
         try {
             cu = this.toolchain.parse(this.getCode());
             this.toolchain.check(cu);
@@ -30,8 +30,8 @@ Editor.prototype = {
             this.compiled = this.toolchain.compile(cu);
 
             this.run();
-        } catch(e) {
-            if(e instanceof CompileError) {
+        } catch (e) {
+            if (e instanceof CompileError) {
                 this.showError(e);
                 this.ace.gotoLine(e.line);
             } else {
@@ -52,7 +52,7 @@ Editor.prototype = {
     showError: function showError(e) {
         this.ace.getSession().setAnnotations([{
             row: e.line - 1,
-            text: e.msg, 
+            text: e.msg,
             type: 'error'
         }]);
     },
