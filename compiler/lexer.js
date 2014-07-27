@@ -386,7 +386,7 @@ Lexer.prototype = {
         if (this.produceUnexpectedTokens) {
             return this.scan(/^./i, 'unexpected');
         } else {
-            throw new Error('Unexpected text: "' + this.input.substr(0, 10) + '"');
+            throw new CompileError(this.lineno, 'Unexpected text: "' + this.input.substr(0, 10) + '"');
         }
     }
 };

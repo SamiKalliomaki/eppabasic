@@ -34,7 +34,7 @@ Parser.prototype = {
     expect: function expect(type) {
         if (this.peek().type === type)
             return this.advance();
-        throw new Error('Expected "' + type + '" but got "' + this.peek().type + '" at line ' + this.peek().line);
+        throw new CompileError(this.peek().line, 'Expected "' + type + '" but got "' + this.peek().type + '"');
     },
 
     /*
@@ -86,7 +86,7 @@ Parser.prototype = {
             case 'sub':
                 return this.parseSubDefinition();
             default:
-                throw new Error('Unexpected token "' + this.peek().type + '" at line ' + this.peek().line);
+                throw new CompileError(this.peek().line, 'Unexpected token "' + this.peek().type + '"');
         }
     },
 
@@ -112,7 +112,7 @@ Parser.prototype = {
             case 'return':
                 return this.parseReturn();
             default:
-                throw new Error('Unexpected token "' + this.peek().type + '" at line ' + this.peek().line);
+                throw new CompileError(this.peek().line, 'Unexpected token "' + this.peek().type + '"');
         }
     },
 
@@ -183,9 +183,9 @@ Parser.prototype = {
 
         var block = this.parseBlock();
 
-        this.expect('next');
+        var nextLine = this.expect('next').line;
         if (variable.name !== this.expect('identifier').val)
-            throw new Error('Next statement must have same variable as the original for statement');
+            throw new CompileError(nextLine, 'Next statement must have same variable as the original for statement');
 
         return new Nodes.For(variable, block, start, stop, step, line);
     },
@@ -451,7 +451,7 @@ Parser.prototype = {
                     return node;
                     break;
                 default:
-                    throw new Error('Number or variable expected instead of "' + t.type + '" at line ' + t.line);
+                    throw new CompileError(t.line, 'Number or variable expected instead of "' + t.type + '"');
             }
         }
 

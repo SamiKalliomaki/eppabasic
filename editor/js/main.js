@@ -1,6 +1,6 @@
 $(function() {
     var notificationSystem = new NotificationSystem('#notification-box');
-    var editor = new Editor('editor', document.getElementById('manual'));
+    var editor = new Editor('editor');
     var userControlsController = new UserControlsController('#user-controls');
     var fileDialogController = new FileDialogController('#file-dialog-wrapper', notificationSystem);
     var fileControlsController = new FileControlsController('#file-controls', editor, userControlsController, fileDialogController, notificationSystem);

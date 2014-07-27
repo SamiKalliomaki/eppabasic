@@ -3,9 +3,8 @@
 /// <reference path="../compiler/types.js" />
 /// <reference path="../compiler/compiler.js" />
 
-function Editor(editorName, errBox) {
+function Editor(editorName) {
     this.editorName = editorName;
-    this.errBox = errBox;
 
     this.types = new TypeContainer();
     this.operators = new OperatorContainer(this.types);
@@ -15,7 +14,6 @@ function Editor(editorName, errBox) {
     this.ace.setTheme('ace/theme/chaos');
     this.ace.getSession().setMode('ace/mode/eppabasic');
     this.ace.setShowPrintMargin(false);
-
 }
 
 Editor.prototype = {
@@ -25,15 +23,30 @@ Editor.prototype = {
     setCode: function setCode(code) {
         this.ace.setValue(code);
     },
-    parse: function parse() {
-        var parser = new Parser(this.ace.getValue(), this.operators, this.types);
+
+    runCode: function runCode() { 
         try {
-            this.ast = parser.parse();
-        } catch (e) {
-            this.errBox.innerHTML = e.message;
-            throw e;
+            this.parse();
+            this.compile();
+            this.ace.getSession().clearAnnotations();
+
+            this.run();
+        } catch(e) {
+            if(e instanceof CompileError) {
+                this.showError(e);
+                this.ace.gotoLine(e.line);
+            } else {
+                alert(e.message);
+                throw e;
+            }
         }
     },
+
+    parse: function parse() {
+        var parser = new Parser(this.getCode(), this.operators, this.types);
+        this.ast = parser.parse();
+    },
+
     compile: function compile() {
         var compiler = new Compiler(this.ast, this.operators, this.types);
 
@@ -108,22 +121,29 @@ Editor.prototype = {
         //// Casting
         compiler.defineJsFunction('__int', false, 'Int', [this.types.Integer], this.types.Integer);
 
-
-        try {
-            // Do checkings here
-            // TODO Move elsewhere
-            new Typechecker(this.ast, compiler.functions, this.operators, this.types).check();
-            new Atomicchecker(this.ast, compiler.functions).check();
+        // Do checkings here
+        // TODO Move elsewhere
+        new Typechecker(this.ast, compiler.functions, this.operators, this.types).check();
+        new Atomicchecker(this.ast, compiler.functions).check();
 
 
-            this.compiled = compiler.compile();
+        this.compiled = compiler.compile();
+    },
 
-            //document.getElementById('codeBox').innerHTML = this.compiled;
-            this.errBox.innerHTML = "";
-        } catch (e) {
-            this.errBox.innerHTML = e.message;
-            throw e;
-        }
+    run: function run() {
+        this.runtimeReady(function ready() {
+            this.window.ebruntime.init();
+            this.window.ebruntime.start();
+        });
+        this.openRuntime();
+    },
+
+    showError: function showError(e) {
+        this.ace.getSession().setAnnotations([{
+            row: e.line - 1,
+            text: e.msg, 
+            type: 'error'
+        }]);
     },
 
     openRuntime: function openRuntime() {
@@ -135,6 +155,7 @@ Editor.prototype = {
         this.window = window.open('runtime/index.html', 'runtime', 'dependent,dialog,height=480,width=640', true);
 
     },
+
     closeRuntime: function closeRuntime() {
         if (this.window)
             this.window.close();
@@ -147,6 +168,4 @@ Editor.prototype = {
             this.onRuntimeReady();
         }
     }
-
-
 };
