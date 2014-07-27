@@ -12,8 +12,16 @@ $(function() {
 
     window.ebeditor = editor;
 
-    i18n.init(function(t) {
-      $('body').i18n();
+    i18n.init({ fallbackLng: 'en-US' }, function(t) {
+        $('#language-selection').val(i18n.options.lng);
+
+        $('#language-selection').change(function() {
+            i18n.setLng($('#language-selection').val(), function(t) {
+                $('body').i18n();
+            });
+        });
+        
+        $('body').i18n();
     });
 
     $('#editor').resizable({

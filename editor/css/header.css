@@ -31,18 +31,23 @@
 {
 	height: 30px;
 	margin-right: 5px;
+	vertical-align: middle;
+	line-height: 100%;
 }
 
 .header-button
 {
 	min-width: 100px;
-	vertical-align: middle;
-	line-height: 100%;
 }
 
 #file-controls
 {
 	display: none;
+}
+
+#language-selection
+{
+	width: 150px;
 }
 
 .top-right-box
