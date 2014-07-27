@@ -72,8 +72,6 @@ function CustomTokenizer() {
 
 CustomTokenizer.prototype = {
     getLineTokens: function(line, state, row) {
-        console.log(line);
-
         var tokens = [];
         this.lexer.input = line;
 
