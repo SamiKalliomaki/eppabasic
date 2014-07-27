@@ -87,6 +87,8 @@ function CustomTokenizer() {
         'clearscreen': 'support.function',
         'clear': 'support.function',
         'drawscreen': 'support.function',
+        'widht': 'support.function',
+        'height': 'support.function',
 
         'sin': 'support.function',
         'cos': 'support.function',
