@@ -37,6 +37,7 @@ Runtime.prototype = {
     loadLibraries: function loadLibraries() {
         this.g2d = new Graphics2D(this.canvasHolder, this.heap);
         this.g2d.setSize(640, 480);
+
         mixin(this.env, this.g2d.env);
 
         var gtext = new GraphicsText(this.canvasHolder, this.heap);

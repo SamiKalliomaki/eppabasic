@@ -6,7 +6,7 @@
     this.MEMU8 = new Int8Array(heap);
     this.MEMS32 = new Int32Array(heap);
     this.MEMF32 = new Float32Array(heap);
-
+    
     // Make all functions to use right this
     for (func in this.env) {
         if (this.env.hasOwnProperty(func))
