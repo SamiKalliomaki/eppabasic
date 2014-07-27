@@ -138,6 +138,10 @@ OperatorContainer.prototype = {
             new UnaryOperatorCompiler('-', this.types.Integer, this.types.Integer, false)));
         this.addOperator(new UnaryOperator(this.types.Double, 'minus', this.types.Double,
             new UnaryOperatorCompiler('-', this.types.Double, this.types.Double, false)));
+
+        // String operators
+        this.addOperator(new BinaryOperator(this.types.String, 'concat', this.types.String, this.types.String,
+           new BinaryOperatorCompiler('__concat', this.types.String, this.types.String, this.types.String, false)));
     },
 
     getTokensByPriority: function getTokensByPriority(priority) {
