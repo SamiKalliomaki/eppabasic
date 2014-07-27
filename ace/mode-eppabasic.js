@@ -79,8 +79,8 @@ CustomTokenizer.prototype = {
 
         do {
             var token = this.lexer.next();
-            if(token.val !== undefined) {
-                tokens.push({ type: this.tokenTypes[token.type] || '', value: token.val });
+            if(token.code !== undefined) {
+                tokens.push({ type: this.tokenTypes[token.type] || '', value: token.code });
             }
         } while(token.type != 'eos' && token !== null);
 

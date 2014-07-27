@@ -10,8 +10,9 @@ Lexer.prototype = {
     /*
      * Creates a generic token with specific type and value
      */
-    tok: function tok(type, val) {
+    tok: function tok(code, type, val) {
         return {
+            code: code,
             type: type,
             line: this.lineno,
             val: val
@@ -52,7 +53,7 @@ Lexer.prototype = {
         var captures;
         if (captures = regex.exec(this.input)) {
             this.consume(captures[0].length);
-            return this.tok(type, captures[0]);
+            return this.tok(captures[0], type, captures[1]);
         }
     },
 
@@ -117,14 +118,28 @@ Lexer.prototype = {
     eosToken: function eosToken() {
         if (this.input.length)
             return;
-        return this.tok('eos');
+        return this.tok('', 'eos');
     },
 
     /*
      * Parses a comment token from the input
      */
     commentToken: function commentToken() {
-        return this.scan(/^('[^\n]*)/, 'comment');
+        return this.scan(/^'[^\n]*/, 'comment');
+    },
+
+    /*
+     * Parses a number from the input
+     */
+    numberToken: function numberToken() {
+        return this.scan(/^(-?\d*\.?\d+)/, 'number')
+    },
+
+    /*
+     * Parses a string from the input
+     */
+    stringToken: function stringToken() {
+        return this.scan(/^"(.*?)"/, 'string')            // TODO More sophisticated string lexer
     },
 
     /*
@@ -154,23 +169,37 @@ Lexer.prototype = {
                 'mod': 'mod',
                 '&': 'concat',
             };
-            return this.tok(map[captures[1].toLowerCase()], captures[0].toLowerCase());
+            return this.tok(captures[0], map[captures[1].toLowerCase()]);
         }
     },
+
+    /*
+     * Parses a comma from the input
+     */
+    commaToken: function commaToken() {
+        return this.scan(/^,/, 'comma');
+    },
+
     /*
      * Parses parenthesis (ie. '(' and  ')') from the input
      */
     parenthesisToken: function parenthesisToken() {
-        var captures;
-        if (captures = /^(\(|\))/i.exec(this.input)) {
-            this.consume(captures[0].length);
-            var map = {
-                '(': 'lparen',
-                ')': 'rparen',
-            };
-            return this.tok(map[captures[1].toLowerCase()], captures[0]);
+        if (this.input[0] == '(') {
+            this.consume(1);
+            return this.tok('(', 'lparen');
+        } else if (this.input[0] == ')') {
+            this.consume(1);
+            return this.tok(')', 'rparen');
         }
     },
+
+    /*
+     * Parses for token
+     */
+    forToken: function forToken() {
+        return this.scan(/^FOR\b/i, 'for');
+    },
+
     /*
      * Parses a "TO" token from the input
      */
@@ -179,23 +208,151 @@ Lexer.prototype = {
     },
 
     /*
+     * Parses a "STEP" token from the input
+     */
+    stepToken: function stepToken() {
+        return this.scan(/^STEP\b/i, 'step');
+    },
+
+    /*
+     * Parses a "NEXT" token from the input
+     */
+    nextToken: function nextToken() {
+        return this.scan(/^NEXT\b/i, 'next');
+    },
+
+    /*
+    * Parses a "DO" token from the input
+    */
+    doToken: function doToken() {
+        return this.scan(/^DO\b/i, 'do');
+    },
+
+    /*
+    * Parses a "LOOP" token from the input
+    */
+    loopToken: function loopToken() {
+        return this.scan(/^LOOP\b/i, 'loop');
+    },
+
+    /*
+    * Parses a "UNTIL" token from the input
+    */
+    untilToken: function untilToken() {
+        return this.scan(/^UNTIL\b/i, 'until');
+    },
+
+    /*
+    * Parses a "WHILE" token from the input
+    */
+    whileToken: function whileToken() {
+        return this.scan(/^WHILE\b/i, 'while');
+    },
+
+    /*
+     * Parses a "IF" token from the input
+     */
+    ifToken: function ifToken() {
+        return this.scan(/^IF\b/i, 'if');
+    },
+
+    /*
+     * Parses a "THEN" token from the input
+     */
+    thenToken: function thenToken() {
+        return this.scan(/^THEN\b/i, 'then');
+    },
+
+    /*
+     * Parses a "ELSEIF" token from the input
+     */
+    elseIfToken: function elseIfToken() {
+        return this.scan(/^ELSEIF\b/i, 'elseif');
+    },
+
+    /*
+     * Parses a "ELSE" token from the input
+     */
+    elseToken: function elseToken() {
+        return this.scan(/^ELSE\b/i, 'else');
+    },
+
+    /*
+     * Parses a "ENDIF" token from the input
+     */
+    endIfToken: function endIfToken() {
+        return this.scan(/^END +IF\b/i, 'endif');
+    },
+
+    /*
+     * Parses a "DIM" token from the input
+     */
+    dimToken: function dimToken() {
+        return this.scan(/^DIM\b/i, 'dim');
+    },
+
+    /*
+     * Parses a "AS" token from the input
+     */
+    asToken: function asToken() {
+        return this.scan(/^AS\b/i, 'as');
+    },
+
+    /*
+     * Parses a "FUNCTION" token from the input
+     */
+    functionToken: function functionToken() {
+        return this.scan(/^FUNCTION\b/i, 'function');
+    },
+
+    /*
+     * Parses a "RETURN" token from the input
+     */
+    returnToken: function returnToken() {
+        return this.scan(/^RETURN\b/i, 'return');
+    },
+
+    /*
+     * Parses a "END FUNCTION" token from the input
+     */
+    endFunctionToken: function endFunctionToken() {
+        return this.scan(/^END +FUNCTION\b/i, 'endfunction');
+    },
+
+    /*
+     * Parses a "SUB" token from the input
+     */
+    subToken: function subToken() {
+        return this.scan(/^SUB\b/i, 'sub');
+    },
+
+    /*
+     * Parses a "END SUB" token from the input
+     */
+    endSubToken: function endSubToken() {
+        return this.scan(/^END +SUB\b/i, 'endsub');
+    },
+
+    /*
+     * Parses brackets ("[" and "]") from the input
+     */
+    bracketToken: function bracketToken() {
+        if (this.input[0] == '[') {
+            this.consume(1);
+            return this.tok('[', 'lbracket');
+        } else if (this.input[0] == ']') {
+            this.consume(1);
+            return this.tok(']', 'rbracket');
+        }
+    },
+
+    /*
      * Parses a identifier (ie. variable names) token
      */
     identifierToken: function ideintifierToken() {
-        return this.scan(/^[A-Za-z][_\w]*/, 'identifier');
+        return this.scan(/^([A-Za-z][_\w]*)/, 'identifier');
     },
-    /*
-     * Parses a number from the input
-     */
-    numberToken: function numberToken() {
-        return this.scan(/^-?\d*\.?\d+/, 'number')
-    },
-    /*
-     * Parses a string from the input
-     */
-    stringToken: function stringToken() {
-        return this.scan(/^".*?"/, 'string')            // TODO More sophisticated string lexer
-    },
+
     /*
      * Parses a newline from the input
      */
@@ -219,148 +376,6 @@ Lexer.prototype = {
             } else {
                 return this.next();
             }
-        }
-    },
-
-    /*
-     * Parses a comma from the input
-     */
-    commaToken: function commaToken() {
-        return this.scan(/^,/, 'comma');
-    },
-
-    /*
-     * Parses for token
-     */
-    forToken: function forToken() {
-        return this.scan(/^FOR\b/i, 'for');
-    },
-    /*
-     * Parses a "NEXT" token from the input
-     */
-    nextToken: function nextToken() {
-        return this.scan(/^NEXT\b/i, 'next');
-    },
-    /*
-     * Parses a "STEP" token from the input
-     */
-    stepToken: function stepToken() {
-        return this.scan(/^STEP\b/i, 'step');
-    },
-
-    /*
-    * Parses a "DO" token from the input
-    */
-    doToken: function doToken() {
-        return this.scan(/^DO\b/i, 'do');
-    },
-    /*
-    * Parses a "LOOP" token from the input
-    */
-    loopToken: function loopToken() {
-        return this.scan(/^LOOP\b/i, 'loop');
-    },
-    /*
-    * Parses a "UNTIL" token from the input
-    */
-    untilToken: function untilToken() {
-        return this.scan(/^UNTIL\b/i, 'until');
-    },
-    /*
-    * Parses a "WHILE" token from the input
-    */
-    whileToken: function whileToken() {
-        return this.scan(/^WHILE\b/i, 'while');
-    },
-
-    /*
-     * Parses a "IF" token from the input
-     */
-    ifToken: function ifToken() {
-        return this.scan(/^IF\b/i, 'if');
-    },
-    /*
-     * Parses a "THEN" token from the input
-     */
-    thenToken: function thenToken() {
-        return this.scan(/^THEN\b/i, 'then');
-    },
-    /*
-     * Parses a "ELSEIF" token from the input
-     */
-    elseIfToken: function elseIfToken() {
-        return this.scan(/^ELSEIF\b/i, 'elseif');
-    },
-    /*
-     * Parses a "ELSE" token from the input
-     */
-    elseToken: function elseToken() {
-        return this.scan(/^ELSE\b/i, 'else');
-    },
-    /*
-     * Parses a "ENDIF" token from the input
-     */
-    endIfToken: function endIfToken() {
-        return this.scan(/^END +IF\b/i, 'endif');
-    },
-
-    /*
-     * Parses a "DIM" token from the input
-     */
-    dimToken: function dimToken() {
-        return this.scan(/^DIM\b/i, 'dim');
-    },
-    /*
-     * Parses a "AS" token from the input
-     */
-    asToken: function asToken() {
-        return this.scan(/^AS\b/i, 'as');
-    },
-
-    /*
-     * Parses a "FUNCTION" token from the input
-     */
-    functionToken: function functionToken() {
-        return this.scan(/^FUNCTION\b/i, 'function');
-    },
-    /*
-     * Parses a "RETURN" token from the input
-     */
-    returnToken: function returnToken() {
-        return this.scan(/^RETURN\b/i, 'return');
-    },
-    /*
-     * Parses a "END FUNCTION" token from the input
-     */
-    endFunctionToken: function endFunctionToken() {
-        return this.scan(/^END +FUNCTION\b/i, 'endfunction');
-    },
-
-    /*
-     * Parses a "SUB" token from the input
-     */
-    subToken: function subToken() {
-        return this.scan(/^SUB\b/i, 'sub');
-    },
-    /*
-     * Parses a "END SUB" token from the input
-     */
-    endSubToken: function endSubToken() {
-        return this.scan(/^END +SUB\b/i, 'endsub');
-    },
-
-    /*
-     * Parses brackets ("[" and "]") from the input
-     */
-    bracketToken: function bracketToken() {
-        var captures;
-        if (captures = /^(\[|\])/i.exec(this.input)) {
-            this.consume(captures[0].length);
-            var map = {
-                '[': 'lbracket',
-                ']': 'rbracket',
-            };
-            return this.tok(map[captures[1].toLowerCase()], captures[0]);
         }
     },
 
