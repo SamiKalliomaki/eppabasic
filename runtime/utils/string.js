@@ -1,7 +1,7 @@
 ﻿function StringUtils(heap) {
     this.heap = heap;
     this.MEMS32 = new Int32Array(heap);
-    this.MEMU8 = new Int8Array(heap);
+    this.MEMU8 = new Uint8Array(heap);
 }
 
 StringUtils.prototype = {
