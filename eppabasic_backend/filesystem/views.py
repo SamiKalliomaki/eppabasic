@@ -89,7 +89,7 @@ class OpenFileView(AjaxView):
         if not has_rights_dir(self.request.user, form.cleaned_data['directory']):
             return HttpResponse('Unauthorized', status=401)
 
-        return JsonResponse({'result': 'success', 'content': form.file_cache.content})
+        return JsonResponse({'result': 'success', 'content': form.file_cache.content, 'editable': has_rights_dir(self.request.user, form.cleaned_data['directory'], edit=True) })
 
 class CreateDirectoryView(AjaxView):
     form_class = CreateDirectoryForm
