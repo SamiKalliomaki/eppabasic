@@ -146,6 +146,18 @@ Graphics2D.prototype = {
         textSize: function textSize(x) {
             this.textSize = x;
         },
+        message: function message(str) {
+            str = this.strUtil.fromEppaBasic(str);
+            alert(str);
+        },
+        askNumber: function askNumber(str) {
+            str = this.strUtil.fromEppaBasic(str);
+            return parseInt(prompt(str));
+        },
+        askText: function askText(str) {
+            str = this.strUtil.fromEppaBasic(str);
+            return prompt(str);
+        },
     },
     stdlib: {}
 };

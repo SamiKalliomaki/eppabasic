@@ -4,6 +4,8 @@ Komennot
 A
 ----------
 * [Abs](manual:abs)
+* [AskNumber](manual:asknumber)
+* [AskText](manual:asktext)
 
 C
 ----------
@@ -40,6 +42,7 @@ K
 M
 ----------
 * [Max](manual:max)
+* [Message](manual:message)
 * [Milliseconds](manual:milliseconds)
 * [Min](manual:min)
 * [Minutes](manual:minutes)
