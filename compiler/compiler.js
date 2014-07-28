@@ -242,7 +242,7 @@ CompilerAbsoluteStackReference.prototype = {
             mem = 'MEMF64';
             shift = 3;
         }
-        this.context.push(mem + '[(' + 1024 + this.offset + '|0)>>' + shift + ']=' + value.type.castTo(value.getValue(), this.type) + ';');
+        this.context.push(mem + '[(SB+' + this.offset + '|0)>>' + shift + ']=' + value.type.castTo(value.getValue(), this.type) + ';');
     },
     getValue: function getValue() {
         var mem = 'MEMS32';
@@ -251,7 +251,7 @@ CompilerAbsoluteStackReference.prototype = {
             mem = 'MEMF64';
             shift = 3;
         }
-        return this.type.cast(mem + '[(' + 1024 + this.offset + '|0)>>' + shift + ']');
+        return this.type.cast(mem + '[(SB+' + this.offset + '|0)>>' + shift + ']');
     },
     free: function free(real) {
         if (real !== false)
@@ -630,6 +630,7 @@ Compiler.prototype = {
         buf.push('var imul=stdlib.Math.imul;');
         buf.push('var __pow=stdlib.Math.pow;');
         buf.push('var SP=0;');
+        buf.push('var SB=0;');
         buf.push('var CP=0;');
         buf.push('var NEXT_FREE=2048;')
         buf.push('var STRING_HEADER_LENGTH=4;')
@@ -637,7 +638,7 @@ Compiler.prototype = {
         buf.push(this.env.join('\n'));
         // Compile all the other functions
         buf.push('function __popCallStack(){CP=(CP-4)|0;}');
-        buf.push('function __init(){SP=1024;CP=0;MEMU32[CP>>2]=' + mainEntry.index + ';}');
+        buf.push('function __init(){SB=SP=1024;CP=0;MEMU32[CP>>2]=' + mainEntry.index + ';}');
         var mainEntryList = this.findEntryList([], this.types.Integer);
         buf.push('function __next(){while(' + mainEntryList.name + '[MEMU32[CP>>2]&' + mainEntryList.mask + ']()|0);}');
         buf.push('function __breakExec(){CP=(CP+4)|0;MEMU32[CP>>2]=' + breakEntry.index + ';}');
