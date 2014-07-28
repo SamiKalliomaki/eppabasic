@@ -22,22 +22,15 @@ Editor.prototype = {
     },
 
     runCode: function runCode() {
-        try {
-            cu = this.toolchain.parse(this.getCode());
-            this.toolchain.check(cu);
-            this.ace.getSession().clearAnnotations();
+        cu = this.toolchain.parse(this.getCode());
+        this.toolchain.check(cu);
 
+        this.ace.getSession().clearAnnotations();
+        if(cu.errors.length !== 0) {
+            this.showErrors(cu.errors);
+        } else {
             this.compiled = this.toolchain.compile(cu);
-
             this.run();
-        } catch (e) {
-            if (e instanceof CompileError) {
-                this.showError(e);
-                this.ace.gotoLine(e.line);
-            } else {
-                alert(e.message);
-                throw e;
-            }
         }
     },
 
@@ -49,12 +42,18 @@ Editor.prototype = {
         this.openRuntime();
     },
 
-    showError: function showError(e) {
-        this.ace.getSession().setAnnotations([{
-            row: e.line - 1,
-            text: e.msg,
-            type: 'error'
-        }]);
+    showErrors: function showError(errors) {
+        var annotations = [];
+
+        errors.forEach(function(e) {
+            annotations.push({
+                row: e.line - 1,
+                text: e.msg,
+                type: 'error'
+            });
+        });
+
+        this.ace.getSession().setAnnotations(annotations);
     },
 
     openRuntime: function openRuntime() {

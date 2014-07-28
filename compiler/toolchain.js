@@ -1,6 +1,7 @@
-function CompilationUnit(ast, compiler) {
+function CompilationUnit(ast, compiler, errors) {
     this.ast = ast;
     this.compiler = compiler;
+    this.errors = errors;
 }
 
 CompilationUnit.prototype = {
@@ -15,24 +16,37 @@ function Toolchain() {
 
 Toolchain.prototype = {
     parse: function(code) {
-        var parser = new Parser(code, this.operators, this.types);
+        var parser = this.getParser(code);
         var ast = parser.parse();
-        var compiler = new Compiler(ast, this.operators, this.types);
-        this.defineFunctions(compiler);
+        var compiler;
+        if(parser.errors.length === 0) {
+            compiler = new Compiler(ast, this.operators, this.types);
+            this.defineFunctions(compiler);
+        }
 
-        return new CompilationUnit(ast, compiler);
+        return new CompilationUnit(ast, compiler, parser.errors);
     },
 
     check: function(compilationUnit) {
         var ast = compilationUnit.ast;
         var compiler = compilationUnit.compiler;
 
-        new Typechecker(ast, compiler.functions, this.operators, this.types).check();
-        new Atomicchecker(ast, compiler.functions).check();
+        if(compilationUnit.errors.length === 0) {
+            var typechecker = new Typechecker(ast, compiler.functions, this.operators, this.types);
+            typechecker.check();
+            Array.prototype.push.apply(compilationUnit.errors, typechecker.errors);
+        }
+        if(compilationUnit.errors.length === 0) {
+            new Atomicchecker(ast, compiler.functions).check();
+        }
     },
 
     compile: function(compilationUnit) {
         return compilationUnit.compiler.compile();
+    },
+
+    getParser: function(code) {
+        return new Parser(code, this.operators, this.types);
     },
 
     defineFunctions: function(compiler) {

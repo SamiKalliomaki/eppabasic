@@ -1,8 +1,8 @@
-﻿function Lexer(input, produceWhitespaceTokens, produceUnexpectedTokens) {
+﻿function Lexer(input, produceUnexpectedTokens) {
     this.input = input || "";
     this.stash = [];
+    this.allTokens = [];
     this.lineno = 1;
-    this.produceWhitespaceTokens = produceWhitespaceTokens;
     this.produceUnexpectedTokens = produceUnexpectedTokens;
 }
 
@@ -24,12 +24,29 @@ Lexer.prototype = {
     consume: function consume(len) {
         this.input = this.input.substr(len);
     },
+
+    /*
+     * Adds token to the stash
+     */
+    addTokenToStash: function() {
+        var token = this.tok('', 'whitespace');
+
+        while(token.type === 'whitespace') {
+            token = this.next();
+            
+            if(token)
+                this.allTokens.push(token);
+        }
+
+        this.stash.push(token);
+    },
+
     /*
      * Peeks n:th token from the input
      */
     peek: function peek(n) {
         var fetch = n - this.stash.length;
-        while (fetch-- > 0) this.stash.push(this.next());
+        while (fetch-- > 0) this.addTokenToStash();
         return this.stash[--n];
     },
     /*
@@ -43,8 +60,10 @@ Lexer.prototype = {
      * Returns and removes the next token
      */
     advance: function advance() {
-        return this.stashed()
-            || this.next();
+        if(this.stash.length === 0)
+            this.addTokenToStash();
+
+        return this.stashed();
     },
     /*
      * Scans input for tokens specified by regex
@@ -369,15 +388,7 @@ Lexer.prototype = {
      * Parses whitespace token
      */
     whitespaceToken: function whitespaceToken() {
-        var res = this.scan(/^\s+/i, 'whitespace');
-
-        if (res) {
-            if (this.produceWhitespaceTokens) {
-                return res;
-            } else {
-                return this.next();
-            }
-        }
+        return this.scan(/^\s+/i, 'whitespace');
     },
 
     /*

@@ -7,9 +7,10 @@ function Parser(input, operators, types) {
     /// <param name='input' type='String' />
     /// <param name='operators' type='OperatorContainer' />
     /// <param name='types' type='TypeContainer' />
-    this.lexer = new Lexer(input);
+    this.lexer = new Lexer(input, true);
     this.operators = operators;
     this.types = types;
+    this.errors = [];
 }
 
 Parser.prototype = {
@@ -32,9 +33,20 @@ Parser.prototype = {
      * Otherwise throws an exception
      */
     expect: function expect(type) {
-        if (this.peek().type === type)
+        var node = this.peek();
+
+        if (node.type === type)
             return this.advance();
-        throw new CompileError(this.peek().line, 'Expected "' + type + '" but got "' + this.peek().type + '"');
+
+        while(this.peek().type !== 'eos' && this.peek().type !== 'newline') {
+            this.advance();
+        }
+
+        if(this.peek().type !== 'newline') {
+            this.advance();
+        }
+
+        throw new CompileError(node.line, 'Expected "' + type + '" but got "' + node.type + '"');
     },
 
     /*
@@ -48,7 +60,16 @@ Parser.prototype = {
                 this.advance();
                 continue;
             }
-            block.nodes.push(this.parseBaselevelStatement());
+
+            try {
+                block.nodes.push(this.parseBaselevelStatement());
+            } catch(e) {
+                if(e instanceof CompileError) {
+                    this.errors.push(e);
+                } else {
+                    throw e;
+                }
+            }
 
             // Comment can be at the end of a line
             if (this.peek().type === 'comment') {
@@ -56,7 +77,16 @@ Parser.prototype = {
             }
             if (this.peek().type === 'eos')
                 break;
-            this.expect('newline');     // Expect newline after every statement
+
+            try {
+                this.expect('newline');     // Expect newline after every statement
+            } catch(e) {
+                if(e instanceof CompileError) {
+                    this.errors.push(e);
+                } else {
+                    throw e;
+                }
+            }
         }
 
         return block;
@@ -69,24 +99,12 @@ Parser.prototype = {
      */
     parseBaselevelStatement: function parseBaselevelStatement() {
         switch (this.peek().type) {
-            case 'comment':
-                return this.parseComment();
-            case 'dim':
-                return this.parseVariableDefinition();
-            case 'for':
-                return this.parseFor();
             case 'function':
                 return this.parseFunctionDefinition();
-            case 'identifier':
-                return this.parseIdentifier();
-            case 'if':
-                return this.parseIf();
-            case 'do':
-                return this.parseDoLoop();
             case 'sub':
                 return this.parseSubDefinition();
             default:
-                throw new CompileError(this.peek().line, 'Unexpected token "' + this.peek().type + '"');
+                return this.parseStatement();
         }
     },
 
@@ -96,23 +114,31 @@ Parser.prototype = {
      * Statement can also be inside a block, so it can not contain function definitions.
      */
     parseStatement: function parseStatement() {
-        switch (this.peek().type) {
-            case 'comment':
-                return this.parseComment();
-            case 'dim':
-                return this.parseVariableDefinition();
-            case 'for':
-                return this.parseFor();
-            case 'identifier':
-                return this.parseIdentifier();
-            case 'if':
-                return this.parseIf();
-            case 'do':
-                return this.parseDoLoop();
-            case 'return':
-                return this.parseReturn();
-            default:
-                throw new CompileError(this.peek().line, 'Unexpected token "' + this.peek().type + '"');
+        try {
+            switch (this.peek().type) {
+                case 'comment':
+                    return this.parseComment();
+                case 'dim':
+                    return this.parseVariableDefinition();
+                case 'for':
+                    return this.parseFor();
+                case 'identifier':
+                    return this.parseIdentifier();
+                case 'if':
+                    return this.parseIf();
+                case 'do':
+                    return this.parseDoLoop();
+                case 'return':
+                    return this.parseReturn();
+                default:
+                    throw new CompileError(this.peek().line, 'Unexpected token "' + this.peek().type + '"');
+            }
+        } catch(e) {
+            if(e instanceof CompileError) {
+                this.errors.push(e);
+            } else {
+                throw e;
+            }
         }
     },
 
@@ -137,9 +163,18 @@ Parser.prototype = {
         if (this.peek().type === 'comment') {
             block.nodes.push(this.parseComment());
         }
-        this.expect('newline');
 
-        while (1) {
+        try {
+            this.expect('newline');
+        } catch(e) {
+            if(e instanceof CompileError) {
+                this.errors.push(e);
+            } else {
+                throw e;
+            }
+        }
+
+        while (this.peek().type !== 'eos') {
             if (this.peek().type === 'newline') {
                 this.advance();
                 continue;
@@ -160,8 +195,19 @@ Parser.prototype = {
             if (this.peek().type === 'comment') {
                 block.nodes.push(this.parseComment());
             }
-            this.expect('newline');     // Expect newline after every statement
+
+            try {
+                this.expect('newline');     // Expect newline after every statement
+            } catch(e) {
+                if(e instanceof CompileError) {
+                    this.errors.push(e);
+                } else {
+                    throw e;
+                }
+            }
         }
+
+        return block;
     },
 
     /*
@@ -170,22 +216,43 @@ Parser.prototype = {
     parseFor: function parseFor() {
         var line = this.expect('for').line;
 
-        var variable = new Nodes.VariableDefinition(this.expect('identifier').val, line);
-        this.expect('eq');
-        var start = this.parseExpr();
-        this.expect('to');
-        var stop = this.parseExpr();
-        var step = new Nodes.Number('1', line);
-        if (this.peek().type === 'step') {
-            this.advance();
-            step = this.parseExpr();
+        var variable;
+        var start;
+        var stop;
+        var step;
+
+        try {
+            variable = new Nodes.VariableDefinition(this.expect('identifier').val, line);
+            this.expect('eq');
+            start = this.parseExpr();
+            this.expect('to');
+            stop = this.parseExpr();
+            step = new Nodes.Number('1', line);
+            if (this.peek().type === 'step') {
+                this.advance();
+                step = this.parseExpr();
+            }
+        } catch(e) {
+            if(e instanceof CompileError) {
+                this.errors.push(e);
+            } else {
+                throw e;
+            }
         }
 
         var block = this.parseBlock();
 
-        var nextLine = this.expect('next').line;
-        if (variable.name !== this.expect('identifier').val)
-            throw new CompileError(nextLine, 'Next statement must have same variable as the original for statement');
+        try {
+            var nextLine = this.expect('next').line;
+            if (variable && variable.name !== this.expect('identifier').val)
+                throw new CompileError(nextLine, 'Next statement must have same variable as the original for statement');
+        } catch(e) {
+            if(e instanceof CompileError) {
+                this.errors.push(e);
+            } else {
+                throw e;
+            }
+        }
 
         return new Nodes.For(variable, block, start, stop, step, line);
     },
@@ -193,12 +260,22 @@ Parser.prototype = {
      * Parses an if statement
      */
     parseIf: function parseIf() {
-        this.expect('if');
+        var expr;
 
-        var expr = this.parseExpr()
-        this.expect('then');
+        try {
+            this.expect('if');
+            expr = this.parseExpr();
+            this.expect('then');
+        } catch(e) {
+            if(e instanceof CompileError) {
+                this.errors.push(e);
+            } else {
+                throw e;
+            }
+        }
+
         var trueStatement = this.parseBlock();
-        var res = new Nodes.If(expr, trueStatement, undefined, expr.line);
+        var res = new Nodes.If(expr, trueStatement, undefined, expr && expr.line);
         var cur = res;
 
         while (this.peek().type !== 'endif') {
@@ -208,8 +285,16 @@ Parser.prototype = {
                 break;
             } else if (this.peek().type === 'elseif') {
                 this.advance();
-                expr = this.parseExpr();
-                this.expect('then');
+                try {
+                    expr = this.parseExpr();
+                    this.expect('then');
+                } catch(e) {
+                    if(e instanceof CompileError) {
+                        this.errors.push(e);
+                    } else {
+                        throw e;
+                    }
+                }
                 trueStatement = this.parseBlock();
                 cur = cur.falseStatement = new Nodes.If(expr, trueStatement, undefined, expr.line);
             } else {
@@ -295,11 +380,9 @@ Parser.prototype = {
     },
 
     /*
-     * Parses a function definition
+     * Parses a parameter list
      */
-    parseFunctionDefinition: function parseFunctionDefinition() {
-        var line = this.expect('function').line;
-        var name = this.expect('identifier').val;
+    parseParameterList: function parseParameterList() {
         var params = [];
 
         // Parse parameter list
@@ -325,12 +408,53 @@ Parser.prototype = {
             }
         }
         this.expect('rparen');
-        this.expect('as');
-        var type = this.types.getTypeByName(this.expect('identifier').val);
+
+        return params;
+    },
+
+    /*
+     * Parses a function definition
+     */
+    parseFunctionDefinition: function parseFunctionDefinition() {
+        var line;
+        var name;
+        var params;
+        var type;
+
+        try {
+            line = this.expect('function').line;
+            name = this.expect('identifier').val;
+        } catch(e) {
+            if(e instanceof CompileError) {
+                this.errors.push(e);
+            } else {
+                throw e;
+            }
+        }
+
+        try {
+            params = this.parseParameterList();
+            this.expect('as');
+            type = this.types.getTypeByName(this.expect('identifier').val);
+        } catch(e) {
+            if(e instanceof CompileError) {
+                this.errors.push(e);
+            } else {
+                throw e;
+            }
+        }
 
         var block = this.parseBlock();
 
-        this.expect('endfunction');
+        try {
+            this.expect('endfunction');
+        } catch(e) {
+            if(e instanceof CompileError) {
+                this.errors.push(e);
+            } else {
+                throw e;
+            }
+        }
 
         return new Nodes.FunctionDefinition(name, params, type, block, line);
     },
@@ -346,38 +470,42 @@ Parser.prototype = {
      * Parses a subprogram definition
      */
     parseSubDefinition: function parseSubDefinition() {
-        var line = this.expect('sub').line;
-        var name = this.expect('identifier').val;
+        var line;
+        var name;
         var params = [];
 
-        // Parse parameter list
-        this.expect('lparen');
-        paramloop: while (this.peek().type !== 'rparen') {
-            var paramname = this.expect('identifier').val;
-            this.expect('as');
-            var paramtype = this.types.getTypeByName(this.expect('identifier').val);
-
-            params.push({
-                name: paramname,
-                type: paramtype
-            });
-
-            switch (this.peek().type) {
-                case 'comma':
-                    this.advance();
-                    break;
-                case 'rparen':
-                    break paramloop;
-                default:
-                    this.expect('comma');
+        try {
+            line = this.expect('function').line;
+            name = this.expect('identifier').val;
+        } catch(e) {
+            if(e instanceof CompileError) {
+                this.errors.push(e);
+            } else {
+                throw e;
             }
         }
-        this.expect('rparen');
+
+        try {
+            params = this.parseParameterList();
+        } catch(e) {
+            if(e instanceof CompileError) {
+                this.errors.push(e);
+            } else {
+                throw e;
+            }
+        }
 
         var block = this.parseBlock();
 
-        this.expect('endsub');
-
+        try {
+            this.expect('endsub');
+        } catch(e) {
+            if(e instanceof CompileError) {
+                this.errors.push(e);
+            } else {
+                throw e;
+            }
+        }
         return new Nodes.FunctionDefinition(name, params, undefined, block, line);
     },
 
@@ -387,21 +515,37 @@ Parser.prototype = {
     parseDoLoop: function parseDoLoop() {
         var line = this.expect('do').line;
 
-        if (this.peek().type === 'while' || this.peek().type === 'until') {
-            var until = this.advance().type === 'until';
-            var beginCondition = this.parseExpr();
-            if (until)
-                beginCondition = new Nodes.UnaryOp('not', beginCondition, beginCondition.line);
+        try {
+            if (this.peek().type === 'while' || this.peek().type === 'until') {
+                var until = this.advance().type === 'until';
+                var beginCondition = this.parseExpr();
+                if (until)
+                    beginCondition = new Nodes.UnaryOp('not', beginCondition, beginCondition.line);
+            }
+        } catch(e) {
+            if(e instanceof CompileError) {
+                this.errors.push(e);
+            } else {
+                throw e;
+            }
         }
 
         var block = this.parseBlock();
 
-        this.expect('loop');
-        if (this.peek().type === 'while' || this.peek().type === 'until') {
-            var until = this.advance().type === 'until';
-            var endCondition = this.parseExpr();
-            if (until)
-                endCondition = new Nodes.UnaryOp('not', endCondition, endCondition.line);
+        try {
+            this.expect('loop');
+            if (this.peek().type === 'while' || this.peek().type === 'until') {
+                var until = this.advance().type === 'until';
+                var endCondition = this.parseExpr();
+                if (until)
+                    endCondition = new Nodes.UnaryOp('not', endCondition, endCondition.line);
+            }
+        } catch(e) {
+            if(e instanceof CompileError) {
+                this.errors.push(e);
+            } else {
+                throw e;
+            }
         }
 
         return new Nodes.DoLoop(beginCondition, endCondition, block, line);
