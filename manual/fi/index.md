@@ -1,27 +1,59 @@
-Ohjekirja
-=========
+Komennot
+==========
 
-Oppaat
-------
-  * [Ohjelmointi](manual:programming) &larr; lue ensin tämä!
-  * [Pelinteko](manual:peli)
-  * [Algoritmit](manual:algo)
+A
+----------
+* [Abs](manual:abs)
 
-Kielen rakenne
---------------
-  * [Muuttujat](manual:muu)
-  * [Taulukot](manual:tau)
-  * [Ehdot](manual:ehd)
-  * [Silmukat](manual:sil)
-  * [Aliohjelmat](manual:ali)
+C
+----------
+* [ClearColor](manual:clearcolor)
+* [ClearScreen](manual:clearscreen)
+* [Cos](manual:cos)
 
-Kirjasto
---------
-  * [Grafiikka](manual:gra)
-  * [Hiiri](manual:hii)
-  * [Matematiikka](manual:mat)
-  * [Merkkijonot](manual:mer)
-  * [Näppäimistö](manual:nap)
-  * [Taulukot](manual:tau2)
+D
+----------
+* [DrawCircle](manual:drawcircle)
+* [DrawColor](manual:drawcolor)
+* [DrawDot](manual:drawdot)
+* [DrawLine](manual:drawline)
+* [DrawRect](manual:drawrect)
+* [DrawScreen](manual:drawscreen)
 
-![Alt text](lumiukko.png)
+F
+----------
+* [FillCircle](manual:fillcircle)
+* [FillColor](manual:fillcolor)
+* [FillRect](manual:fillrect)
+
+H
+----------
+* [Hours](manual:hours)
+
+K
+----------
+* [KeyDown](manual:keydown)
+* [KeyHit](manual:keyhit)
+* [KeyUp](manual:keyup)
+
+M
+----------
+* [Max](manual:max)
+* [MilliSeconds](manual:milliseconds)
+* [Min](manual:min)
+* [Minutes](manual:minutes)
+* [MouseDown](manual:mousedown)
+* [MouseX](manual:mousex)
+* [MouseY](manual:mousey)
+
+S
+----------
+* [Seconds](manual:seconds)
+* [Sin](manual:sin)
+* [Sqr](manual:sqr)
+
+T
+----------
+* [Tan](manual:tan)
+
+&nbsp;

@@ -1,5 +1,5 @@
 ﻿function Lexer(input, produceWhitespaceTokens, produceUnexpectedTokens) {
-    this.input = input.trim() || "";
+    this.input = input || "";
     this.stash = [];
     this.lineno = 1;
     this.produceWhitespaceTokens = produceWhitespaceTokens;
