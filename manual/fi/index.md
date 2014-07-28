@@ -49,7 +49,7 @@ M
 
 R
 ----------
-* [Rand](manual:rand)
+* [Rnd](manual:rnd)
 
 S
 ----------

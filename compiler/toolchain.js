@@ -85,7 +85,8 @@ Toolchain.prototype = {
         compiler.defineJsFunction('stdlib.Math.max', true, 'Max', [this.types.Integer, this.types.Integer], this.types.Integer);
 
         
-        compiler.defineJsFunction('env.rand', true, 'Rand', [this.types.Double, this.types.Double], this.types.Double);
+        compiler.defineJsFunction('env.randInt', true, 'Rnd', [this.types.Integer, this.types.Integer], this.types.Integer);
+        compiler.defineJsFunction('env.randDbl', true, 'Rnd', [], this.types.Double);
         
         //compiler.defineJsFunction('SQRT', [Types.Double], 'sqrt', Types.Double);
 

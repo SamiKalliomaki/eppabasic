@@ -12,8 +12,11 @@
 EbMath.prototype = {
     env: {
         // Random functions
-        rand: function rand(a, b) {
+        randInt: function randInt(a, b) {
             return a + parseInt(Math.random() * (b - a + 1));
+        },      
+        randDbl: function randDbl() {
+            return Math.random();
         },      
 
         // Time functions

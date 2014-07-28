@@ -9,8 +9,8 @@
 
     this.strUtil = strUtil;    
     
-    this.printX = 10;
-    this.printY = 20;
+    this.printX = 5;
+    this.printY = 5;
     this.clearColor = "rgb('0,0,0')";
     this.textColor = "rgb('255,255,255')";
     this.textFont = "Arial"
@@ -37,7 +37,7 @@ Graphics2D.prototype = {
         this.ctx.fillStyle = this.textColor;
         this.ctx.textBaseline = "top";
         this.ctx.fillText(str, this.printX, this.printY);
-        this.printY += this.textSize + 2;
+        this.printY += this.textSize + this.textSize/10;
         this.ctx.fillStyle = origStyle;        
     },
 
