@@ -81,7 +81,7 @@ CompilerContext.prototype = {
         this.stackOffset += size;
         this.push('SP=(SP+' + reserved + ')|0;');
 
-        if(this.isMain)
+        if (this.isMain)
             return new CompilerAbsoluteStackReference(type, offset, reserved, this);
         else
             return new CompilerStackReference(type, offset, reserved, this);
@@ -100,12 +100,14 @@ CompilerContext.prototype = {
             reserved++;
             this.stackOffset++;
         }
-        this.push('SP=(SP+' + reserved + ')|0;');
+        if (reserved > 0)
+            this.push('SP=(SP+' + reserved + ')|0;');
         return reserved;
     },
     revertAlign: function revertAlign(reserved) {
         this.stackOffset -= reserved;
-        this.push('SP=(SP-' + reserved + ')|0;');
+        if (reserved > 0)
+            this.push('SP=(SP-' + reserved + ')|0;');
     },
 
     setCallStack: function setCallStack(entry) {
@@ -582,7 +584,7 @@ Compiler.prototype = {
         mainContext.push('MEMU32[CP>>2]=' + endEntry.index + ';');
         mainContext.push('return 1;');
 
-        userDefinedFunctions.forEach(function(userFunction) {
+        userDefinedFunctions.forEach(function (userFunction) {
             var def = userFunction.def;
             var context = userFunction.context;
 
