@@ -26,6 +26,7 @@ function CustomTokenizer() {
         'minus': 'keyword.operator',
         'mul': 'keyword.operator',
         'div': 'keyword.operator',
+        'idiv': 'keyword.operator',
         'pow': 'keyword.operator',
         'mod': 'keyword.operator',
         'concat': 'keyword.operator',

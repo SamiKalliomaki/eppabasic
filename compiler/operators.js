@@ -48,6 +48,7 @@ OperatorContainer.prototype = {
 
         this.addToken(4, 'mul', true);
         this.addToken(4, 'div', true);
+        this.addToken(4, 'idiv', true);
         this.addToken(4, 'mod', true);
         this.addToken(4, 'pow', true);
 
@@ -90,7 +91,6 @@ OperatorContainer.prototype = {
         var operators = {
             'plus': '+',
             'minus': '-',
-            'div': '/',
             'mod': '%'
         };
         for (var op in operators) {
@@ -120,6 +120,13 @@ OperatorContainer.prototype = {
 
         this.addOperator(new BinaryOperator(this.types.Double, 'mul', this.types.Double, this.types.Double,
             new BinaryOperatorCompiler('*', this.types.Double, this.types.Double, this.types.Double, true)));
+        // Divison
+        this.addOperator(new BinaryOperator(this.types.Double, 'div', this.types.Double, this.types.Double,
+            new BinaryOperatorCompiler('/', this.types.Double, this.types.Double, this.types.Double, true)));
+
+        this.addOperator(new BinaryOperator(this.types.Integer, 'idiv', this.types.Integer, this.types.Integer,
+            new BinaryOperatorCompiler('/', this.types.Integer, this.types.Integer, this.types.Integer, true)));
+
         // Power
         this.addOperator(new BinaryOperator(this.types.Integer, 'pow', this.types.Integer, this.types.Double,
             new BinaryOperatorCompiler('__pow', this.types.Double, this.types.Double, this.types.Double, false)));
