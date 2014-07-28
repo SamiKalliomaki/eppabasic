@@ -3,11 +3,12 @@
 /// <reference path="types.js" />
 
 
-function CompilerContext(types, entry) {
+function CompilerContext(types, entry, isMain) {
     /// <param name='types' type='TypeContainer' />
     /// <param name='entry' type='CompilerFunctionEntry' />
     this.types = types;
     this.func = entry;
+    this.isMain = isMain;
 
     this.stackOffset = 0;
     this.temporaries = [];
@@ -79,7 +80,11 @@ CompilerContext.prototype = {
         var offset = this.stackOffset;
         this.stackOffset += size;
         this.push('SP=(SP+' + reserved + ')|0;');
-        return new CompilerStackReference(type, offset, reserved, this);
+
+        if(this.isMain)
+            return new CompilerAbsoluteStackReference(type, offset, reserved, this);
+        else
+            return new CompilerStackReference(type, offset, reserved, this);
     },
 
     reserveConstant: function reserveConstant(type) {
@@ -215,6 +220,51 @@ CompilerStackReference.prototype = {
             this.context.stackOffset -= this.reserved;
     },
     refType: 'stack'
+};
+function CompilerAbsoluteStackReference(type, offset, reserved, context) {
+    /// <param name='type' type='BaseType' />
+    /// <param name='offset' type='Number' />
+    /// <param name='reserved' type='Number' />
+    /// <param name='context' type='CompilerContext' />
+    this.type = type;
+    this.offset = offset;
+    this.reserved = reserved;
+    this.context = context;
+    this.types = this.context.types;
+}
+CompilerAbsoluteStackReference.prototype = {
+    setValue: function setValue(value) {
+        var mem = 'MEMS32';
+        var shift = 2;
+        if (this.type === this.types.Double) {
+            mem = 'MEMF64';
+            shift = 3;
+        }
+        this.context.push(mem + '[(' + this.offset + '|0)>>' + shift + ']=' + value.type.castTo(value.getValue(), this.type) + ';');
+    },
+    getValue: function getValue() {
+        var mem = 'MEMS32';
+        var shift = 2;
+        if (this.type === this.types.Double) {
+            mem = 'MEMF64';
+            shift = 3;
+        }
+        return this.type.cast(mem + '[(' + this.offset + '|0)>>' + shift + ']');
+    },
+    free: function free(real) {
+        if (real !== false)
+            real = true;
+        // TODO Free the type
+        var size = 4;
+        if (this.type === this.types.Double)
+            size = 8;
+        if (real && this.context.stackOffset - size !== this.offset)
+            throw new Error('Stack popped in wrong order!');
+        this.context.push('SP=(SP-' + this.reserved + ')|0;');
+        if (real)
+            this.context.stackOffset -= this.reserved;
+    },
+    refType: 'absstack'
 };
 function CompilerAbsoluteReference(type, offset, context) {
     /// <param name='type' type='BaseType' />
@@ -492,6 +542,8 @@ Compiler.prototype = {
         var endEntry = this.createEntry(this.generateFunctionName(), undefined, undefined, this.types.Integer);
         endEntry.push('return 0;');
 
+        var userDefinedFunctions = [];
+
         // Compile user defined functions
         this.ast.nodes.forEach(function each(def) {
             if (def.nodeType === 'FunctionDefinition') {
@@ -501,7 +553,7 @@ Compiler.prototype = {
                     retType = this.types.Integer;
 
                 var entry = def.handle.entry = this.createEntry(this.generateFunctionName(), true, paramTypes, retType, true);
-                var context = new CompilerContext(this.types, def.handle.entry);
+                var context = new CompilerContext(this.types, def.handle.entry, false);
                 context.atomic = def.atomic;
                 context.lastTemporary = entry.nextFreeTemporary;
 
@@ -518,43 +570,50 @@ Compiler.prototype = {
                 if (!def.atomic)
                     context.push('CP=(CP+4)|0;');
 
-                this.compileBlock(def.block, context);
-
-                // Just an emergency return if no user defined
-                if (def.type) {
-                    if (def.atomic) {
-                        if (def.type === this.types.Double)
-                            context.push('return 0.0;');
-                        else
-                            context.push('return 0;');
-                    } else {
-                        var topref = new CompilerStackReference(def.type, 0, 0, context);
-                        var val = context.reserveConstant(def.type);
-                        if (def.type === this.types.Double)
-                            val.setValue('0.0');
-                        else
-                            val.setValue('0');
-                        topref.setValue(val);
-                        context.push('CP=(CP-4)|0;');
-                        context.push('return 1;');
-                        //throw new Error('Non-atomic user defined functions not supported');
-                    }
-                } else {
-                    if (!def.atomic) {
-                        context.push('CP=(CP-4)|0;');
-                        context.push('return 1;');
-                    }
-                }
+                userDefinedFunctions.push({ def: def, context: context });
             }
         }.bind(this));
 
         // Compile main code
         var mainEntry = this.createEntry('MAIN', undefined, undefined, this.types.Integer);
-        var mainContext = new CompilerContext(this.types, mainEntry);
+        var mainContext = new CompilerContext(this.types, mainEntry, true);
         this.compileBlock(this.ast, mainContext);
         // Push end entry to call stack to signal that program has ended
         mainContext.push('MEMU32[CP>>2]=' + endEntry.index + ';');
         mainContext.push('return 1;');
+
+        userDefinedFunctions.forEach(function(userFunction) {
+            var def = userFunction.def;
+            var context = userFunction.context;
+
+            this.compileBlock(def.block, context);
+
+            // Just an emergency return if no user defined
+            if (def.type) {
+                if (def.atomic) {
+                    if (def.type === this.types.Double)
+                        context.push('return 0.0;');
+                    else
+                        context.push('return 0;');
+                } else {
+                    var topref = new CompilerStackReference(def.type, 0, 0, context);
+                    var val = context.reserveConstant(def.type);
+                    if (def.type === this.types.Double)
+                        val.setValue('0.0');
+                    else
+                        val.setValue('0');
+                    topref.setValue(val);
+                    context.push('CP=(CP-4)|0;');
+                    context.push('return 1;');
+                    //throw new Error('Non-atomic user defined functions not supported');
+                }
+            } else {
+                if (!def.atomic) {
+                    context.push('CP=(CP-4)|0;');
+                    context.push('return 1;');
+                }
+            }
+        }.bind(this));
 
         // No that everything is compiled we can align entry lists
         this.alignEntryLists();
