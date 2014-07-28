@@ -24,6 +24,7 @@ function CustomTokenizer() {
         'and': 'keyword.operator',
         'or': 'keyword.operator',
         'xor': 'keyword.operator',
+        'not': 'keyword.operator',
         'plus': 'keyword.operator',
         'minus': 'keyword.operator',
         'mul': 'keyword.operator',

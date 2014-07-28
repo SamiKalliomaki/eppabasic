@@ -146,6 +146,9 @@ OperatorContainer.prototype = {
         this.addOperator(new UnaryOperator(this.types.Double, 'minus', this.types.Double,
             new UnaryOperatorCompiler('-', this.types.Double, this.types.Double, false)));
 
+        this.addOperator(new UnaryOperator(this.types.Boolean, 'not', this.types.Boolean,
+            new UnaryOperatorCompiler('!', this.types.Boolean, this.types.Boolean, false)));
+
         // String operators
         this.addOperator(new BinaryOperator(this.types.String, 'concat', this.types.String, this.types.String,
            new BinaryOperatorCompiler('__concat', this.types.String, this.types.String, this.types.String, false)));

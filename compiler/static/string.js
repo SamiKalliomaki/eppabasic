@@ -1,32 +1,31 @@
-﻿function compilerString() {
-    function strconcat(a, b) {
-        a = a | 0;
-        b = b | 0;
-
-        var al = 0;
-        var bl = 0;
-        var cl = 0;
-        var c = 0;
-        var cp = 0;
-        var i = 0;
-
-        al = MEMU32[a >> 2] | 0;
-        bl = MEMU32[b >> 2] | 0;
-
-        cl = (al + bl) | 0;
-        c = memreserve4((cl + 8) | 0) | 0;
-        MEMU32[c >> 2] = cl;
-        cp = (c + 8) | 0;
-
-        for (i = 0; ((i | 0) < (al | 0)) | 0 ; i = (i + 1) | 0) {
-            MEMU8[cp] = MEMU8[((a + i + 8) | 0)] | 0;
-            cp = (cp + 1) | 0;
-        }
-        for (i = 0; (i | 0) < (bl | 0) ; i = (i + 1) | 0) {
-            MEMU8[cp] = MEMU8[((b + i + 8) | 0)] | 0;
-            cp = (cp + 1) | 0;
-        }
-
-        return c | 0;
+﻿function __concat(stra, strb) {
+    stra = stra | 0;
+    strb = strb | 0;
+    var alen = 0;
+    var blen = 0;
+    var clen = 0;
+    var strc = 0;
+    var ptr = 0;
+    var ptrc = 0;
+    alen = MEMS32[(stra | 0) >> 2] | 0;
+    blen = MEMS32[(strb | 0) >> 2] | 0;
+    clen = (alen + blen) | 0;
+    strc = __memreserve((clen + (STRING_HEADER_LENGTH | 0)) | 0) | 0;
+    ptrc = (strc + (STRING_HEADER_LENGTH | 0)) | 0;
+    ptr = (stra + (STRING_HEADER_LENGTH | 0)) | 0;
+    MEMS32[(strc | 0) >> 2] = clen | 0;
+    while (alen | 0) {
+        MEMU8[(ptrc | 0) >> 0] = MEMU8[(ptr | 0) >> 0];
+        ptrc = (ptrc + 1) | 0;
+        ptr = (ptr + 1) | 0;
+        alen = (alen - 1) | 0;
     }
+    ptr = (strb + (STRING_HEADER_LENGTH | 0)) | 0;
+    while (blen | 0) {
+        MEMU8[(ptrc | 0) >> 0] = MEMU8[(ptr | 0) >> 0];
+        ptrc = (ptrc + 1) | 0;
+        ptr = (ptr + 1) | 0;
+        blen = (blen - 1) | 0;
+    }
+    return strc | 0;
 }

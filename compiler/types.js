@@ -1,4 +1,5 @@
-﻿
+﻿/// <reference path="compiler.js" />
+
 
 function TypeContainer() {
     this.types = [];
@@ -40,6 +41,7 @@ TypeContainer.prototype = {
 function BaseType() {
 }
 BaseType.prototype = {
+    free: function free(ref, context) { },
     canCastTo: function canCastTo(type) {
         if (this === type)
             return true;
@@ -123,6 +125,10 @@ StringType.prototype.castTo = function castTo(expr, type) {
     }
     throw new Error('Failed to cast "' + this + '" to "' + type + '"');
 }
+StringType.prototype.free = function free(ref, context) {
+    // Just free the string
+    context.push('__memfree((' + ref.getValue() + ')|0);');
+}
 
 function ArrayType(itemType, dimensionCount) {
     this.itemType = itemType;
@@ -145,3 +151,53 @@ ArrayType.prototype.castTo = function castTo(expr, type) {
         return expr;
     throw new Error('Failed to cast "' + this + '" to "' + type + '"');
 };
+ArrayType.prototype.free = function free(ptr, context) {
+    /// <param name='context' type='CompilerContext' />
+    context.push('/*Freeing array of type ' + this + '*/');
+    // Compute the size
+    var offset = context.reserveConstant(TypeContainer.prototype.Integer);
+    offset.setValue(ptr.getValue());
+    var ref = new CompilerAbsoluteReference(TypeContainer.prototype.Integer, offset, context);
+    var sizeStr = ref.getValue();
+    for (var i = 1; i < this.dimensionCount; i++) {
+        offset.setValue(ptr.getValue() + '+' + (4 * i));
+        ref = new CompilerAbsoluteReference(TypeContainer.prototype.Integer, offset, context);
+        sizeStr = '(imul(' + sizeStr + ',' + ref.getValue() + ')|0)';
+    }
+
+    var cnt = context.reserveConstant(TypeContainer.prototype.Integer);
+    cnt.setValue(sizeStr);
+    var sizeRef = context.reserveTemporary(TypeContainer.prototype.Integer);
+    sizeRef.setValue(cnt);
+    cnt.freeRef();
+    var indexRef = context.reserveTemporary(TypeContainer.prototype.Integer);
+    cnt = context.reserveConstant(TypeContainer.prototype.Integer);
+    cnt.setValue('0');
+    indexRef.setValue(cnt);
+    cnt.freeRef();
+
+    context.push('while((' + indexRef.getValue() + '<' + sizeRef.getValue() + ')|0){');
+    cnt = context.reserveConstant(TypeContainer.prototype.Integer);
+    cnt.setValue(ptr.getValue() + '+' + this.dataOffset + '+((' + indexRef.getValue() + ')<<' + this.elementShift + ')');
+    var abs = new CompilerAbsoluteReference(this.itemType, cnt, context);
+    abs.freeVal();
+    abs.freeRef();
+    cnt.freeRef();
+
+    // Increase index
+    cnt = context.reserveConstant(TypeContainer.prototype.Integer);
+    cnt.setValue(indexRef.getValue() + '+1');
+    indexRef.setValue(cnt);
+    cnt.freeRef();
+
+    context.push('}');
+
+
+    indexRef.freeVal();
+    indexRef.freeRef();
+    sizeRef.freeVal();
+    sizeRef.freeRef();
+
+    // Finally free the whole array
+    context.push('__memfree((' + ptr.getValue() + ')|0);');
+}

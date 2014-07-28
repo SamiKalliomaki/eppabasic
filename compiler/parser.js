@@ -580,6 +580,8 @@ Parser.prototype = {
                 // TODO Move unary operators away from parseExpr
                 case 'minus':
                     return new Nodes.UnaryOp('minus', this.parseExpr(level), t.line);
+                case 'not':
+                    return new Nodes.UnaryOp('not', this.parseExpr(0), t.line);
 
                 case 'number':
                     return new Nodes.Number(t.val, t.line);

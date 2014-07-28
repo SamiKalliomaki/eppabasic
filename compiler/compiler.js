@@ -120,8 +120,8 @@ CompilerContext.prototype = {
     freeVariable: function freeVariable(ref) {
         if (this.registeredVariables.pop() !== ref)
             throw new Error('Registered variables freed in wrong order.');
-        //ref.freeType();
-        ref.free();
+        ref.freeVal();
+        ref.freeRef();
     },
     freeAll: function freeAll(release) {
         if (release) {
@@ -170,7 +170,7 @@ CompilerTemporaryReference.prototype = {
     getValue: function getValue() {
         return this.type.cast(this.name);
     },
-    free: function free(real) {
+    freeRef: function freeRef(real) {
         if (real !== false)
             real = true;
         if (real)
@@ -208,10 +208,10 @@ CompilerStackReference.prototype = {
         }
         return this.type.cast(mem + '[((SP-' + (this.context.stackOffset - this.offset) + ')|0)>>' + shift + ']');
     },
-    free: function free(real) {
+    freeRef: function freeRef(real) {
         if (real !== false)
             real = true;
-        // TODO Free the type
+
         var size = 4;
         if (this.type === this.types.Double)
             size = 8;
@@ -253,10 +253,10 @@ CompilerAbsoluteStackReference.prototype = {
         }
         return this.type.cast(mem + '[(SB+' + this.offset + '|0)>>' + shift + ']');
     },
-    free: function free(real) {
+    freeRef: function freeRef(real) {
         if (real !== false)
             real = true;
-        // TODO Free the type
+
         var size = 4;
         if (this.type === this.types.Double)
             size = 8;
@@ -296,10 +296,9 @@ CompilerAbsoluteReference.prototype = {
         }
         return this.type.cast(mem + '[((' + this.offset.getValue() + ')|0)>>' + shift + ']');
     },
-    free: function free(real) {
+    freeRef: function freeRef(real) {
         if (real !== false)
             real = true;
-        // TODO Free the type
     },
     refType: 'abs'
 };
@@ -319,13 +318,23 @@ CompilerConstantReference.prototype = {
     getValue: function getValue() {
         return this.type.cast(this.value);
     },
-    free: function free(real) { },
+    freeRef: function freeRef(real) { },
     refType: 'const'
 };
 function CompilerNoFreeReference(ref) {
     extend(this, ref);
-    this.free = function () { };        // Replace free by a dummy function
+    this.freeVal = function () { };
+    this.freeRef = function () { };
 }
+
+CompilerTemporaryReference.prototype.freeVal =
+    CompilerStackReference.prototype.freeVal =
+    CompilerAbsoluteStackReference.prototype.freeVal =
+    CompilerAbsoluteReference.prototype.freeVal =
+    CompilerConstantReference.prototype.freeVal =
+    function freeVal() {
+        this.type.free(this, this.context);
+    };
 
 function CompilerFunctionEntry(name, hasBody, paramTypes) {
     if (hasBody !== false)
@@ -632,13 +641,14 @@ Compiler.prototype = {
         buf.push('var SP=0;');
         buf.push('var SB=0;');
         buf.push('var CP=0;');
-        buf.push('var NEXT_FREE=2048;')
+        buf.push('var NEXT_BLOCK=0;');
+        buf.push('var HEAP_END=0;');
         buf.push('var STRING_HEADER_LENGTH=4;')
         // Add compiler defined environmental variables
         buf.push(this.env.join('\n'));
         // Compile all the other functions
         buf.push('function __popCallStack(){CP=(CP-4)|0;}');
-        buf.push('function __init(){SB=SP=1024;CP=0;MEMU32[CP>>2]=' + mainEntry.index + ';}');
+        buf.push('function __init(){__meminit(0x100000);SB=SP=__memreserve(1024)|0;CP=__memreserve(1024)|0;MEMU32[CP>>2]=' + mainEntry.index + ';}');
         var mainEntryList = this.findEntryList([], this.types.Integer);
         buf.push('function __next(){while(' + mainEntryList.name + '[MEMU32[CP>>2]&' + mainEntryList.mask + ']()|0);}');
         buf.push('function __breakExec(){CP=(CP+4)|0;MEMU32[CP>>2]=' + breakEntry.index + ';}');
@@ -646,9 +656,9 @@ Compiler.prototype = {
         buf.push('function __sp(){return SP|0;}');
         buf.push('function __cp(){return CP|0;}');
 
-        buf.push('function __concat(n,t){n=n|0;t=t|0;var u=0,f=0,o=0,e=0,i=0,r=0;for(u=MEMS32[(n|0)>>2]|0,f=MEMS32[(t|0)>>2]|0,o=u+f|0,e=__memreserve(o+(STRING_HEADER_LENGTH|0)|0)|0,r=e+(STRING_HEADER_LENGTH|0)|0,i=n+(STRING_HEADER_LENGTH|0)|0,MEMS32[(e|0)>>2]=o|0;u|0;)MEMU8[(r|0)>>0]=MEMU8[(i|0)>>0],r=r+1|0,i=i+1|0,u=u-1|0;for(i=t+(STRING_HEADER_LENGTH|0)|0;f|0;)MEMU8[(r|0)>>0]=MEMU8[(i|0)>>0],r=r+1|0,i=i+1|0,f=f-1|0;return e|0}');
+        buf.push('function __concat(stra,strb){stra=stra|0;strb=strb|0;var alen=0;var blen=0;var clen=0;var strc=0;var ptr=0;var ptrc=0;alen=MEMS32[(stra|0)>>2]|0;blen=MEMS32[(strb|0)>>2]|0;clen=(alen+blen)|0;strc=__memreserve((clen+(STRING_HEADER_LENGTH|0))|0)|0;ptrc=(strc+(STRING_HEADER_LENGTH|0))|0;ptr=(stra+(STRING_HEADER_LENGTH|0))|0;MEMS32[(strc|0)>>2]=clen|0;while(alen|0){MEMU8[(ptrc|0)>>0]=MEMU8[(ptr|0)>>0];ptrc=(ptrc+1)|0;ptr=(ptr+1)|0;alen=(alen-1)|0;}ptr=(strb+(STRING_HEADER_LENGTH|0))|0;while(blen|0){MEMU8[(ptrc|0)>>0]=MEMU8[(ptr|0)>>0];ptrc=(ptrc+1)|0;ptr=(ptr+1)|0;blen=(blen-1)|0;}return strc|0;}');
 
-        buf.push('function __memreserve(a){a=a|0;while(NEXT_FREE&7)NEXT_FREE=(NEXT_FREE+1)|0;NEXT_FREE=(NEXT_FREE+a)|0;return (NEXT_FREE-a)|0;}');
+        buf.push('function __meminit(size){size=size|0;while((size&7)|0)size=(size-1)|0;MEMS32[0>>2]=0;MEMS32[4>>2]=(size-8)|0;MEMS32[((size-8)|0)>>2]=0;NEXT_BLOCK=0;HEAP_END=size;}function __memreserve(size){size=size|0;var header=0;var footer=0;var i=0;size=(size+7)&0xfffffff8;size=(size+8)|0;header=__memfind(size|0)|0;footer=(header+(MEMS32[(header+4)>>2]|0))|0;if((size|0)<(MEMS32[((header|0)+4)>>2]|0)){MEMS32[((header|0)+4)>>2]=size;MEMS32[((header|0)+size)>>2]=header;MEMS32[((header|0)+size+4)>>2]=(footer-header-size)|0;MEMS32[footer>>2]=(header+size)|0;}MEMS32[(header+4)>>2]=MEMS32[(header+4)>>2]|1;header=(header+8)|0;size=(size-8)|0;for(i=0;(i|0)<(size|0);i=(i+1)|0){MEMS32[(header+i)>>2]=0;}return header|0;}function __memfind(size){size=size|0;while(1){if((MEMS32[((NEXT_BLOCK+4)|0)>>2]&1)==0){if((MEMS32[((NEXT_BLOCK+4)|0)>>2]|0)>=(size|0)){return NEXT_BLOCK|0;}}NEXT_BLOCK=(NEXT_BLOCK+(MEMS32[((NEXT_BLOCK+4)|0)>>2]|0))&0xfffffff8;if(((NEXT_BLOCK+8)|0)>=(HEAP_END|0))NEXT_BLOCK=0;}return 0;}function __memfree(ptr){ptr=ptr|0;ptr=(ptr-8)|0;MEMS32[(ptr+4)>>2]=MEMS32[(ptr+4)>>2]&0xfffffffe;__memcoalesce(ptr);}function __memcoalesce(header){header=header|0;var header2=0;var footer=0;var tmp=0;header2=(header+(MEMS32[(header+4)>>2]|0))|0;if((MEMS32[((header2+4)|0)>>2]&1)==0){MEMS32[((header+4)|0)>>2]=((MEMS32[((header+4)|0)>>2]|0)+(MEMS32[((header2+4)|0)>>2]|0));footer=(header+(MEMS32[(header+4)>>2]|0))|0;MEMS32[footer>>2]=header;}header2=MEMS32[header>>2]|0;if((MEMS32[((header2+4)|0)>>2]&1)==0){tmp=header;header=header2;header2=tmp;MEMS32[((header+4)|0)>>2]=((MEMS32[((header+4)|0)>>2]|0)+(MEMS32[((header2+4)|0)>>2]|0));footer=(header+(MEMS32[(header+4)>>2]|0))|0;MEMS32[footer>>2]=header;}NEXT_BLOCK=header;}');
 
         buf.push(this.generateFunctions());
         // Compile f-tables in the end
@@ -691,8 +701,10 @@ Compiler.prototype = {
                     break;
                 case 'FunctionCall':
                     var ret = this.compileFunctionCall(node, context);
-                    if (ret)
-                        ret.free();
+                    if (ret) {
+                        ret.freeVal();
+                        ret.freeRef();
+                    }
                     break;
                 case 'FunctionDefinition':
                     break;      // TODO Add warning to non-global context
@@ -720,7 +732,6 @@ Compiler.prototype = {
         // And finally free the reserved variables in reverse order
         block.variables.reverse().forEach(function each(variable) {
             context.freeVariable(variable.location);
-            //variable.location.free();
         }.bind(this));
     },
 
@@ -744,14 +755,17 @@ Compiler.prototype = {
 
             context.push('}');
 
-            testValue.free();
+            testValue.freeVal();
+            testValue.freeRef();
         } else {
             // First compute the test value
             var testValue = this.compileExpr(statement.expr, context);
             if (testValue.refType === 'temp') {
                 var tmp = context.reserveStack(testValue.type);
                 tmp.setValue(testValue);
-                testValue.free();
+
+                tmp.freeVal = testValue.freeVal;
+                testValue.freeRef();
                 testValue = tmp;
             }
 
@@ -792,7 +806,8 @@ Compiler.prototype = {
             // Continue compiling to the end of if statement
             context.setCurrentFunction(endFunc);
 
-            testValue.free();
+            testValue.freeVal();
+            testValue.freeRef();
             //throw new Error('Non-atomic if statements not supported yet');
         }
     },
@@ -804,7 +819,8 @@ Compiler.prototype = {
             loop.variable.location = context.reserveTemporary(loop.variable.type);
             var start = this.compileExpr(loop.start, context);
             loop.variable.location.setValue(start);
-            start.free();
+            loop.variable.location.freeVal = start.freeVal;
+            start.freeRef();
             var stop = this.compileExpr(loop.stop, context);
             var step = this.compileExpr(loop.step, context);
 
@@ -819,27 +835,33 @@ Compiler.prototype = {
             var newIndex = context.reserveConstant(loop.variable.type);
             newIndex.setValue(loop.variable.location.getValue() + '+' + step.getValue());
             loop.variable.location.setValue(newIndex);
-            newIndex.free();
+            newIndex.freeRef();
             context.push('}');
 
-            step.free();
-            stop.free();
-            loop.variable.location.free();
+            step.freeVal();
+            step.freeRef();
+            stop.freeVal();
+            stop.freeRef();
+            loop.variable.location.freeVal();
+            loop.variable.location.freeRef();
         } else {
             // Reserve a variable for the loop
             loop.variable.location = context.reserveStack(loop.variable.type);
             var start = this.compileExpr(loop.start, context);
             loop.variable.location.setValue(start);
-            start.free();
+            loop.variable.location.freeVal = start.freeVal;
+            start.freeRef();
             var stop = this.compileExpr(loop.stop, context);
             var tmp = context.reserveStack(stop.type);
             tmp.setValue(stop);
-            stop.free();
+            tmp.freeVal = stop.freeVal;
+            stop.freeRef();
             stop = tmp;
             var step = this.compileExpr(loop.step, context);
             tmp = context.reserveStack(step.type);
             tmp.setValue(step);
-            step.free();
+            tmp.freeVal = step.freeVal;
+            step.freeRef();
             step = tmp;
 
             // Go to loop function
@@ -865,7 +887,7 @@ Compiler.prototype = {
             var newIndex = context.reserveConstant(loop.variable.type);
             newIndex.setValue(loop.variable.location.getValue() + '+' + step.getValue());
             loop.variable.location.setValue(newIndex);
-            newIndex.free();
+            newIndex.freeRef();
             // Jump to the begining
             context.setCallStack(loopFunc);
             context.push('return 1;');
@@ -874,9 +896,12 @@ Compiler.prototype = {
             context.setCurrentFunction(endFunc);
 
             // Free memory
-            step.free();
-            stop.free();
-            loop.variable.location.free();
+            step.freeVal();
+            step.freeRef();
+            stop.freeVal();
+            stop.freeRef();
+            loop.variable.location.freeVal();
+            loop.variable.location.freeRef();
         }
     },
     compileFunctionCall: function compileFunctionCall(call, context) {
@@ -930,7 +955,8 @@ Compiler.prototype = {
                 var stackTop = context.reserveStack(retType);
                 retVal = context.reserveTemporary(retType);
                 retVal.setValue(stackTop);
-                stackTop.free();
+                retVal.freeVal = stackTop.freeVal;
+                stackTop.freeRef();
             }
         } else {
             if (call.handle.atomic) {
@@ -955,7 +981,8 @@ Compiler.prototype = {
         context.revertAlign(align);
         // And free parameters
         params.reverse().forEach(function each(param) {
-            param.free();
+            param.freeVal();
+            param.freeRef();
         }.bind(this));
 
         return retVal;
@@ -968,19 +995,23 @@ Compiler.prototype = {
             if (loop.beginCondition) {
                 var testValue = this.compileExpr(loop.beginCondition, context);
                 context.push('if((!(' + testValue.getValue() + '))|0){');
-                testValue.free(false);
+                testValue.freeVal();
+                testValue.freeRef(false);
                 context.push('break;');
                 context.push('}');
-                testValue.free();
+                testValue.freeVal();
+                testValue.freeRef();
             }
             this.compileBlock(loop.block, context);
             if (loop.endCondition) {
                 var testValue = this.compileExpr(loop.endCondition, context);
                 context.push('if((!(' + testValue.getValue() + '))|0){');
-                testValue.free(false);
+                testValue.freeVal();
+                testValue.freeRef(false);
                 context.push('break;');
                 context.push('}');
-                testValue.free();
+                testValue.freeVal();
+                testValue.freeRef();
             }
             context.push('}');
         } else {
@@ -995,21 +1026,25 @@ Compiler.prototype = {
             if (loop.beginCondition) {
                 var testValue = this.compileExpr(loop.beginCondition, context);
                 context.push('if((!(' + testValue.getValue() + '))|0){');
-                testValue.free(false);
+                testValue.freeVal();
+                testValue.freeRef(false);
                 context.setCallStack(endFunc);
                 context.push('return 1;');
                 context.push('}');
-                testValue.free();
+                testValue.freeVal();
+                testValue.freeRef();
             }
             this.compileBlock(loop.block, context);
             if (loop.endCondition) {
                 var testValue = this.compileExpr(loop.endCondition, context);
                 context.push('if((!(' + testValue.getValue() + '))|0){');
-                testValue.free(false);
+                testValue.freeVal();
+                testValue.freeRef(false);
                 context.setCallStack(endFunc);
                 context.push('return 1;');
                 context.push('}');
-                testValue.free();
+                testValue.freeVal();
+                testValue.freeRef();
             }
             // Jump to the begining
             context.setCallStack(loopFunc);
@@ -1041,7 +1076,8 @@ Compiler.prototype = {
         }
 
         // After everything free the returned value (though this code will never be executed)
-        val.free();
+        val.freeVal();
+        val.freeRef();
     },
     compileVariableAssignment: function compileVariableAssignment(variable, context) {
         /// <param name='variable' type='Nodes.VariableAssignment' />
@@ -1074,11 +1110,12 @@ Compiler.prototype = {
             // Finally compute the value and push it to the array
             var val = this.compileExpr(variable.expr, context);
             ref.setValue(val);
-            val.free();
+            val.freeRef();
 
             var i = dimensions.length;
             while (i--) {
-                dimensions[i].free();
+                dimensions[i].freeVal();
+                dimensions[i].freeRef();
             }
 
             //throw new Error('Arrays not supported, yet');
@@ -1087,7 +1124,7 @@ Compiler.prototype = {
 
         var ref = this.compileExpr(variable.expr, context);
         variable.ref.location.setValue(ref);
-        ref.free();
+        ref.freeRef();
     },
     compileVariableDefinition: function compileVariableDefinition(variable, context) {
         /// <param name='variable' type='Nodes.VariableDefinition' />
@@ -1119,7 +1156,7 @@ Compiler.prototype = {
 
             // Save value to variable
             variable.location.setValue(cnt);
-            cnt.free();
+            cnt.freeRef();
 
             // Finally fill in array dimensions to the begining of the reserved area
             for (var i = 0; i < dimensions.length; i++) {
@@ -1136,7 +1173,8 @@ Compiler.prototype = {
             // Free the dimensions
             var i = dimensions.length;
             while (i--) {
-                dimensions[i].free();
+                dimensions[i].freeVal();
+                dimensions[i].freeRef();
             }
 
             //throw new Error('Arrays not supported, yet');
@@ -1146,7 +1184,7 @@ Compiler.prototype = {
         if (variable.initial) {
             var ref = this.compileExpr(variable.initial, context);
             variable.location.setValue(ref);
-            ref.free();
+            ref.freeRef();
         }
     },
 
@@ -1162,7 +1200,8 @@ Compiler.prototype = {
                         // Push this to the top of the stack
                         var stackRef = context.reserveStack(ref.type);
                         stackRef.setValue(ref);
-                        ref.free();
+                        stackRef.freeVal = ref.freeVal;
+                        ref.freeRef();
                         ref = stackRef;
                     }
                     return expr;
@@ -1212,7 +1251,7 @@ Compiler.prototype = {
         var cnt = context.reserveConstant(str.type);
         cnt.setValue('__memreserve(' + (utf8.length + 4) + ')|0');
         ref.setValue(cnt);
-        cnt.free();
+        cnt.freeRef();
         // Save the length of the payload
         var sizeRef = new CompilerAbsoluteReference(this.types.Integer, ref, context);
         cnt = context.reserveConstant(this.types.Integer);
@@ -1267,8 +1306,10 @@ Compiler.prototype = {
         res.setValue(cnt);
 
         // And last but not least, return all the memory we have reserved
-        rightRef.free();
-        leftRef.free();
+        rightRef.freeVal();
+        rightRef.freeRef();
+        leftRef.freeVal();
+        leftRef.freeRef();
         return res;
     },
     compileUnaryExpr: function compileUnaryExpr(expr, context) {
@@ -1302,7 +1343,8 @@ Compiler.prototype = {
         res.setValue(cnt);
 
         // And last but not least, return all the memory we have reserved
-        inputRef.free();
+        inputRef.freeVal();
+        inputRef.freeRef();
         return res;
     },
     compileIndexExpr: function compileIndexExpr(variable, context) {
@@ -1338,7 +1380,8 @@ Compiler.prototype = {
         // Get rid of the trash
         var i = dimensions.length;
         while (i--) {
-            dimensions[i].free();
+            dimensions[i].freeVal();
+            dimensions[i].freeRef();
         }
 
         var tmpref = context.reserveTemporary(variable.expr.type.itemType);
