@@ -240,7 +240,7 @@ CompilerAbsoluteStackReference.prototype = {
             mem = 'MEMF64';
             shift = 3;
         }
-        this.context.push(mem + '[(' + this.offset + '|0)>>' + shift + ']=' + value.type.castTo(value.getValue(), this.type) + ';');
+        this.context.push(mem + '[(' + 1024 + this.offset + '|0)>>' + shift + ']=' + value.type.castTo(value.getValue(), this.type) + ';');
     },
     getValue: function getValue() {
         var mem = 'MEMS32';
@@ -249,7 +249,7 @@ CompilerAbsoluteStackReference.prototype = {
             mem = 'MEMF64';
             shift = 3;
         }
-        return this.type.cast(mem + '[(' + this.offset + '|0)>>' + shift + ']');
+        return this.type.cast(mem + '[(' + 1024 + this.offset + '|0)>>' + shift + ']');
     },
     free: function free(real) {
         if (real !== false)
