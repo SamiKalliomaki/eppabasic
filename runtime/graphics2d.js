@@ -1,4 +1,4 @@
-﻿function Graphics2D(canvasHolder, heap) {
+﻿function Graphics2D(canvasHolder, heap, strUtil) {
     this.canvas = document.createElement('canvas');
     canvasHolder.appendChild(this.canvas);
 
@@ -7,6 +7,15 @@
     this.MEMS32 = new Int32Array(heap);
     this.MEMF32 = new Float32Array(heap);
 
+    this.strUtil = strUtil;    
+    
+    this.printX = 10;
+    this.printY = 20;
+    this.clearColor = "rgb('0,0,0')";
+    this.textColor = "rgb('255,255,255')";
+    this.textFont = "Arial"
+    this.textSize = 12;
+    
     // Make all functions to use right this
     for (func in this.env) {
         if (this.env.hasOwnProperty(func))
@@ -21,6 +30,15 @@ Graphics2D.prototype = {
     },
     setProgram: function setProgram(program) {
         this.program = program;
+    },
+    print: function print(str) {
+        var origStyle = this.ctx.fillStyle;
+        this.ctx.font = this.textSize + "px " + this.textFont;
+        this.ctx.fillStyle = this.textColor;
+        this.ctx.textBaseline = "top";
+        this.ctx.fillText(str, this.printX, this.printY);
+        this.printY += this.textSize + 2;
+        this.ctx.fillStyle = origStyle;        
     },
 
     /*
@@ -100,7 +118,34 @@ Graphics2D.prototype = {
                 this.canvas.webkitRequestFullScreen();
             else if (this.canvas.msRequestFullScreen)
                 this.canvas.msRequestFullScreen();
-        }
+        },
+        
+        printStr: function printStr(str) {
+            str = this.strUtil.fromEppaBasic(str);
+            this.print(str);
+        },
+        printInt: function printInt(a) {
+            this.print(a);
+        },
+        printDbl: function printDbl(a) {
+            this.print(a);
+        },
+        drawText: function drawText(x, y, str) {
+            this.printX = x;
+            this.printY = y;
+            str = this.strUtil.fromEppaBasic(str);
+            this.print(str);
+        },
+        textColor: function textColor(r, g, b) {
+            this.textColor = 'rgb(' + r + ',' + g + ',' + b + ')';
+        },
+        textFont: function textFont(str) {
+            str = this.strUtil.fromEppaBasic(str);
+            this.textFont = str;
+        },
+        textSize: function textSize(x) {
+            this.textSize = x;
+        },
     },
     stdlib: {}
 };

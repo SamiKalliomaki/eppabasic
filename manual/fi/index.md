@@ -19,6 +19,7 @@ D
 * [DrawLine](manual:drawline)
 * [DrawRect](manual:drawrect)
 * [DrawScreen](manual:drawscreen)
+* [DrawText](manual:drawtext)
 
 F
 ----------
@@ -39,12 +40,16 @@ K
 M
 ----------
 * [Max](manual:max)
-* [MilliSeconds](manual:milliseconds)
+* [Milliseconds](manual:milliseconds)
 * [Min](manual:min)
 * [Minutes](manual:minutes)
 * [MouseDown](manual:mousedown)
 * [MouseX](manual:mousex)
 * [MouseY](manual:mousey)
+
+R
+----------
+* [Rand](manual:rand)
 
 S
 ----------
@@ -55,5 +60,8 @@ S
 T
 ----------
 * [Tan](manual:tan)
+* [TextColor](manual:textcolor)
+* [TextFont](manual:textfont)
+* [TextSize](manual:textsize)
 
 &nbsp;

@@ -54,6 +54,12 @@ Toolchain.prototype = {
         compiler.defineJsFunction('env.clear', true, 'ClearScreen', []);
         compiler.defineJsFunction('env.clear', true, 'Clear', []);
         compiler.defineJsFunction('env.drawScreen', true, 'DrawScreen', [], undefined, false);
+
+        compiler.defineJsFunction('env.drawText', true, 'DrawText', [this.types.Integer, this.types.Integer, this.types.String]);
+        compiler.defineJsFunction('env.textColor', true, 'TextColor', [this.types.Integer, this.types.Integer, this.types.Integer]);
+        compiler.defineJsFunction('env.textFont', true, 'TextFont', [this.types.String]);
+        compiler.defineJsFunction('env.textSize', true, 'TextSize', [this.types.Integer]);
+        
         //compiler.defineJsFunction('env.fullScreen', true, 'FullScreen', []);                  // Reserved for a better day
 
         /// Screen size

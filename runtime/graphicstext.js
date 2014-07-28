@@ -4,7 +4,7 @@ function GraphicsText(canvasHolder, heap, strUtil) {
     this.console = document.createElement('div');
     canvasHolder.appendChild(this.console);
 
-    this.strUtil = strUtil
+    this.strUtil = strUtil;
 
     // Make all functions to use right this
     for (func in this.env) {
@@ -28,17 +28,17 @@ GraphicsText.prototype = {
             //this.canvas.style.visibility = "visible";
         },
 
-        printStr: function print(str) {
-            str = this.strUtil.fromEppaBasic(str);
-
-            alert(str);
-        },
-        printInt: function printInt(a) {
-            alert(a);
-        },
-        printDbl: function printDbl(a) {
-            alert(a);
-        }
+//         printStr: function print(str) {
+//             str = this.strUtil.fromEppaBasic(str);
+// 
+//             alert(str);
+//         },
+//         printInt: function printInt(a) {
+//             alert(a);
+//         },
+//         printDbl: function printDbl(a) {
+//             alert(a);
+//         }
     },
     stdlib: {}
 };
