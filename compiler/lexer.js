@@ -147,7 +147,7 @@ Lexer.prototype = {
      */
     opToken: function opToken() {
         var captures;
-        if (captures = /^(<>|<=?|>=?|=|\+|-|\*|\/|\\|\^|&|MOD\b|AND\b|OR\b|XOR\b)/i.exec(this.input)) {
+        if (captures = /^(<>|<=?|>=?|=|\+|-|\*|\/|\\|\^|&|MOD\b|AND\b|OR\b|XOR\b|NOT\b)/i.exec(this.input)) {
             this.consume(captures[0].length);
             var map = {
                 '<': 'lt',
@@ -160,6 +160,7 @@ Lexer.prototype = {
                 'and': 'and',
                 'or': 'or',
                 'xor': 'xor',
+                'not': 'not',
 
                 '+': 'plus',
                 '-': 'minus',
