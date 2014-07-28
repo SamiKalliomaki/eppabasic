@@ -8,7 +8,9 @@ var WorkerClient = require("../worker/worker_client").WorkerClient;
 var Range = require("../range").Range;
 
 function CustomTokenizer() {
-    this.lexer = new Lexer('', true, true);
+    this.lexer = new Lexer('', true);
+    this.toolchain = new Toolchain();
+
     this.tokenTypes = {
         'comment': 'comment',
         'number': 'constant.numeric',
@@ -160,21 +162,43 @@ CustomTokenizer.prototype = {
     },
 
     getLineTokens: function(line, state, row) {
-        var tokens = [];
-        this.lexer.input = line;
+        var parser = this.toolchain.getParser(line);
+        
+        try {
+            parser.parse();
+        } catch(e) {
+            console.log(e);
+        }
 
-        do {
-            var token = this.lexer.next();
+        var lexer = parser.lexer;
+
+        while(lexer.peek() && lexer.peek().type !== 'eos') {
+            lexer.advance();
+        }
+
+        var allTokens = lexer.allTokens;
+
+        var tokens = [];
+        
+        allTokens.forEach(function(token) {
             if(token.code !== undefined) {
                 var type = this.tokenTypes[token.type];
 
                 if(token.type == 'identifier') {
                     type = this.specialIdentifiers[token.val.toLowerCase()];
+
+                    if(type === 'support.function' && !token.isFunctionCall) {
+                        type = null;
+                    }
+
+                    if(type === 'support.type' && !token.isType) {
+                        type = null;
+                    }
                 }
 
                 tokens.push({ type: type || '', value: token.code });
             }
-        } while(token.type != 'eos' && token !== null);
+        }.bind(this));
 
         return {
             tokens: tokens,

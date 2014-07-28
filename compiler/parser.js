@@ -323,6 +323,7 @@ Parser.prototype = {
             return new Nodes.VariableAssignment(tok.val, expr, dimensions, tok.line);
         } else {
             var params = this.parseParams();
+            tok.isFunctionCall = true;
             return new Nodes.FunctionCall(tok.val, params, tok.line);
         }
     },
@@ -368,7 +369,9 @@ Parser.prototype = {
         }
         if (this.peek().type === 'as') {
             this.advance();
-            type = this.types.getTypeByName(this.expect('identifier').val);
+            var typeTok = this.expect('identifier');
+            typeTok.isType = true;
+            type = this.types.getTypeByName(typeTok.val);
         }
         if (this.peek().type === 'eq') {
             this.advance();
@@ -390,7 +393,9 @@ Parser.prototype = {
         paramloop: while (this.peek().type !== 'rparen') {
             var paramname = this.expect('identifier').val;
             this.expect('as');
-            var paramtype = this.types.getTypeByName(this.expect('identifier').val);
+            var typeTok = this.expect('identifier');
+            typeTok.isType = true;
+            var paramtype = this.types.getTypeByName(typeTok.val);
 
             params.push({
                 name: paramname,
@@ -435,7 +440,9 @@ Parser.prototype = {
         try {
             params = this.parseParameterList();
             this.expect('as');
-            type = this.types.getTypeByName(this.expect('identifier').val);
+            var typeTok = this.expect('identifier');
+            typeTok.isType = true;
+            type = this.types.getTypeByName(typeTok.val);
         } catch(e) {
             if(e instanceof CompileError) {
                 this.errors.push(e);
@@ -475,7 +482,7 @@ Parser.prototype = {
         var params = [];
 
         try {
-            line = this.expect('function').line;
+            line = this.expect('sub').line;
             name = this.expect('identifier').val;
         } catch(e) {
             if(e instanceof CompileError) {
@@ -583,6 +590,7 @@ Parser.prototype = {
                     var node;
                     if (this.peek().type === 'lparen') {
                         // It's function call!
+                        t.isFunctionCall = true;
                         var params = this.parseParams();
                         var node = new Nodes.FunctionCall(t.val, params, t.line);
                     } else {
