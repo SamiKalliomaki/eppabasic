@@ -17,8 +17,15 @@ function Toolchain() {
 Toolchain.prototype = {
     parse: function(code) {
         var parser = this.getParser(code);
-        var ast = parser.parse();
+        var ast;
         var compiler;
+
+        try {
+            ast = parser.parse();
+        } catch(e) {
+            console.log(e);
+        }
+
         if(parser.errors.length === 0) {
             compiler = new Compiler(ast, this.operators, this.types);
             this.defineFunctions(compiler);
@@ -33,7 +40,11 @@ Toolchain.prototype = {
 
         if(compilationUnit.errors.length === 0) {
             var typechecker = new Typechecker(ast, compiler.functions, this.operators, this.types);
-            typechecker.check();
+            try {
+                typechecker.check();
+            } catch(e) {
+                console.log(e);
+            }
             Array.prototype.push.apply(compilationUnit.errors, typechecker.errors);
         }
         if(compilationUnit.errors.length === 0) {
