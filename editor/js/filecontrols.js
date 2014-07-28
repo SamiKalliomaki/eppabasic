@@ -24,16 +24,22 @@ function FileControlsController(fileControls, editor, userControlsController, fi
     this.loadButton.click(function() {
         fileDialogController.show(false);
         fileDialogController.onSelect = function() {
+            var fileOpening = fileDialogController.getSelectedFile();
+
             submitForm(fileDialogController.fileForm, 'eb/fs/open/', function(data) {
                 if(data['result'] === 'success') {
                     editor.setCode(data['content']);
                     notificationSystem.notify('File opened successfully.');
+
+                    if(data['editable']) {
+                        me.openedFile = fileOpening;
+                    } else {
+                        me.openedFile = null;
+                    }
                 } else {
                     notificationSystem.showErrors(data['errors']);
                 }
             });
-
-            me.openedFile = fileDialogController.getSelectedFile();
         }
     });
 
