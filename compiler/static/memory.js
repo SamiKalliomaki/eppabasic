@@ -78,8 +78,10 @@ function __memfind(size) {
             around = 1;
         }
 
-        if ((around | 0) & ((NEXT_BLOCK | 0) >= (start | 0)))
+        if ((around | 0) & ((NEXT_BLOCK | 0) >= (start | 0))) {
             __panic();
+            return 0;
+        }
     }
 
     return 0;
