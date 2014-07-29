@@ -54,6 +54,9 @@ Graphics2D.prototype = {
         lineColor: function lineColor(r, g, b) {
             this.ctx.strokeStyle = 'rgb(' + r + ',' + g + ',' + b + ')';
         },
+        lineWidth: function lineWidth(x) {
+            this.ctx.lineWidth = x;
+        },
         fillColor: function fillColor(r, g, b) {
             this.ctx.fillStyle = 'rgb(' + r + ',' + g + ',' + b + ')';
         },

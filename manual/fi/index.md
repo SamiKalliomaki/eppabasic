@@ -22,6 +22,7 @@ D
 * [DrawRect](manual:drawrect)
 * [DrawScreen](manual:drawscreen)
 * [DrawText](manual:drawtext)
+* [DrawWidth](manual:drawwidth)
 
 F
 ----------
