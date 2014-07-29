@@ -14,7 +14,7 @@ function Toolchain() {
 }
 
 Toolchain.prototype = {
-    parse: function(code) {
+    parse: function (code) {
         var parser = new Parser(code, this.operators, this.types);
         var ast = parser.parse();
         var compiler = new Compiler(ast, this.operators, this.types);
@@ -23,7 +23,7 @@ Toolchain.prototype = {
         return new CompilationUnit(ast, compiler);
     },
 
-    check: function(compilationUnit) {
+    check: function (compilationUnit) {
         var ast = compilationUnit.ast;
         var compiler = compilationUnit.compiler;
 
@@ -31,11 +31,11 @@ Toolchain.prototype = {
         new Atomicchecker(ast, compiler.functions).check();
     },
 
-    compile: function(compilationUnit) {
+    compile: function (compilationUnit) {
         return compilationUnit.compiler.compile();
     },
 
-    defineFunctions: function(compiler) {
+    defineFunctions: function (compiler) {
         //// Drawing functions
         compiler.defineJsFunction('env.clearColor', true, 'ClearColor', [this.types.Integer, this.types.Integer, this.types.Integer]);
         compiler.defineJsFunction('env.lineColor', true, 'DrawColor', [this.types.Integer, this.types.Integer, this.types.Integer]);
@@ -63,13 +63,17 @@ Toolchain.prototype = {
         compiler.defineJsFunction('env.message', true, 'Message', [this.types.String]);
         compiler.defineJsFunction('env.askNumber', true, 'AskNumber', [this.types.String], this.types.Double);
         compiler.defineJsFunction('env.askText', true, 'AskText', [this.types.String], this.types.String);
-        
-        
+
+
         //compiler.defineJsFunction('env.fullScreen', true, 'FullScreen', []);                  // Reserved for a better day
 
         /// Screen size
         compiler.defineJsFunction('env.width', true, 'Width', [], this.types.Integer);
         compiler.defineJsFunction('env.height', true, 'Height', [], this.types.Integer);
+
+        // Memory functions
+        compiler.defineJsFunction('__peek32', false, 'Peek32', [this.types.Integer], this.types.Integer);
+        compiler.defineJsFunction('__poke32', false, 'Poke32', [this.types.Integer, this.types.Integer]);
 
         //compiler.defineJsFunction('TEXT', [Types.Integer, Types.Integer, Types.String], 'text');
 
@@ -89,10 +93,10 @@ Toolchain.prototype = {
         compiler.defineJsFunction('stdlib.Math.max', true, 'Max', [this.types.Double, this.types.Double], this.types.Double);
         compiler.defineJsFunction('stdlib.Math.max', true, 'Max', [this.types.Integer, this.types.Integer], this.types.Integer);
 
-        
+
         compiler.defineJsFunction('env.randInt', true, 'Rnd', [this.types.Integer, this.types.Integer], this.types.Integer);
         compiler.defineJsFunction('env.randDbl', true, 'Rnd', [], this.types.Double);
-        
+
         //compiler.defineJsFunction('SQRT', [Types.Double], 'sqrt', Types.Double);
 
         //compiler.defineJsFunction('RANDOM', [], 'random', Types.Double);
