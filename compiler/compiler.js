@@ -636,19 +636,22 @@ Compiler.prototype = {
         buf.push('var MEMS32=new stdlib.Int32Array(heap);');
         buf.push('var MEMU32=new stdlib.Uint32Array(heap);');
         buf.push('var MEMF64=new stdlib.Float64Array(heap);');
-        buf.push('var imul=stdlib.Math.imul;');
+        buf.push('var __imul=stdlib.Math.imul;');
         buf.push('var __pow=stdlib.Math.pow;');
+        buf.push('var __panic=env.panic;');
         buf.push('var SP=0;');
         buf.push('var SB=0;');
         buf.push('var CP=0;');
         buf.push('var NEXT_BLOCK=0;');
         buf.push('var HEAP_END=0;');
         buf.push('var STRING_HEADER_LENGTH=4;')
+        buf.push('var HEAP_SIZE=env.heapSize|0;')
+
         // Add compiler defined environmental variables
         buf.push(this.env.join('\n'));
         // Compile all the other functions
         buf.push('function __popCallStack(){CP=(CP-4)|0;}');
-        buf.push('function __init(){__meminit(0x100000);SB=SP=__memreserve(1024)|0;CP=__memreserve(1024)|0;MEMU32[CP>>2]=' + mainEntry.index + ';}');
+        buf.push('function __init(){__meminit(HEAP_SIZE|0);SB=SP=__memreserve(1024)|0;CP=__memreserve(1024)|0;MEMU32[CP>>2]=' + mainEntry.index + ';}');
         var mainEntryList = this.findEntryList([], this.types.Integer);
         buf.push('function __next(){while(' + mainEntryList.name + '[MEMU32[CP>>2]&' + mainEntryList.mask + ']()|0);}');
         buf.push('function __breakExec(){CP=(CP+4)|0;MEMU32[CP>>2]=' + breakEntry.index + ';}');
@@ -659,7 +662,7 @@ Compiler.prototype = {
         // String functions
         buf.push('function __concat(stra,strb){stra=stra|0;strb=strb|0;var alen=0;var blen=0;var clen=0;var strc=0;var ptr=0;var ptrc=0;alen=MEMS32[(stra|0)>>2]|0;blen=MEMS32[(strb|0)>>2]|0;clen=(alen+blen)|0;strc=__memreserve((clen+(STRING_HEADER_LENGTH|0))|0)|0;ptrc=(strc+(STRING_HEADER_LENGTH|0))|0;ptr=(stra+(STRING_HEADER_LENGTH|0))|0;MEMS32[(strc|0)>>2]=clen|0;while(alen|0){MEMU8[(ptrc|0)>>0]=MEMU8[(ptr|0)>>0];ptrc=(ptrc+1)|0;ptr=(ptr+1)|0;alen=(alen-1)|0;}ptr=(strb+(STRING_HEADER_LENGTH|0))|0;while(blen|0){MEMU8[(ptrc|0)>>0]=MEMU8[(ptr|0)>>0];ptrc=(ptrc+1)|0;ptr=(ptr+1)|0;blen=(blen-1)|0;}return strc|0;}');
         // Memory functions
-        buf.push('function __meminit(size){size=size|0;while((size&7)|0)size=(size-1)|0;MEMS32[0>>2]=0;MEMS32[4>>2]=(size-8)|0;MEMS32[((size-8)|0)>>2]=0;NEXT_BLOCK=0;HEAP_END=size;}function __memreserve(size){size=size|0;var header=0;var footer=0;var i=0;size=(size+7)&0xfffffff8;size=(size+8)|0;header=__memfind(size|0)|0;footer=(header+(MEMS32[(header+4)>>2]|0))|0;if((size|0)<(MEMS32[((header|0)+4)>>2]|0)){MEMS32[((header|0)+4)>>2]=size;MEMS32[((header|0)+size)>>2]=header;MEMS32[((header|0)+size+4)>>2]=(footer-header-size)|0;MEMS32[footer>>2]=(header+size)|0;}MEMS32[(header+4)>>2]=MEMS32[(header+4)>>2]|1;header=(header+8)|0;size=(size-8)|0;for(i=0;(i|0)<(size|0);i=(i+1)|0){MEMS32[(header+i)>>2]=0;}return header|0;}function __memfind(size){size=size|0;while(1){if((MEMS32[((NEXT_BLOCK+4)|0)>>2]&1)==0){if((MEMS32[((NEXT_BLOCK+4)|0)>>2]|0)>=(size|0)){return NEXT_BLOCK|0;}}NEXT_BLOCK=(NEXT_BLOCK+(MEMS32[((NEXT_BLOCK+4)|0)>>2]|0))&0xfffffff8;if(((NEXT_BLOCK+8)|0)>=(HEAP_END|0))NEXT_BLOCK=0;}return 0;}function __memfree(ptr){ptr=ptr|0;ptr=(ptr-8)|0;MEMS32[(ptr+4)>>2]=MEMS32[(ptr+4)>>2]&0xfffffffe;__memcoalesce(ptr);}function __memcoalesce(header){header=header|0;var header2=0;var footer=0;var tmp=0;header2=(header+(MEMS32[(header+4)>>2]|0))|0;if((MEMS32[((header2+4)|0)>>2]&1)==0){MEMS32[((header+4)|0)>>2]=((MEMS32[((header+4)|0)>>2]|0)+(MEMS32[((header2+4)|0)>>2]|0));footer=(header+(MEMS32[(header+4)>>2]|0))|0;MEMS32[footer>>2]=header;}header2=MEMS32[header>>2]|0;if((MEMS32[((header2+4)|0)>>2]&1)==0){tmp=header;header=header2;header2=tmp;MEMS32[((header+4)|0)>>2]=((MEMS32[((header+4)|0)>>2]|0)+(MEMS32[((header2+4)|0)>>2]|0));footer=(header+(MEMS32[(header+4)>>2]|0))|0;MEMS32[footer>>2]=header;}NEXT_BLOCK=header;}');
+        buf.push('function __meminit(size){size=size|0;while((size&7)|0)size=(size-1)|0;MEMS32[0>>2]=0;MEMS32[4>>2]=(size-8)|0;MEMS32[((size-8)|0)>>2]=0;NEXT_BLOCK=0;HEAP_END=size;}function __memreserve(size){size=size|0;var header=0;var footer=0;var i=0;size=(size+7)&0xfffffff8;size=(size+8)|0;header=__memfind(size|0)|0;footer=(header+(MEMS32[(header+4)>>2]|0))|0;if((size|0)<(MEMS32[((header|0)+4)>>2]|0)){MEMS32[((header|0)+4)>>2]=size;MEMS32[((header|0)+size)>>2]=header;MEMS32[((header|0)+size+4)>>2]=(footer-header-size)|0;MEMS32[footer>>2]=(header+size)|0;}MEMS32[(header+4)>>2]=MEMS32[(header+4)>>2]|1;header=(header+8)|0;size=(size-8)|0;for(i=0;(i|0)<(size|0);i=(i+1)|0){MEMS32[(header+i)>>2]=0;}return header|0;}function __memfind(size){size=size|0;var around=0;var start=0;start=NEXT_BLOCK;while(1){if((MEMS32[((NEXT_BLOCK+4)|0)>>2]&1)==0){if((MEMS32[((NEXT_BLOCK+4)|0)>>2]|0)>=(size|0)){return NEXT_BLOCK|0;}}NEXT_BLOCK=(NEXT_BLOCK+(MEMS32[((NEXT_BLOCK+4)|0)>>2]|0))&0xfffffff8;if(((NEXT_BLOCK+8)|0)>=(HEAP_END|0)){NEXT_BLOCK=0;around=1;}if((around|0)&((NEXT_BLOCK|0)>=(start|0)))__panic();}return 0;}function __memfree(ptr){ptr=ptr|0;ptr=(ptr-8)|0;MEMS32[(ptr+4)>>2]=MEMS32[(ptr+4)>>2]&0xfffffffe;__memcoalesce(ptr);}function __memcoalesce(header){header=header|0;var header2=0;var footer=0;var tmp=0;header2=(header+(MEMS32[(header+4)>>2]|0))|0;if((MEMS32[((header2+4)|0)>>2]&1)==0){MEMS32[((header+4)|0)>>2]=((MEMS32[((header+4)|0)>>2]|0)+(MEMS32[((header2+4)|0)>>2]|0));footer=(header+(MEMS32[(header+4)>>2]|0))|0;MEMS32[footer>>2]=header;}header2=MEMS32[header>>2]|0;if((MEMS32[((header2+4)|0)>>2]&1)==0){tmp=header;header=header2;header2=tmp;MEMS32[((header+4)|0)>>2]=((MEMS32[((header+4)|0)>>2]|0)+(MEMS32[((header2+4)|0)>>2]|0));footer=(header+(MEMS32[(header+4)>>2]|0))|0;MEMS32[footer>>2]=header;}NEXT_BLOCK=header;}');
         buf.push('function __peek32(a){a=a|0;return MEMS32[a>>2]|0;}function __poke32(a,v){a=a|0;v=v|0;MEMS32[a>>2]=v|0;}')
 
         buf.push(this.generateFunctions());

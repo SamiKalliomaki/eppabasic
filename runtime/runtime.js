@@ -28,6 +28,7 @@ function Runtime() {
     };
     this.env = {};
     this.env.heapSize = 1024 * 1024;
+    this.env.panic = this.panic.bind(this);
     this.heap = new ArrayBuffer(this.env.heapSize);
 
     this.stringUtil = new StringUtils(this.heap);
@@ -63,6 +64,12 @@ Runtime.prototype = {
         this.g2d.setProgram(this.program);
         this.stringUtil.setProgram(this.program);
         this.program.init();
+    },
+
+    /* A callback called by the program in case memory allocation fail or similar */
+    panic: function panic() {
+        alert('PANIC');
+        window.close();
     },
 
 

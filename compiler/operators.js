@@ -110,7 +110,7 @@ OperatorContainer.prototype = {
         }
         // Multiplication
         this.addOperator(new BinaryOperator(this.types.Integer, 'mul', this.types.Integer, this.types.Integer,
-            new BinaryOperatorCompiler('imul', this.types.Integer, this.types.Integer, this.types.Integer, false)));
+            new BinaryOperatorCompiler('__imul', this.types.Integer, this.types.Integer, this.types.Integer, false)));
 
         this.addOperator(new BinaryOperator(this.types.Double, 'mul', this.types.Integer, this.types.Double,
             new BinaryOperatorCompiler('*', this.types.Double, this.types.Double, this.types.Double, true)));

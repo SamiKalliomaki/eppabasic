@@ -55,6 +55,10 @@ function __memreserve(size) {
 
 function __memfind(size) {
     size = size | 0;
+    var around = 0;
+    var start = 0;
+
+    start = NEXT_BLOCK;
 
     while (1) {
         if ((MEMS32[((NEXT_BLOCK + 4) | 0) >> 2] & 1) == 0) {
@@ -69,8 +73,13 @@ function __memfind(size) {
         // Reserved or too small -> move to the next one
         NEXT_BLOCK = (NEXT_BLOCK + (MEMS32[((NEXT_BLOCK + 4) | 0) >> 2] | 0)) & 0xfffffff8;
         // Test if we get out so return to the start
-        if (((NEXT_BLOCK + 8) | 0) >= (HEAP_END | 0))
+        if (((NEXT_BLOCK + 8) | 0) >= (HEAP_END | 0)) {
             NEXT_BLOCK = 0;
+            around = 1;
+        }
+
+        if ((around | 0) & ((NEXT_BLOCK | 0) >= (start | 0)))
+            __panic();
     }
 
     return 0;
