@@ -22,6 +22,50 @@ Parser.prototype = {
             n = 1;
         return this.lexer.peek(n);
     },
+
+    /*
+     * Peeks tokens and finds the distance to the first node of specific type
+     */
+    peekDistance: function peekDistance(nodeType) {
+        for(var i = 0;; i++) {
+            var node = this.peek(i + 1);
+
+            if(node.type === nodeType) {
+                return i;
+            }
+            if(node.type === 'eos') {
+                return undefined;
+            }
+        }
+    },
+
+    /*
+     * Peeks distance to matching right paren
+     */
+    peekDistanceToMatchingParen: function peekDistanceToMatchingParen(leftParen) {
+        leftParen = leftParen || 1;
+
+        var depth = 1;
+
+        for(var i = leftParen;; i++) {
+            var node = this.peek(i + 1);
+
+            if(node.type === 'eos') {
+                return undefined;
+            }
+
+            if(node.type === 'lparen') {
+                depth++;
+            } else if(node.type === 'rparen') {
+                depth--;
+            }
+
+            if(depth === 0) {
+                return i;
+            }
+        }
+    },
+
     /*
      * Advances lexer by one token
      */
@@ -333,7 +377,7 @@ Parser.prototype = {
     parseParams: function parseParams() {
         var params = [];
         var hasParens = false;
-        if (this.peek().type === 'lparen') {
+        if (this.peek().type === 'lparen' && (this.peek(2).type === 'rparen' || this.peekDistance('comma') < this.peekDistanceToMatchingParen())) {
             this.advance();
             hasParens = true;
         }
