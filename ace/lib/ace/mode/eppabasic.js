@@ -119,6 +119,9 @@ function CustomTokenizer() {
 
         'int': 'support.function',
 
+        'peek32': 'support.function',
+        'poke32': 'support.function',
+
 
         'integer': 'support.type',
         'double': 'support.type',
