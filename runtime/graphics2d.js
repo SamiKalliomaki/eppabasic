@@ -169,8 +169,14 @@ Graphics2D.prototype = {
             return parseInt(prompt(str));
         },
         askText: function askText(str) {
+            return 0;
+        },
+        setWindowTitle: function setWindowTitle(str) {
             str = this.strUtil.fromEppaBasic(str);
-            return prompt(str);
+            document.title = str;
+        },
+        getWindowTitle: function getWindowTitle() {
+            return 0;
         },
     },
     stdlib: {}

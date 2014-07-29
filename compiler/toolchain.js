@@ -90,13 +90,16 @@ Toolchain.prototype = {
         compiler.defineJsFunction('env.message', true, 'Message', [this.types.String]);
         compiler.defineJsFunction('env.askNumber', true, 'AskNumber', [this.types.String], this.types.Double);
         compiler.defineJsFunction('env.askText', true, 'AskText', [this.types.String], this.types.String);
-
+        compiler.defineJsFunction('env.setWindowTitle', true, 'WindowTitle', [this.types.String]);
+        compiler.defineJsFunction('env.getWindowTitle', true, 'WindowTitle', [], this.types.String);
+        /// Screen size
+        compiler.defineJsFunction('env.width', true, 'Width', [], this.types.Integer);
+        compiler.defineJsFunction('env.width', true, 'WindowWidth', [], this.types.Integer);
+        compiler.defineJsFunction('env.height', true, 'Height', [], this.types.Integer);
+        compiler.defineJsFunction('env.height', true, 'WindowHeight', [], this.types.Integer);
 
         //compiler.defineJsFunction('env.fullScreen', true, 'FullScreen', []);                  // Reserved for a better day
 
-        /// Screen size
-        compiler.defineJsFunction('env.width', true, 'Width', [], this.types.Integer);
-        compiler.defineJsFunction('env.height', true, 'Height', [], this.types.Integer);
 
         /// Memory functions
         compiler.defineJsFunction('__peek32', false, 'Peek32', [this.types.Integer], this.types.Integer);

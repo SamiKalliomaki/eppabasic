@@ -69,4 +69,10 @@ T
 * [TextSize](manual:textsize)
 * [Timer](manual:timer)
 
+W
+----------
+* [WindowHeight](manual:windowheight)
+* [WindowTitle](manual:windowtitle)
+* [WindowWidth](manual:windowwidth)
+
 &nbsp;
