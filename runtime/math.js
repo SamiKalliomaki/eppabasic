@@ -31,7 +31,10 @@ EbMath.prototype = {
         },
         milliseconds: function milliseconds() {
             return new Date().getMilliseconds();
-        }
+        },
+        timer: function timer() {
+            return new Date().getTime()/1000;
+        },
     },
 
     stdlib: {}

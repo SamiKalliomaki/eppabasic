@@ -66,5 +66,6 @@ T
 * [TextColor](manual:textcolor)
 * [TextFont](manual:textfont)
 * [TextSize](manual:textsize)
+* [Timer](manual:timer)
 
 &nbsp;

@@ -31,10 +31,13 @@ Graphics2D.prototype = {
     setProgram: function setProgram(program) {
         this.program = program;
     },
-    print: function print(str) {
+    print: function print(str, a = 0) {
         var origStyle = this.ctx.fillStyle;
         this.ctx.font = this.textSize + "px " + this.textFont;
         this.ctx.fillStyle = this.textColor;
+        if (a == 0) this.ctx.textAlign = "left";
+        if (a == 1) this.ctx.textAlign = "right";
+        if (a == 2) this.ctx.textAlign = "center";
         this.ctx.textBaseline = "top";
         this.ctx.fillText(str, this.printX, this.printY);
         this.printY += this.textSize + this.textSize/10;
@@ -99,6 +102,8 @@ Graphics2D.prototype = {
             this.ctx.fillStyle = this.clearColor;
             this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
             this.ctx.fillStyle = origStyle;
+            this.printX = 5;
+            this.printY = 5;            
         },
         drawScreen: function drawScreen() {
             this.program.breakExec();
@@ -135,6 +140,12 @@ Graphics2D.prototype = {
             this.printY = y;
             str = this.strUtil.fromEppaBasic(str);
             this.print(str);
+        },
+        drawTextA: function drawTextA(x, y, str, a) {
+            this.printX = x;
+            this.printY = y;
+            str = this.strUtil.fromEppaBasic(str);
+            this.print(str, a);
         },
         textColor: function textColor(r, g, b) {
             this.textColor = 'rgb(' + r + ',' + g + ',' + b + ')';

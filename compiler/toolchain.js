@@ -81,6 +81,7 @@ Toolchain.prototype = {
         compiler.defineJsFunction('env.drawScreen', true, 'DrawScreen', [], undefined, false);
 
         compiler.defineJsFunction('env.drawText', true, 'DrawText', [this.types.Integer, this.types.Integer, this.types.String]);
+        compiler.defineJsFunction('env.drawTextA', true, 'DrawText', [this.types.Integer, this.types.Integer, this.types.String, this.types.Integer]);
         compiler.defineJsFunction('env.textColor', true, 'TextColor', [this.types.Integer, this.types.Integer, this.types.Integer]);
         compiler.defineJsFunction('env.textFont', true, 'TextFont', [this.types.String]);
         compiler.defineJsFunction('env.textSize', true, 'TextSize', [this.types.Integer]);
@@ -134,6 +135,7 @@ Toolchain.prototype = {
         compiler.defineJsFunction('env.minutes', true, 'Minutes', [], this.types.Integer);
         compiler.defineJsFunction('env.seconds', true, 'Seconds', [], this.types.Integer);
         compiler.defineJsFunction('env.milliseconds', true, 'MilliSeconds', [], this.types.Integer);
+        compiler.defineJsFunction('env.timer', true, 'Timer', [], this.types.Double);
 
         //// Input
         compiler.defineJsFunction('env.keyDown', true, 'KeyDown', [this.types.Integer], this.types.Boolean);
