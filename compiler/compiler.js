@@ -1084,6 +1084,7 @@ Compiler.prototype = {
     compileVariableAssignment: function compileVariableAssignment(variable, context) {
         /// <param name='variable' type='Nodes.VariableAssignment' />
         /// <param name='context' type='CompilerContext' />
+
         var type = variable.ref.type;
         if (type.isArray()) {
             // Compute the index
@@ -1111,6 +1112,7 @@ Compiler.prototype = {
 
             // Finally compute the value and push it to the array
             var val = this.compileExpr(variable.expr, context);
+            ref.freeVal();
             ref.setValue(val);
             val.freeRef();
 
@@ -1125,6 +1127,7 @@ Compiler.prototype = {
         }
 
         var ref = this.compileExpr(variable.expr, context);
+        variable.ref.location.freeVal();
         variable.ref.location.setValue(ref);
         ref.freeRef();
     },
