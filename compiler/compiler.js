@@ -128,10 +128,10 @@ CompilerContext.prototype = {
             while (this.registeredVariables.length)
                 this.freeVariable(this.registeredVariables[this.registeredVariables.length - 1]);
         } else {
-            var i = this.registeredVariables.length;
+            /*var i = this.registeredVariables.length;
             while (i--) {
                 this.registeredVariables[i].freeType();
-            }
+            }*/
         }
     },
 
