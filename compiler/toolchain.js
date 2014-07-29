@@ -96,9 +96,10 @@ Toolchain.prototype = {
         compiler.defineJsFunction('env.width', true, 'Width', [], this.types.Integer);
         compiler.defineJsFunction('env.height', true, 'Height', [], this.types.Integer);
 
-        // Memory functions
+        /// Memory functions
         compiler.defineJsFunction('__peek32', false, 'Peek32', [this.types.Integer], this.types.Integer);
         compiler.defineJsFunction('__poke32', false, 'Poke32', [this.types.Integer, this.types.Integer]);
+        compiler.defineJsFunction('__memsize', false, 'MemorySize', [], this.types.Integer);
 
         //compiler.defineJsFunction('TEXT', [Types.Integer, Types.Integer, Types.String], 'text');
 

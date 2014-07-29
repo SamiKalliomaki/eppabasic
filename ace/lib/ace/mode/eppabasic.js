@@ -121,7 +121,7 @@ function CustomTokenizer() {
 
         'peek32': 'support.function',
         'poke32': 'support.function',
-
+        'memorysize': 'support.function',
 
         'integer': 'support.type',
         'double': 'support.type',
