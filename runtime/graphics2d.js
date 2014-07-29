@@ -31,7 +31,7 @@ Graphics2D.prototype = {
     setProgram: function setProgram(program) {
         this.program = program;
     },
-    print: function print(str, a = 0) {
+    print: function print(str, a) {
         var origStyle = this.ctx.fillStyle;
         this.ctx.font = this.textSize + "px " + this.textFont;
         this.ctx.fillStyle = this.textColor;
@@ -130,19 +130,19 @@ Graphics2D.prototype = {
         
         printStr: function printStr(str) {
             str = this.strUtil.fromEppaBasic(str);
-            this.print(str);
+            this.print(str, 0);
         },
         printInt: function printInt(a) {
-            this.print(a);
+            this.print(a, 0);
         },
         printDbl: function printDbl(a) {
-            this.print(a);
+            this.print(a, 0);
         },
         drawText: function drawText(x, y, str) {
             this.printX = x;
             this.printY = y;
             str = this.strUtil.fromEppaBasic(str);
-            this.print(str);
+            this.print(str, 0);
         },
         drawTextA: function drawTextA(x, y, str, a) {
             this.printX = x;
