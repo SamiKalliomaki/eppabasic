@@ -149,6 +149,8 @@ Toolchain.prototype = {
         compiler.defineJsFunction('env.mouseX', true, 'MouseX', [], this.types.Integer);
         compiler.defineJsFunction('env.mouseY', true, 'MouseY', [], this.types.Integer);
         compiler.defineJsFunction('env.mouseDown', true, 'MouseDown', [this.types.Integer], this.types.Boolean);
+        compiler.defineJsFunction('env.mouseUp', true, 'MouseUp', [this.types.Integer], this.types.Boolean);
+        compiler.defineJsFunction('env.mouseHit', true, 'MouseHit', [this.types.Integer], this.types.Boolean);
 
         //// Output
         compiler.defineJsFunction('env.printInt', true, 'Print', [this.types.Integer]);

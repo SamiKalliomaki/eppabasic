@@ -4,6 +4,7 @@
     this.keysHit = new Array(256);
     this.mouseButtons = 0;
     this.mouseX = this.mouseY = -1;
+    this.mouseHit = 0;
 
     // Make all functions to use right this
     for (func in this.env) {
@@ -46,7 +47,18 @@ Input.prototype = {
         },
         mouseDown: function mouseDown(key) {
             return (this.mouseButtons & (1 << (key - 1))) !== 0;
+        },
+        mouseUp: function mouseUp(key) {
+            return (this.mouseButtons & (1 << (key - 1))) === 0;
+        },
+        mouseHit: function mouseHit(key) {
+            if (this.mouseHit & (1 << (key - 1))) {
+                this.mouseHit ^= (1 << (key - 1));
+                return 1;
+            }
+            return 0;
         }
+        
     },
 
     keyDown: function keyDown(e) {
@@ -74,13 +86,25 @@ Input.prototype = {
             }
         }
         this.mouseButtons = e.buttons;
+        if (e.type == "mousedown") {
+            if (e.button == 0) this.mouseHit |= 1;
+            if (e.button == 1) this.mouseHit |= 4;
+            if (e.button == 2) this.mouseHit |= 2;            
+            if (!e.button) {
+                if (e.which == 1) this.mouseHit |= 1;
+                if (e.which == 2) this.mouseHit |= 2;
+                if (e.which == 3) this.mouseHit |= 4;            
+            }
+        }
         if (e.type == "mouseup") {
             if (e.button == 0) this.mouseButtons &= (~1);
             if (e.button == 1) this.mouseButtons &= (~4);
             if (e.button == 2) this.mouseButtons &= (~2);            
-            if (e.which == 1) this.mouseButtons &= (~1);
-            if (e.which == 2) this.mouseButtons &= (~2);
-            if (e.which == 3) this.mouseButtons &= (~4);
+            if (!e.button) {
+                if (e.which == 1) this.mouseButtons &= (~1);
+                if (e.which == 2) this.mouseButtons &= (~2);
+                if (e.which == 3) this.mouseButtons &= (~4);
+            }
         }
         e.preventDefault();
         return false;
