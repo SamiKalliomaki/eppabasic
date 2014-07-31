@@ -1,4 +1,5 @@
-﻿/// <reference path="types.js" />
+﻿/// <reference path="framework.js" />
+/// <reference path="types.js" />
 
 Nodes = {};
 
@@ -83,9 +84,9 @@ Nodes.Block = function Block(nodes, line) {
     this.parent = undefined;
 };
 Nodes.Block.prototype = {
-    defineVariable: function defineVariable(def) {
+    defineVariable: function defineVariable(def, line) {
         if (this.variables.some(function some(elem) { return elem.name.toLowerCase() === def.name.toLowerCase(); })) {
-            throw new Error('Redefinition of variable "' + name + '"');
+            throw new CompileError(line, 'Redefinition of variable "' + def.name + '"');
         }
         this.variables.push(def);
     },

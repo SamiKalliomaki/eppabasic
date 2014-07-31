@@ -74,7 +74,14 @@ Typechecker.prototype = {
                 this.errors.push(new CompileError(definition.line, 'Can not cast type "' + this.resolveExprType(definition.initial, parent) + '" to "' + definition.type + '"'));
         }
         // Tell the parent about this variable
-        parent.defineVariable(definition);
+        try {
+            parent.defineVariable(definition, definition.line);
+        } catch (e) {
+            if (e instanceof CompileError)
+                this.errors.push(e);
+            else
+                throw e;
+        }
     },
 
     /*
