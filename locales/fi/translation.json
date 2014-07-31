@@ -31,5 +31,8 @@
     "share-dialog": {
         "link-help": "Voit käyttää linkkiä alapuolella jakaaksesi koodin ystävällesi."
     },
-    "confirm-leave": "Haluatko varmasti poistua sivulta? Kaikki tallentamattomat muutokset tuhoutuvat."
+    "confirm-leave": "Haluatko varmasti poistua sivulta? Kaikki tallentamattomat muutokset tuhoutuvat.",
+    "manual": {
+        "back": "Takaisin"
+    }
 }

@@ -64,7 +64,7 @@ BaseType.prototype = {
 
 function IntegerType() { }
 extend(IntegerType.prototype, BaseType.prototype);
-IntegerType.prototype.castTargets = [TypeContainer.prototype.Double];
+IntegerType.prototype.castTargets = [TypeContainer.prototype.Double, TypeContainer.prototype.String];
 IntegerType.prototype.name = 'Integer';
 IntegerType.prototype.castTo = function castTo(expr, type) {
     /// <param name='expr' type='String' />
@@ -74,13 +74,15 @@ IntegerType.prototype.castTo = function castTo(expr, type) {
             return expr;
         case TypeContainer.prototype.Double:
             return '(+(' + expr + '))';
+        case TypeContainer.prototype.String:
+            return '(__integerstring((' + expr + ')|0)|0)';
     }
     throw new Error('Failed to cast "' + this + '" to "' + type + '"');
 }
 
 function DoubleType() { }
 extend(DoubleType.prototype, BaseType.prototype);
-DoubleType.prototype.castTargets = [TypeContainer.prototype.Integer];
+DoubleType.prototype.castTargets = [TypeContainer.prototype.Integer, TypeContainer.prototype.String];
 DoubleType.prototype.name = 'Double';
 DoubleType.prototype.castTo = function castTo(expr, type) {
     /// <param name='expr' type='String' />
@@ -90,6 +92,8 @@ DoubleType.prototype.castTo = function castTo(expr, type) {
             return expr;
         case TypeContainer.prototype.Integer:
             return '((~~+(' + expr + '))|0)';
+        case TypeContainer.prototype.String:
+            return '(__doublestring(+(' + expr + '))|0)';
     }
     throw new Error('Failed to cast "' + this + '" to "' + type + '"');
 }

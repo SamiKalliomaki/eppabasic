@@ -6,7 +6,7 @@ $(function() {
     var fileControlsController = new FileControlsController('#file-controls', editor, userControlsController, fileDialogController, notificationSystem);
     var codeControlsController = new CodeControlsController('#code-controls', editor);
     var pasteControlsController = new PasteControlsController('#paste-controls', '#share-dialog-wrapper', editor, notificationSystem);
-    var manual = new Manual('#manual', 'fi');
+    var manual = new Manual('#manual-container', 'fi');
 
     manual.openPage('index');
 

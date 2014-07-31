@@ -19,10 +19,6 @@
     <script src="ace/build/src/ace.js" type="text/javascript" charset="utf-8"></script>
     <script src="libs/marked.js" type="text/javascript" charset="utf-8"></script>
     <script src="libs/i18next-1.7.3.min.js" type="text/javascript" charset="utf-8"></script>
-    <!--Compiler recources-->
-    <script src="compiler/static/math.js"></script>
-    <script src="compiler/static/memory.js"></script>
-    <script src="compiler/static/string.js"></script>
     <!--Compiler-->
     <script src="compiler/framework.js"></script>
     <script src="compiler/polyfill.js"></script>
@@ -118,7 +114,13 @@
         <div class="clear"></div>
     </div>
     <div id="editor"></div>
-    <div id="manual">
+    <div id="manual-container">
+        <div id="manual-header">
+            <div class="header-block">
+                <button class="header-ui-element header-button back" data-i18n="manual.back"></button>
+            </div>
+        </div>
+        <div id="manual"></div>
     </div>
     <div id="file-dialog-wrapper" class="dialog-wrapper">
         <div class="file-dialog dialog">
