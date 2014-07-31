@@ -128,10 +128,11 @@ CompilerContext.prototype = {
             while (this.registeredVariables.length)
                 this.freeVariable(this.registeredVariables[this.registeredVariables.length - 1]);
         } else {
-            /*var i = this.registeredVariables.length;
+            var i = this.registeredVariables.length;
             while (i--) {
-                this.registeredVariables[i].freeType();
-            }*/
+                this.registeredVariables[i].freeVal();
+                this.registeredVariables[i].freeRef(false);
+            }
         }
     },
 
@@ -1104,7 +1105,7 @@ Compiler.prototype = {
                 offset.setValue(variable.ref.location.getValue() + '+' + (4 * i));
                 var ref = new CompilerAbsoluteReference(this.types.Integer, offset, context);
 
-                indexStr = '(((stdlib.Math.imul(' + indexStr + ',' + ref.getValue() + ')|0)+' + dimensions[i].type.castTo(dimensions[i].getValue(), this.types.Integer) + ')|0)';
+                indexStr = '(((__imul(' + indexStr + ',' + ref.getValue() + ')|0)+' + dimensions[i].type.castTo(dimensions[i].getValue(), this.types.Integer) + ')|0)';
             }
 
             // The offset of the referenced index
@@ -1150,7 +1151,7 @@ Compiler.prototype = {
             // Compute the actual size of the string
             var sizeStr = dimensions[0].type.castTo(dimensions[0].getValue(), this.types.Integer);
             for (var i = 1; i < dimensions.length; i++) {
-                sizeStr = 'stdlib.Math.imul(' + sizeStr + ',' + dimensions[i].type.castTo(dimensions[i].getValue(), this.types.Integer) + ')|0';
+                sizeStr = '__imul(' + sizeStr + ',' + dimensions[i].type.castTo(dimensions[i].getValue(), this.types.Integer) + ')|0';
             }
             /*var sizeStr = [];
             dimensions.forEach(function each(dim) {
@@ -1376,7 +1377,7 @@ Compiler.prototype = {
             offset.setValue(base.getValue() + '+' + (4 * i));
             var ref = new CompilerAbsoluteReference(this.types.Integer, offset, context);
 
-            indexStr = '(((stdlib.Math.imul(' + indexStr + ',' + ref.getValue() + ')|0)+' + dimensions[i].type.castTo(dimensions[i].getValue(), this.types.Integer) + ')|0)';
+            indexStr = '(((__imul(' + indexStr + ',' + ref.getValue() + ')|0)+' + dimensions[i].type.castTo(dimensions[i].getValue(), this.types.Integer) + ')|0)';
         }
 
         // Then get offset to the item
