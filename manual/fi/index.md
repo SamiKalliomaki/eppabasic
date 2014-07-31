@@ -3,76 +3,75 @@ Komennot
 
 A
 ----------
-* [Abs](manual:abs)
-* [AskNumber](manual:asknumber)
-* [AskText](manual:asktext)
+* [`Abs`](manual:abs)
+* [`AskNumber`](manual:asknumber)
 
 C
 ----------
-* [ClearColor](manual:clearcolor)
-* [ClearScreen](manual:clearscreen)
-* [Cos](manual:cos)
+* [`ClearColor`](manual:clearcolor)
+* [`ClearScreen`](manual:clearscreen)
+* [`Cos`](manual:cos)
 
 D
 ----------
-* [DrawCircle](manual:drawcircle)
-* [DrawColor](manual:drawcolor)
-* [DrawDot](manual:drawdot)
-* [DrawLine](manual:drawline)
-* [DrawRect](manual:drawrect)
-* [DrawScreen](manual:drawscreen)
-* [DrawText](manual:drawtext)
-* [DrawWidth](manual:drawwidth)
+* [`DrawCircle`](manual:drawcircle)
+* [`DrawColor`](manual:drawcolor)
+* [`DrawDot`](manual:drawdot)
+* [`DrawLine`](manual:drawline)
+* [`DrawRect`](manual:drawrect)
+* [`DrawScreen`](manual:drawscreen)
+* [`DrawText`](manual:drawtext)
+* [`DrawWidth`](manual:drawwidth)
 
 F
 ----------
-* [FillCircle](manual:fillcircle)
-* [FillColor](manual:fillcolor)
-* [FillRect](manual:fillrect)
+* [`FillCircle`](manual:fillcircle)
+* [`FillColor`](manual:fillcolor)
+* [`FillRect`](manual:fillrect)
 
 H
 ----------
-* [Hours](manual:hours)
+* [`Hours`](manual:hours)
 
 K
 ----------
-* [KeyDown](manual:keydown)
-* [KeyHit](manual:keyhit)
-* [KeyUp](manual:keyup)
+* [`KeyDown`](manual:keydown)
+* [`KeyHit`](manual:keyhit)
+* [`KeyUp`](manual:keyup)
 
 M
 ----------
-* [Max](manual:max)
-* [Message](manual:message)
-* [Milliseconds](manual:milliseconds)
-* [Min](manual:min)
-* [Minutes](manual:minutes)
-* [MouseDown](manual:mousedown)
-* [MouseX](manual:mousex)
-* [MouseY](manual:mousey)
+* [`Max`](manual:max)
+* [`Message`](manual:message)
+* [`Min`](manual:min)
+* [`Minutes`](manual:minutes)
+* [`MouseDown`](manual:mousedown)
+* [`MouseX`](manual:mousex)
+* [`MouseY`](manual:mousey)
 
 R
 ----------
-* [Rnd](manual:rnd)
+* [`Rnd`](manual:rnd)
 
 S
 ----------
-* [Seconds](manual:seconds)
-* [Sin](manual:sin)
-* [Sqr](manual:sqr)
+* [`Seconds`](manual:seconds)
+* [`Sin`](manual:sin)
+* [`Sqr`](manual:sqr)
 
 T
 ----------
-* [Tan](manual:tan)
-* [TextColor](manual:textcolor)
-* [TextFont](manual:textfont)
-* [TextSize](manual:textsize)
-* [Timer](manual:timer)
+* [`Tan`](manual:tan)
+* [`TextColor`](manual:textcolor)
+* [`TextFont`](manual:textfont)
+* [`TextSize`](manual:textsize)
+* [`Timer`](manual:timer)
 
 W
 ----------
-* [WindowHeight](manual:windowheight)
-* [WindowTitle](manual:windowtitle)
-* [WindowWidth](manual:windowwidth)
+* [`Wait`](manual:wait)
+* [`WindowHeight`](manual:windowheight)
+* [`WindowTitle`](manual:windowtitle)
+* [`WindowWidth`](manual:windowwidth)
 
 &nbsp;
