@@ -52,7 +52,7 @@ Runtime.prototype = {
         this.math = new EbMath(this.heap);
         mixin(this.env, this.math.env);
 
-        var ebstring = new EbString(this.heap);
+        var ebstring = new EbString(this.heap, this.stringUtil);
         mixin(this.env, ebstring.env);
 
         var input = new Input(this.heap, this.canvasHolder, document.body);
