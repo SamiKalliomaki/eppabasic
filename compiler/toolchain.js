@@ -93,10 +93,15 @@ Toolchain.prototype = {
         compiler.defineJsFunction('env.setWindowTitle', true, 'WindowTitle', [this.types.String]);
         compiler.defineJsFunction('env.getWindowTitle', true, 'WindowTitle', [], this.types.String);
         /// Screen size
-        compiler.defineJsFunction('env.width', true, 'Width', [], this.types.Integer);
-        compiler.defineJsFunction('env.width', true, 'WindowWidth', [], this.types.Integer);
-        compiler.defineJsFunction('env.height', true, 'Height', [], this.types.Integer);
-        compiler.defineJsFunction('env.height', true, 'WindowHeight', [], this.types.Integer);
+        compiler.defineJsFunction('env.getWidth', true, 'Width', [], this.types.Integer);
+        compiler.defineJsFunction('env.getWidth', true, 'WindowWidth', [], this.types.Integer);
+        compiler.defineJsFunction('env.getHeight', true, 'Height', [], this.types.Integer);
+        compiler.defineJsFunction('env.getHeight', true, 'WindowHeight', [], this.types.Integer);
+        compiler.defineJsFunction('env.setWidth', true, 'Width', [this.types.Integer]);
+        compiler.defineJsFunction('env.setWidth', true, 'WindowWidth', [this.types.Integer]);
+        compiler.defineJsFunction('env.setHeight', true, 'Height', [this.types.Integer]);
+        compiler.defineJsFunction('env.setHeight', true, 'WindowHeight', [this.types.Integer]);
+        compiler.defineJsFunction('env.setSize', true, 'WindowSize', [this.types.Integer, this.types.Integer]);
 
         //compiler.defineJsFunction('env.fullScreen', true, 'FullScreen', []);                  // Reserved for a better day
 
@@ -140,7 +145,7 @@ Toolchain.prototype = {
         compiler.defineJsFunction('env.seconds', true, 'Seconds', [], this.types.Integer);
         compiler.defineJsFunction('env.milliseconds', true, 'MilliSeconds', [], this.types.Integer);
         compiler.defineJsFunction('env.timer', true, 'Timer', [], this.types.Double);
-        compiler.defineJsFunction('env.wait', true, 'Wait', [this.types.Double],undefined,false);
+        compiler.defineJsFunction('env.wait', true, 'Wait', [this.types.Double], undefined, false);
 
         //// Input
         compiler.defineJsFunction('env.keyDown', true, 'KeyDown', [this.types.Integer], this.types.Boolean);

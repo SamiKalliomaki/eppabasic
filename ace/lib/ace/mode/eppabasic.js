@@ -107,6 +107,7 @@ define(function (require, exports, module) {
             'windowwidth': 'support.function',
             'height': 'support.function',
             'windowheight': 'support.function',
+            'windowsize': 'support.function',
 
             'peek32': 'support.function',
             'poke32': 'support.function',
