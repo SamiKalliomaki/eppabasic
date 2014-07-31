@@ -124,11 +124,20 @@ Graphics2D.prototype = {
         drawScreen: function drawScreen() {
             this.program.breakExec();
         },
-        width: function width() {
+        getWidth: function getWidth() {
             return this.canvas.width | 0;
         },
-        height: function height() {
+        getHeight: function getHeight() {
             return this.canvas.height | 0;
+        },
+        setWidth: function setWidth(width) {
+            this.setSize(width, this.canvas.height);
+        },
+        setHeight: function setHeight(height) {
+            this.setSize(this.canvas.width, height);
+        },
+        setSize: function setSize(width, height) {
+            this.setSize(width, height);
         },
         fullScreen: function fullScreen() {
             if (this.canvas.requestFullscreen)
@@ -184,12 +193,13 @@ Graphics2D.prototype = {
         askText: function askText(str) {
             return 0;
         },
+
         setWindowTitle: function setWindowTitle(str) {
             str = this.strUtil.fromEppaBasic(str);
             document.title = str;
         },
         getWindowTitle: function getWindowTitle() {
-            return 0;
+            return this.strUtil.toEppaBasic(document.title);
         },
     },
     stdlib: {}
