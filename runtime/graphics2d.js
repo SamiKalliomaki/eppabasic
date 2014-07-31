@@ -1,21 +1,22 @@
 ﻿function Graphics2D(canvasHolder, heap, strUtil) {
     this.canvas = document.createElement('canvas');
     canvasHolder.appendChild(this.canvas);
+    this.canvasHolder = canvasHolder;
 
     this.ctx = this.canvas.getContext('2d');
     this.MEMU8 = new Int8Array(heap);
     this.MEMS32 = new Int32Array(heap);
     this.MEMF32 = new Float32Array(heap);
 
-    this.strUtil = strUtil;    
-    
+    this.strUtil = strUtil;
+
     this.printX = 5;
     this.printY = 5;
     this.clearColor = "rgb('0,0,0')";
     this.textColor = "rgb('255,255,255')";
     this.textFont = "Arial"
     this.textSize = 12;
-    
+
     // Make all functions to use right this
     for (func in this.env) {
         if (this.env.hasOwnProperty(func))
@@ -24,9 +25,20 @@
 }
 
 Graphics2D.prototype = {
-    setSize: function setSize(widht, height) {
-        this.canvas.width = widht;
+    setSize: function setSize(width, height) {
+        this.canvas.width = width;
         this.canvas.height = height;
+
+        // Set the window size
+        var outerWidth = width + (window.outerWidth - window.innerWidth);
+        var outerHeight = height + (window.outerHeight - window.innerHeight);
+        window.resizeTo(outerWidth, outerHeight);
+
+        // Set canvas to scale according to the size
+        this.canvasHolder.style.width = '100vw';
+        this.canvasHolder.style.height = (100 / (width / height)) + 'vw';
+        this.canvasHolder.style.maxHeight = '100vh';
+        this.canvasHolder.style.maxWidth = (100 * width / height) + 'vh';
     },
     setProgram: function setProgram(program) {
         this.program = program;
@@ -40,8 +52,8 @@ Graphics2D.prototype = {
         if (a == 2) this.ctx.textAlign = "center";
         this.ctx.textBaseline = "top";
         this.ctx.fillText(str, this.printX, this.printY);
-        this.printY += this.textSize + this.textSize/10;
-        this.ctx.fillStyle = origStyle;        
+        this.printY += this.textSize + this.textSize / 10;
+        this.ctx.fillStyle = origStyle;
     },
 
     /*
@@ -49,7 +61,7 @@ Graphics2D.prototype = {
      */
     env: {
         clearColor: function clearColor(r, g, b) {
-            this.clearColor = 'rgb(' + r + ',' + g + ',' + b + ')';
+            document.body.style.backgroundColor = this.clearColor = 'rgb(' + r + ',' + g + ',' + b + ')';
         },
         lineColor: function lineColor(r, g, b) {
             this.ctx.strokeStyle = 'rgb(' + r + ',' + g + ',' + b + ')';
@@ -106,7 +118,7 @@ Graphics2D.prototype = {
             this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
             this.ctx.fillStyle = origStyle;
             this.printX = 5;
-            this.printY = 5;            
+            this.printY = 5;
         },
         drawScreen: function drawScreen() {
             this.program.breakExec();
@@ -127,7 +139,7 @@ Graphics2D.prototype = {
             else if (this.canvas.msRequestFullScreen)
                 this.canvas.msRequestFullScreen();
         },
-        
+
         printStr: function printStr(str) {
             str = this.strUtil.fromEppaBasic(str);
             this.print(str, 0);

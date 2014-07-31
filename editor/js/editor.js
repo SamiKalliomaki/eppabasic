@@ -59,8 +59,7 @@ Editor.prototype = {
     openRuntime: function openRuntime() {
         // Close opened window
         this.closeRuntime();
-        this.window = window.open('runtime/index.html', 'runtime', 'dependent,dialog,height=480,width=640', true);
-
+        this.window = window.open('runtime/index.html', 'runtime', 'dependent,resizable', true);
     },
 
     closeRuntime: function closeRuntime() {

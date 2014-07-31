@@ -55,7 +55,7 @@ Runtime.prototype = {
         var ebstring = new EbString(this.heap);
         mixin(this.env, ebstring.env);
 
-        var input = new Input(this.heap, document.body);
+        var input = new Input(this.heap, this.canvasHolder, document.body);
         mixin(this.env, input.env);
     },
 

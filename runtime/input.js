@@ -1,9 +1,11 @@
-﻿function Input(heap, container) {
+﻿function Input(heap, canvasHolder, container) {
     this.MEMS32 = new Int32Array(heap);
     this.keysDown = new Array(256);
     this.keysHit = new Array(256);
     this.mouseButtons = 0;
     this.mouseX = this.mouseY = -1;
+
+    this.scale = 1;
 
     // Make all functions to use right this
     for (func in this.env) {
@@ -22,6 +24,13 @@
         e.preventDefault();
         return false;
     }, false);
+
+    // For resizing
+    this.canvasHolder = canvasHolder;
+    var canvas = canvasHolder.getElementsByTagName('canvas')[0];
+    window.addEventListener('resize', function resize() {
+        this.scale = canvas.width / canvasHolder.offsetWidth;
+    }.bind(this));
 }
 
 Input.prototype = {
@@ -63,8 +72,8 @@ Input.prototype = {
     },
     mouse: function mouse(e) {
         // Position
-        this.mouseX = e.clientX;
-        this.mouseY = e.clientY;
+        this.mouseX = (e.pageX - this.canvasHolder.offsetLeft) * this.scale;
+        this.mouseY = (e.pageY - this.canvasHolder.offsetTop) * this.scale;
         // Buttons
         if (!e.buttons) {
             switch (e.which) {
