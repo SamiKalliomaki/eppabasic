@@ -65,7 +65,6 @@ Input.prototype = {
         // Position
         this.mouseX = e.clientX;
         this.mouseY = e.clientY;
-        // Buttons
         if (!e.buttons) {
             switch (e.which) {
                 case 0: break;
@@ -75,6 +74,14 @@ Input.prototype = {
             }
         }
         this.mouseButtons = e.buttons;
+        if (e.type == "mouseup") {
+            if (e.button == 0) this.mouseButtons &= (~1);
+            if (e.button == 1) this.mouseButtons &= (~4);
+            if (e.button == 2) this.mouseButtons &= (~2);            
+            if (e.which == 1) this.mouseButtons &= (~1);
+            if (e.which == 2) this.mouseButtons &= (~2);
+            if (e.which == 3) this.mouseButtons &= (~4);
+        }
         e.preventDefault();
         return false;
     },
