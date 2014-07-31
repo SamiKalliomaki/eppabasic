@@ -124,6 +124,22 @@ define(function (require, exports, module) {
 
             'rnd': 'support.function',
 
+            'asc': 'support.function',
+            'chr': 'support.function',
+            'instr': 'support.function',
+            'lcase': 'support.function',
+            'len': 'support.function',
+            'left': 'support.function',
+            'match': 'support.function',
+            'mid': 'support.function',
+            'repeat': 'support.function',
+            'replace': 'support.function',
+            'right': 'support.function',
+            'reverse': 'support.function',
+            'rot13': 'support.function',
+            'trim': 'support.function',
+            'ucase': 'support.function',
+
             'hours': 'support.function',
             'minutes': 'support.function',
             'seconds': 'support.function',
