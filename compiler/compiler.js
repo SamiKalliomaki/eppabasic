@@ -1,4 +1,5 @@
-﻿/// <reference path="operators.js" />
+﻿/// <reference path="framework.js" />
+/// <reference path="operators.js" />
 /// <reference path="nodes.js" />
 /// <reference path="types.js" />
 
@@ -568,6 +569,7 @@ Compiler.prototype = {
                 var context = new CompilerContext(this.types, def.handle.entry, false);
                 context.atomic = def.atomic;
                 context.lastTemporary = entry.nextFreeTemporary;
+                context.retType = def.type;
 
                 // Add parameter references
                 for (var i = 0; i < def.params.length; i++) {
@@ -577,6 +579,8 @@ Compiler.prototype = {
                         stack.setValue(def.params[i].location);
                         def.params[i].location = stack;
                     }
+
+                    context.registeredVariables(def.params[i].location);
                 }
 
                 if (!def.atomic)
@@ -1064,26 +1068,41 @@ Compiler.prototype = {
         /// <param name='statement' type='Nodes.Return' />
         /// <param name='context' type='CompilerContext' />
 
-        // First compute the value to be returned
-        var val = this.compileExpr(statement.expr, context);
-        // Then free all reserved values
-        context.freeAll(false);
-        // TODO Free parameters
+        var retType = context.retType;
 
-        if (context.atomic) {
-            context.push('return ' + val.getValue() + ';');
+        if (retType) {
+            // First compute the value to be returned
+            var val = this.compileExpr(statement.expr, context);
+
+            context.freeAll(false);
+            // TODO Free parameters
+            if (context.atomic) {
+                context.push('return ' + val.type.castTo(val.getValue(), retType) + ';');
+            } else {
+                context.push('SP=(SP-' + context.stackOffset + ')|0;');
+                var topref = new CompilerStackReference(retType, context.stackOffset, 0, context);
+                topref.setValue(val);
+                context.push('CP=(CP-4)|0;');
+                context.push('return 1;');
+                //throw new Error('Non-atomic returning functions not supported yet');
+            }
+
+            // After everything free the returned value (though this code will never be executed)
+            val.freeVal();
+            val.freeRef();
         } else {
-            context.push('SP=(SP-' + context.stackOffset + ')|0;');
-            var topref = new CompilerStackReference(statement.type, context.stackOffset, 0, context);
-            topref.setValue(val);
-            context.push('CP=(CP-4)|0;');
-            context.push('return 1;');
-            //throw new Error('Non-atomic returning functions not supported yet');
-        }
+            if (statement.expr)
+                throw new CompileError(statement.line, 'Sub program return can\'t have a value');
+            context.freeAll(false);
+            // TODO Free parameters
 
-        // After everything free the returned value (though this code will never be executed)
-        val.freeVal();
-        val.freeRef();
+            if (context.atomic) {
+                context.push('return;');
+            } else {
+                context.push('CP=(CP-4)|0;');
+                context.push('return 1;');
+            }
+        }
     },
     compileVariableAssignment: function compileVariableAssignment(variable, context) {
         /// <param name='variable' type='Nodes.VariableAssignment' />

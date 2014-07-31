@@ -111,7 +111,9 @@ Atomicchecker.prototype = {
      * Visits a return statement
      */
     visitReturn: function visitReturn(ret) {
-        return ret.atomic = this.visitExpr(ret.expr);
+        if (ret.expr)
+            return ret.atomic = this.visitExpr(ret.expr);
+        return ret.atomic = true;
     },
 
     /*

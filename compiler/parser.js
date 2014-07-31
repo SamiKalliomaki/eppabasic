@@ -27,13 +27,13 @@ Parser.prototype = {
      * Peeks tokens and finds the distance to the first node of specific type
      */
     peekDistance: function peekDistance(nodeType) {
-        for(var i = 0;; i++) {
+        for (var i = 0; ; i++) {
             var node = this.peek(i + 1);
 
-            if(node.type === nodeType) {
+            if (node.type === nodeType) {
                 return i;
             }
-            if(node.type === 'eos') {
+            if (node.type === 'eos') {
                 return undefined;
             }
         }
@@ -47,20 +47,20 @@ Parser.prototype = {
 
         var depth = 1;
 
-        for(var i = leftParen;; i++) {
+        for (var i = leftParen; ; i++) {
             var node = this.peek(i + 1);
 
-            if(node.type === 'eos') {
+            if (node.type === 'eos') {
                 return undefined;
             }
 
-            if(node.type === 'lparen') {
+            if (node.type === 'lparen') {
                 depth++;
-            } else if(node.type === 'rparen') {
+            } else if (node.type === 'rparen') {
                 depth--;
             }
 
-            if(depth === 0) {
+            if (depth === 0) {
                 return i;
             }
         }
@@ -82,11 +82,11 @@ Parser.prototype = {
         if (node.type === type)
             return this.advance();
 
-        while(this.peek().type !== 'eos' && this.peek().type !== 'newline') {
+        while (this.peek().type !== 'eos' && this.peek().type !== 'newline') {
             this.advance();
         }
 
-        if(this.peek().type !== 'newline') {
+        if (this.peek().type !== 'newline') {
             this.advance();
         }
 
@@ -107,8 +107,8 @@ Parser.prototype = {
 
             try {
                 block.nodes.push(this.parseBaselevelStatement());
-            } catch(e) {
-                if(e instanceof CompileError) {
+            } catch (e) {
+                if (e instanceof CompileError) {
                     this.errors.push(e);
                 } else {
                     throw e;
@@ -124,8 +124,8 @@ Parser.prototype = {
 
             try {
                 this.expect('newline');     // Expect newline after every statement
-            } catch(e) {
-                if(e instanceof CompileError) {
+            } catch (e) {
+                if (e instanceof CompileError) {
                     this.errors.push(e);
                 } else {
                     throw e;
@@ -177,8 +177,8 @@ Parser.prototype = {
                 default:
                     throw new CompileError(this.peek().line, 'Unexpected token "' + this.peek().type + '"');
             }
-        } catch(e) {
-            if(e instanceof CompileError) {
+        } catch (e) {
+            if (e instanceof CompileError) {
                 this.errors.push(e);
             } else {
                 throw e;
@@ -210,8 +210,8 @@ Parser.prototype = {
 
         try {
             this.expect('newline');
-        } catch(e) {
-            if(e instanceof CompileError) {
+        } catch (e) {
+            if (e instanceof CompileError) {
                 this.errors.push(e);
             } else {
                 throw e;
@@ -242,8 +242,8 @@ Parser.prototype = {
 
             try {
                 this.expect('newline');     // Expect newline after every statement
-            } catch(e) {
-                if(e instanceof CompileError) {
+            } catch (e) {
+                if (e instanceof CompileError) {
                     this.errors.push(e);
                 } else {
                     throw e;
@@ -276,8 +276,8 @@ Parser.prototype = {
                 this.advance();
                 step = this.parseExpr();
             }
-        } catch(e) {
-            if(e instanceof CompileError) {
+        } catch (e) {
+            if (e instanceof CompileError) {
                 this.errors.push(e);
             } else {
                 throw e;
@@ -290,8 +290,8 @@ Parser.prototype = {
             var nextLine = this.expect('next').line;
             if (variable && variable.name !== this.expect('identifier').val)
                 throw new CompileError(nextLine, 'Next statement must have same variable as the original for statement');
-        } catch(e) {
-            if(e instanceof CompileError) {
+        } catch (e) {
+            if (e instanceof CompileError) {
                 this.errors.push(e);
             } else {
                 throw e;
@@ -310,8 +310,8 @@ Parser.prototype = {
             this.expect('if');
             expr = this.parseExpr();
             this.expect('then');
-        } catch(e) {
-            if(e instanceof CompileError) {
+        } catch (e) {
+            if (e instanceof CompileError) {
                 this.errors.push(e);
             } else {
                 throw e;
@@ -332,8 +332,8 @@ Parser.prototype = {
                 try {
                     expr = this.parseExpr();
                     this.expect('then');
-                } catch(e) {
-                    if(e instanceof CompileError) {
+                } catch (e) {
+                    if (e instanceof CompileError) {
                         this.errors.push(e);
                     } else {
                         throw e;
@@ -473,8 +473,8 @@ Parser.prototype = {
         try {
             line = this.expect('function').line;
             name = this.expect('identifier').val;
-        } catch(e) {
-            if(e instanceof CompileError) {
+        } catch (e) {
+            if (e instanceof CompileError) {
                 this.errors.push(e);
             } else {
                 throw e;
@@ -487,8 +487,8 @@ Parser.prototype = {
             var typeTok = this.expect('identifier');
             typeTok.isType = true;
             type = this.types.getTypeByName(typeTok.val);
-        } catch(e) {
-            if(e instanceof CompileError) {
+        } catch (e) {
+            if (e instanceof CompileError) {
                 this.errors.push(e);
             } else {
                 throw e;
@@ -499,8 +499,8 @@ Parser.prototype = {
 
         try {
             this.expect('endfunction');
-        } catch(e) {
-            if(e instanceof CompileError) {
+        } catch (e) {
+            if (e instanceof CompileError) {
                 this.errors.push(e);
             } else {
                 throw e;
@@ -514,7 +514,10 @@ Parser.prototype = {
      */
     parseReturn: function parseReturn(ret, parent) {
         var line = this.expect('return').line;
-        return new Nodes.Return(this.parseExpr(), line);
+        if (this.peek().type !== 'newline' && this.peek().type !== 'eos')
+            return new Nodes.Return(this.parseExpr(), line);
+        else
+            return new Nodes.Return(undefined, line);
     },
 
     /*
@@ -528,8 +531,8 @@ Parser.prototype = {
         try {
             line = this.expect('sub').line;
             name = this.expect('identifier').val;
-        } catch(e) {
-            if(e instanceof CompileError) {
+        } catch (e) {
+            if (e instanceof CompileError) {
                 this.errors.push(e);
             } else {
                 throw e;
@@ -538,8 +541,8 @@ Parser.prototype = {
 
         try {
             params = this.parseParameterList();
-        } catch(e) {
-            if(e instanceof CompileError) {
+        } catch (e) {
+            if (e instanceof CompileError) {
                 this.errors.push(e);
             } else {
                 throw e;
@@ -550,8 +553,8 @@ Parser.prototype = {
 
         try {
             this.expect('endsub');
-        } catch(e) {
-            if(e instanceof CompileError) {
+        } catch (e) {
+            if (e instanceof CompileError) {
                 this.errors.push(e);
             } else {
                 throw e;
@@ -573,8 +576,8 @@ Parser.prototype = {
                 if (until)
                     beginCondition = new Nodes.UnaryOp('not', beginCondition, beginCondition.line);
             }
-        } catch(e) {
-            if(e instanceof CompileError) {
+        } catch (e) {
+            if (e instanceof CompileError) {
                 this.errors.push(e);
             } else {
                 throw e;
@@ -591,8 +594,8 @@ Parser.prototype = {
                 if (until)
                     endCondition = new Nodes.UnaryOp('not', endCondition, endCondition.line);
             }
-        } catch(e) {
-            if(e instanceof CompileError) {
+        } catch (e) {
+            if (e instanceof CompileError) {
                 this.errors.push(e);
             } else {
                 throw e;
