@@ -133,6 +133,25 @@ Toolchain.prototype = {
         //compiler.defineJsFunction('RANDOM', [], 'random', Types.Double);
         //compiler.defineJsFunction('RANDINT', [Types.Integer, Types.Integer], 'randint', Types.Integer);
 
+        
+        //// String functions
+        compiler.defineJsFunction('env.asc', true, 'Asc', [this.types.String], this.types.Integer);
+        compiler.defineJsFunction('env.chr', true, 'Chr', [this.types.Integer], this.types.String);
+        compiler.defineJsFunction('env.instr', true, 'InStr', [this.types.String, this.types.String], this.types.Integer);
+        compiler.defineJsFunction('env.instr2', true, 'InStr', [this.types.String, this.types.String, this.types.Integer], this.types.Integer);
+        compiler.defineJsFunction('env.lcase', true, 'LCase', [this.types.String], this.types.String);
+        compiler.defineJsFunction('env.len', true, 'Len', [this.types.String], this.types.Integer);
+        compiler.defineJsFunction('env.left', true, 'Left', [this.types.String, this.types.Integer], this.types.String);
+        compiler.defineJsFunction('env.match', true, 'Match', [this.types.String, this.types.String], this.types.Boolean);
+        compiler.defineJsFunction('env.mid', true, 'Mid', [this.types.String, this.types.Integer], this.types.String);
+        compiler.defineJsFunction('env.mid2', true, 'Mid', [this.types.String, this.types.Integer, this.types.Integer], this.types.String);
+        compiler.defineJsFunction('env.repeat', true, 'Repeat', [this.types.String, this.types.Integer], this.types.String);
+        compiler.defineJsFunction('env.replace', true, 'Replace', [this.types.String, this.types.String, this.types.String], this.types.String);
+        compiler.defineJsFunction('env.right', true, 'Right', [this.types.String, this.types.Integer], this.types.String);
+        compiler.defineJsFunction('env.reverse', true, 'Reverse', [this.types.String], this.types.String);
+        compiler.defineJsFunction('env.rot13', true, 'Rot13', [this.types.String], this.types.String);
+        compiler.defineJsFunction('env.trim', true, 'Trim', [this.types.String], this.types.String);
+        compiler.defineJsFunction('env.ucase', true, 'UCase', [this.types.String], this.types.String);
 
         //// Time functions
         compiler.defineJsFunction('env.hours', true, 'Hours', [], this.types.Integer);
