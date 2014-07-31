@@ -584,7 +584,7 @@ Compiler.prototype = {
                         def.params[i].location = stack;
                     }
 
-                    context.registeredVariables(def.params[i].location);
+                    context.registerVariable(def.params[i].location);
                 }
 
                 if (!def.atomic)
