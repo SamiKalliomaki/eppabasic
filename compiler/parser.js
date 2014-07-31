@@ -366,7 +366,7 @@ Parser.prototype = {
             var expr = this.parseExpr();
             return new Nodes.VariableAssignment(tok.val, expr, dimensions, tok.line);
         } else {
-            var params = this.parseParams();
+            var params = this.parseParams(false);
             tok.isFunctionCall = true;
             return new Nodes.FunctionCall(tok.val, params, tok.line);
         }
@@ -374,13 +374,15 @@ Parser.prototype = {
     /*
      * Parses function/sub call parameters
      */
-    parseParams: function parseParams() {
+    parseParams: function parseParams(hasParens) {
         var params = [];
-        var hasParens = false;
+        if (hasParens !== true)
+            hasParens = false;
         if (this.peek().type === 'lparen' && (this.peek(2).type === 'rparen' || this.peekDistance('comma') < this.peekDistanceToMatchingParen())) {
-            this.advance();
             hasParens = true;
         }
+        if (hasParens)
+            this.expect('lparen');
 
         while (this.peek().type !== 'newline'
             && this.peek().type !== 'rparen'
@@ -640,7 +642,7 @@ Parser.prototype = {
                     if (this.peek().type === 'lparen') {
                         // It's function call!
                         t.isFunctionCall = true;
-                        var params = this.parseParams();
+                        var params = this.parseParams(true);
                         var node = new Nodes.FunctionCall(t.val, params, t.line);
                     } else {
                         // Ok, it's just variable
