@@ -31,7 +31,7 @@
     "share-dialog": {
         "link-help": "You can use the link below to share the code to a friend."
     },
-    "confirm-leave": "Are you sure you want to leave this page? All unsaved changes will be lost."
+    "confirm-leave": "Are you sure you want to leave this page? All unsaved changes will be lost.",
     "manual": {
         "back": "Back"
     }
