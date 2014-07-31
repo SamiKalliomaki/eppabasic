@@ -13,6 +13,9 @@ Atomicchecker.prototype = {
         // TODO Make more efficient loop!!!
         for (var i = 0; i < 100; i++)
             this.visit(this.ast);
+
+        // Global block is never atomic to keep global variables accessable
+        this.ast.atomic = false;
     },
 
     /*
