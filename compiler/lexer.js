@@ -28,13 +28,13 @@ Lexer.prototype = {
     /*
      * Adds token to the stash
      */
-    addTokenToStash: function() {
+    addTokenToStash: function () {
         var token = this.tok('', 'whitespace');
 
-        while(token.type === 'whitespace') {
+        while (token.type === 'whitespace') {
             token = this.next();
-            
-            if(token)
+
+            if (token)
                 this.allTokens.push(token);
         }
 
@@ -60,7 +60,7 @@ Lexer.prototype = {
      * Returns and removes the next token
      */
     advance: function advance() {
-        if(this.stash.length === 0)
+        if (this.stash.length === 0)
             this.addTokenToStash();
 
         return this.stashed();
@@ -399,7 +399,7 @@ Lexer.prototype = {
         if (this.produceUnexpectedTokens) {
             return this.scan(/^./i, 'unexpected');
         } else {
-            throw new CompileError(this.lineno, 'Unexpected text: "' + this.input.substr(0, 10) + '"');
+            throw new CompileError(this.lineno, 'errors.lexer-unexpexted-text', { text: this.input.substr(0, 10) });
         }
     }
 };

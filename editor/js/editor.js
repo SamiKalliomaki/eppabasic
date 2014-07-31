@@ -26,7 +26,7 @@ Editor.prototype = {
         this.toolchain.check(cu);
 
         this.ace.getSession().clearAnnotations();
-        if(cu.errors.length !== 0) {
+        if (cu.errors.length !== 0) {
             this.showErrors(cu.errors);
         } else {
             this.compiled = this.toolchain.compile(cu);
@@ -45,10 +45,10 @@ Editor.prototype = {
     showErrors: function showError(errors) {
         var annotations = [];
 
-        errors.forEach(function(e) {
+        errors.forEach(function (e) {
             annotations.push({
                 row: e.line - 1,
-                text: e.msg,
+                text: i18n.t(e.msg, e.data),
                 type: 'error'
             });
         });
