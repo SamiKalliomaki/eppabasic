@@ -74,6 +74,7 @@ define(function (require, exports, module) {
             'rbracket': 'paren.rparen',
         };
         this.specialIdentifiers = {
+            //// Drawing functions
             'clearcolor': 'support.function',
             'drawcolor': 'support.function',
             'linecolor': 'support.function',
@@ -103,16 +104,19 @@ define(function (require, exports, module) {
             'asktext': 'support.function',
             'windowtitle': 'support.function',
 
+            //// Screen size
             'width': 'support.function',
             'windowwidth': 'support.function',
             'height': 'support.function',
             'windowheight': 'support.function',
             'windowsize': 'support.function',
 
+            //// Memory functions
             'peek32': 'support.function',
             'poke32': 'support.function',
             'memorysize': 'support.function',
 
+            //// Mathematical functions
             'sin': 'support.function',
             'cos': 'support.function',
             'tan': 'support.function',
@@ -124,6 +128,7 @@ define(function (require, exports, module) {
 
             'rnd': 'support.function',
 
+            //// String functions
             'asc': 'support.function',
             'chr': 'support.function',
             'instr': 'support.function',
@@ -140,6 +145,7 @@ define(function (require, exports, module) {
             'trim': 'support.function',
             'ucase': 'support.function',
 
+            //// Time functions
             'hours': 'support.function',
             'minutes': 'support.function',
             'seconds': 'support.function',
@@ -147,6 +153,7 @@ define(function (require, exports, module) {
             'timer': 'support.function',
             'wait': 'support.function',
 
+            //// Input
             'keydown': 'support.function',
             'keyup': 'support.function',
             'keyhit': 'support.function',
@@ -154,11 +161,14 @@ define(function (require, exports, module) {
             'mousey': 'support.function',
             'mousedown': 'support.function',
 
+            //// Output
             'print': 'support.function',
 
+            //// Casting
             'int': 'support.function',
 
 
+            //// Types
             'integer': 'support.type',
             'double': 'support.type',
             'number': 'support.type',

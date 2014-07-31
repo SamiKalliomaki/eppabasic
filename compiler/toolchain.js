@@ -92,7 +92,8 @@ Toolchain.prototype = {
         compiler.defineJsFunction('env.askText', true, 'AskText', [this.types.String], this.types.String);
         compiler.defineJsFunction('env.setWindowTitle', true, 'WindowTitle', [this.types.String]);
         compiler.defineJsFunction('env.getWindowTitle', true, 'WindowTitle', [], this.types.String);
-        /// Screen size
+
+        //// Screen size
         compiler.defineJsFunction('env.getWidth', true, 'Width', [], this.types.Integer);
         compiler.defineJsFunction('env.getWidth', true, 'WindowWidth', [], this.types.Integer);
         compiler.defineJsFunction('env.getHeight', true, 'Height', [], this.types.Integer);
@@ -106,7 +107,7 @@ Toolchain.prototype = {
         //compiler.defineJsFunction('env.fullScreen', true, 'FullScreen', []);                  // Reserved for a better day
 
 
-        /// Memory functions
+        //// Memory functions
         compiler.defineJsFunction('__peek32', false, 'Peek32', [this.types.Integer], this.types.Integer);
         compiler.defineJsFunction('__poke32', false, 'Poke32', [this.types.Integer, this.types.Integer]);
         compiler.defineJsFunction('__memsize', false, 'MemorySize', [], this.types.Integer);
@@ -138,7 +139,7 @@ Toolchain.prototype = {
         //compiler.defineJsFunction('RANDOM', [], 'random', Types.Double);
         //compiler.defineJsFunction('RANDINT', [Types.Integer, Types.Integer], 'randint', Types.Integer);
 
-        
+
         //// String functions
         compiler.defineJsFunction('env.asc', true, 'Asc', [this.types.String], this.types.Integer);
         compiler.defineJsFunction('env.chr', true, 'Chr', [this.types.Integer], this.types.String);
