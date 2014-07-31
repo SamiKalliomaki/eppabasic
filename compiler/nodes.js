@@ -86,7 +86,7 @@ Nodes.Block = function Block(nodes, line) {
 Nodes.Block.prototype = {
     defineVariable: function defineVariable(def, line) {
         if (this.variables.some(function some(elem) { return elem.name.toLowerCase() === def.name.toLowerCase(); })) {
-            throw new CompileError(line, 'Redefinition of variable "' + def.name + '"');
+            throw new CompileError(line, 'errors.variable-redefinition', { name: def.name });
         }
         this.variables.push(def);
     },

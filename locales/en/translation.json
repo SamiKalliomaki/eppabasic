@@ -34,5 +34,23 @@
     "confirm-leave": "Are you sure you want to leave this page? All unsaved changes will be lost.",
     "manual": {
         "back": "Back"
+    },
+    "errors": {
+        "sub-return-expr": "Sub program return can't have a value",
+        "variable-redefinition": "Redefinition of variable '__name__'",
+        "variable-type-or-initial": "Definition of variable '__name__' must have either type or initial value",
+        "variable-undefined": "No variable called '__name__' exists in this scope",
+        "array-dimension-integer": "Array dimensions must be of type 'Integer'",
+        "array-index-integer": "Array indices must be of type 'Integer'",
+        "cast-failed": "Can't cast from type '__from__' to '__to__'",
+        "for-start-end-type": "Loop end and start types must be the same",
+        "for-iterator-step-type": "Loop step and iterator types must be the same",
+        "call-undefined": "Call of an undefined function '__name__'",
+        "function-no-match": "No function matches for a call '__name__(__params__)'",
+        "function-many-match": "Ambiguous function call '__name__(__params__)'\nCandidates are:\n__candidates__",
+        "do-multiple-conditions": "Conditions is allowed only at the begining of the loop or at the end, not at both places",
+        "binop-undefined": "Failed to find operator '__op__' for '__left__' and '__right__'",
+        "unnop-undefined": "Failed to find unary operator '__op__' for '__type__'",
+        "lexer-unexpected-text": "Unexpected text: '__text__'"
     }
 }

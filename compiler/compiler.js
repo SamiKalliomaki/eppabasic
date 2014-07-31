@@ -1100,7 +1100,7 @@ Compiler.prototype = {
             val.freeRef();
         } else {
             if (statement.expr)
-                throw new CompileError(statement.line, 'Sub program return can\'t have a value');
+                throw new CompileError(statement.line, 'errors.sub-return-expr');
             context.freeAll(false);
             // TODO Free parameters
 

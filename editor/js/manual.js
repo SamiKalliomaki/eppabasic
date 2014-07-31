@@ -22,8 +22,6 @@ function Manual(manualContainer, lang) {
         }
     });
 
-    console.log(this.back);
-
     this.back.click(function back(e) {
         if (this.history.length > 1) {
             this.history.pop();
