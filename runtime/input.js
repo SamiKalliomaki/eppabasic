@@ -1,10 +1,12 @@
-﻿function Input(heap, container) {
+﻿function Input(heap, canvasHolder, container) {
     this.MEMS32 = new Int32Array(heap);
     this.keysDown = new Array(256);
     this.keysHit = new Array(256);
     this.mouseButtons = 0;
     this.mouseX = this.mouseY = -1;
     this.mouseHit = 0;
+
+    this.scale = 1;
 
     // Make all functions to use right this
     for (func in this.env) {
@@ -23,6 +25,13 @@
         e.preventDefault();
         return false;
     }, false);
+
+    // For resizing
+    this.canvasHolder = canvasHolder;
+    var canvas = canvasHolder.getElementsByTagName('canvas')[0];
+    window.addEventListener('resize', function resize() {
+        this.scale = canvas.width / canvasHolder.offsetWidth;
+    }.bind(this));
 }
 
 Input.prototype = {
@@ -58,7 +67,7 @@ Input.prototype = {
             }
             return 0;
         }
-        
+
     },
 
     keyDown: function keyDown(e) {
@@ -75,8 +84,10 @@ Input.prototype = {
     },
     mouse: function mouse(e) {
         // Position
-        this.mouseX = e.clientX;
-        this.mouseY = e.clientY;
+        this.mouseX = (e.pageX - this.canvasHolder.offsetLeft) * this.scale;
+        this.mouseY = (e.pageY - this.canvasHolder.offsetTop) * this.scale;
+
+        // Buttons
         if (!e.buttons) {
             switch (e.which) {
                 case 0: break;
@@ -89,17 +100,17 @@ Input.prototype = {
         if (e.type == "mousedown") {
             if (e.button == 0) this.mouseHit |= 1;
             if (e.button == 1) this.mouseHit |= 4;
-            if (e.button == 2) this.mouseHit |= 2;            
+            if (e.button == 2) this.mouseHit |= 2;
             if (!e.button) {
                 if (e.which == 1) this.mouseHit |= 1;
                 if (e.which == 2) this.mouseHit |= 2;
-                if (e.which == 3) this.mouseHit |= 4;            
+                if (e.which == 3) this.mouseHit |= 4;
             }
         }
         if (e.type == "mouseup") {
             if (e.button == 0) this.mouseButtons &= (~1);
             if (e.button == 1) this.mouseButtons &= (~4);
-            if (e.button == 2) this.mouseButtons &= (~2);            
+            if (e.button == 2) this.mouseButtons &= (~2);
             if (!e.button) {
                 if (e.which == 1) this.mouseButtons &= (~1);
                 if (e.which == 2) this.mouseButtons &= (~2);
