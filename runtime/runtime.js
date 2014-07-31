@@ -49,8 +49,8 @@ Runtime.prototype = {
         var gtext = new GraphicsText(this.canvasHolder, this.heap, this.stringUtil);
         mixin(this.env, gtext.env);
 
-        var ebmath = new EbMath(this.heap);
-        mixin(this.env, ebmath.env);
+        this.math = new EbMath(this.heap);
+        mixin(this.env, this.math.env);
 
         var ebstring = new EbString(this.heap);
         mixin(this.env, ebstring.env);
@@ -63,6 +63,7 @@ Runtime.prototype = {
         this.program = Program(this.stdlib, this.env, this.heap);
         this.g2d.setProgram(this.program);
         this.stringUtil.setProgram(this.program);
+        this.math.setProgram(this.program);
         this.program.init();
     },
 

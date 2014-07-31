@@ -10,14 +10,18 @@
 }
 
 EbMath.prototype = {
+    setProgram: function setProgram(program) {
+        this.program = program;
+    },
+
     env: {
         // Random functions
         randInt: function randInt(a, b) {
             return a + parseInt(Math.random() * (b - a + 1));
-        },      
+        },
         randDbl: function randDbl() {
             return Math.random();
-        },      
+        },
 
         // Time functions
         hours: function hours() {
@@ -33,9 +37,26 @@ EbMath.prototype = {
             return new Date().getMilliseconds();
         },
         timer: function timer() {
-            return new Date().getTime()/1000;
+            return new Date().getTime() / 1000;
         },
+        wait: function wait(time) {
+            var endTime = new Date().getTime() + time * 1000;
+            this.setWaitCond(function () {
+                return new Date().getTime() >= endTime;
+            });
+            this.program.waitExec();
+        },
+        waitCond: function waitCond() {
+            return this.waitCond();
+        }
+
     },
 
-    stdlib: {}
+    setWaitCond: function setWaitCond(cond) {
+        this.waitCond = cond;
+    },
+
+    stdlib: {},
+
+
 };

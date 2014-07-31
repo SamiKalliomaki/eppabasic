@@ -140,6 +140,7 @@ Toolchain.prototype = {
         compiler.defineJsFunction('env.seconds', true, 'Seconds', [], this.types.Integer);
         compiler.defineJsFunction('env.milliseconds', true, 'MilliSeconds', [], this.types.Integer);
         compiler.defineJsFunction('env.timer', true, 'Timer', [], this.types.Double);
+        compiler.defineJsFunction('env.wait', true, 'Wait', [this.types.Double],undefined,false);
 
         //// Input
         compiler.defineJsFunction('env.keyDown', true, 'KeyDown', [this.types.Integer], this.types.Boolean);
