@@ -4,16 +4,21 @@ Komennot
 A
 ----------
 * [`Abs`](manual:abs)
+* [`Asc`](manual:asc)
 * [`AskNumber`](manual:asknumber)
+* [`AskText`](manual:asknumber)
 
 C
 ----------
+* [`Chr`](manual:chr)
 * [`ClearColor`](manual:clearcolor)
 * [`ClearScreen`](manual:clearscreen)
 * [`Cos`](manual:cos)
 
 D
 ----------
+* [`Dim`](manual:dim)
+* [`Do`](manual:do)
 * [`DrawCircle`](manual:drawcircle)
 * [`DrawColor`](manual:drawcolor)
 * [`DrawDot`](manual:drawdot)
@@ -28,10 +33,17 @@ F
 * [`FillCircle`](manual:fillcircle)
 * [`FillColor`](manual:fillcolor)
 * [`FillRect`](manual:fillrect)
+* [`For`](manual:fillrect)
+* [`Function`](manual:function)
 
 H
 ----------
-* [`Hours`](manual:hours)
+<!--* [`Hours`](manual:hours)-->
+
+I
+----------
+* [`If`](manual:if)
+* [`InStr`](manual:instr)
 
 K
 ----------
@@ -39,25 +51,46 @@ K
 * [`KeyHit`](manual:keyhit)
 * [`KeyUp`](manual:keyup)
 
+L
+----------
+* [`LCase`](manual:lcase)
+* [`Left`](manual:left)
+* [`Len`](manual:len)
+
 M
 ----------
+* [`Match`](manual:match)
 * [`Max`](manual:max)
 * [`Message`](manual:message)
+* [`Mid`](manual:mid)
 * [`Min`](manual:min)
-* [`Minutes`](manual:minutes)
+<!--* [`Minutes`](manual:minutes)-->
 * [`MouseDown`](manual:mousedown)
+* [`MouseHit`](manual:mousehit)
 * [`MouseX`](manual:mousex)
 * [`MouseY`](manual:mousey)
 
+P
+----------
+* [`Print`](manual:print)
+
+
 R
 ----------
+* [`Repeat`](manual:repeat)
+<!--* [`Replace`](manual:replace)-->
+* [`Return`](manual:return)
+* [`Reverse`](manual:reverse)
+* [`Right`](manual:right)
 * [`Rnd`](manual:rnd)
+* [`Rot13`](manual:rot13)
 
 S
 ----------
-* [`Seconds`](manual:seconds)
+<!--* [`Seconds`](manual:seconds)-->
 * [`Sin`](manual:sin)
 * [`Sqr`](manual:sqr)
+* [`Sub`](manual:sub)
 
 T
 ----------
@@ -66,11 +99,17 @@ T
 * [`TextFont`](manual:textfont)
 * [`TextSize`](manual:textsize)
 * [`Timer`](manual:timer)
+* [`Trim`](manual:trim)
+
+U
+----------
+* [`UCase`](manual:ucase)
 
 W
 ----------
 * [`Wait`](manual:wait)
 * [`WindowHeight`](manual:windowheight)
+* [`WindowSize`](manual:windowsize)
 * [`WindowTitle`](manual:windowtitle)
 * [`WindowWidth`](manual:windowwidth)
 

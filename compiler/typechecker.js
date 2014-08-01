@@ -219,7 +219,7 @@ Typechecker.prototype = {
         switch (expr.nodeType) {
             case 'Number':
                 if (+expr.val === (expr.val | 0) && expr.val.indexOf('.') === -1) {
-                    return expr.type = this.types.Integer;
+                    return expr.type = this.types.Double;
                 } else {
                     return expr.type = this.types.Double;
                 }

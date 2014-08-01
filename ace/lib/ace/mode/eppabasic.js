@@ -127,6 +127,7 @@ define(function (require, exports, module) {
             'max': 'support.function',
 
             'rnd': 'support.function',
+            'round': 'support.function',
 
             //// String functions
             'asc': 'support.function',

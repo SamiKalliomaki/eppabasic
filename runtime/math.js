@@ -22,7 +22,15 @@ EbMath.prototype = {
         randDbl: function randDbl() {
             return Math.random();
         },
-
+        
+        round: function round(a) {
+            return Math.round(a);
+        },
+        round2: function round2(a, b) {
+            var p = Math.pow(10,b);
+            return Math.round(a*p)/p;
+        },
+        
         // Time functions
         hours: function hours() {
             return new Date().getHours();

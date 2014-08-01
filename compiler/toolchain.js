@@ -134,6 +134,9 @@ Toolchain.prototype = {
         compiler.defineJsFunction('env.randInt', true, 'Rnd', [this.types.Integer, this.types.Integer], this.types.Integer);
         compiler.defineJsFunction('env.randDbl', true, 'Rnd', [], this.types.Double);
 
+        compiler.defineJsFunction('env.round', true, 'Round', [this.types.Double], this.types.Double);
+        compiler.defineJsFunction('env.round2', true, 'Round', [this.types.Double, this.types.Integer], this.types.Double);
+
         //compiler.defineJsFunction('SQRT', [Types.Double], 'sqrt', Types.Double);
 
         //compiler.defineJsFunction('RANDOM', [], 'random', Types.Double);
@@ -178,8 +181,8 @@ Toolchain.prototype = {
         compiler.defineJsFunction('env.mouseHit', true, 'MouseHit', [this.types.Integer], this.types.Boolean);
 
         //// Output
-        compiler.defineJsFunction('env.printInt', true, 'Print', [this.types.Integer]);
-        compiler.defineJsFunction('env.printDbl', true, 'Print', [this.types.Double]);
+        //compiler.defineJsFunction('env.printInt', true, 'Print', [this.types.Integer]);
+        //compiler.defineJsFunction('env.printDbl', true, 'Print', [this.types.Double]);
         compiler.defineJsFunction('env.printStr', true, 'Print', [this.types.String]);
         //compiler.defineJsFunction('PRINT', [Types.String], 'print');
         //compiler.defineJsFunction('PRINT', [Types.Double], 'printDbl');

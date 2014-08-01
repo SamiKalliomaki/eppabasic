@@ -123,6 +123,8 @@ EbString.prototype = {
             return this.strUtil.toEppaBasic('' + (val | 0));
         },
         doubleToString: function doubleToString(val) {
+            var p = Math.pow(10,8);
+            val = Math.round(val*p)/p;
             return this.strUtil.toEppaBasic('' + (+val));
         },
     },
