@@ -1,11 +1,11 @@
 {
     "header": {
-        "run": "Suorita",
+        "run": "Käynnistä",
         "new": "Uusi",
         "load": "Lataa",
         "save": "Tallenna",
         "save-as": "Tallenna nimellä",
-        "share": "Jaa",
+        "share": "Jaa koodi",
         "login": "Kirjaudu sisään",
         "logout": "kirjaudu ulos"
     },
@@ -29,7 +29,7 @@
         "delete-this-directory": "Poista tämä kansio"
     },
     "share-dialog": {
-        "link-help": "Voit käyttää linkkiä alapuolella jakaaksesi koodin ystävällesi."
+        "link-help": "Voit käyttää tätä linkkiä jakaaksesi koodin ystävällesi."
     },
     "confirm-leave": "Haluatko varmasti poistua sivulta? Kaikki tallentamattomat muutokset tuhoutuvat.",
     "manual": {
@@ -38,7 +38,7 @@
     "errors": {
         "sub-return-expr": "Aliohjelmalla ei voi olla paluuarvoa",
         "variable-redefinition": "Muuttuja '__name__' on jo olemassa",
-        "variable-type-or-initial": "Muuttujalla '__name__' täytyy olla ainakin joko tyyppi tai oletusarvo",
+        "variable-type-or-initial": "Muuttujalla '__name__' täytyy olla ainakin tyyppi tai oletusarvo",
         "variable-undefined": "Muuttujaa '__name__' ei ole määritelty tällä näkyvyysalueella",
         "array-dimension-integer": "Taulukon ulottuvuuksien tyypin täytyy olla 'Integer'",
         "array-index-integer": "Taulukon indeksien tyyppien täytyy olla 'Integer'",
