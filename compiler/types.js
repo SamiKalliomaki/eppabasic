@@ -57,6 +57,8 @@ BaseType.prototype = {
     },
     castTargets: [],
     toString: function toString() {
+        if (this.aliasName)
+            return this.aliasName;
         return this.name;
     }
 };
@@ -66,6 +68,7 @@ function IntegerType() { }
 extend(IntegerType.prototype, BaseType.prototype);
 IntegerType.prototype.castTargets = [TypeContainer.prototype.Double, TypeContainer.prototype.String];
 IntegerType.prototype.name = 'Integer';
+IntegerType.prototype.aliasName = 'Number';
 IntegerType.prototype.castTo = function castTo(expr, type) {
     /// <param name='expr' type='String' />
     /// <param name='type' type='BaseType' />
@@ -84,6 +87,7 @@ function DoubleType() { }
 extend(DoubleType.prototype, BaseType.prototype);
 DoubleType.prototype.castTargets = [TypeContainer.prototype.Integer, TypeContainer.prototype.String];
 DoubleType.prototype.name = 'Double';
+DoubleType.prototype.aliasName = 'Number';
 DoubleType.prototype.castTo = function castTo(expr, type) {
     /// <param name='expr' type='String' />
     /// <param name='type' type='BaseType' />
