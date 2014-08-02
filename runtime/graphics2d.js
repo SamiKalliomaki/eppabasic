@@ -14,8 +14,9 @@
     this.printY = 5;
     this.clearColor = "rgb('0,0,0')";
     this.textColor = "rgb('255,255,255')";
-    this.textFont = "Arial"
+    this.textFont = "Arial";
     this.textSize = 12;
+    this.textAlign = 1;
 
     // Make all functions to use right this
     for (func in this.env) {
@@ -47,9 +48,9 @@ Graphics2D.prototype = {
         var origStyle = this.ctx.fillStyle;
         this.ctx.font = this.textSize + "px " + this.textFont;
         this.ctx.fillStyle = this.textColor;
-        if (a == 0) this.ctx.textAlign = "left";
-        if (a == 1) this.ctx.textAlign = "right";
-        if (a == 2) this.ctx.textAlign = "center";
+        if (a == 1) this.ctx.textAlign = "left";
+        if (a == 2) this.ctx.textAlign = "right";
+        if (a == 3) this.ctx.textAlign = "center";
         this.ctx.textBaseline = "top";
         this.ctx.fillText(str, this.printX, this.printY);
         this.printY += this.textSize + this.textSize / 10;
@@ -152,25 +153,25 @@ Graphics2D.prototype = {
 
         printStr: function printStr(str) {
             str = this.strUtil.fromEppaBasic(str);
-            this.print(str, 0);
+            this.print(str, 1);
         },
         printInt: function printInt(a) {
-            this.print(a, 0);
+            this.print(a, 1);
         },
         printDbl: function printDbl(a) {
-            this.print(a, 0);
+            this.print(a, 1);
         },
         drawText: function drawText(x, y, str) {
             this.printX = x;
             this.printY = y;
             str = this.strUtil.fromEppaBasic(str);
-            this.print(str, 0);
+            this.print(str, this.textAlign);
         },
         drawTextA: function drawTextA(x, y, str, a) {
             this.printX = x;
             this.printY = y;
             str = this.strUtil.fromEppaBasic(str);
-            this.print(str, a);
+            this.print(str, a+1);
         },
         textColor: function textColor(r, g, b) {
             this.textColor = 'rgb(' + r + ',' + g + ',' + b + ')';
@@ -181,6 +182,9 @@ Graphics2D.prototype = {
         },
         textSize: function textSize(x) {
             this.textSize = x;
+        },
+        textAlign: function textAlign(x) {
+            this.textAlign = x;
         },
         message: function message(str) {
             str = this.strUtil.fromEppaBasic(str);

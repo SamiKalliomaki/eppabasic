@@ -100,6 +100,7 @@ S
 T
 ----------
 * [`Tan`](manual:tan)
+* [`TextAlign`](manual:textalign)
 * [`TextColor`](manual:textcolor)
 * [`TextFont`](manual:textfont)
 * [`TextSize`](manual:textsize)
@@ -115,10 +116,10 @@ W
 ----------
 * [`Wait`](manual:wait)
 * [`Weekday`](manual:weekday)
-* [`WindowHeight`](manual:windowheight)
-* [`WindowSize`](manual:windowsize)
+<!--* [`WindowHeight`](manual:windowheight)-->
+<!--* [`WindowSize`](manual:windowsize)-->
 * [`WindowTitle`](manual:windowtitle)
-* [`WindowWidth`](manual:windowwidth)
+<!--* [`WindowWidth`](manual:windowwidth)-->
 
 Y
 ----------

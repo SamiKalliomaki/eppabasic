@@ -86,6 +86,7 @@ Toolchain.prototype = {
         compiler.defineJsFunction('env.textColor', true, 'TextColor', [this.types.Integer, this.types.Integer, this.types.Integer]);
         compiler.defineJsFunction('env.textFont', true, 'TextFont', [this.types.String]);
         compiler.defineJsFunction('env.textSize', true, 'TextSize', [this.types.Integer]);
+        compiler.defineJsFunction('env.textAlign', true, 'TextAlign', [this.types.Integer]);
 
         compiler.defineJsFunction('env.message', true, 'Message', [this.types.String]);
         compiler.defineJsFunction('env.askNumber', true, 'AskNumber', [this.types.String], this.types.Double);
