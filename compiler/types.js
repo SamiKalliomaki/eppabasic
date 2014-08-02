@@ -135,7 +135,9 @@ StringType.prototype.castTo = function castTo(expr, type) {
 }
 StringType.prototype.free = function free(ref, context) {
     // Just free the string
+    context.push('if((' + ref.getValue() + ')|0){')
     context.push('__memfree((' + ref.getValue() + ')|0);');
+    context.push('}');
 }
 
 function ArrayType(itemType, dimensionCount) {
