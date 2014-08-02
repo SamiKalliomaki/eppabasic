@@ -18,6 +18,9 @@ StringUtils.prototype = {
         return ptr;
     },
     fromEppaBasic: function fromEppaBasic(ptr) {
+        if (!ptr)
+            return '';          // a null pointer is an empty string
+
         var len = this.MEMS32[ptr >> 2];
         var i = 0;
         var buf = [];
