@@ -29,3 +29,20 @@
     }
     return strc | 0;
 }
+
+function __streq(a, b) {
+    a = a | 0;
+    b = b | 0;
+    var c = 0;      // Iterator end
+
+    // Test that the lengths are the same
+    if (((MEMS32[a >> 2] | 0) != (MEMS32[a >> 2] | 0)) | 0)
+        return 0;
+    c = ((MEMS32[a >> 2] | 0) + a + STRING_HEADER_LENGTH) | 0;
+
+    for (; ((a | 0) < (c | 0)) | 0; a = (a + 1) | 0, b = (b + 1) | 0)
+        if (((MEMU8[a >> 0] | 0) != (MEMU8[b >> 0] | 0)) | 0)
+            return 0;
+
+    return 1;
+}

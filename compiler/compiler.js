@@ -338,7 +338,7 @@ CompilerTemporaryReference.prototype.freeVal =
         this.type.free(this, this.context);
     };
 
-function CompilerFunctionEntry(name, hasBody, paramTypes) {
+function CompilerFunctionEntry(name, hasBody, paramTypes, types) {
     if (hasBody !== false)
         hasBody = true;
     if (!paramTypes)
@@ -346,6 +346,7 @@ function CompilerFunctionEntry(name, hasBody, paramTypes) {
     this.name = name;
     this.hasBody = hasBody;
     this.paramTypes = paramTypes;
+    this.types = types;
 
     var paramStr = [];
     var paramCastStr = [];
@@ -353,7 +354,7 @@ function CompilerFunctionEntry(name, hasBody, paramTypes) {
     paramTypes.forEach(function each(param) {
         var name = CreateIthName(paramI++);
         paramStr.push(name);
-        if (param.toString() === 'Double')
+        if (param === this.types.Double)
             paramCastStr.push(name + '=+' + name + ';');
         else
             paramCastStr.push(name + '=' + name + '|0;');
@@ -470,7 +471,7 @@ Compiler.prototype = {
             paramTypes = [];
         if (hasBody !== false)
             hasBody = true;
-        var entry = new CompilerFunctionEntry(name, hasBody, paramTypes);
+        var entry = new CompilerFunctionEntry(name, hasBody, paramTypes, this.types);
 
         if (native) {
             var entryList = this.findEntryList(paramTypes, returnType);
@@ -673,7 +674,7 @@ Compiler.prototype = {
         buf.push('function __cp(){return CP|0;}');
 
         // String functions
-        buf.push('function __concat(stra,strb){stra=stra|0;strb=strb|0;var alen=0;var blen=0;var clen=0;var strc=0;var ptr=0;var ptrc=0;alen=MEMS32[(stra|0)>>2]|0;blen=MEMS32[(strb|0)>>2]|0;clen=(alen+blen)|0;strc=__memreserve((clen+(STRING_HEADER_LENGTH|0))|0)|0;ptrc=(strc+(STRING_HEADER_LENGTH|0))|0;ptr=(stra+(STRING_HEADER_LENGTH|0))|0;MEMS32[(strc|0)>>2]=clen|0;while(alen|0){MEMU8[(ptrc|0)>>0]=MEMU8[(ptr|0)>>0];ptrc=(ptrc+1)|0;ptr=(ptr+1)|0;alen=(alen-1)|0;}ptr=(strb+(STRING_HEADER_LENGTH|0))|0;while(blen|0){MEMU8[(ptrc|0)>>0]=MEMU8[(ptr|0)>>0];ptrc=(ptrc+1)|0;ptr=(ptr+1)|0;blen=(blen-1)|0;}return strc|0;}');
+        buf.push('function __concat(stra,strb){stra=stra|0;strb=strb|0;var alen=0;var blen=0;var clen=0;var strc=0;var ptr=0;var ptrc=0;alen=MEMS32[(stra|0)>>2]|0;blen=MEMS32[(strb|0)>>2]|0;clen=(alen+blen)|0;strc=__memreserve((clen+(STRING_HEADER_LENGTH|0))|0)|0;ptrc=(strc+(STRING_HEADER_LENGTH|0))|0;ptr=(stra+(STRING_HEADER_LENGTH|0))|0;MEMS32[(strc|0)>>2]=clen|0;while(alen|0){MEMU8[(ptrc|0)>>0]=MEMU8[(ptr|0)>>0];ptrc=(ptrc+1)|0;ptr=(ptr+1)|0;alen=(alen-1)|0;}ptr=(strb+(STRING_HEADER_LENGTH|0))|0;while(blen|0){MEMU8[(ptrc|0)>>0]=MEMU8[(ptr|0)>>0];ptrc=(ptrc+1)|0;ptr=(ptr+1)|0;blen=(blen-1)|0;}return strc|0;}function __streq(a,b){a=a|0;b=b|0;var c=0;if(((MEMS32[a>>2]|0)!=(MEMS32[a>>2]|0))|0)return 0;c=((MEMS32[a>>2]|0)+a+STRING_HEADER_LENGTH)|0;for(;((a|0)<(c|0))|0;a=(a+1)|0,b=(b+1)|0)if(((MEMU8[a>>0]|0)!=(MEMU8[b>>0]|0))|0)return 0;return 1;}');
         // Memory functions
         buf.push('function __meminit(size){size=size|0;while((size&7)|0)size=(size-1)|0;MEMS32[0>>2]=0;MEMS32[4>>2]=(size-8)|0;MEMS32[((size-8)|0)>>2]=0;NEXT_BLOCK=0;HEAP_END=size;}function __memreserve(size){size=size|0;var header=0;var footer=0;var i=0;size=(size+7)&0xfffffff8;size=(size+8)|0;header=__memfind(size|0)|0;footer=(header+(MEMS32[(header+4)>>2]|0))|0;if((size|0)<(MEMS32[((header|0)+4)>>2]|0)){MEMS32[((header|0)+4)>>2]=size;MEMS32[((header|0)+size)>>2]=header;MEMS32[((header|0)+size+4)>>2]=(footer-header-size)|0;MEMS32[footer>>2]=(header+size)|0;}MEMS32[(header+4)>>2]=MEMS32[(header+4)>>2]|1;header=(header+8)|0;size=(size-8)|0;for(i=0;(i|0)<(size|0);i=(i+1)|0){MEMS32[(header+i)>>2]=0;}return header|0;}function __memfind(size){size=size|0;var around=0;var start=0;start=NEXT_BLOCK;while(1){if((MEMS32[((NEXT_BLOCK+4)|0)>>2]&1)==0){if((MEMS32[((NEXT_BLOCK+4)|0)>>2]|0)>=(size|0)){return NEXT_BLOCK|0;}}NEXT_BLOCK=(NEXT_BLOCK+(MEMS32[((NEXT_BLOCK+4)|0)>>2]|0))&0xfffffff8;if(((NEXT_BLOCK+8)|0)>=(HEAP_END|0)){NEXT_BLOCK=0;around=1;}if((around|0)&((NEXT_BLOCK|0)>=(start|0))){__panic();return 0;}}return 0;}function __memfree(ptr){ptr=ptr|0;ptr=(ptr-8)|0;MEMS32[(ptr+4)>>2]=MEMS32[(ptr+4)>>2]&0xfffffffe;__memcoalesce(ptr);}function __memcoalesce(header){header=header|0;var header2=0;var footer=0;var tmp=0;header2=(header+(MEMS32[(header+4)>>2]|0))|0;if((MEMS32[((header2+4)|0)>>2]&1)==0){MEMS32[((header+4)|0)>>2]=((MEMS32[((header+4)|0)>>2]|0)+(MEMS32[((header2+4)|0)>>2]|0));footer=(header+(MEMS32[(header+4)>>2]|0))|0;MEMS32[footer>>2]=header;}header2=MEMS32[header>>2]|0;if((MEMS32[((header2+4)|0)>>2]&1)==0){tmp=header;header=header2;header2=tmp;MEMS32[((header+4)|0)>>2]=((MEMS32[((header+4)|0)>>2]|0)+(MEMS32[((header2+4)|0)>>2]|0));footer=(header+(MEMS32[(header+4)>>2]|0))|0;MEMS32[footer>>2]=header;}NEXT_BLOCK=header;}');
         buf.push('function __peek32(a){a=a|0;return MEMS32[a>>2]|0;}function __poke32(a,v){a=a|0;v=v|0;MEMS32[a>>2]=v|0;}function __memsize(){return HEAP_SIZE|0;}')

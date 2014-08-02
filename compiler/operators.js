@@ -82,10 +82,13 @@ OperatorContainer.prototype = {
                 this.addOperator(new BinaryOperator(this.types.Integer, op, this.types.Integer, this.types.Boolean,
                     new BinaryOperatorCompiler(operators[op], this.types.Integer, this.types.Integer, this.types.Boolean, true)));
 
-                this.addOperator(new BinaryOperator(this.types.String, op, this.types.String, this.types.Boolean,
-                    new BinaryOperatorCompiler(operators[op], this.types.String, this.types.String, this.types.Boolean, true)));
+                //this.addOperator(new BinaryOperator(this.types.String, op, this.types.String, this.types.Boolean,
+                //    new BinaryOperatorCompiler(operators[op], this.types.String, this.types.String, this.types.Boolean, true)));
             }
         }
+
+        this.addOperator(new BinaryOperator(this.types.String, 'eq', this.types.String, this.types.Boolean,
+            new BinaryOperatorCompiler('__streq', this.types.String, this.types.String, this.types.Boolean, false)));
 
         // Mathematical operators
         var operators = {
