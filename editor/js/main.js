@@ -1,12 +1,12 @@
 $(function () {
     var notificationSystem = new NotificationSystem('#notification-box');
-    var editor = new Editor('editor');
+    var manual = new Manual('#manual-container', 'fi');
+    var editor = new Editor('editor', manual);
     var userControlsController = new UserControlsController('#user-controls');
     var fileDialogController = new FileDialogController('#file-dialog-wrapper', notificationSystem);
     var fileControlsController = new FileControlsController('#file-controls', editor, userControlsController, fileDialogController, notificationSystem);
     var codeControlsController = new CodeControlsController('#code-controls', editor);
     var pasteControlsController = new PasteControlsController('#paste-controls', '#share-dialog-wrapper', editor, notificationSystem);
-    var manual = new Manual('#manual-container', 'fi');
 
     manual.openPage('index');
 

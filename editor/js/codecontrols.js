@@ -15,6 +15,7 @@ function CodeControlsController(codeControls, editor) {
         if (e.keyCode == 112) {
             // F1
             // TODO Show help
+            editor.showHelp();
         }
     });
 }

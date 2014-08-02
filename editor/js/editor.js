@@ -3,8 +3,9 @@
 /// <reference path="../compiler/types.js" />
 /// <reference path="../compiler/compiler.js" />
 
-function Editor(editorName) {
+function Editor(editorName, manual) {
     this.toolchain = new Toolchain();
+    this.manual = manual;
 
     this.editorName = editorName;
     this.ace = ace.edit(editorName);
@@ -20,7 +21,6 @@ Editor.prototype = {
     setCode: function setCode(code) {
         this.ace.setValue(code);
     },
-
     runCode: function runCode() {
         cu = this.toolchain.parse(this.getCode());
         this.toolchain.check(cu);
@@ -42,6 +42,19 @@ Editor.prototype = {
         this.openRuntime();
     },
 
+    showHelp: function showHelp() {
+        var pos = this.ace.getCursorPosition();
+        var line = this.ace.getSession().getLine(pos.row)
+        var x1 = pos.column;
+        var x2 = pos.column;
+        var s = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        if (s.indexOf(line.charAt(x1)) == -1) return;
+        while (x1 > 0 && s.indexOf(line.charAt(x1-1)) != -1) x1--;
+        while (x2 < line.length-2 && s.indexOf(line.charAt(x2+1)) != -1) x2++;
+        var k = line.substring(x1, x2+1).toLowerCase();
+        this.manual.openPage(k, 0);
+    },
+    
     showErrors: function showError(errors) {
         var annotations = [];
 
