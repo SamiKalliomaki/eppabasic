@@ -19,7 +19,7 @@ Editor.prototype = {
         return this.ace.getValue();
     },
     setCode: function setCode(code) {
-        this.ace.setValue(code);
+        this.ace.setValue(code, -1);
     },
     runCode: function runCode() {
         cu = this.toolchain.parse(this.getCode());
