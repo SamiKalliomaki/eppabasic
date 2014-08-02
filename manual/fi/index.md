@@ -43,8 +43,8 @@ H
 I
 ----------
 * [`If`](manual:if)
-* [`InputNumber`](manual:asknumber)
-* [`InputText`](manual:asktext)
+* [`InputNumber`](manual:inputnumber)
+* [`InputText`](manual:inputtext)
 * [`InStr`](manual:instr)
 
 K
