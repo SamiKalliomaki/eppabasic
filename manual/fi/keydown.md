@@ -3,7 +3,7 @@
 
 Funktio `KeyDown` palauttaa tiedon, onko näppäin alhaalla. 
 
-Funktion parametrina on näppäimen koodi.
+[`Lista näppäinkoodeista`](manual:keycodes)
 
 Esimerkki
 ----------

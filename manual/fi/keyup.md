@@ -3,7 +3,7 @@
 
 Funktio `KeyUp` palauttaa tiedon, onko näppäin ylhäällä. 
 
-Funktion parametrina on näppäimen koodi.
+[`Lista näppäinkoodeista`](manual:keycodes)
 
 Esimerkki
 ----------
