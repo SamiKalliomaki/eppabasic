@@ -70,6 +70,7 @@ M
 * [`Month`](manual:month)
 * [`MouseDown`](manual:mousedown)
 * [`MouseHit`](manual:mousehit)
+* [`MouseUp`](manual:mouseup)
 * [`MouseX`](manual:mousex)
 * [`MouseY`](manual:mousey)
 
