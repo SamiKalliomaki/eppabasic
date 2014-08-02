@@ -1222,6 +1222,11 @@ Compiler.prototype = {
             var ref = this.compileExpr(variable.initial, context);
             variable.location.setValue(ref);
             ref.freeRef();
+        } else {
+            var cnt = context.reserveConstant(variable.location.type);
+            cnt.setValue('0');
+            variable.location.setValue(cnt);
+            cnt.freeRef();
         }
     },
 
