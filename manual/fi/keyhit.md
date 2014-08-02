@@ -3,6 +3,8 @@
 
 Funktio `KeyHit` kertoo, onko näppäintä painettu.
 
+[`Lista näppäinkoodeista`](manual:keycodes)
+
 Esimerkki
 ----------
 
