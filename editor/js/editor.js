@@ -47,10 +47,10 @@ Editor.prototype = {
         var line = this.ace.getSession().getLine(pos.row)
         var x1 = pos.column;
         var x2 = pos.column;
-        var s = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        var s = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
         if (s.indexOf(line.charAt(x1)) == -1) return;
         while (x1 > 0 && s.indexOf(line.charAt(x1-1)) != -1) x1--;
-        while (x2 < line.length-2 && s.indexOf(line.charAt(x2+1)) != -1) x2++;
+        while (x2 < line.length-1 && s.indexOf(line.charAt(x2+1)) != -1) x2++;
         var k = line.substring(x1, x2+1).toLowerCase();
         this.manual.openPage(k, 0);
     },
