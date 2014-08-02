@@ -90,6 +90,8 @@ Toolchain.prototype = {
         compiler.defineJsFunction('env.message', true, 'Message', [this.types.String]);
         compiler.defineJsFunction('env.askNumber', true, 'AskNumber', [this.types.String], this.types.Double);
         compiler.defineJsFunction('env.askText', true, 'AskText', [this.types.String], this.types.String);
+        compiler.defineJsFunction('env.askNumber', true, 'InputNumber', [this.types.String], this.types.Double);
+        compiler.defineJsFunction('env.askText', true, 'InputText', [this.types.String], this.types.String);
         compiler.defineJsFunction('env.setWindowTitle', true, 'WindowTitle', [this.types.String]);
         compiler.defineJsFunction('env.getWindowTitle', true, 'WindowTitle', [], this.types.String);
 

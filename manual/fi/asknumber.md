@@ -1,10 +1,10 @@
-`AskNumber`
+`InputNumber`
 ==========
 
-Funktio `AskNumber` kysyy käyttäjältä luvun.
+Funktio `InputNumber` kysyy käyttäjältä luvun.
 
 Esimerkki
 ----------
 
-    Dim x = AskNumber("Anna luku:")
+    Dim x = InputNumber("Anna luku:")
     Message "Luvun neliöjuuri: " & Sqr(x)

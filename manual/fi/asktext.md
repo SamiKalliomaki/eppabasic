@@ -1,10 +1,10 @@
-`AskText`
+`InputText`
 ==========
 
-Funktio `AskText` kysyy käyttäjältä merkkijonon.
+Funktio `InputText` kysyy käyttäjältä merkkijonon.
 
 Esimerkki
 ----------
 
-    Dim x = AskText("Anna nimesi:")
+    Dim x = InputText("Anna nimesi:")
     Message "Väärinpäin: " & Reverse(x)

@@ -5,8 +5,6 @@ A
 ----------
 * [`Abs`](manual:abs)
 * [`Asc`](manual:asc)
-* [`AskNumber`](manual:asknumber)
-* [`AskText`](manual:asktext)
 
 C
 ----------
@@ -35,7 +33,7 @@ F
 * [`FillCircle`](manual:fillcircle)
 * [`FillColor`](manual:fillcolor)
 * [`FillRect`](manual:fillrect)
-* [`For`](manual:fillrect)
+* [`For`](manual:for)
 * [`Function`](manual:function)
 
 H
@@ -45,6 +43,8 @@ H
 I
 ----------
 * [`If`](manual:if)
+* [`InputNumber`](manual:asknumber)
+* [`InputText`](manual:asktext)
 * [`InStr`](manual:instr)
 
 K
@@ -123,5 +123,3 @@ W
 Y
 ----------
 * [`Year`](manual:year)
-
-&nbsp;
