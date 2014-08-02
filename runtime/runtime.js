@@ -49,7 +49,7 @@ Runtime.prototype = {
         var gtext = new GraphicsText(this.canvasHolder, this.heap, this.stringUtil);
         mixin(this.env, gtext.env);
 
-        this.math = new EbMath(this.heap);
+        this.math = new EbMath(this.heap, this.stringUtil);
         mixin(this.env, this.math.env);
 
         var ebstring = new EbString(this.heap, this.stringUtil);

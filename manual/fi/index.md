@@ -6,7 +6,7 @@ A
 * [`Abs`](manual:abs)
 * [`Asc`](manual:asc)
 * [`AskNumber`](manual:asknumber)
-* [`AskText`](manual:asknumber)
+* [`AskText`](manual:asktext)
 
 C
 ----------
@@ -17,6 +17,8 @@ C
 
 D
 ----------
+* [`Date`](manual:date)
+* [`Day`](manual:day)
 * [`Dim`](manual:dim)
 * [`Do`](manual:do)
 * [`DrawCircle`](manual:drawcircle)
@@ -38,7 +40,7 @@ F
 
 H
 ----------
-<!--* [`Hours`](manual:hours)-->
+* [`Hour`](manual:hour)
 
 I
 ----------
@@ -64,7 +66,8 @@ M
 * [`Message`](manual:message)
 * [`Mid`](manual:mid)
 * [`Min`](manual:min)
-<!--* [`Minutes`](manual:minutes)-->
+* [`Minute`](manual:minute)
+* [`Month`](manual:month)
 * [`MouseDown`](manual:mousedown)
 * [`MouseHit`](manual:mousehit)
 * [`MouseX`](manual:mousex)
@@ -78,16 +81,17 @@ P
 R
 ----------
 * [`Repeat`](manual:repeat)
-<!--* [`Replace`](manual:replace)-->
+* [`Replace`](manual:replace)
 * [`Return`](manual:return)
 * [`Reverse`](manual:reverse)
 * [`Right`](manual:right)
 * [`Rnd`](manual:rnd)
 * [`Rot13`](manual:rot13)
+* [`Round`](manual:round)
 
 S
 ----------
-<!--* [`Seconds`](manual:seconds)-->
+* [`Second`](manual:second)
 * [`Sin`](manual:sin)
 * [`Sqr`](manual:sqr)
 * [`Sub`](manual:sub)
@@ -98,6 +102,7 @@ T
 * [`TextColor`](manual:textcolor)
 * [`TextFont`](manual:textfont)
 * [`TextSize`](manual:textsize)
+* [`Time`](manual:time)
 * [`Timer`](manual:timer)
 * [`Trim`](manual:trim)
 
@@ -108,9 +113,14 @@ U
 W
 ----------
 * [`Wait`](manual:wait)
+* [`Weekday`](manual:weekday)
 * [`WindowHeight`](manual:windowheight)
 * [`WindowSize`](manual:windowsize)
 * [`WindowTitle`](manual:windowtitle)
 * [`WindowWidth`](manual:windowwidth)
+
+Y
+----------
+* [`Year`](manual:year)
 
 &nbsp;

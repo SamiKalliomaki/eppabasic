@@ -71,11 +71,20 @@ EbString.prototype = {
             return this.strUtil.toEppaBasic(newStr);
         },
         replace: function replace(str1, str2, str3) {
-            // TODO: replace all
             str1 = this.strUtil.fromEppaBasic(str1);
             str2 = this.strUtil.fromEppaBasic(str2);
             str3 = this.strUtil.fromEppaBasic(str3);
-            var newStr = str1.replace(str2, str3);
+            var newStr = "";
+            var oldStr = str1;
+            while (true) {
+                var pos = oldStr.indexOf(str2);
+                if (pos == -1) break;
+                var x = oldStr.substr(0, pos+str2.length);
+                var y = oldStr.substr(pos+str2.length);
+                newStr += x.replace(str2, str3);
+                oldStr = y;
+            }
+            newStr += oldStr;
             return this.strUtil.toEppaBasic(newStr);
         },
         reverse: function reverse(str) {

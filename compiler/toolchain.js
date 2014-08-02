@@ -163,13 +163,21 @@ Toolchain.prototype = {
         compiler.defineJsFunction('env.ucase', true, 'UCase', [this.types.String], this.types.String);
 
         //// Time functions
-        compiler.defineJsFunction('env.hours', true, 'Hours', [], this.types.Integer);
-        compiler.defineJsFunction('env.minutes', true, 'Minutes', [], this.types.Integer);
-        compiler.defineJsFunction('env.seconds', true, 'Seconds', [], this.types.Integer);
-        compiler.defineJsFunction('env.milliseconds', true, 'MilliSeconds', [], this.types.Integer);
         compiler.defineJsFunction('env.timer', true, 'Timer', [], this.types.Double);
         compiler.defineJsFunction('env.wait', true, 'Wait', [this.types.Double], undefined, false);
 
+        compiler.defineJsFunction('env.year', true, 'Year', [], this.types.Integer);
+        compiler.defineJsFunction('env.month', true, 'Month', [], this.types.Integer);
+        compiler.defineJsFunction('env.day', true, 'Day', [], this.types.Integer);
+        compiler.defineJsFunction('env.weekday', true, 'Weekday', [], this.types.Integer);
+        compiler.defineJsFunction('env.hour', true, 'Hour', [], this.types.Integer);
+        compiler.defineJsFunction('env.minute', true, 'Minute', [], this.types.Integer);
+        compiler.defineJsFunction('env.second', true, 'Second', [], this.types.Integer);
+        compiler.defineJsFunction('env.time', true, 'Time', [], this.types.String);
+        compiler.defineJsFunction('env.date', true, 'Date', [], this.types.String);
+        //compiler.defineJsFunction('env.milliseconds', true, 'MilliSeconds', [], this.types.Integer);
+        
+        
         //// Input
         compiler.defineJsFunction('env.keyDown', true, 'KeyDown', [this.types.Integer], this.types.Boolean);
         compiler.defineJsFunction('env.keyUp', true, 'KeyUp', [this.types.Integer], this.types.Boolean);
