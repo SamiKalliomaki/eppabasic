@@ -33,6 +33,7 @@
     },
     "confirm-leave": "Haluatko varmasti poistua sivulta? Kaikki tallentamattomat muutokset tuhoutuvat.",
     "manual": {
+        "index": "Etusivu",
         "back": "Takaisin"
     },
     "errors": {

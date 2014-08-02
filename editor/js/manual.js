@@ -2,6 +2,7 @@ function Manual(manualContainer, lang) {
     manualContainer = $(manualContainer);
     this.container = manualContainer;
     this.manual = $(manualContainer.find('#manual'));
+    this.index = $(manualContainer.find('.index'));
     this.back = $(manualContainer.find('.back'));
     this.lang = lang;
 
@@ -24,6 +25,10 @@ function Manual(manualContainer, lang) {
         }
     });
 
+    this.index.click(function index(e) {
+        this.openPage("index", 0);
+    }.bind(this));    
+    
     this.back.click(function back(e) {
         if (this.history.length > 1) {
             this.history.pop();
