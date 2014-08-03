@@ -121,7 +121,7 @@ Typechecker.prototype = {
      */
     visitFor: function visitFor(loop, parent) {
         loop.variable.type = this.resolveExprType(loop.start, parent);
-        if (this.resolveExprType(loop.stop, parent) !== loop.variable.type)
+        if (!this.resolveExprType(loop.stop, parent).canCastTo(loop.variable.type))
             this.errors.push(new CompileError(loop.line, 'errors.for-start-end-type'));
         if (!this.resolveExprType(loop.step, parent).canCastTo(loop.variable.type))
             this.errors.push(new CompileError(loop.line, 'errors.for-iterator-step-type'));

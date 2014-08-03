@@ -846,13 +846,13 @@ Compiler.prototype = {
             '(((' + step.getValue() + '>0)|0)&((' + loop.variable.location.getValue() + '<=' + stop.getValue() + ')|0))';
             '(((' + step.getValue() + '<0)|0)&((' + loop.variable.location.getValue() + '<=' + stop.getValue() + ')|0))';
             context.push('while('
-                + '(((' + step.getValue() + '>0)|0)&((' + loop.variable.location.getValue() + '<=' + stop.getValue() + ')|0))'
-                + '|(((' + step.getValue() + '<0)|0)&((' + loop.variable.location.getValue() + '>=' + stop.getValue() + ')|0))'
+                + '(((' + step.getValue() + '>' + step.type.cast('0') + ')|0)&((' + loop.variable.location.getValue() + '<=' + stop.type.castTo(stop.getValue(), loop.variable.location.type) + ')|0))'
+                + '|(((' + step.getValue() + '<' + step.type.cast('0') + ')|0)&((' + loop.variable.location.getValue() + '>=' + stop.type.castTo(stop.getValue(), loop.variable.location.type) + ')|0))'
                 + '){');
             this.compileBlock(loop.block, context);
             // Increase the index
             var newIndex = context.reserveConstant(loop.variable.type);
-            newIndex.setValue(loop.variable.location.getValue() + '+' + step.getValue());
+            newIndex.setValue(loop.variable.location.getValue() + '+' + step.type.castTo(step.getValue(), loop.variable.location.type));
             loop.variable.location.setValue(newIndex);
             newIndex.freeRef();
             context.push('}');
@@ -892,8 +892,8 @@ Compiler.prototype = {
             context.setCurrentFunction(loopFunc);
             // Do break checking
             context.push('if('
-                + '(((' + step.getValue() + '>0)|0)&((' + loop.variable.location.getValue() + '>' + stop.getValue() + ')|0))'
-                + '|(((' + step.getValue() + '<0)|0)&((' + loop.variable.location.getValue() + '<' + stop.getValue() + ')|0))'
+                + '(((' + step.getValue() + '>' + step.type.cast('0') + ')|0)&((' + loop.variable.location.getValue() + '>' + stop.type.castTo(stop.getValue(), loop.variable.location.type) + ')|0))'
+                + '|(((' + step.getValue() + '<' + step.type.cast('0') + ')|0)&((' + loop.variable.location.getValue() + '<' + stop.type.castTo(stop.getValue(), loop.variable.location.type) + ')|0))'
                 + '){');
             // Break out
             context.setCallStack(endFunc);
@@ -904,7 +904,7 @@ Compiler.prototype = {
             this.compileBlock(loop.block, context);
             // Increase the index
             var newIndex = context.reserveConstant(loop.variable.type);
-            newIndex.setValue(loop.variable.location.getValue() + '+' + step.getValue());
+            newIndex.setValue(loop.variable.location.getValue() + '+' + step.type.castTo(step.getValue(), loop.variable.location.type));
             loop.variable.location.setValue(newIndex);
             newIndex.freeRef();
             // Jump to the begining
