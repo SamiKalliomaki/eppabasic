@@ -590,6 +590,7 @@ Compiler.prototype = {
                 if (!def.atomic)
                     retType = this.types.Integer;
 
+                // Create the entry and the context
                 var entry = def.handle.entry = this.createEntry(this.generateFunctionName(), true, paramTypes, retType, true);
                 var context = new CompilerContext(this.types, def.handle.entry, false);
                 context.atomic = def.atomic;
@@ -598,14 +599,21 @@ Compiler.prototype = {
 
                 // Add parameter references
                 for (var i = 0; i < def.params.length; i++) {
-                    def.params[i].location = new CompilerTemporaryReference(def.params[i].type, CreateIthName(i), context);
+                    var ref = new CompilerTemporaryReference(def.params[i].type, CreateIthName(i), context);
+
+                    // Clone the value
+                    var tmp = ref.type.clone(ref, context);
+                    ref.freeRef();
+                    ref = tmp;
+
+                    // Push the values to the stack if necessary
                     if (!def.atomic) {
                         var stack = context.reserveStack(def.params[i].type);
-                        stack.setValue(def.params[i].location);
-                        def.params[i].location = stack;
+                        stack.setValue(ref);
+                        ref = stack;
                     }
 
-                    context.registerVariable(def.params[i].location);
+                    context.registerVariable(def.params[i].location = ref);
                 }
 
                 if (!def.atomic)
