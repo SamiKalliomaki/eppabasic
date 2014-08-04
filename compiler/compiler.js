@@ -28,9 +28,9 @@ CompilerContext.prototype = {
         // First try to find if there is already an unused temporary of right type
         var tmp = this.temporaries.find(function find(tmp) {
             if (type === this.types.Double) {
-                return tmp.type === this.types.Double && tmp.used === false;
+                return tmp.type === this.types.Double && tmp.refCount === 0;
             } else {
-                return tmp.type !== this.types.Double && tmp.used === false;
+                return tmp.type !== this.types.Double && tmp.refCount === 0;
             }
         }.bind(this));
 
@@ -54,7 +54,7 @@ CompilerContext.prototype = {
         }
 
         // This temporary is ofcourse in use...
-        tmp.used = true;
+        tmp.refCount = 1;
         // ...and it must be of right type
         tmp.type = type;            // This is safe because it is either double or not
 
@@ -163,6 +163,7 @@ function CompilerTemporaryReference(type, name, context) {
     this.name = name;
     this.context = context;
     this.used = false;
+    this.refCount = 1;
 }
 CompilerTemporaryReference.prototype = {
     setValue: function setValue(value) {
@@ -175,8 +176,12 @@ CompilerTemporaryReference.prototype = {
     freeRef: function freeRef(real) {
         if (real !== false)
             real = true;
-        if (real)
-            this.used = false;
+        if (!this.refCount)
+            throw new Error('No reference to free');
+
+        if (real) {
+            this.refCount--;
+        }
     },
     refType: 'temp'
 };
@@ -190,6 +195,7 @@ function CompilerStackReference(type, offset, reserved, context) {
     this.reserved = reserved;
     this.context = context;
     this.types = this.context.types;
+    this.refCount = 1;
 }
 CompilerStackReference.prototype = {
     setValue: function setValue(value) {
@@ -213,6 +219,8 @@ CompilerStackReference.prototype = {
     freeRef: function freeRef(real) {
         if (real !== false)
             real = true;
+        if (!this.refCount)
+            throw new Error('No reference to free');
 
         var size = 4;
         if (this.type === this.types.Double)
@@ -220,8 +228,10 @@ CompilerStackReference.prototype = {
         if (real && this.context.stackOffset - size !== this.offset)
             throw new Error('Stack popped in wrong order!');
         this.context.push('SP=(SP-' + this.reserved + ')|0;');
-        if (real)
+        if (real) {
+            this.refCount--;
             this.context.stackOffset -= this.reserved;
+        }
     },
     refType: 'stack'
 };
@@ -235,6 +245,7 @@ function CompilerAbsoluteStackReference(type, offset, reserved, context) {
     this.reserved = reserved;
     this.context = context;
     this.types = this.context.types;
+    this.refCount = 1;
 }
 CompilerAbsoluteStackReference.prototype = {
     setValue: function setValue(value) {
@@ -258,6 +269,8 @@ CompilerAbsoluteStackReference.prototype = {
     freeRef: function freeRef(real) {
         if (real !== false)
             real = true;
+        if (!this.refCount)
+            throw new Error('No reference to free');
 
         var size = 4;
         if (this.type === this.types.Double)
@@ -265,8 +278,10 @@ CompilerAbsoluteStackReference.prototype = {
         if (real && this.context.stackOffset - size !== this.offset)
             throw new Error('Stack popped in wrong order!');
         this.context.push('SP=(SP-' + this.reserved + ')|0;');
-        if (real)
+        if (real) {
+            this.refCount--;
             this.context.stackOffset -= this.reserved;
+        }
     },
     refType: 'absstack'
 };
@@ -278,6 +293,7 @@ function CompilerAbsoluteReference(type, offset, context) {
     this.offset = offset;
     this.context = context;
     this.types = this.context.types;
+    this.refCount = 1;
 }
 CompilerAbsoluteReference.prototype = {
     setValue: function setValue(value) {
@@ -301,6 +317,10 @@ CompilerAbsoluteReference.prototype = {
     freeRef: function freeRef(real) {
         if (real !== false)
             real = true;
+        if (!this.refCount)
+            throw new Error('No reference to free');
+        if (real)
+            this.refCount--;
     },
     refType: 'abs'
 };
@@ -1082,6 +1102,11 @@ Compiler.prototype = {
         if (retType) {
             // First compute the value to be returned
             var val = this.compileExpr(statement.expr, context);
+            // Then clone it
+            var tmp = val.type.clone(val, context);
+            val.freeVal();
+            val.freeRef();
+            val = tmp;
 
             context.freeAll(false);
             // TODO Free parameters
@@ -1143,8 +1168,14 @@ Compiler.prototype = {
             // And the reference
             var ref = new CompilerAbsoluteReference(variable.ref.type.itemType, offset, context);
 
-            // Finally compute the value and push it to the array
+            // Finally compute the value
             var val = this.compileExpr(variable.expr, context);
+            // Clone the value
+            var tmp = val.type.clone(val, context);
+            val.freeVal();
+            val.freeRef();
+            val = tmp;
+            // And then set it to the right index
             ref.freeVal();
             ref.setValue(val);
             val.freeRef();
@@ -1160,6 +1191,12 @@ Compiler.prototype = {
         }
 
         var ref = this.compileExpr(variable.expr, context);
+        // Clone the value
+        var tmp = ref.type.clone(ref, context);
+        ref.freeVal();
+        ref.freeRef();
+        ref = tmp;
+
         variable.ref.location.freeVal();
         variable.ref.location.setValue(ref);
         ref.freeRef();
@@ -1222,6 +1259,12 @@ Compiler.prototype = {
 
         if (variable.initial) {
             var ref = this.compileExpr(variable.initial, context);
+            // Clone the value
+            var tmp = ref.type.clone(ref, context);
+            ref.freeVal();
+            ref.freeRef();
+            ref = tmp;
+
             variable.location.setValue(ref);
             ref.freeRef();
         } else {

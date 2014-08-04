@@ -56,6 +56,12 @@ BaseType.prototype = {
         return false;
     },
     castTargets: [],
+    clone: function clone(ref, context) {
+        if (ref.type !== this)
+            throw new Error('A reference to be cloned must match the type of the cloner');
+        ref.refCount++;
+        return ref;
+    },
     toString: function toString() {
         if (this.aliasName)
             return this.aliasName;
@@ -138,6 +144,42 @@ StringType.prototype.free = function free(ref, context) {
     context.push('if((' + ref.getValue() + ')|0){')
     context.push('__memfree((' + ref.getValue() + ')|0);');
     context.push('}');
+}
+StringType.prototype.clone = function clone(ref, context) {
+    if (ref.type !== this)
+        throw new Error('A reference to be cloned must match the type of the cloner');
+
+    var res = context.reserveTemporary(this);
+    var origSizeRef = new CompilerAbsoluteReference(TypeContainer.prototype.Integer, ref, context);
+
+    // Reserve the right amount of memory
+    var cnt = context.reserveConstant(this);
+    cnt.setValue('__memreserve((' + origSizeRef.getValue() + '+(STRING_HEADER_LENGTH|0))|0)|0');
+    res.setValue(cnt);
+
+    // Then set the size
+    var resSizeRef = new CompilerAbsoluteReference(TypeContainer.prototype.Integer, res, context);
+    resSizeRef.setValue(origSizeRef);
+
+    // And then copy the payload
+    var indexRef = context.reserveTemporary(TypeContainer.prototype.Integer);
+    cnt = context.reserveConstant(TypeContainer.prototype.Integer);
+    cnt.setValue('0');
+    indexRef.setValue(cnt);
+
+    context.push('while((' + indexRef.getValue() + '<' + resSizeRef.getValue() + ')|0){');
+    context.push('MEMU8[(' + res.getValue() + '+' + indexRef.getValue() + '+(STRING_HEADER_LENGTH|0))>>0]=MEMU8[(' + ref.getValue() + '+' + indexRef.getValue() + '+(STRING_HEADER_LENGTH|0))>>0];')
+    // Increase index
+    cnt = context.reserveConstant(TypeContainer.prototype.Integer);
+    cnt.setValue(indexRef.getValue() + '+1');
+    indexRef.setValue(cnt);
+
+    context.push('}');
+
+    indexRef.freeRef();
+    indexRef.freeVal();
+
+    return res;
 }
 
 function ArrayType(itemType, dimensionCount) {
