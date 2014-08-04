@@ -928,7 +928,7 @@ Compiler.prototype = {
         /// <param name='context' type='CompilerContext' />
 
         // Compile parameters
-        var params = this.compileExprList(call.params, context);
+        var params = this.compileExprList(call.params, context, call.atomic, call.handle.entry.paramTypes);
 
 
         context.push('/* Calling function ' + call.name + '*/');
@@ -1120,7 +1120,8 @@ Compiler.prototype = {
         var type = variable.ref.type;
         if (type.isArray()) {
             // Compute the index
-            var dimensions = this.compileExprList(variable.index, context, variable.expr.atomic);
+            var dimensions = this.compileExprList(variable.index, context, variable.expr.atomic,
+                Array.apply(null, Array(variable.index.length)).map(function () { return this.types.Integer; }.bind(this)));
 
             if (dimensions.length !== type.dimensionCount)
                 throw new Error('Trying to access ' + type.dimensionCount + '-dimensional array with ' + dimensions.length + ' dimensions');
@@ -1174,7 +1175,8 @@ Compiler.prototype = {
             //    throw new Error('Double typed arrays not supported. Yet');
 
             // Compile the expressions for size
-            var dimensions = this.compileExprList(variable.dimensions, context);
+            var dimensions = this.compileExprList(variable.dimensions, context, true,
+                Array.apply(null, Array(variable.dimensions.length)).map(function () { return this.types.Integer; }.bind(this)));
 
             // Compute the actual size of the string
             var sizeStr = dimensions[0].type.castTo(dimensions[0].getValue(), this.types.Integer);
@@ -1230,11 +1232,14 @@ Compiler.prototype = {
         }
     },
 
-    compileExprList: function compileExprList(list, context, atomic) {
+    compileExprList: function compileExprList(list, context, atomic, types) {
+        /// <param name='context' type='CompilerContext' />
         if (atomic !== false)
             atomic = true;
+        if (types && types.length !== list.length)
+            throw new Error('Expression list length and the types list lenght don\'t match');
         var res = [];
-        list.forEach(function each(expr) {
+        list.forEach(function each(expr, i) {
             if (!expr.atomic || !atomic) {
                 // This expr is not atomic so push every earlier expression to the stack if it is not there already
                 res = res.map(function each(ref) {
@@ -1246,11 +1251,21 @@ Compiler.prototype = {
                         ref.freeRef();
                         ref = stackRef;
                     }
-                    return expr;
+                    return ref;
                 }.bind(this));
             }
-            // Don't forget to push this to the stack
-            res.push(this.compileExpr(expr, context));
+
+            // Don't forget to push this to the return value
+            var val = this.compileExpr(expr, context);
+            if (types && types[i] !== val.type) {
+                // Cast value to the right type
+                var tmp = context.reserveTemporary(types[i]);
+                tmp.setValue(val);
+                val.freeVal();
+                val.freeRef();
+                val = tmp;
+            }
+            res.push(val);
         }.bind(this));
         return res;
     },
@@ -1394,7 +1409,8 @@ Compiler.prototype = {
         /// <param name='context' type='CompilerContext' />
 
         // First find out the index
-        var dimensions = this.compileExprList(variable.index, context, variable.expr.atomic);
+        var dimensions = this.compileExprList(variable.index, context, variable.expr.atomic,
+            Array.apply(null, Array(variable.index.length)).map(function () { return this.types.Integer; }.bind(this)));
 
         if (dimensions.length !== variable.expr.type.dimensionCount)
             throw new Error('Trying to access ' + variable.expr.type.dimensionCount + '-dimensional array with ' + dimensions.length + ' dimensions');
