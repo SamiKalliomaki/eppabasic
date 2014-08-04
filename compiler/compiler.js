@@ -643,6 +643,8 @@ Compiler.prototype = {
 
             this.compileBlock(def.block, context);
 
+            context.freeAll(true);
+
             // Just an emergency return if no user defined
             if (def.type) {
                 if (def.atomic) {
