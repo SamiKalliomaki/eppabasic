@@ -129,11 +129,17 @@ CompilerContext.prototype = {
             while (this.registeredVariables.length)
                 this.freeVariable(this.registeredVariables[this.registeredVariables.length - 1]);
         } else {
+            var originalStackOffset = this.stackOffset;
             var i = this.registeredVariables.length;
             while (i--) {
                 this.registeredVariables[i].freeVal();
                 this.registeredVariables[i].freeRef(false);
+                // Pop the stack offset for the right alignment for the type freeing
+                if (this.registeredVariables[i].refType === 'stack' || this.registeredVariables[i].refType === 'absstack')
+                    this.stackOffset -= this.registeredVariables[i].reserved;
             }
+            // Revert the stack offset
+            this.stackOffset = originalStackOffset;
         }
     },
 
@@ -1121,7 +1127,6 @@ Compiler.prototype = {
             if (context.atomic) {
                 context.push('return ' + val.type.castTo(val.getValue(), retType) + ';');
             } else {
-                context.push('SP=(SP-' + context.stackOffset + ')|0;');
                 var topref = new CompilerStackReference(retType, context.stackOffset, 0, context);
                 topref.setValue(val);
                 context.push('CP=(CP-4)|0;');
