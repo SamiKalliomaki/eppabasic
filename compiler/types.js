@@ -172,7 +172,7 @@ ArrayType.prototype.free = function free(ptr, context) {
     for (var i = 1; i < this.dimensionCount; i++) {
         offset.setValue(ptr.getValue() + '+' + (4 * i));
         ref = new CompilerAbsoluteReference(TypeContainer.prototype.Integer, offset, context);
-        sizeStr = '(imul(' + sizeStr + ',' + ref.getValue() + ')|0)';
+        sizeStr = '(__imul(' + sizeStr + ',' + ref.getValue() + ')|0)';
     }
 
     var cnt = context.reserveConstant(TypeContainer.prototype.Integer);
