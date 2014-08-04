@@ -39,15 +39,20 @@ $(function () {
     });
 
     // Restore save code
-    if (localStorage && localStorage.getItem('code')) {
+    if (sessionStorage && sessionStorage.getItem('code')) {
+        editor.setCode(sessionStorage.getItem('code'));
+    } else if (localStorage && localStorage.getItem('code')) {
         editor.setCode(localStorage.getItem('code'));
     }
     // Save code to sessionStorage if possible
     // Otherwise just show a message telling that the code will be lost
     window.onbeforeunload = function (e) {
-        if (localStorage) {
-            // Save the code to the sessionStorage
-            localStorage.setItem('code', editor.getCode());
+        if (sessionStorage || localStorage) {
+            // Save the code to the Storage
+            if (sessionStorage)
+                sessionStorage.setItem('code', editor.getCode());
+            if (localStorage)
+                localStorage.setItem('code', editor.getCode());
         } else {
             // Show the message
             var msg = i18n.t('confirm-leave');
