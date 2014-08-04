@@ -8,6 +8,7 @@ A
 
 C
 ----------
+* [`Ceil`](manual:ceil)
 * [`Chr`](manual:chr)
 * [`ClearColor`](manual:clearcolor)
 * [`ClearScreen`](manual:clearscreen)
@@ -33,6 +34,7 @@ F
 * [`FillCircle`](manual:fillcircle)
 * [`FillColor`](manual:fillcolor)
 * [`FillRect`](manual:fillrect)
+* [`Floor`](manual:floor)
 * [`For`](manual:for)
 * [`Function`](manual:function)
 
