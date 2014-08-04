@@ -1224,9 +1224,9 @@ Compiler.prototype = {
                 Array.apply(null, Array(variable.dimensions.length)).map(function () { return this.types.Integer; }.bind(this)));
 
             // Compute the actual size of the string
-            var sizeStr = dimensions[0].type.castTo(dimensions[0].getValue(), this.types.Integer);
+            var sizeStr = '(' + dimensions[0].type.castTo(dimensions[0].getValue(), this.types.Integer) + '+1)|0';
             for (var i = 1; i < dimensions.length; i++) {
-                sizeStr = '__imul(' + sizeStr + ',' + dimensions[i].type.castTo(dimensions[i].getValue(), this.types.Integer) + ')|0';
+                sizeStr = '__imul(' + sizeStr + ',(' + dimensions[i].type.castTo(dimensions[i].getValue(), this.types.Integer) + '+1)|0)|0';
             }
             /*var sizeStr = [];
             dimensions.forEach(function each(dim) {
