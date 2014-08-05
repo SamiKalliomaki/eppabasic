@@ -26,7 +26,7 @@ $(function () {
 
     $('#editor').resizable({
         resize: function (e, ui) {
-            $('#manual').css('margin-left', ui.size.width + 2);
+            $('#manual-container').css('margin-left', ui.size.width + 2);
         },
         handles: "e"
     });
