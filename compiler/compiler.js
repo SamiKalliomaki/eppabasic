@@ -1322,6 +1322,12 @@ Compiler.prototype = {
                 val.freeVal();
                 val.freeRef();
                 val = tmp;
+            } else {
+                // Then just clone the value
+                var tmp = val.type.clone(val, context);
+                val.freeVal();
+                val.freeRef();
+                val = tmp;
             }
             res.push(val);
         }.bind(this));
@@ -1403,6 +1409,38 @@ Compiler.prototype = {
         // Compile left and right operands
         var leftRef = this.compileExpr(expr.left, context);
         var rightRef = this.compileExpr(expr.right, context);
+
+        // Cast or clone the operands
+        if (leftRef.type !== comp.leftType) {
+            // Cast the reference
+            var tmp = context.reserveTemporary(comp.leftType);
+            tmp.setValue(leftRef);
+            leftRef.freeVal();
+            leftRef.freeRef();
+            leftRef = tmp;
+        } else {
+            // Just clone the value
+            var tmp = leftRef.type.clone(leftRef, context);
+            leftRef.freeVal();
+            leftRef.freeRef();
+            leftRef = tmp;
+        }
+        if (rightRef.type !== comp.rightType) {
+            // Cast the reference
+            var tmp = context.reserveTemporary(comp.rightType);
+            tmp.setValue(rightRef);
+            rightRef.freeVal();
+            rightRef.freeRef();
+            rightRef = tmp;
+        } else {
+            // Just clone the value
+            var tmp = rightRef.type.clone(rightRef, context);
+            rightRef.freeVal();
+            rightRef.freeRef();
+            rightRef = tmp;
+        }
+            
+
         // Get values as string with the right kind of casting for the operator
         var left = leftRef.type.castTo(leftRef.getValue(), comp.leftType);
         var right = rightRef.type.castTo(rightRef.getValue(), comp.rightType);
@@ -1503,7 +1541,7 @@ Compiler.prototype = {
         var tmpref = context.reserveTemporary(variable.expr.type.itemType);
         tmpref.setValue(ref);
 
-        return tmpref;
+        return new CompilerNoFreeReference(tmpref);
         //throw new Error('Arrays not supported, yet');
     },
 };
