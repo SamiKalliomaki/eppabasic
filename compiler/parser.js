@@ -418,6 +418,8 @@ Parser.prototype = {
             var typeTok = this.expect('identifier');
             typeTok.isType = true;
             type = this.types.getTypeByName(typeTok.val);
+            if (!type)
+                this.errors.push(new CompileError(line, 'errors.type-undefined', {type: typeTok.val}));
         }
         if (this.peek().type === 'eq') {
             this.advance();
@@ -435,13 +437,16 @@ Parser.prototype = {
         var params = [];
 
         // Parse parameter list
-        this.expect('lparen');
+        var line = this.expect('lparen').line;
         paramloop: while (this.peek().type !== 'rparen') {
             var paramname = this.expect('identifier').val;
             this.expect('as');
             var typeTok = this.expect('identifier');
             typeTok.isType = true;
             var paramtype = this.types.getTypeByName(typeTok.val);
+            if (!paramtype)
+                this.errors.push(new CompileError(line, 'errors.type-undefined', {type: typeTok.val}));
+
 
             params.push({
                 name: paramname,

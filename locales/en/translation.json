@@ -52,6 +52,7 @@
         "do-multiple-conditions": "Conditions is allowed only at the begining of the loop or at the end, not at both places",
         "binop-undefined": "Failed to find operator '__op__' for '__left__' and '__right__'",
         "unnop-undefined": "Failed to find unary operator '__op__' for '__type__'",
-        "lexer-unexpected-text": "Unexpected text: '__text__'"
+        "lexer-unexpected-text": "Unexpected text: '__text__'",
+        "type-undefined": "Undefined type '__type__'"
     }
 }
