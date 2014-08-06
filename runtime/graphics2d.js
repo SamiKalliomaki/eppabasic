@@ -12,8 +12,8 @@
 
     this.printX = 5;
     this.printY = 5;
-    this.clearColor = "rgb('0,0,0')";
-    this.textColor = "rgb('255,255,255')";
+    this.clearColor = "rgb(0,0,0)";
+    this.textColor = "rgb(255,255,255)";
     this.textFont = "Arial";
     this.textSize = 12;
     this.textAlign = 1;
