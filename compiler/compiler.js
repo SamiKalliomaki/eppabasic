@@ -1255,7 +1255,7 @@ Compiler.prototype = {
                 offset.setValue(variable.location.getValue() + '+' + (4 * i));
 
                 var value = context.reserveConstant(this.types.Integer);
-                value.setValue(dimensions[i]);
+                value.setValue(dimensions[i].getValue() + '+1');
 
                 var ref = new CompilerAbsoluteReference(this.types.Integer, offset, context);
                 ref.setValue(value);
@@ -1439,7 +1439,7 @@ Compiler.prototype = {
             rightRef.freeRef();
             rightRef = tmp;
         }
-            
+
 
         // Get values as string with the right kind of casting for the operator
         var left = leftRef.type.castTo(leftRef.getValue(), comp.leftType);
