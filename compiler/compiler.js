@@ -1255,7 +1255,7 @@ Compiler.prototype = {
                 offset.setValue(variable.location.getValue() + '+' + (4 * i));
 
                 var value = context.reserveConstant(this.types.Integer);
-                value.setValue(dimensions[i] + '+1');
+                value.setValue(dimensions[i]);
 
                 var ref = new CompilerAbsoluteReference(this.types.Integer, offset, context);
                 ref.setValue(value);

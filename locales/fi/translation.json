@@ -52,7 +52,6 @@
         "do-multiple-conditions": "Toistorakenteessa ehto voi olla joko alussa tai lopussa, muttei molemmissa",
         "binop-undefined": "Operaattoria '__op__' tyypeille '__left__' ja '__right__' ei ole määritelty",
         "unnop-undefined": "Operaattoria '__op__' tyypille '__type__ ei ole määritelty'",
-        "lexer-unexpected-text": "Odottamaton teksti: '__text__'",
-        "type-undefined": "Määrittelemätön tyyppi '__type__'"
+        "lexer-unexpected-text": "Odottamaton teksti: '__text__'"
     }
 }

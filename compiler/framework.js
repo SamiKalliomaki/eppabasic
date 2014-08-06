@@ -1,4 +1,4 @@
-function CompileError(line, msg, data) {
+function CompileError(line, msg,data) {
     this.line = line;
     this.msg = msg;
     // Convert data types to string

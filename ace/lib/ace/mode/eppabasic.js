@@ -126,9 +126,6 @@ define(function (require, exports, module) {
             'min': 'support.function',
             'max': 'support.function',
 
-            'floor': 'support.function',
-            'ceil': 'support.function',
-
             'rnd': 'support.function',
             'round': 'support.function',
 
