@@ -10,7 +10,7 @@
             this.env[func] = this.env[func].bind(this);
     }
     
-    this.randSeed = new Date().getTime();
+    this.mt = Random.engines.mt19937().autoSeed();
 }
 
 EbMath.prototype = {
@@ -27,13 +27,17 @@ EbMath.prototype = {
     env: {
         // Random functions
         randInt: function randInt(a, b) {
-            return a + parseInt(this.random() * (b - a + 1));
+            return Random.integer(a, b)(this.mt);
+            //alert(Random.integer(a, b));
+            //return Random.integer(a, b);
+            //return a + parseInt(this.random() * (b - a + 1));
         },
         randDbl: function randDbl() {
-            return this.random();
+            return Random.real(0, 1, false)(this.mt);
+            //return this.random();
         },
         randomize: function randomize(a) {
-            this.randSeed = a;
+            this.mt = Random.engines.mt19937().seed(a);
         },
         
         round: function round(a) {
