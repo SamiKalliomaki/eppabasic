@@ -83,6 +83,7 @@ P
 
 R
 ----------
+* [`Randomize`](manual:randomize)
 * [`Repeat`](manual:repeat)
 * [`Replace`](manual:replace)
 * [`Return`](manual:return)

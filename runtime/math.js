@@ -9,20 +9,31 @@
         if (this.env.hasOwnProperty(func))
             this.env[func] = this.env[func].bind(this);
     }
+    
+    this.randSeed = new Date().getTime();
 }
 
 EbMath.prototype = {
     setProgram: function setProgram(program) {
         this.program = program;
     },
+    
+    random: function random() {
+        this.randSeed = (this.randSeed * 9301 + 49297) % 233280;
+        var rnd = this.randSeed / 233280;
+        return rnd;
+    },
 
     env: {
         // Random functions
         randInt: function randInt(a, b) {
-            return a + parseInt(Math.random() * (b - a + 1));
+            return a + parseInt(this.random() * (b - a + 1));
         },
         randDbl: function randDbl() {
-            return Math.random();
+            return this.random();
+        },
+        randomize: function randomize(a) {
+            this.randSeed = a;
         },
         
         round: function round(a) {

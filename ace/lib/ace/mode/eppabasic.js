@@ -128,6 +128,7 @@ define(function (require, exports, module) {
             'max': 'support.function',
 
             'rnd': 'support.function',
+            'randomize': 'support.function',
             'round': 'support.function',
             'ceil': 'support.function',
             'floor': 'support.function',
