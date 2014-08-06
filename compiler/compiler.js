@@ -172,9 +172,11 @@ function CompilerTemporaryReference(type, name, context) {
     this.refCount = 1;
 }
 CompilerTemporaryReference.prototype = {
-    setValue: function setValue(value) {
+    setValue: function setValue(value, context) {
+        if (!context)
+            context = this.context;
         var code = this.name + '=' + value.type.castTo(value.getValue(), this.type) + ';';
-        this.context.push(code);
+        context.push(code);
     },
     getValue: function getValue() {
         return this.type.cast(this.name);
@@ -204,14 +206,17 @@ function CompilerStackReference(type, offset, reserved, context) {
     this.refCount = 1;
 }
 CompilerStackReference.prototype = {
-    setValue: function setValue(value) {
+    setValue: function setValue(value, context) {
+        if (!context)
+            context = this.context;
+
         var mem = 'MEMS32';
         var shift = 2;
         if (this.type === this.types.Double) {
             mem = 'MEMF64';
             shift = 3;
         }
-        this.context.push(mem + '[((SP-' + (this.context.stackOffset - this.offset) + ')|0)>>' + shift + ']=' + value.type.castTo(value.getValue(), this.type) + ';');
+        context.push(mem + '[((SP-' + (context.stackOffset - this.offset) + ')|0)>>' + shift + ']=' + value.type.castTo(value.getValue(), this.type) + ';');
     },
     getValue: function getValue() {
         var mem = 'MEMS32';
@@ -254,14 +259,16 @@ function CompilerAbsoluteStackReference(type, offset, reserved, context) {
     this.refCount = 1;
 }
 CompilerAbsoluteStackReference.prototype = {
-    setValue: function setValue(value) {
+    setValue: function setValue(value, context) {
+        if (!context)
+            context = this.context;
         var mem = 'MEMS32';
         var shift = 2;
         if (this.type === this.types.Double) {
             mem = 'MEMF64';
             shift = 3;
         }
-        this.context.push(mem + '[(SB+' + this.offset + '|0)>>' + shift + ']=' + value.type.castTo(value.getValue(), this.type) + ';');
+        context.push(mem + '[(SB+' + this.offset + '|0)>>' + shift + ']=' + value.type.castTo(value.getValue(), this.type) + ';');
     },
     getValue: function getValue() {
         var mem = 'MEMS32';
@@ -302,14 +309,16 @@ function CompilerAbsoluteReference(type, offset, context) {
     this.refCount = 1;
 }
 CompilerAbsoluteReference.prototype = {
-    setValue: function setValue(value) {
+    setValue: function setValue(value, context) {
+        if (!context)
+            context = this.context;
         var mem = 'MEMS32';
         var shift = 2;
         if (this.type === this.types.Double) {
             mem = 'MEMF64';
             shift = 3;
         }
-        this.context.push(mem + '[((' + this.offset.getValue() + ')|0)>>' + shift + ']=' + value.type.castTo(value.getValue(), this.type) + ';');
+        context.push(mem + '[((' + this.offset.getValue() + ')|0)>>' + shift + ']=' + value.type.castTo(value.getValue(), this.type) + ';');
     },
     getValue: function getValue() {
         var mem = 'MEMS32';
@@ -336,9 +345,12 @@ function CompilerConstantReference(type, context) {
     /// <param name='context' type='CompilerContext' />
     this.type = type;
     this.context = context;
+    this.refCount = 1;
 }
 CompilerConstantReference.prototype = {
-    setValue: function setValue(value) {
+    setValue: function setValue(value, context) {
+        if (!context)
+            context = this.context;
         if (typeof value !== "string")
             value = value.getValue();
         this.value = value;
@@ -1213,7 +1225,7 @@ Compiler.prototype = {
         ref = tmp;
 
         variable.ref.location.freeVal();
-        variable.ref.location.setValue(ref);
+        variable.ref.location.setValue(ref, context);
         ref.freeRef();
     },
     compileVariableDefinition: function compileVariableDefinition(variable, context) {
