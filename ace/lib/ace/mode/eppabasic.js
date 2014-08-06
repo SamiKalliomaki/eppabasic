@@ -95,7 +95,6 @@ define(function (require, exports, module) {
             'drawscreen': 'support.function',
 
             'drawtext': 'support.function',
-            'drawwidth': 'support.function',
             'textcolor': 'support.function',
             'textfont': 'support.function',
             'textsize': 'support.function',
@@ -112,7 +111,6 @@ define(function (require, exports, module) {
             'height': 'support.function',
             'windowheight': 'support.function',
             'windowsize': 'support.function',
-            'windowtitle': 'support.function',
 
             //// Memory functions
             'peek32': 'support.function',
