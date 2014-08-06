@@ -95,13 +95,15 @@ define(function (require, exports, module) {
             'drawscreen': 'support.function',
 
             'drawtext': 'support.function',
+            'drawwidth': 'support.function',
             'textcolor': 'support.function',
             'textfont': 'support.function',
             'textsize': 'support.function',
+            'textalign': 'support.function',
 
             'message': 'support.function',
-            'asknumber': 'support.function',
-            'asktext': 'support.function',
+            'inputnumber': 'support.function',
+            'inputtext': 'support.function',
             'windowtitle': 'support.function',
 
             //// Screen size
@@ -110,6 +112,7 @@ define(function (require, exports, module) {
             'height': 'support.function',
             'windowheight': 'support.function',
             'windowsize': 'support.function',
+            'windowtitle': 'support.function',
 
             //// Memory functions
             'peek32': 'support.function',
@@ -128,6 +131,8 @@ define(function (require, exports, module) {
 
             'rnd': 'support.function',
             'round': 'support.function',
+            'ceil': 'support.function',
+            'floor': 'support.function',
 
             //// String functions
             'asc': 'support.function',
@@ -147,12 +152,17 @@ define(function (require, exports, module) {
             'ucase': 'support.function',
 
             //// Time functions
-            'hours': 'support.function',
-            'minutes': 'support.function',
-            'seconds': 'support.function',
-            'milliseconds': 'support.function',
+            'hour': 'support.function',
+            'minute': 'support.function',
+            'second': 'support.function',
+            'day': 'support.function',
+            'month': 'support.function',
+            'year': 'support.function',
             'timer': 'support.function',
             'wait': 'support.function',
+            'date': 'support.function',
+            'time': 'support.function',
+            'weekday': 'support.function',
 
             //// Input
             'keydown': 'support.function',
@@ -161,6 +171,8 @@ define(function (require, exports, module) {
             'mousex': 'support.function',
             'mousey': 'support.function',
             'mousedown': 'support.function',
+            'mousehit': 'support.function',
+            'mouseup': 'support.function',
 
             //// Output
             'print': 'support.function',
