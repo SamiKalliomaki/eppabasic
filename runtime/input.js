@@ -47,6 +47,10 @@ Input.prototype = {
             this.keysHit[key] = false;
             return val;
         },
+        // for Message, InputNumber, InputText etc.
+        allDown: function allDown() {
+            for (var i = 0; i < 256; i++) this.keysDown[i] = 0;
+        },
 
         mouseX: function mouseX() {
             return this.mouseX;

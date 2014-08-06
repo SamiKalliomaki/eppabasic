@@ -37,7 +37,7 @@ function Runtime() {
 
 Runtime.prototype = {
     loadLibraries: function loadLibraries() {
-        this.g2d = new Graphics2D(this.canvasHolder, this.heap, this.stringUtil);
+        this.g2d = new Graphics2D(this.canvasHolder, this.heap, this.stringUtil, this.env);
         this.g2d.setSize(640, 480);
         this.g2d.ctx.strokeStyle = 'rgb(255, 255, 255)';
         this.g2d.ctx.fillStyle = 'rgb(255, 255, 255)';

@@ -1,4 +1,4 @@
-﻿function Graphics2D(canvasHolder, heap, strUtil) {
+﻿function Graphics2D(canvasHolder, heap, strUtil, theEnv) {
     this.canvas = document.createElement('canvas');
     canvasHolder.appendChild(this.canvas);
     this.canvasHolder = canvasHolder;
@@ -9,6 +9,7 @@
     this.MEMF32 = new Float32Array(heap);
 
     this.strUtil = strUtil;
+    this.theEnv = theEnv;
 
     this.printX = 5;
     this.printY = 5;
@@ -132,9 +133,11 @@ Graphics2D.prototype = {
             return this.canvas.height | 0;
         },
         setWidth: function setWidth(width) {
+            if (width < 0) return;
             this.setSize(width, this.canvas.height);
         },
         setHeight: function setHeight(height) {
+            if (height < 0) return;
             this.setSize(this.canvas.width, height);
         },
         setSize: function setSize(width, height) {
@@ -189,14 +192,19 @@ Graphics2D.prototype = {
         message: function message(str) {
             str = this.strUtil.fromEppaBasic(str);
             alert(str);
+            this.theEnv.allDown();
         },
         askNumber: function askNumber(str) {
             str = this.strUtil.fromEppaBasic(str);
-            return parseInt(prompt(str));
+            var res = prompt(str);
+            this.theEnv.allDown();
+            return parseInt(res);
         },
         askText: function askText(str) {
             str = this.strUtil.fromEppaBasic(str);
-            return this.strUtil.toEppaBasic(prompt(str));
+            var res = prompt(str);
+            this.theEnv.allDown();
+            return this.strUtil.toEppaBasic(res);
         },
 
         setWindowTitle: function setWindowTitle(str) {
