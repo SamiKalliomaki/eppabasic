@@ -90,6 +90,9 @@ OperatorContainer.prototype = {
         this.addOperator(new BinaryOperator(this.types.String, 'eq', this.types.String, this.types.Boolean,
             new BinaryOperatorCompiler('__streq', this.types.String, this.types.String, this.types.Boolean, false)));
 
+        this.addOperator(new BinaryOperator(this.types.String, 'neq', this.types.String, this.types.Boolean,
+            new BinaryOperatorCompiler('__strneq', this.types.String, this.types.String, this.types.Boolean, false)));
+
         // Mathematical operators
         var operators = {
             'plus': '+',
