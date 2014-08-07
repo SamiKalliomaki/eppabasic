@@ -1422,6 +1422,12 @@ Compiler.prototype = {
             var res = context.reserveStack(comp.returnType);
         // Compile left and right operands
         var leftRef = this.compileExpr(expr.left, context);
+        if (!expr.right.atomic) {
+            var tmp = context.reserveStack(leftRef.type);
+            tmp.setValue(leftRef);
+            leftRef.freeRef();
+            leftRef = tmp;
+        }
         var rightRef = this.compileExpr(expr.right, context);
 
         // Cast or clone the operands
