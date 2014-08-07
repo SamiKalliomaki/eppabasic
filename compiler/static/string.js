@@ -86,5 +86,5 @@ function __strneq(a, b) {
     var d = 0;
     c = __streq(a, b) | 0;
     d = (1 - c) | 0;
-    return d;
+    return d | 0;
 }
