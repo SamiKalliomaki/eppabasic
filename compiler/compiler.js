@@ -241,7 +241,8 @@ CompilerStackReference.prototype = {
         this.context.push('SP=(SP-' + this.reserved + ')|0;');
         if (real) {
             this.refCount--;
-            this.context.stackOffset -= this.reserved;
+            if (!this.refCount)     // Was the last reference
+                this.context.stackOffset -= this.reserved;
         }
     },
     refType: 'stack'
@@ -293,7 +294,8 @@ CompilerAbsoluteStackReference.prototype = {
         this.context.push('SP=(SP-' + this.reserved + ')|0;');
         if (real) {
             this.refCount--;
-            this.context.stackOffset -= this.reserved;
+            if (!this.refCount)     // Was the last reference
+                this.context.stackOffset -= this.reserved;
         }
     },
     refType: 'absstack'
