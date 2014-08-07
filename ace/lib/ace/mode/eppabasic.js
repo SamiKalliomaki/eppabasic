@@ -178,6 +178,8 @@ define(function (require, exports, module) {
 
             //// Casting
             'int': 'support.function',
+            'val': 'support.function',
+            'str': 'support.function',
 
 
             //// Types

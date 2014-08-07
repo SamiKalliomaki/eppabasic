@@ -98,6 +98,7 @@ S
 * [`Second`](manual:second)
 * [`Sin`](manual:sin)
 * [`Sqr`](manual:sqr)
+* [`Str`](manual:str)
 * [`Sub`](manual:sub)
 
 T
@@ -114,6 +115,10 @@ T
 U
 ----------
 * [`UCase`](manual:ucase)
+
+V
+----------
+* [`Val`](manual:val)
 
 W
 ----------

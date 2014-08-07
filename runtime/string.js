@@ -136,6 +136,9 @@ EbString.prototype = {
             val = Math.round(val*p)/p;
             return this.strUtil.toEppaBasic('' + (+val));
         },
+        val: function val(x) {
+            return parseFloat(this.strUtil.fromEppaBasic(x));
+        },
     },
 
     stdlib: {}

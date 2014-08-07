@@ -204,5 +204,8 @@ Toolchain.prototype = {
 
         //// Casting
         compiler.defineJsFunction('__int', false, 'Int', [this.types.Integer], this.types.Integer);
+        compiler.defineJsFunction('env.val', true, 'Val', [this.types.String], this.types.Double);
+        compiler.defineJsFunction('env.integerToString', true, 'Str', [this.types.Integer], this.types.String);
+        compiler.defineJsFunction('env.doubleToString', true, 'Str', [this.types.Double], this.types.String);
     }
 }
