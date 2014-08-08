@@ -27,7 +27,7 @@ function Runtime() {
         Float64Array: Float64Array
     };
     this.env = {};
-    this.env.heapSize = 1024 * 1024;
+    this.env.heapSize = 16 * 1024 * 1024;
     this.env.panic = this.panic.bind(this);
     this.heap = new ArrayBuffer(this.env.heapSize);
 
