@@ -18,7 +18,7 @@
     this.textFont = "Arial";
     this.textSize = 12;
     this.textAlign = 1;
-    
+
     this.cancel = false; // input functions
 
     // Make all functions to use right this
@@ -110,6 +110,20 @@ Graphics2D.prototype = {
         },
         fillRect: function fillRect(x, y, w, h) {
             this.ctx.fillRect(x, y, w, h);
+        },
+        triangle: function triangle(x1, y1, x2, y2, x3, y3) {
+            this.ctx.beginPath();
+            this.ctx.moveTo(x1, y1);
+            this.ctx.lineTo(x2, y2);
+            this.ctx.lineTo(x3, y3);
+            this.ctx.stroke();
+        },
+        fillTriangle: function fillTriangle(x1, y1, x2, y2, x3, y3) {
+            this.ctx.beginPath();
+            this.ctx.moveTo(x1, y1);
+            this.ctx.lineTo(x2, y2);
+            this.ctx.lineTo(x3, y3);
+            this.ctx.fill();
         },
         circle: function circle(x, y, r) {
             this.ctx.beginPath();
@@ -203,7 +217,7 @@ Graphics2D.prototype = {
             this.printX = x;
             this.printY = y;
             str = this.strUtil.fromEppaBasic(str);
-            this.print(str, a+1);
+            this.print(str, a + 1);
         },
         textColor: function textColor(r, g, b) {
             if (r < 0) r = 0;

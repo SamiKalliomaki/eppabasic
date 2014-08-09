@@ -82,6 +82,9 @@ Toolchain.prototype = {
         compiler.defineJsFunction('env.rect', true, 'DrawRect', [this.types.Integer, this.types.Integer, this.types.Integer, this.types.Integer]);
         compiler.defineJsFunction('env.rect', true, 'Rect', [this.types.Integer, this.types.Integer, this.types.Integer, this.types.Integer]);
         compiler.defineJsFunction('env.fillRect', true, 'FillRect', [this.types.Integer, this.types.Integer, this.types.Integer, this.types.Integer]);
+        compiler.defineJsFunction('env.triangle', true, 'Triangle', [this.types.Integer, this.types.Integer, this.types.Integer, this.types.Integer, this.types.Integer, this.types.Integer]);
+        compiler.defineJsFunction('env.triangle', true, 'DrawTriangle', [this.types.Integer, this.types.Integer, this.types.Integer, this.types.Integer, this.types.Integer, this.types.Integer]);
+        compiler.defineJsFunction('env.fillTriangle', true, 'FillTriangle', [this.types.Integer, this.types.Integer, this.types.Integer, this.types.Integer, this.types.Integer, this.types.Integer]);
         compiler.defineJsFunction('env.dot', true, 'DrawDot', [this.types.Integer, this.types.Integer]);
         compiler.defineJsFunction('env.dot', true, 'Dot', [this.types.Integer, this.types.Integer]);
         compiler.defineJsFunction('env.clear', true, 'ClearScreen', []);
@@ -142,7 +145,7 @@ Toolchain.prototype = {
         compiler.defineJsFunction('stdlib.Math.max', true, 'Max', [this.types.Integer, this.types.Integer], this.types.Integer);
 
         compiler.defineJsFunction('stdlib.Math.floor', true, 'Floor', [this.types.Double], this.types.Double);
-        compiler.defineJsFunction('stdlib.Math.ceil', true, 'Ceil', [this.types.Double], this.types.Double);        
+        compiler.defineJsFunction('stdlib.Math.ceil', true, 'Ceil', [this.types.Double], this.types.Double);
 
         compiler.defineJsFunction('env.randInt', true, 'Rnd', [this.types.Integer, this.types.Integer], this.types.Integer);
         compiler.defineJsFunction('env.randDbl', true, 'Rnd', [], this.types.Double);
@@ -190,8 +193,8 @@ Toolchain.prototype = {
         compiler.defineJsFunction('env.time', true, 'Time', [], this.types.String);
         compiler.defineJsFunction('env.date', true, 'Date', [], this.types.String);
         //compiler.defineJsFunction('env.milliseconds', true, 'MilliSeconds', [], this.types.Integer);
-        
-        
+
+
         //// Input
         compiler.defineJsFunction('env.keyDown', true, 'KeyDown', [this.types.Integer], this.types.Boolean);
         compiler.defineJsFunction('env.keyUp', true, 'KeyUp', [this.types.Integer], this.types.Boolean);
