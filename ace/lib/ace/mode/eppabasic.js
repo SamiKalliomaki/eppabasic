@@ -249,14 +249,14 @@ define(function (require, exports, module) {
                 if (token.code !== undefined) {
                     var type = this.tokenTypes[token.type];
 
-                    if (token.type == 'identifier') {
+                    if(token.type == 'identifier') {
                         type = this.specialIdentifiers[token.val.toLowerCase()];
 
-                        if (type === 'support.function' && !token.isFunctionCall) {
+                        if(type === 'support.function' && token.identifierType && token.identifierType !== 'function name') {
                             type = null;
                         }
 
-                        if (type === 'support.type' && !token.isType) {
+                        if(type === 'support.type' && token.identifierType && token.identifierType !== 'type') {
                             type = null;
                         }
                     }

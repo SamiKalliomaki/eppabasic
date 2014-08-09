@@ -86,10 +86,6 @@ Parser.prototype = {
             this.advance();
         }
 
-        if (this.peek().type !== 'newline') {
-            this.advance();
-        }
-
         throw new CompileError(node.line, 'Expected "' + type + '" but got "' + node.type + '"');
     },
 
@@ -266,7 +262,9 @@ Parser.prototype = {
         var step;
 
         try {
-            variable = new Nodes.VariableDefinition(this.expect('identifier').val, line);
+            var variableNameToken = this.expect('identifier');
+            variableNameToken.identifierType = 'variable';
+            variable = new Nodes.VariableDefinition(variableNameToken.val, line);
             this.expect('eq');
             start = this.parseExpr();
             this.expect('to');
@@ -288,7 +286,9 @@ Parser.prototype = {
 
         try {
             var nextLine = this.expect('next').line;
-            if (variable && variable.name !== this.expect('identifier').val)
+            var variableNameToken = this.expect('identifier');
+            variableNameToken.identifierType = 'variable';
+            if (variable && variable.name !== variableNameToken.val)
                 throw new CompileError(nextLine, 'Next statement must have same variable as the original for statement');
         } catch (e) {
             if (e instanceof CompileError) {
@@ -358,6 +358,7 @@ Parser.prototype = {
         var tok = this.expect('identifier');
 
         if (this.peek().type === 'eq' || this.peek().type === 'lbracket') {
+            tok.identifierType = 'variable';
             var dimensions;
             if (this.peek().type === 'lbracket') {
                 dimensions = this.parseDimensions();
@@ -366,8 +367,8 @@ Parser.prototype = {
             var expr = this.parseExpr();
             return new Nodes.VariableAssignment(tok.val, expr, dimensions, tok.line);
         } else {
+            tok.identifierType = 'function name';
             var params = this.parseParams(false);
-            tok.isFunctionCall = true;
             return new Nodes.FunctionCall(tok.val, params, tok.line);
         }
     },
@@ -406,17 +407,21 @@ Parser.prototype = {
      */
     parseVariableDefinition: function parseVariableDefinition() {
         var line = this.expect('dim').line;
-        var name = this.expect('identifier').val;
+        var nameToken = this.expect('identifier');
+        var name = nameToken.val;
         var type;
         var initial;
         var dimensions;
+
+        nameToken.identifierType = 'variable';
+
         if (this.peek().type === 'lbracket') {
             dimensions = this.parseDimensions();
         }
         if (this.peek().type === 'as') {
             this.advance();
             var typeTok = this.expect('identifier');
-            typeTok.isType = true;
+            typeTok.identifierType = 'type';
             type = this.types.getTypeByName(typeTok.val);
             if (!type)
                 this.errors.push(new CompileError(line, 'errors.type-undefined', { type: typeTok.val }));
@@ -439,10 +444,12 @@ Parser.prototype = {
         // Parse parameter list
         var line = this.expect('lparen').line;
         paramloop: while (this.peek().type !== 'rparen') {
-            var paramname = this.expect('identifier').val;
+            var paramnameToken = this.expect('identifier');
+            paramnameToken.identifierType = 'param';
+            var paramname = paramnameToken.val;
             this.expect('as');
             var typeTok = this.expect('identifier');
-            typeTok.isType = true;
+            typeTok.identifierType = 'type';
             var paramtype = this.types.getTypeByName(typeTok.val);
             if (!paramtype)
                 this.errors.push(new CompileError(line, 'errors.type-undefined', { type: typeTok.val }));
@@ -479,6 +486,7 @@ Parser.prototype = {
         try {
             line = this.expect('function').line;
             name = this.expect('identifier').val;
+            name.identifierType = 'function name';
         } catch (e) {
             if (e instanceof CompileError) {
                 this.errors.push(e);
@@ -491,7 +499,7 @@ Parser.prototype = {
             params = this.parseParameterList();
             this.expect('as');
             var typeTok = this.expect('identifier');
-            typeTok.isType = true;
+            typeTok.identifierType = 'type';
             type = this.types.getTypeByName(typeTok.val);
         } catch (e) {
             if (e instanceof CompileError) {
@@ -536,7 +544,9 @@ Parser.prototype = {
 
         try {
             line = this.expect('sub').line;
-            name = this.expect('identifier').val;
+            var nameToken = this.expect('identifier');
+            nameToken.identifierType = 'function name';
+            name = nameToken.val;
         } catch (e) {
             if (e instanceof CompileError) {
                 this.errors.push(e);
@@ -645,7 +655,7 @@ Parser.prototype = {
                     var node;
                     if (this.peek().type === 'lparen') {
                         // It's function call!
-                        t.isFunctionCall = true;
+                        t.identifierType = 'function name';
                         var params = this.parseParams(true);
                         var node = new Nodes.FunctionCall(t.val, params, t.line);
                     } else {
