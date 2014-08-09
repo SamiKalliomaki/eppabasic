@@ -62,6 +62,10 @@ OperatorContainer.prototype = {
             if (operators.hasOwnProperty(op)) {
                 this.addOperator(new BinaryOperator(this.types.Boolean, op, this.types.Boolean, this.types.Boolean,
                     new BinaryOperatorCompiler(operators[op], this.types.Boolean, this.types.Boolean, this.types.Boolean, true)));
+
+                this.addOperator(new BinaryOperator(this.types.Integer, op, this.types.Integer, this.types.Integer,
+                    new BinaryOperatorCompiler(operators[op], this.types.Integer, this.types.Integer, this.types.Integer, true)));
+
             }
         }
 
@@ -154,7 +158,10 @@ OperatorContainer.prototype = {
 
         this.addOperator(new UnaryOperator(this.types.Boolean, 'not', this.types.Boolean,
             new UnaryOperatorCompiler('!', this.types.Boolean, this.types.Boolean, false)));
+        this.addOperator(new UnaryOperator(this.types.Integer, 'not', this.types.Integer,
+            new UnaryOperatorCompiler('~', this.types.Integer, this.types.Integer, false)));
 
+        
         // String operators
         this.addOperator(new BinaryOperator(this.types.String, 'concat', this.types.String, this.types.String,
            new BinaryOperatorCompiler('__concat', this.types.String, this.types.String, this.types.String, false)));
