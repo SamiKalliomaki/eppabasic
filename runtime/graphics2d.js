@@ -116,6 +116,7 @@ Graphics2D.prototype = {
             this.ctx.moveTo(x1, y1);
             this.ctx.lineTo(x2, y2);
             this.ctx.lineTo(x3, y3);
+            this.ctx.lineTo(x1, y1);
             this.ctx.stroke();
         },
         fillTriangle: function fillTriangle(x1, y1, x2, y2, x3, y3) {
