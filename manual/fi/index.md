@@ -27,6 +27,7 @@ D
 * [`DrawRect`](manual:drawrect)
 * [`DrawScreen`](manual:drawscreen)
 * [`DrawText`](manual:drawtext)
+* [`DrawTriangle`](manual:drawtriangle)
 * [`DrawWidth`](manual:drawwidth)
 
 F
@@ -34,6 +35,7 @@ F
 * [`FillCircle`](manual:fillcircle)
 * [`FillColor`](manual:fillcolor)
 * [`FillRect`](manual:fillrect)
+* [`FillTriangle`](manual:filltriangle)
 * [`Floor`](manual:floor)
 * [`For`](manual:for)
 * [`Function`](manual:function)
