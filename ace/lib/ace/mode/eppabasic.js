@@ -74,122 +74,16 @@ define(function (require, exports, module) {
             'rbracket': 'paren.rparen',
         };
         this.specialIdentifiers = {
-            //// Drawing functions
-            'clearcolor': 'support.function',
-            'drawcolor': 'support.function',
-            'linecolor': 'support.function',
-            'drawwidth': 'support.function',
-            'fillcolor': 'support.function',
-            'drawline': 'support.function',
-            'line': 'support.function',
-            'drawcircle': 'support.function',
-            'circle': 'support.function',
-            'fillcircle': 'support.function',
-            'drawrect': 'support.function',
-            'rect': 'support.function',
-            'fillrect': 'support.function',
-            'drawdot': 'support.function',
-            'dot': 'support.function',
-            'clearscreen': 'support.function',
-            'clear': 'support.function',
-            'drawscreen': 'support.function',
-
-            'drawtext': 'support.function',
-            'textcolor': 'support.function',
-            'textfont': 'support.function',
-            'textsize': 'support.function',
-            'textalign': 'support.function',
-
-            'message': 'support.function',
-            'inputnumber': 'support.function',
-            'inputtext': 'support.function',
-            'inputcancel': 'support.function',
-            'windowtitle': 'support.function',
-
-            //// Screen size
-            'width': 'support.function',
-            'windowwidth': 'support.function',
-            'height': 'support.function',
-            'windowheight': 'support.function',
-            'windowsize': 'support.function',
-
-            //// Memory functions
-            'peek32': 'support.function',
-            'poke32': 'support.function',
-            'memorysize': 'support.function',
-
-            //// Mathematical functions
-            'sin': 'support.function',
-            'cos': 'support.function',
-            'tan': 'support.function',
-            'sqr': 'support.function',
-            'abs': 'support.function',
-
-            'min': 'support.function',
-            'max': 'support.function',
-
-            'rnd': 'support.function',
-            'randomize': 'support.function',
-            'round': 'support.function',
-            'ceil': 'support.function',
-            'floor': 'support.function',
-
-            //// String functions
-            'asc': 'support.function',
-            'chr': 'support.function',
-            'instr': 'support.function',
-            'lcase': 'support.function',
-            'len': 'support.function',
-            'left': 'support.function',
-            'match': 'support.function',
-            'mid': 'support.function',
-            'repeat': 'support.function',
-            'replace': 'support.function',
-            'right': 'support.function',
-            'reverse': 'support.function',
-            'rot13': 'support.function',
-            'trim': 'support.function',
-            'ucase': 'support.function',
-
-            //// Time functions
-            'hour': 'support.function',
-            'minute': 'support.function',
-            'second': 'support.function',
-            'day': 'support.function',
-            'month': 'support.function',
-            'year': 'support.function',
-            'timer': 'support.function',
-            'wait': 'support.function',
-            'date': 'support.function',
-            'time': 'support.function',
-            'weekday': 'support.function',
-
-            //// Input
-            'keydown': 'support.function',
-            'keyup': 'support.function',
-            'keyhit': 'support.function',
-            'mousex': 'support.function',
-            'mousey': 'support.function',
-            'mousedown': 'support.function',
-            'mousehit': 'support.function',
-            'mouseup': 'support.function',
-
-            //// Output
-            'print': 'support.function',
-
-            //// Casting
-            'int': 'support.function',
-            'val': 'support.function',
-            'str': 'support.function',
-
-
             //// Types
             'integer': 'support.type',
             'double': 'support.type',
             'number': 'support.type',
             'string': 'support.type',
-
         };
+        var compiler = this.toolchain.getCompiler();
+        compiler.functions.forEach(function(f) {
+            this.specialIdentifiers[f.name.toLowerCase()] = 'support.function';
+        }.bind(this));
         this.indentEffect = {
             'for': 1,
             'next': -1,

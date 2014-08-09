@@ -27,8 +27,7 @@ Toolchain.prototype = {
         }
 
         if (parser.errors.length === 0) {
-            compiler = new Compiler(ast, this.operators, this.types);
-            this.defineFunctions(compiler);
+            compiler = this.getCompiler(ast);
         }
 
         return new CompilationUnit(ast, compiler, parser.errors);
@@ -58,6 +57,14 @@ Toolchain.prototype = {
 
     getParser: function (code) {
         return new Parser(code, this.operators, this.types);
+    },
+
+    getCompiler: function (ast) {
+        ast = ast || { nodes: [] };
+        var compiler = new Compiler(ast, this.operators, this.types);
+        this.defineFunctions(compiler);
+
+        return compiler;
     },
 
     defineFunctions: function (compiler) {
