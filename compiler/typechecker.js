@@ -142,6 +142,8 @@ Typechecker.prototype = {
      */
     visitIf: function visitIf(statement, parent) {
         this.resolveExprType(statement.expr, parent);
+        if (!statement.expr.type.canCastTo(this.types.Boolean))
+            this.errors.push(new CompileError(statement.expr.line, 'errors.cast-failed', { from: statement.expr.type, to: this.types.Boolean }));
         this.visit(statement.trueStatement, parent);
         if (statement.falseStatement) {
             this.visit(statement.falseStatement, parent);
