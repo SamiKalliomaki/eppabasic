@@ -1,7 +1,7 @@
 `Trim`
 ==========
 
-Funktio `Trim` poistaa merkkijonon ympäriltä välilyönnit.
+Funktio `Trim(s)` poistaa merkkijonon `s` ympäriltä välilyönnit.
 
 Esimerkki
 ----------

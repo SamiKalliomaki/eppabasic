@@ -103,6 +103,7 @@ define(function (require, exports, module) {
             'message': 'support.function',
             'inputnumber': 'support.function',
             'inputtext': 'support.function',
+            'inputcancel': 'support.function',
             'windowtitle': 'support.function',
 
             //// Screen size

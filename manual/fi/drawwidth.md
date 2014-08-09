@@ -3,8 +3,16 @@
 
 Komento `DrawWidth` määrittää kuvioiden ääriviivojen paksuuden.
 
+Komentoa käytetään näin:
+
+    DrawWidth x
+    
+Parametri `x` on ääriviivan paksuus.
+
 Esimerkki
 ----------
+
+Seuraava koodi piirtää neljä viivaa, joiden paksuudet ovat 1, 2, 5 ja 10.
 
     DrawWidth 1
     DrawLine 50, 50, 200, 50

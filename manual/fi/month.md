@@ -1,7 +1,7 @@
 `Month`
 ==========
 
-Funktio `Month` palauttaa kuukauden numeron väliltä 1–12.
+Funktio `Month()` palauttaa tämänhetkisen kuukauden numeron väliltä 1–12.
 
 Esimerkki
 ----------
@@ -11,3 +11,5 @@ Esimerkki
 Koodin tulostus (esimerkiksi):
 
     8
+    
+Katso myös: [`Day`](manual:day), [`Weekday`](manual:weekday), [`Year`](manual:year)

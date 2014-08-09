@@ -1,7 +1,7 @@
 `Ceil`
 ==========
 
-Funktio `Ceil` palauttaa luvun pyöristettynä ylöspäin.
+Funktio `Ceil(x)` palauttaa luvun `x` pyöristettynä ylöspäin.
 
 Esimerkki
 ----------
@@ -15,3 +15,5 @@ Koodin tulostus:
     6
     2
     3
+    
+Katso myös: [`Floor`](manual:floor), [`Round`](manual:round)

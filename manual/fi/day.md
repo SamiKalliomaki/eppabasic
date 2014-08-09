@@ -1,7 +1,7 @@
 `Day`
 ==========
 
-Funktio `Day` palauttaa kuukauden päivän numeron väliltä 1–31:
+Funktio `Day()` palauttaa tämänhetkisen kuukauden päivän numeron väliltä 1–31.
 
 Esimerkki
 ----------
@@ -11,3 +11,5 @@ Esimerkki
 Koodin tulostus (esimerkiksi):
 
     27
+    
+Katso myös: [`Month`](manual:month), [`Weekday`](manual:weekday), [`Year`](manual:year)

@@ -3,10 +3,19 @@
 
 Komento `DrawText` piirtää tekstiä näytölle.
 
-Komennon parametrit ovat
-x- ja y-koordinaatti sekä piirrettävä teksti.
+Komentoa käytetään näin:
 
-Esimerkki 1
+    DrawText x, y, s
+    
+Parametrit ovat:
+
+* `x`: tekstin x-koordinaatti (ks. [`TextAlign`](manual:textalign))
+* `y`: tekstin yläreunan y-koordinaatti
+* `s`: piirrettävä teksti
+
+Esimerkki
 ----------
+
+Seuraava koodi piirtää näytölle tekstin "aybabtu":
 
     DrawText 100, 120, "aybabtu"

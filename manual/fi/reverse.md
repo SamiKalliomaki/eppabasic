@@ -1,7 +1,7 @@
 `Reverse`
 ==========
 
-Funktio `Reverse` kääntää merkkijonon toisinpäin.
+Funktio `Reverse(s)` kääntää merkkijonon `s` toisinpäin.
 
 Esimerkki
 ----------

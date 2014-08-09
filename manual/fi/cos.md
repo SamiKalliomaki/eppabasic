@@ -1,14 +1,19 @@
 `Cos`
 ==========
 
-Funktio `Cos` palauttaa kulman kosinin. Kulman suuruus annetaan radiaaneina.
+Funktio `Cos(x)` palauttaa kulman `x` kosinin. Kulma `x` annetaan radiaaneina.
 
 Esimerkki
 ----------
 
-Seuraava koodi piirtää pisteistä ympyrän, jossa on 20 pistettä:
+    Print Cos(0)
+    Print Cos(1)
+    Print Cos(0.4)
+    
+Koodin tulostus:
 
-    Dim pii = 3.141592654
-    For i = 0.0 To 2*pii Step 2*pii/20
-        DrawDot 320+Cos(i)*100, 240+Sin(i)*100
-    Next i
+    1
+    0.54030231
+    0.92106099
+
+Katso myös: [`Sin`](manual:sin), [`Tan`](manual:tan)

@@ -1,7 +1,8 @@
 `Repeat`
 ==========
 
-Funktio `Repeat` toistaa merkkijonoa halutun määrän kertoja.
+Funktio `Repeat(s, k)` muodostaa merkkijonon,
+jossa on `s` toistettuna `k` kertaa.
 
 Esimerkki
 ----------

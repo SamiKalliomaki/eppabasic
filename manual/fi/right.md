@@ -1,7 +1,8 @@
 `Right`
 ==========
 
-Funktio `Right` erottaa osan merkkijonon lopusta.
+Funktio `Right(s, k)` palauttaa merkkijonon
+`s` viimeiset `k` merkkiä.
 
 Esimerkki
 ----------
@@ -11,3 +12,5 @@ Esimerkki
 Koodin tulostus:
 
     btu
+    
+Katso myös: [`Left`](manual:left), [`Mid`](manual:mid)

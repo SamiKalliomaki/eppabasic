@@ -1,7 +1,7 @@
 `Min`
 ==========
 
-Funktio `Min` palauttaa pienemmän kahdesta luvusta.
+Funktio `Min(a, b)` palauttaa pienemmän luvuista `a` ja `b`.
 
 Esimerkki
 ----------
@@ -15,3 +15,5 @@ Koodin tulostus:
     5
     -3
     4
+    
+Katso myös: [`Max`](manual:max)

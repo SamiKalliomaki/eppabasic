@@ -39,3 +39,5 @@ Seuraava koodi tulostaa 78 % todennäköisyydellä "Moikka!" ja 22 % todennäkö
     Else
         Print "Heippa!"
     End If
+    
+Katso myös: [`Randomize`](manual:randomize)

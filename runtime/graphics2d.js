@@ -18,6 +18,8 @@
     this.textFont = "Arial";
     this.textSize = 12;
     this.textAlign = 1;
+    
+    this.cancel = false; // input functions
 
     // Make all functions to use right this
     for (func in this.env) {
@@ -63,15 +65,42 @@ Graphics2D.prototype = {
      */
     env: {
         clearColor: function clearColor(r, g, b) {
+            if (r < 0) r = 0;
+            if (g < 0) g = 0;
+            if (b < 0) b = 0;
+            if (r > 255) r = 255;
+            if (g > 255) g = 255;
+            if (b > 255) b = 255;
+            r = parseInt(r);
+            g = parseInt(g);
+            b = parseInt(b);
             document.body.style.backgroundColor = this.clearColor = 'rgb(' + r + ',' + g + ',' + b + ')';
         },
         lineColor: function lineColor(r, g, b) {
+            if (r < 0) r = 0;
+            if (g < 0) g = 0;
+            if (b < 0) b = 0;
+            if (r > 255) r = 255;
+            if (g > 255) g = 255;
+            if (b > 255) b = 255;
+            r = parseInt(r);
+            g = parseInt(g);
+            b = parseInt(b);
             this.ctx.strokeStyle = 'rgb(' + r + ',' + g + ',' + b + ')';
         },
         lineWidth: function lineWidth(x) {
             this.ctx.lineWidth = x;
         },
         fillColor: function fillColor(r, g, b) {
+            if (r < 0) r = 0;
+            if (g < 0) g = 0;
+            if (b < 0) b = 0;
+            if (r > 255) r = 255;
+            if (g > 255) g = 255;
+            if (b > 255) b = 255;
+            r = parseInt(r);
+            g = parseInt(g);
+            b = parseInt(b);
             this.ctx.fillStyle = 'rgb(' + r + ',' + g + ',' + b + ')';
         },
         rect: function rect(x, y, w, h) {
@@ -177,6 +206,15 @@ Graphics2D.prototype = {
             this.print(str, a+1);
         },
         textColor: function textColor(r, g, b) {
+            if (r < 0) r = 0;
+            if (g < 0) g = 0;
+            if (b < 0) b = 0;
+            if (r > 255) r = 255;
+            if (g > 255) g = 255;
+            if (b > 255) b = 255;
+            r = parseInt(r);
+            g = parseInt(g);
+            b = parseInt(b);
             this.textColor = 'rgb(' + r + ',' + g + ',' + b + ')';
         },
         textFont: function textFont(str) {
@@ -198,13 +236,26 @@ Graphics2D.prototype = {
             str = this.strUtil.fromEppaBasic(str);
             var res = prompt(str);
             this.theEnv.allDown();
+            this.cancel = false;
+            if (res === null) {
+                this.cancel = true;
+                return 0;
+            }
             return parseInt(res);
         },
         askText: function askText(str) {
             str = this.strUtil.fromEppaBasic(str);
             var res = prompt(str);
             this.theEnv.allDown();
+            this.cancel = false;
+            if (res === null) {
+                this.cancel = true;
+                return this.strUtil.toEppaBasic("");
+            }
             return this.strUtil.toEppaBasic(res);
+        },
+        inputCancel: function inputCancel() {
+            return this.cancel;
         },
 
         setWindowTitle: function setWindowTitle(str) {

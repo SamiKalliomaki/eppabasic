@@ -1,13 +1,16 @@
 `UCase`
 ==========
 
-Funktio `UCase` muuttaa merkkijonon kaikki merkit suuriksi.
+Funktio `UCase(s)` palauttaa merkkijonon `s` niin,
+että kaikki kirjaimet on muutettu suuriksi.
 
 Esimerkki
 ----------
 
-    Print UCase("AyBaBtU")
+    Print LCase("AyBaBtU")
     
 Koodin tulostus:
 
     AYBABTU
+    
+Katso myös: [`LCase`](manual:lcase)

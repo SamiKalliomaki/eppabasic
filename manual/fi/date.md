@@ -1,7 +1,7 @@
 `Date`
 ==========
 
-Funktio `Date` palauttaa päivämäärän tekstimuodossa.
+Funktio `Date()` palauttaa tämänhetkisen päivämäärän tekstimuodossa.
 
 Esimerkki
 ----------
@@ -11,3 +11,5 @@ Esimerkki
 Koodin tulostus (esimerkiksi):
 
     2.8.2014
+    
+Katso myös: [`Time`](manual:time)

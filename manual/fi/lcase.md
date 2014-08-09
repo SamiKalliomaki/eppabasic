@@ -1,7 +1,8 @@
 `LCase`
 ==========
 
-Funktio `LCase` muuttaa merkkijonon kaikki merkit pieniksi.
+Funktio `LCase(s)` palauttaa merkkijonon `s` niin,
+että kaikki kirjaimet on muutettu pieniksi.
 
 Esimerkki
 ----------
@@ -11,3 +12,5 @@ Esimerkki
 Koodin tulostus:
 
     aybabtu
+    
+Katso myös: [`UCase`](manual:ucase)

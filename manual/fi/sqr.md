@@ -1,7 +1,7 @@
 `Sqr`
 ==========
 
-Funktio `Sqr` palauttaa luvun neliöjuuren. Funktion parametrin tulee olla ei-negatiivinen.
+Funktio `Sqr(x)` palauttaa luvun `x` neliöjuuren. Luvun `x` tulee olla ei-negatiivinen.
 
 Esimerkki
 ----------

@@ -1,7 +1,7 @@
 `Time`
 ==========
 
-Funktio `Time` palauttaa kellonajan tekstimuodossa.
+Funktio `Time()` palauttaa tämänhetkisen kellonajan tekstimuodossa.
 
 Esimerkki
 ----------
@@ -11,3 +11,5 @@ Esimerkki
 Koodin tulostus (esimerkiksi):
 
     17:33:02
+    
+Katso myös: [`Date`](manual:date)

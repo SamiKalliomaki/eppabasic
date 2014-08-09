@@ -3,9 +3,20 @@
 
 Komento `DrawColor` määrittää värin, jolla kuvioiden ääriviivat piirretään.
 
-Komennolle annetaan kolme parametria väliltä 0–255: punaisen, vihreän ja sinisen määrä.
+Komentoa käytetään näin:
+
+    DrawColor r, g, b
+    
+Parametrit ovat:
+
+* `r`: punaisen värin määrä (0–255)
+* `g`: vihreän värin määrä (0–255)
+* `b`: sinisen värin määrä (0–255)
 
 Esimerkki
 ----------
 
-    DrawColor 255, 0, 0
+Seuraava koodi piirtää sinisen ympyrän:
+
+    DrawColor 0, 0, 255
+    DrawCircle 200, 200, 50

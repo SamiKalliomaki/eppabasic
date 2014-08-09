@@ -1,7 +1,9 @@
 `Asc`
 ==========
 
-Funktio `Asc` palauttaa merkkijonon ensimmäisen merkin merkkikoodin.
+Funktio `Asc(s)` palauttaa merkkijonon `s` ensimmäisen merkin merkkikoodin.
+
+Jos merkkijono on tyhjä, funktio palauttaa arvon 0.
 
 Esimerkki
 ----------
@@ -11,3 +13,5 @@ Esimerkki
 Koodin tulostus:
 
     65
+    
+Katso myös: [`Chr`](manual:chr)

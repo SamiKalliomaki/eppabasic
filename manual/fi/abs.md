@@ -1,7 +1,7 @@
 `Abs`
 ==========
 
-Funktio `Abs` palauttaa luvun itseisarvon. Itseisarvo on luvun suuruus ilman etumerkkiä.
+Funktio `Abs(x)` palauttaa luvun `x` itseisarvon. Itseisarvo on luvun suuruus ilman etumerkkiä.
 
 Esimerkki
 ----------

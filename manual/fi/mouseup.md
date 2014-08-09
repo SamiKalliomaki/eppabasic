@@ -1,7 +1,7 @@
 `MouseUp`
 ==========
 
-Funktio `MouseUp` palauttaa tiedon, onko hiiren nappi ylhäällä.
+Funktio `MouseUp(x)` palauttaa tiedon, onko hiiren nappi `x` ylhäällä.
 
 Vasemman napin tunnus on 1, oikean napin 2 ja keskinapin 3.
 
@@ -21,3 +21,5 @@ Esimerkki
         End If
         DrawScreen
     Loop
+    
+Katso myös: [`MouseDown`](manual:mousedown), [`MouseHit`](manual:mousehit)

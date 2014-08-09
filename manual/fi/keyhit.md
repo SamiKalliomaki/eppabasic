@@ -1,7 +1,7 @@
 `KeyHit`
 ==========
 
-Funktio `KeyHit` kertoo, onko näppäintä painettu.
+Funktio `KeyHit(x)` kertoo, onko näppäintä `x` painettu funktion viime kutsun jälkeen.
 
 [`Lista näppäinkoodeista`](manual:keycodes)
 
@@ -17,3 +17,5 @@ kun käyttäjä painaa välilyöntiä:
         End If
         DrawScreen
     Loop
+    
+Katso myös: [`KeyDown`](manual:keydown), [`KeyUp`](manual:keyup)

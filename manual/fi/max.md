@@ -1,7 +1,7 @@
 `Max`
 ==========
 
-Funktio `Max` palauttaa suuremman kahdesta luvusta.
+Funktio `Max(a, b)` palauttaa suuremman luvuista `a` ja `b`.
 
 Esimerkki
 ----------
@@ -15,3 +15,5 @@ Koodin tulostus:
     7
     -2
     4
+    
+Katso myös: [`Min`](manual:min)

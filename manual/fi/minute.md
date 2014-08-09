@@ -1,7 +1,7 @@
 `Minute`
 ==========
 
-Funktio `Minute` palauttaa minuutin numeron väliltä 0–59.
+Funktio `Minute()` palauttaa tämänhetkisen ajan minuutin väliltä 0–59.
 
 Esimerkki
 ----------
@@ -11,3 +11,5 @@ Esimerkki
 Koodin tulostus (esimerkiksi):
 
     47
+    
+Katso myös: [`Hour`](manual:hour), [`Second`](manual:second)

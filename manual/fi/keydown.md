@@ -1,7 +1,7 @@
 `KeyDown`
 ==========
 
-Funktio `KeyDown` palauttaa tiedon, onko näppäin alhaalla. 
+Funktio `KeyDown(x)` palauttaa tiedon, onko näppäin `x` alhaalla. 
 
 [`Lista näppäinkoodeista`](manual:keycodes)
 
@@ -15,3 +15,5 @@ Esimerkki
         End If
         DrawScreen
     Loop
+    
+Katso myös: [`KeyHit`](manual:keyhit), [`KeyUp`](manual:keyup)

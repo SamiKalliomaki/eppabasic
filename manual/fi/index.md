@@ -45,6 +45,7 @@ H
 I
 ----------
 * [`If`](manual:if)
+* [`InputCancel`](manual:inputcancel)
 * [`InputNumber`](manual:inputnumber)
 * [`InputText`](manual:inputtext)
 * [`InStr`](manual:instr)
@@ -124,10 +125,10 @@ W
 ----------
 * [`Wait`](manual:wait)
 * [`Weekday`](manual:weekday)
-<!--* [`WindowHeight`](manual:windowheight)-->
-<!--* [`WindowSize`](manual:windowsize)-->
+* [`WindowHeight`](manual:windowheight)
+* [`WindowSize`](manual:windowsize)
 * [`WindowTitle`](manual:windowtitle)
-<!--* [`WindowWidth`](manual:windowwidth)-->
+* [`WindowWidth`](manual:windowwidth)
 
 Y
 ----------

@@ -1,7 +1,8 @@
 `Left`
 ==========
 
-Funktio `Left` erottaa osan merkkijonon alusta.
+Funktio `Left(s, k)` palauttaa merkkijonon
+`s` ensimmäiset `k` merkkiä.
 
 Esimerkki
 ----------
@@ -11,3 +12,5 @@ Esimerkki
 Koodin tulostus:
 
     ayb
+    
+Katso myös: [`Mid`](manual:mid), [`Right`](manual:right)

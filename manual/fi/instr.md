@@ -1,12 +1,12 @@
-`Instr`
+`InStr`
 ==========
 
-Funktio `Instr` etsii ensimmäisen kohdan merkkijonossa,
-jossa toinen merkkijono esiintyy.
+Funktio `InStr(x, y)` palauttaa ensimmäisen kohdan,
+jossa merkkijono `y` esiintyy merkkijonossa `x`.
 Jos tällaista kohtaa ei ole, funktio palauttaa 0.
 
-Funktiolle voi antaa myös ylimääräisen parametrin,
-joka tarkoittaa kohtaa, josta etsintä alkaa.
+Funktio `InStr(k, x, y)` palauttaa vastaavasti
+ensimmäisen kohdan kohdasta `k` alkaen.
 
 Esimerkki 1
 ----------
@@ -23,8 +23,8 @@ Esimerkki 2
 ----------
 
     Print InStr("aybabtu", "b")
-    Print InStr("aybabtu", "b", 4)
-    Print InStr("aybabtu", "b", 7)
+    Print InStr(4, "aybabtu", "b")
+    Print InStr(7, "aybabtu", "b")
     
 Koodin tulostus:
 

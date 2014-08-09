@@ -17,6 +17,7 @@ EbString.prototype = {
     env: {
         asc: function asc(str) {
             str = this.strUtil.fromEppaBasic(str);
+            if (str == "") return 0;
             return str.charCodeAt(0);
         },
         chr: function chr(x) {
@@ -34,7 +35,7 @@ EbString.prototype = {
             var res = str1.indexOf(str2);
             return res+1;
         },
-        instr2: function instr2(str1, str2, x) {
+        instr2: function instr2(x, str1, str2) {
             str1 = this.strUtil.fromEppaBasic(str1);
             str2 = this.strUtil.fromEppaBasic(str2);
             var res = str1.indexOf(str2, x-1);

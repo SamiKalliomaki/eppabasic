@@ -1,7 +1,7 @@
 `MouseDown`
 ==========
 
-Funktio `MouseDown` palauttaa tiedon, onko hiiren nappi alhaalla.
+Funktio `MouseDown(x)` palauttaa tiedon, onko hiiren nappi `x` alhaalla.
 
 Vasemman napin tunnus on 1, oikean napin 2 ja keskinapin 3.
 
@@ -21,3 +21,5 @@ Esimerkki
         End If
         DrawScreen
     Loop
+    
+Katso myös: [`MouseHit`](manual:mousehit), [`MouseUp`](manual:mouseup)

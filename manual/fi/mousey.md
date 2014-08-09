@@ -1,7 +1,7 @@
 `MouseY`
 ==========
 
-Funktio `MouseY` palauttaa hiiren y-koordinaatin.
+Funktio `MouseY()` palauttaa hiiren y-koordinaatin.
 
 Esimerkki
 ----------
@@ -13,3 +13,5 @@ Seuraava koodi näyttää hiiren y-koordinaatin hiiren liikkuessa:
         Print MouseY()
         DrawScreen
     Loop
+    
+Katso myös: [`MouseX`](manual:mousex)

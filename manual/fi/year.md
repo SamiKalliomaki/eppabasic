@@ -1,7 +1,7 @@
 `Year`
 ==========
 
-Funktio `Year` palauttaa vuoden nelinumeroisena.
+Funktio `Year()` palauttaa tämänhetkisen vuoden nelinumeroisena.
 
 Esimerkki
 ----------
@@ -11,3 +11,5 @@ Esimerkki
 Koodin tulostus (esimerkiksi):
 
     2014
+    
+Katso myös: [`Day`](manual:day), [`Month`](manual:month), [`Weekday`](manual:weekday)

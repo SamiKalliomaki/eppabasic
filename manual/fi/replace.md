@@ -1,7 +1,9 @@
 `Replace`
 ==========
 
-Funktio `Replace` korvaa merkkijonossa esiintyvät osat toisilla.
+Funktio `Replace(s, a, b)` muodostaa merkkijonon,
+jonka lähtökohtana on `s`,
+mutta jokainen `a` on korvattu `b`:llä.
 
 Esimerkki 1
 ----------

@@ -1,7 +1,7 @@
 `Len`
 ==========
 
-Funktio `Len` palauttaa merkkijonon merkkien määrän.
+Funktio `Len(s)` palauttaa merkkijonon `s` merkkien määrän.
 
 Esimerkki
 ----------

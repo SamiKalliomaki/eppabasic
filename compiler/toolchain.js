@@ -93,6 +93,7 @@ Toolchain.prototype = {
         compiler.defineJsFunction('env.askText', true, 'AskText', [this.types.String], this.types.String);
         compiler.defineJsFunction('env.askNumber', true, 'InputNumber', [this.types.String], this.types.Double);
         compiler.defineJsFunction('env.askText', true, 'InputText', [this.types.String], this.types.String);
+        compiler.defineJsFunction('env.inputCancel', true, 'InputCancel', [], this.types.Boolean);
         compiler.defineJsFunction('env.setWindowTitle', true, 'WindowTitle', [this.types.String]);
         compiler.defineJsFunction('env.getWindowTitle', true, 'WindowTitle', [], this.types.String);
 
@@ -153,7 +154,7 @@ Toolchain.prototype = {
         compiler.defineJsFunction('env.asc', true, 'Asc', [this.types.String], this.types.Integer);
         compiler.defineJsFunction('env.chr', true, 'Chr', [this.types.Integer], this.types.String);
         compiler.defineJsFunction('env.instr', true, 'InStr', [this.types.String, this.types.String], this.types.Integer);
-        compiler.defineJsFunction('env.instr2', true, 'InStr', [this.types.String, this.types.String, this.types.Integer], this.types.Integer);
+        compiler.defineJsFunction('env.instr2', true, 'InStr', [this.types.Integer, this.types.String, this.types.String], this.types.Integer);
         compiler.defineJsFunction('env.lcase', true, 'LCase', [this.types.String], this.types.String);
         compiler.defineJsFunction('env.len', true, 'Len', [this.types.String], this.types.Integer);
         compiler.defineJsFunction('env.left', true, 'Left', [this.types.String, this.types.Integer], this.types.String);

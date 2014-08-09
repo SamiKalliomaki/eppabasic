@@ -1,7 +1,7 @@
 `Hour`
 ==========
 
-Funktio `Hour` palauttaa tunnin numeron väliltä 0–23.
+Funktio `Hour()` palauttaa tämänhetkisen ajan tunnin väliltä 0–23.
 
 Esimerkki
 ----------
@@ -11,3 +11,5 @@ Esimerkki
 Koodin tulostus (esimerkiksi):
 
     21
+    
+Katso myös: [`Minute`](manual:minute), [`Second`](manual:second)

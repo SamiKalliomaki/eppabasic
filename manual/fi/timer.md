@@ -1,7 +1,7 @@
 `Timer`
 ==========
 
-Funktio `Timer` palauttaa 1.1.1970 0:00:00 jälkeen kuluneen ajan sekunteina desimaalilukuna.
+Funktio `Timer()` palauttaa 1.1.1970 0:00:00 jälkeen kuluneen ajan sekunteina desimaalilukuna.
 
 Esimerkki
 ----------

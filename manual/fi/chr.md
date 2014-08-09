@@ -1,7 +1,7 @@
 `Chr`
 ==========
 
-Funktio `Chr` palauttaa merkkikoodia vastaavan merkin.
+Funktio `Chr(x)` palauttaa merkkikoodia `x` vastaavan merkin.
 
 Esimerkki
 ----------
@@ -11,3 +11,5 @@ Esimerkki
 Koodin tulostus:
 
     A
+    
+Katso myös: [`Asc`](manual:asc)

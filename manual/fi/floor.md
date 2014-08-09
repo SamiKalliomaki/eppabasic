@@ -1,7 +1,7 @@
 `Floor`
 ==========
 
-Funktio `Floor` palauttaa luvun pyöristettynä alaspäin.
+Funktio `Floor(x)` palauttaa luvun `x` pyöristettynä alaspäin.
 
 Esimerkki
 ----------
@@ -15,3 +15,5 @@ Koodin tulostus:
     5
     1
     3
+    
+Katso myös: [`Ceil`](manual:ceil), [`Round`](manual:round)

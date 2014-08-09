@@ -1,7 +1,7 @@
 `MouseHit`
 ==========
 
-Funktio `MouseHit` kertoo, onko hiiren nappia painettu.
+Funktio `MouseHit(x)` kertoo, onko hiiren nappia `x` painettu funktion viime kutsun jälkeen.
 
 Vasemman napin tunnus on 1, oikean napin 2 ja keskinapin 3.
 
@@ -17,3 +17,5 @@ kun käyttäjä painaa hiiren vasenta nappia:
         End If
         DrawScreen
     Loop
+    
+Katso myös: [`MouseDown`](manual:mousedown), [`MouseUp`](manual:mouseup)

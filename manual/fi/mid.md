@@ -4,8 +4,8 @@
 Funktio `Mid` erottaa osan merkkijonon keskeltä.
 Funktiota voi käyttää kahdella tavalla:
 
-* `Mid(x, a)` erottaa `x`:stä kaikki merkit loppuun asti merkistä `a` alkaen.
-* `Mid(x, a, b)` erottaa `x`:stä `b` merkkiä merkistä `a` alkaen.
+* `Mid(s, a)` erottaa `s`:stä kaikki merkit loppuun asti merkistä `a` alkaen.
+* `Mid(s, a, b)` erottaa `s`:stä `b` merkkiä merkistä `a` alkaen.
 
 Esimerkki
 ----------
@@ -17,3 +17,5 @@ Koodin tulostus:
 
     abtu
     yba
+    
+Katso myös: [`Left`](manual:left), [`Right`](manual:right)

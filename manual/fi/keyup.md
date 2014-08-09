@@ -1,7 +1,7 @@
 `KeyUp`
 ==========
 
-Funktio `KeyUp` palauttaa tiedon, onko näppäin ylhäällä. 
+Funktio `KeyUp(x)` palauttaa tiedon, onko näppäin `x` ylhäällä. 
 
 [`Lista näppäinkoodeista`](manual:keycodes)
 
@@ -15,3 +15,5 @@ Esimerkki
         End If
         DrawScreen
     Loop
+    
+Katso myös: [`KeyDown`](manual:keydown), [`KeyHit`](manual:keyhit)

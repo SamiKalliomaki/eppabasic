@@ -1,4 +1,6 @@
 `Str`
 ==========
 
-Funktio `Str` muuttaa luvun merkkijonoksi.
+Funktio `Str(x)` muuttaa luvun `x` merkkijonoksi.
+
+Katso myös: [`Val`](manual:val)
