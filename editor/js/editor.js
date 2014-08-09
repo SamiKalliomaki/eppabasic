@@ -28,6 +28,7 @@ Editor.prototype = {
         this.ace.getSession().clearAnnotations();
         if (cu.errors.length !== 0) {
             this.showErrors(cu.errors);
+            this.ace.gotoLine(cu.errors[0].line);
         } else {
             this.compiled = this.toolchain.compile(cu);
             this.run();
