@@ -318,6 +318,12 @@ Parser.prototype = {
             }
         }
 
+        if (this.peek().type !== 'newline' && this.peek().type !== 'eos' && this.peek().type !== 'comment') {
+            // An oneline if
+            var statement = this.parseStatement();
+            return new Nodes.If(expr, new Nodes.Block([statement], statement.line), undefined, expr && expr.line);
+        }
+
         var trueStatement = this.parseBlock();
         var res = new Nodes.If(expr, trueStatement, undefined, expr && expr.line);
         var cur = res;
