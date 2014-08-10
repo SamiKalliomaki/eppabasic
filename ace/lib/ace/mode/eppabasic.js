@@ -7,6 +7,11 @@ define(function (require, exports, module) {
 
     var Range = require("../range").Range;
 
+    // Eppabasic compiler parts
+    var Lexer = require('compiler/lexer');
+    var Toolchain = require('compiler/toolchain');
+    var Compiler = require('compiler/compiler');
+
     function CustomTokenizer() {
         this.lexer = new Lexer('', true);
         this.toolchain = new Toolchain();
