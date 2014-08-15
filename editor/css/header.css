@@ -40,9 +40,14 @@
 	min-width: 100px;
 }
 
-#file-controls
+#file-controls .save, #file-controls .save-as
 {
 	display: none;
+}
+
+#file-controls.logged-in .save, #file-controls.logged-in .save-as
+{
+	display: inline-block;
 }
 
 #language-selection

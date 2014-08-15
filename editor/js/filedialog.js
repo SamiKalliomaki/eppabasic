@@ -116,90 +116,89 @@ FileDialogController.prototype = {
 
         var me = this;
 
-        $.ajax(
+        simpleGet(
             'eb/fs/directory/' + dir + '/',
-            {
-                success: function(data) {
-                    me.openedDirectory = data['id'];
-                    me.openedDirectoryParents = parents.slice(0);
+            '',
+            function(data) {
+                me.openedDirectory = data['id'];
+                me.openedDirectoryParents = parents.slice(0);
 
-                    me.currentDirectory.empty();
-                    me.formDirectory.val(data['id']);
-                    $('input', me.fileForm).prop('disabled', false);
+                me.currentDirectory.empty();
+                me.formDirectory.val(data['id']);
+                $('input', me.fileForm).prop('disabled', false);
 
-                    if(data['editable']) {
-                        me.createDirectory.parent().show();
-                    } else {
-                        me.createDirectory.parent().hide();
+                if(data['editable']) {
+                    me.createDirectory.parent().show();
+                } else {
+                    me.createDirectory.parent().hide();
 
-                        if(me.editMode) {
-                            $('input', me.fileForm).prop('disabled', true);
-                        }
+                    if(me.editMode) {
+                        $('input', me.fileForm).prop('disabled', true);
                     }
+                }
 
-                    if(data['deletable']) {
-                        me.deleteDirectory.parent().show();
-                    } else {
-                        me.deleteDirectory.parent().hide();
-                    }
+                if(data['deletable']) {
+                    me.deleteDirectory.parent().show();
+                } else {
+                    me.deleteDirectory.parent().hide();
+                }
 
-                    parents.push({ 'id': data['id'], 'name': data['name'] });
+                parents.push({ 'id': data['id'], 'name': data['name'] });
 
-                    function populateFileList(fileList, content) {
-                        for(var i in content['subdirs']) {
-                            var listElem = $('<li/>', {
-                                'class': 'directory'
-                            });
+                function populateFileList(fileList, content) {
+                    for(var i in content['subdirs']) {
+                        var listElem = $('<li/>', {
+                            'class': 'directory'
+                        });
 
-                            listElem.append($('<a/>', {
-                                'href': '#',
-                                'class': 'directory-link',
-                                'data-dir': content['subdirs'][i].id,
-                                'data-parents': JSON.stringify(parents),
-                                'text': content['subdirs'][i].name + '/'
-                            }));
-
-                            fileList.append(listElem);
-                        }
-
-                        for(var i in content['files']) {
-                            var listElem = $('<li/>', {
-                                'class': 'file'
-                            });
-
-                            listElem.append($('<a/>', {
-                                'href': '#',
-                                'class': 'file-link',
-                                'data-file': content['files'][i],
-                                'text': content['files'][i]
-                            }));
-
-                            fileList.append(listElem);
-                        }
-
-                        if(content['subdirs'].length === 0 && content['files'].length === 0) {
-                            fileList.append('<li>This directory is empty</li>');
-                        }
-                    }
-
-                    populateFileList(me.mainFileList, data['content']);
-
-                    if('shared' in data) {
-                        me.shareBox.show();
-                        populateFileList(me.sharedFileList, data['shared']);
-                    } else {
-                        me.shareBox.hide();
-                    }
-
-                    for(var i in parents) {
-                        me.currentDirectory.append($('<a/>', {
+                        listElem.append($('<a/>', {
                             'href': '#',
                             'class': 'directory-link',
-                            'data-dir': parents[i].id,
-                            'data-parents': JSON.stringify(parents.slice(0, i)),
-                            'text': parents[i].name + '/'
+                            'data-dir': content['subdirs'][i].id,
+                            'data-parents': JSON.stringify(parents),
+                            'text': content['subdirs'][i].name + '/'
                         }));
+
+                        fileList.append(listElem);
                     }
+
+                    for(var i in content['files']) {
+                        var listElem = $('<li/>', {
+                            'class': 'file'
+                        });
+
+                        listElem.append($('<a/>', {
+                            'href': '#',
+                            'class': 'file-link',
+                            'data-file': content['files'][i],
+                            'text': content['files'][i]
+                        }));
+
+                        fileList.append(listElem);
+                    }
+
+                    if(content['subdirs'].length === 0 && content['files'].length === 0) {
+                        fileList.append('<li>This directory is empty</li>');
+                    }
+                }
+
+                populateFileList(me.mainFileList, data['content']);
+
+                if('shared' in data) {
+                    me.shareBox.show();
+                    populateFileList(me.sharedFileList, data['shared']);
+                } else {
+                    me.shareBox.hide();
+                }
+
+                for(var i in parents) {
+                    me.currentDirectory.append($('<a/>', {
+                        'href': '#',
+                        'class': 'directory-link',
+                        'data-dir': parents[i].id,
+                        'data-parents': JSON.stringify(parents.slice(0, i)),
+                        'text': parents[i].name + '/'
+                    }));
                 }
             }
         );

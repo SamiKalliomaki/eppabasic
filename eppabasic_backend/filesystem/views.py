@@ -15,7 +15,12 @@ def has_rights_dir(user, directory, edit=False):
     p = directory
 
     while p != None:
-        shares = p.directory_shares.filter(Q(shared_with=user) | Q(shared_with=None))
+        query = Q(shared_with=None)
+
+        if user.is_authenticated():
+            query |= Q(shared_with=user)
+
+        shares = p.directory_shares.filter(query)
         if edit:
             shares = shares.filter(can_edit=True)
 
@@ -28,36 +33,57 @@ def has_rights_dir(user, directory, edit=False):
 
 class GetDirectoryView(View):
     def get(self, request, directory_id=None, *args, **kwargs):
-        if directory_id == None:
-            directory = Directory.objects.get(owner=request.user, parent=None)
-        else:
-            directory = get_object_or_404(Directory.objects, pk=int(directory_id))
+        if directory_id != None or request.user.is_authenticated():
+            if directory_id == None:
+                directory = Directory.objects.get(owner=request.user, parent=None)
+            else:
+                directory = get_object_or_404(Directory.objects, pk=int(directory_id))
 
-        if not has_rights_dir(request.user, directory):
-            return HttpResponse('Unauthorized', status=401)
+            if not has_rights_dir(request.user, directory):
+                return HttpResponse('Unauthorized', status=401)
 
-        subdirs = [{ 'id': child.pk, 'name': child.name } for child in directory.subdirs.order_by('name').all()]
-        files = [f.name for f in directory.files.order_by('name').all()]
+            subdirs = [{ 'id': child.pk, 'name': child.name } for child in directory.subdirs.order_by('name').all()]
+            files = [f.name for f in directory.files.order_by('name').all()]
 
-        response = {
-            'result': 'success',
-            'id': directory.pk,
-            'name': directory.name,
-            'deletable': directory.parent != None and has_rights_dir(request.user, directory, edit=True),
-            'editable': has_rights_dir(request.user, directory, edit=True),
+            response = {
+                'result': 'success',
+                'id': directory.pk,
+                'name': directory.name,
+                'deletable': directory.parent != None and has_rights_dir(request.user, directory, edit=True),
+                'editable': has_rights_dir(request.user, directory, edit=True),
+                'is_root': directory.parent == None and directory.owner == request.user,
 
-            'content': {
-                'subdirs': subdirs,
-                'files': files,
+                'content': {
+                    'subdirs': subdirs,
+                    'files': files,
+                }
             }
-        }
+        else:
+            response = {
+                'result': 'success',
+                'id': 'root',
+                'name': 'root (anonymous)',
+                'deletable': False,
+                'editable': False,
+                'is_root': True,
 
-        if directory.parent == None and directory.owner == request.user:
-            shared_directories = DirectoryShare.objects \
-                .filter(Q(shared_with=request.user) | Q(shared_with=None)) \
-                .exclude(directory__owner=request.user) \
-                .order_by('directory__name') \
-                .values('directory', 'directory__name')
+                'content': {
+                    'subdirs': [],
+                    'files': []
+                }
+            }
+
+        if response['is_root']:
+            query = Q(shared_with=None)
+            if request.user.is_authenticated():
+                query |= Q(shared_with=request.user)
+
+            shared_directories = DirectoryShare.objects.filter(query)
+
+            if request.user.is_authenticated():
+                shared_directories = shared_directories.exclude(directory__owner=request.user)
+                
+            shared_directories = shared_directories.order_by('directory__name').values('directory', 'directory__name')
 
             response['shared'] = {
                 'subdirs': [

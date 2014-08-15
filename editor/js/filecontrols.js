@@ -10,10 +10,10 @@ function FileControlsController(fileControls, editor, userControlsController, fi
     var me = this;
 
     userControlsController.onLogin = function() {
-        me.fileControls.css('display', 'inline-block');
+        me.fileControls.addClass('logged-in');
     };
     userControlsController.onLogout = function() {
-        me.fileControls.hide();
+        me.fileControls.removeClass('logged-in');
     };
 
     this.newButton.click(function() {
