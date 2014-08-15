@@ -35,7 +35,11 @@
         "confirm-leave": "Are you sure you want to leave this page? All unsaved changes will be lost.",
         "confirm-new": "You have unsaved changes. These changes will be destroyed if you create new file. Are you sure you want to create a new file?",
         "confirm-load": "You have unsaved changes. These changes will be destroyed if you load a file. Are you sure you want to load file?",
-        "confirm-delete": "Are you sure you want to delete the file? This cannot be undone."
+        "confirm-delete": "Are you sure you want to delete the file? This cannot be undone.",
+        "file-opened": "File opened successfully.",
+        "file-saved": "File saved successfully.",
+        "open": "Open",
+        "save": "Save"
     },
     "manual": {
         "index": "Index",

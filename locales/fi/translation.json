@@ -35,7 +35,11 @@
         "confirm-leave": "Haluatko varmasti poistua sivulta? Kaikki tallentamattomat muutokset tuhoutuvat.",
         "confirm-new": "Sinulla on tallentamattomia muutoksia. Muutokset tuhoutuvat, jos luot uuden tiedoston. Haluatko varmasti luoda uuden tiedoston?",
         "confirm-load": "Sinulla on tallentamattomia muutoksia. Muutokset tuhoutuvat, jos lataat tiedoston. Haluatko varmasti ladata tiedoston?",
-        "confirm-delete": "Haluatko varmasti poistaa tiedoston? Toimintoa ei voida kumota."
+        "confirm-delete": "Haluatko varmasti poistaa tiedoston? Toimintoa ei voida kumota.",
+        "file-opened": "Tiedosto avattiin onnistuneesti.",
+        "file-saved": "Tiedosto tallennettiin onnistuneesti.",
+        "open": "Avaa",
+        "save": "Tallenna"
     },
     "manual": {
         "index": "Etusivu",

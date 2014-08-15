@@ -101,7 +101,7 @@ FileDialogController.prototype = {
         this.editMode = editMode;
 
         this.resetDialog();
-        this.formSubmit.val(editMode ? 'Save' : 'Open');
+        this.formSubmit.val(editMode ? i18n.t('editor.save') : i18n.t('editor.open'));
         this.fileDialogWrapper.show();
     },
 

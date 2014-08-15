@@ -34,7 +34,7 @@ function FileControlsController(fileControls, editor, userControlsController, fi
                     if(data['result'] === 'success') {
                         editor.setCode(data['content']);
                         editor.modified = false;
-                        notificationSystem.notify('File opened successfully.');
+                        notificationSystem.notify(i18n.t('editor.file-opened'));
 
                         if(data['editable']) {
                             me.openedFile = fileOpening;
@@ -55,7 +55,7 @@ function FileControlsController(fileControls, editor, userControlsController, fi
             'eb/fs/save/',
             function(data) {
                 if(data['result'] === 'success') {
-                    notificationSystem.notify('File saved successfully.');
+                    notificationSystem.notify(i18n.t('editor.file-saved'));
                     editor.modified = false;
                 } else {
                     notificationSystem.showErrors(data['errors']);
