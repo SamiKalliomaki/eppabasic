@@ -47,6 +47,11 @@
 	color: white;
 }
 
+#file-dialog-wrapper .file-list .delete-link
+{
+	text-decoration: none;
+}
+
 #file-dialog-wrapper .file-list li:before, #file-dialog-wrapper .tools li:before
 {
 	font-family: "Batch";

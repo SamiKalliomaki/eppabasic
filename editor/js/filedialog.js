@@ -22,6 +22,27 @@ function FileDialogController(fileDialogWrapper, notificationSystem) {
         me.formFilename.val($(this).data('file'));
     });
 
+    this.fileDialog.on('click', '.delete-link', function(e) {
+        e.preventDefault();
+
+        if(confirm(i18n.t('editor.confirm-delete'))) {
+            simplePost(
+                'eb/fs/delete/',
+                {
+                    'directory': me.openedDirectory,
+                    'filename': $(this).data('file')
+                },
+                function(data) {
+                    if(data['result'] === 'success') {
+                        me.reloadDirectory();
+                    } else {
+                        notificationSystem.showErrors(data['errors'])
+                    }
+                }
+            );
+        }
+    });
+
     this.fileDialog.on('click', '.directory-link', function(e) {
         e.preventDefault();
 
@@ -38,7 +59,7 @@ function FileDialogController(fileDialogWrapper, notificationSystem) {
                 'directory':  me.formDirectory.val()
             }, function(data) {
                 if(data['result'] === 'success') {
-                    me.openDirectory(me.openedDirectory, me.openedDirectoryParents);
+                    me.reloadDirectory();
                 } else {
                     notificationSystem.showErrors(data['errors'])
                 }
@@ -104,6 +125,10 @@ FileDialogController.prototype = {
     resetDialog: function() {
         this.openDirectory('root');
         this.formFilename.val('');
+    },
+
+    reloadDirectory: function() {
+        this.openDirectory(this.openedDirectory, this.openedDirectoryParents);
     },
 
     openDirectory: function(dir, parents) {
@@ -173,6 +198,15 @@ FileDialogController.prototype = {
                             'data-file': content['files'][i],
                             'text': content['files'][i]
                         }));
+                        if(data['editable']) {
+                            listElem.append(' ');
+                            listElem.append($('<a/>', {
+                                'href': '#',
+                                'class': 'delete-link batch',
+                                'data-file': content['files'][i],
+                                'data-icon': '\uf155'
+                            }));
+                        }
 
                         fileList.append(listElem);
                     }

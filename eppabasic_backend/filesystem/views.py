@@ -117,6 +117,17 @@ class OpenFileView(AjaxView):
 
         return JsonResponse({'result': 'success', 'content': form.file_cache.content, 'editable': has_rights_dir(self.request.user, form.cleaned_data['directory'], edit=True) })
 
+class DeleteFileView(AjaxView):
+    form_class = FileForm
+
+    def form_valid(self, form):
+        if not has_rights_dir(self.request.user, form.cleaned_data['directory'], edit=True):
+            return HttpResponse('Unauthorized', status=401)
+
+        form.file_cache.delete()
+
+        return JsonResponse({'result': 'success'})
+
 class CreateDirectoryView(AjaxView):
     form_class = CreateDirectoryForm
 
