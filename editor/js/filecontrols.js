@@ -17,29 +17,35 @@ function FileControlsController(fileControls, editor, userControlsController, fi
     };
 
     this.newButton.click(function() {
-        editor.setCode('');
-        me.openedFile = null;
+        if(!editor.modified || confirm(i18n.t('editor.confirm-new'))) {
+            editor.setCode('');
+            editor.modified = false;
+            me.openedFile = null;
+        }
     });
 
     this.loadButton.click(function() {
         fileDialogController.show(false);
         fileDialogController.onSelect = function() {
-            var fileOpening = fileDialogController.getSelectedFile();
+            if(!editor.modified || confirm(i18n.t('editor.confirm-load'))) {
+                var fileOpening = fileDialogController.getSelectedFile();
 
-            submitForm(fileDialogController.fileForm, 'eb/fs/open/', function(data) {
-                if(data['result'] === 'success') {
-                    editor.setCode(data['content']);
-                    notificationSystem.notify('File opened successfully.');
+                submitForm(fileDialogController.fileForm, 'eb/fs/open/', function(data) {
+                    if(data['result'] === 'success') {
+                        editor.setCode(data['content']);
+                        editor.modified = false;
+                        notificationSystem.notify('File opened successfully.');
 
-                    if(data['editable']) {
-                        me.openedFile = fileOpening;
+                        if(data['editable']) {
+                            me.openedFile = fileOpening;
+                        } else {
+                            me.openedFile = null;
+                        }
                     } else {
-                        me.openedFile = null;
+                        notificationSystem.showErrors(data['errors']);
                     }
-                } else {
-                    notificationSystem.showErrors(data['errors']);
-                }
-            });
+                });
+            }
         }
     });
 
@@ -50,6 +56,7 @@ function FileControlsController(fileControls, editor, userControlsController, fi
             function(data) {
                 if(data['result'] === 'success') {
                     notificationSystem.notify('File saved successfully.');
+                    editor.modified = false;
                 } else {
                     notificationSystem.showErrors(data['errors']);
                 }

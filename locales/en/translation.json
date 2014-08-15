@@ -31,7 +31,11 @@
     "share-dialog": {
         "link-help": "You can use the link below to share the code to a friend."
     },
-    "confirm-leave": "Are you sure you want to leave this page? All unsaved changes will be lost.",
+    "editor": {
+        "confirm-leave": "Are you sure you want to leave this page? All unsaved changes will be lost.",
+        "confirm-new": "You have unsaved changes. These changes will be destroyed if you create new file. Are you sure you want to create a new file?",
+        "confirm-load" "You have unsaved changes. These changes will be destroyed if you load a file. Are you sure you want to load file?"
+    },
     "manual": {
         "index": "Index",
         "back": "Back"

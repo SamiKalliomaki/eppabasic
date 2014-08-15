@@ -55,7 +55,7 @@ $(function () {
                 localStorage.setItem('code', editor.getCode());
         } else {
             // Show the message
-            var msg = i18n.t('confirm-leave');
+            var msg = i18n.t('editor.confirm-leave');
 
             e.returnValue = msg;
             return msg;

@@ -31,7 +31,11 @@
     "share-dialog": {
         "link-help": "Voit käyttää tätä linkkiä jakaaksesi koodin ystävällesi."
     },
-    "confirm-leave": "Haluatko varmasti poistua sivulta? Kaikki tallentamattomat muutokset tuhoutuvat.",
+    "editor": {
+        "confirm-leave": "Haluatko varmasti poistua sivulta? Kaikki tallentamattomat muutokset tuhoutuvat.",
+        "confirm-new": "Sinulla on tallentamattomia muutoksia. Muutokset tuhoutuvat, jos luot uuden tiedoston. Haluatko varmasti luoda uuden tiedoston?",
+        "confirm-load": "Sinulla on tallentamattomia muutoksia. Muutokset tuhoutuvat, jos lataat tiedoston. Haluatko varmasti ladata tiedoston?"
+    },
     "manual": {
         "index": "Etusivu",
         "back": "Takaisin"

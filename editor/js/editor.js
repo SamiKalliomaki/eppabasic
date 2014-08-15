@@ -12,6 +12,11 @@ function Editor(editorName, manual) {
     this.ace.setTheme('ace/theme/chaos');
     this.ace.getSession().setMode('ace/mode/eppabasic');
     this.ace.setShowPrintMargin(false);
+    this.modified = false;
+
+    this.ace.on('change', function() {
+        this.modified = true;
+    }.bind(this));
 }
 
 Editor.prototype = {
@@ -20,6 +25,7 @@ Editor.prototype = {
     },
     setCode: function setCode(code) {
         this.ace.setValue(code, -1);
+        this.modified = true;
     },
     runCode: function runCode() {
         cu = this.toolchain.parse(this.getCode());
