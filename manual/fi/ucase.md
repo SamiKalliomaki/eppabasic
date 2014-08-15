@@ -7,7 +7,7 @@ että kaikki kirjaimet on muutettu suuriksi.
 Esimerkki
 ----------
 
-    Print LCase("AyBaBtU")
+    Print UCase("AyBaBtU")
     
 Koodin tulostus:
 
