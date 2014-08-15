@@ -38,22 +38,32 @@ $(function () {
         $(this).hide();
     });
 
-    // Restore save code
-    if (sessionStorage && sessionStorage.getItem('code')) {
-        editor.setCode(sessionStorage.getItem('code'));
-    } else if (localStorage && localStorage.getItem('code')) {
-        editor.setCode(localStorage.getItem('code'));
+    function tryLoadFromStorage(storage) {
+        if (storage && storage.getItem('code')) {
+            editor.setCode(storage.getItem('code'));
+            editor.modified = storage.getItem('code-modified') === 'true';
+        }
     }
+
+    function trySaveToStorage(storage) {
+        if (storage) {
+            storage.setItem('code', editor.getCode());
+            storage.setItem('code-modified', editor.modified);
+        }
+    }
+
+    // Restore save code
+    tryLoadFromStorage(localStorage);
+    tryLoadFromStorage(sessionStorage);
+    
     // Save code to sessionStorage if possible
     // Otherwise just show a message telling that the code will be lost
     window.onbeforeunload = function (e) {
         if (sessionStorage || localStorage) {
             // Save the code to the Storage
-            if (sessionStorage)
-                sessionStorage.setItem('code', editor.getCode());
-            if (localStorage)
-                localStorage.setItem('code', editor.getCode());
-        } else {
+            trySaveToStorage(localStorage);
+            trySaveToStorage(sessionStorage);
+        } else if(editor.modified) {
             // Show the message
             var msg = i18n.t('editor.confirm-leave');
 
