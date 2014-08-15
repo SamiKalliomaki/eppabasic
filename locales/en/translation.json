@@ -39,7 +39,9 @@
         "file-opened": "File opened successfully.",
         "file-saved": "File saved successfully.",
         "open": "Open",
-        "save": "Save"
+        "save": "Save",
+        "enter-directory-name": "Enter name for the new directory.",
+        "confirm-delete-directory": "Are you sure you want to delete this directory and everything inside it? This cannot be undone."
     },
     "manual": {
         "index": "Index",

@@ -52,7 +52,7 @@ function FileDialogController(fileDialogWrapper, notificationSystem) {
     this.createDirectory.click(function(e) {
         e.preventDefault();
 
-        var name = window.prompt('Enter name for the new directory.');
+        var name = window.prompt(i18n.t('editor.enter-directory-name'));
         if(name !== null) {
             simplePost('eb/fs/create_directory/', {
                 'name': name,
@@ -70,7 +70,7 @@ function FileDialogController(fileDialogWrapper, notificationSystem) {
     this.deleteDirectory.click(function(e) {
         e.preventDefault();
 
-        if(confirm('Are you sure you want to delete this directory and everything inside it? This cannot be undone.')) {
+        if(confirm(i18n.t('editor.confirm-delete-directory'))) {
             simplePost('eb/fs/delete_directory/', {
                 'directory':  me.formDirectory.val()
             }, function(data) {

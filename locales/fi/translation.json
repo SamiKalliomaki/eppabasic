@@ -39,7 +39,9 @@
         "file-opened": "Tiedosto avattiin onnistuneesti.",
         "file-saved": "Tiedosto tallennettiin onnistuneesti.",
         "open": "Avaa",
-        "save": "Tallenna"
+        "save": "Tallenna",
+        "enter-directory-name": "Syötä kansion nimi.",
+        "confirm-delete-directory": "Haluatko varmasti poistaa kansion ja kaiken sen sisällön? Tätä toimintoa ei voida kumota."
     },
     "manual": {
         "index": "Etusivu",
