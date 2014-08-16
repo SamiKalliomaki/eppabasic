@@ -9,6 +9,9 @@
         jqueryui: '//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min',
         i18n: 'libs/i18next.amd.withJQuery-1.7.3.min',
         ace: 'ace/lib/ace'
+    },
+    shim: {
+        'jqueryui': ['jquery']
     }
 });
 
