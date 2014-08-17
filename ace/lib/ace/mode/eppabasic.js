@@ -235,6 +235,16 @@ define(function (require, exports, module) {
 
     (function () {
 
+        this.createWorker = function (session) {
+            var worker = new WorkerClient(['ace'], 'ace/mode/eppabasic_worker', 'EppaBasicWorker');
+            worker.attachToDocument(session.getDocument());
+
+            worker.on('change', function (res) {
+                console.log(res);
+            });
+
+            return worker;
+        }
     }).call(Mode.prototype);
 
     exports.Mode = Mode;
