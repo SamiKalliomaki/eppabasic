@@ -1,4 +1,4 @@
-define(['jquery', 'i18n', './notifications', './manual', './editor', './usercontrols', './filedialog', './filecontrols', './codecontrols', './pastecontrols'], function ($, i18n, NotificationSystem, Manual, Editor, UserControlsController, FileDialogController, FileControlsController, CodeControlsController, PasteControlsController) {
+define(['jquery', 'i18n', './notifications', './manual', './editor', './usercontrols', './filedialog', './filecontrols', './codecontrols', './pastecontrols', 'jqueryui'], function ($, i18n, NotificationSystem, Manual, Editor, UserControlsController, FileDialogController, FileControlsController, CodeControlsController, PasteControlsController) {
     $(function () {
         var notificationSystem = new NotificationSystem('#notification-box');
         var manual = new Manual('#manual-container', 'fi');
