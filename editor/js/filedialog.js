@@ -1,4 +1,4 @@
-define(['jquery', './framework', 'i18n'], function ($, Framework, i18n) {
+define(['jquery', 'i18n', './framework'], function ($, i18n, Framework) {
     function FileDialogController(fileDialogWrapper, notificationSystem) {
         this.fileDialogWrapper = $(fileDialogWrapper);
         this.fileDialog = $('.file-dialog', fileDialogWrapper);
