@@ -11,6 +11,7 @@ define(function (require, exports, module) {
     var Lexer = require('compiler/lexer');
     var Toolchain = require('compiler/toolchain');
     var Compiler = require('compiler/compiler');
+    var i18n = require('i18n');
 
     function CustomTokenizer() {
         this.lexer = new Lexer('', true);
@@ -86,7 +87,7 @@ define(function (require, exports, module) {
             'string': 'support.type',
         };
         var compiler = this.toolchain.getCompiler();
-        compiler.functions.forEach(function(f) {
+        compiler.functions.forEach(function (f) {
             this.specialIdentifiers[f.name.toLowerCase()] = 'support.function';
         }.bind(this));
         this.indentEffect = {
@@ -148,14 +149,14 @@ define(function (require, exports, module) {
                 if (token.code !== undefined) {
                     var type = this.tokenTypes[token.type];
 
-                    if(token.type == 'identifier') {
+                    if (token.type == 'identifier') {
                         type = this.specialIdentifiers[token.val.toLowerCase()];
 
-                        if(type === 'support.function' && token.identifierType && token.identifierType !== 'function name') {
+                        if (type === 'support.function' && token.identifierType && token.identifierType !== 'function name') {
                             type = null;
                         }
 
-                        if(type === 'support.type' && token.identifierType && token.identifierType !== 'type') {
+                        if (type === 'support.type' && token.identifierType && token.identifierType !== 'type') {
                             type = null;
                         }
                     }
@@ -239,12 +240,31 @@ define(function (require, exports, module) {
             var worker = new WorkerClient(['ace'], 'ace/mode/eppabasic_worker', 'EppaBasicWorker');
             worker.attachToDocument(session.getDocument());
 
-            worker.on('change', function (res) {
-                console.log(res);
-            });
+            worker.on('parsed', function (res) {
+                var cu = res.data[0];
+
+                session.clearAnnotations();
+                if (cu.errors.length !== 0) {
+                    this.showErrors(session, cu.errors);
+                }
+            }.bind(this));
 
             return worker;
         }
+
+        this.showErrors = function showErrors(session, errors) {
+            var annotations = [];
+
+            errors.forEach(function (e) {
+                annotations.push({
+                    row: e.line - 1,
+                    text: i18n.t(e.msg, e.data),
+                    type: 'error'
+                })
+            });
+
+            session.setAnnotations(annotations);
+        };
     }).call(Mode.prototype);
 
     exports.Mode = Mode;

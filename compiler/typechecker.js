@@ -2,7 +2,7 @@
 /// <reference path="types.js" />
 /// <reference path="types.js" />
 
-define(function () {
+define(['./framework/compileerror'], function (CompileError) {
     function Typechecker(ast, functions, operators, types) {
         /// <param name='ast' type='Nodes.Block' />
         /// <param name='functions' type='Array' />

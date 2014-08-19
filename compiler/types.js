@@ -1,6 +1,6 @@
 ﻿/// <reference path="compiler.js" />
 
-define(['./compiler/absolutereference', './compiler/constantreference', './compiler/temporaryreference'], function (CompilerAbsoluteReference, CompilerConstantReference, CompilerTemporaryReference) {
+define(['./compiler/absolutereference', './compiler/constantreference', './compiler/temporaryreference', './polyfill'], function (CompilerAbsoluteReference, CompilerConstantReference, CompilerTemporaryReference) {
     function TypeContainer() {
         this.types = [];
         this.arrayTypes = [];

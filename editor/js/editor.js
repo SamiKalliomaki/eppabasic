@@ -4,7 +4,7 @@
 /// <reference path="../compiler/compiler.js" />
 
 
-define(['compiler/toolchain', 'ace/ace'], function (Toolchain, ace) {
+define(['compiler/toolchain', 'ace/ace', 'i18n'], function (Toolchain, ace, i18n) {
     function Editor(editorName, manual) {
         this.toolchain = new Toolchain();
         this.manual = manual;
@@ -59,17 +59,7 @@ define(['compiler/toolchain', 'ace/ace'], function (Toolchain, ace) {
         },
 
         showErrors: function showError(errors) {
-            var annotations = [];
-
-            errors.forEach(function (e) {
-                annotations.push({
-                    row: e.line - 1,
-                    text: i18n.t(e.msg, e.data),
-                    type: 'error'
-                });
-            });
-
-            this.ace.getSession().setAnnotations(annotations);
+            this.ace.getSession().getMode().showErrors(this.ace.getSession(), errors);
         },
 
         openRuntime: function openRuntime() {

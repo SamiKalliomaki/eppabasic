@@ -29,7 +29,6 @@ function buildEditor() {
         console.error(err);
     });
 }
-
 function buildAceWorkers() {
     workers('ace/lib/ace/mode').forEach(function (name) {
         var extra = {
@@ -83,6 +82,7 @@ function buildAceThemes() {
     });
 }
 
+deleteFolder('build');
 buildEditor();
 buildAceWorkers();
 buildAceModes();
@@ -116,6 +116,20 @@ function combine(a, b) {
     return c;
 }
 
+
+function deleteFolder(path) {
+    if (fs.existsSync(path)) {
+        fs.readdirSync(path).forEach(function (file, index) {
+            var curPath = path + '/' + file;
+            if (fs.lstatSync(curPath).isDirectory()) {
+                deleteFolder(curPath);
+            } else {
+                fs.unlinkSync(curPath);
+            }
+        });
+        fs.rmdirSync(path);
+    }
+}
 
 /*
 var copy = require('dryice').copy;
