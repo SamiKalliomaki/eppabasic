@@ -18,21 +18,23 @@
 
     (function () {
         this.onUpdate = function () {
+            function showInternalError(e) {
+                this.sender.emit('internalerror', [e.message + '@' + e.filename + ' ' + e.lineNumber]);
+            }
+
             var code = this.doc.getValue();
+            var cu = this.toolchain.getCompilationUnit(code);
 
             try {
                 // Parse the code
-                var cu = this.toolchain.parse(code);
+                this.toolchain.parse(cu);
                 // Typecheck
                 this.toolchain.check(cu);
-                // And finally compile
-                if (cu.errors.length === 0)
-                    this.toolchain.compile(cu);
-
-                this.sender.emit('parsed', [cu.errors]);
             } catch (e) {
-                this.sender.emit('internalerror', [e.message + '@' + e.filename + ' ' + e.lineNumber]);
+                showInternalError(e);
             }
+
+            this.sender.emit('parsed', [cu.errors]);
         }
     }).call(EppaBasicWorker.prototype);
 });

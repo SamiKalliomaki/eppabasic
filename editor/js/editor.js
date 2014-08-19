@@ -26,8 +26,15 @@ define(['compiler/toolchain', 'ace/ace', 'i18n'], function (Toolchain, ace, i18n
             this.modified = true;
         },
         runCode: function runCode() {
-            cu = this.toolchain.parse(this.getCode());
-            this.toolchain.check(cu);
+            var cu = this.toolchain.getCompilationUnit(this.getCode());
+
+            try {
+                this.toolchain.parse(cu);
+                this.toolchain.check(cu);
+            } catch(e) {
+                console.error(e);
+            }
+
             this.ace.getSession().clearAnnotations();
             if (cu.errors.length !== 0) {
                 this.showErrors(cu.errors);

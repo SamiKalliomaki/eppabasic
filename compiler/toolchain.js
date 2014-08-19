@@ -1,13 +1,11 @@
 
 define(['./types', './operators', './compiler', './parser', './typechecker', './atomicchecker'], function (TypeContainer, OperatorContainer, Compiler, Parser, Typechecker, Atomicchecker) {
-    function CompilationUnit(ast, compiler, errors) {
-        this.ast = ast;
-        this.compiler = compiler;
-        this.errors = errors;
+    function CompilationUnit(code) {
+        this.code = code;
+        this.errors = [];
     }
 
     CompilationUnit.prototype = {
-
     }
 
     function Toolchain() {
@@ -17,18 +15,24 @@ define(['./types', './operators', './compiler', './parser', './typechecker', './
     }
 
     Toolchain.prototype = {
-        parse: function (code) {
-            var parser = this.getParser(code);
-            var ast;
-            var compiler;
+        getCompilationUnit: function(code) {
+            return new CompilationUnit(code);
+        },
 
-            ast = parser.parse();
+        parse: function (compilationUnit) {
+            var parser = this.getParser(compilationUnit.code);
+
+            try {
+                compilationUnit.ast = parser.parse();
+            } catch(e) {
+                compilationUnit.errors = parser.errors;
+                throw e;
+            }
+            compilationUnit.errors = parser.errors;
 
             if (parser.errors.length === 0) {
-                compiler = this.getCompiler(ast);
+                compilationUnit.compiler = this.getCompiler(compilationUnit.ast);
             }
-
-            return new CompilationUnit(ast, compiler, parser.errors);
         },
 
         check: function (compilationUnit) {
@@ -37,7 +41,12 @@ define(['./types', './operators', './compiler', './parser', './typechecker', './
 
             if (compilationUnit.errors.length === 0) {
                 var typechecker = new Typechecker(ast, compiler.functions, this.operators, this.types);
-                typechecker.check();
+                try {
+                    typechecker.check();
+                } catch(e) {
+                    Array.prototype.push.apply(compilationUnit.errors, typechecker.errors);
+                    throw e;
+                }
                 Array.prototype.push.apply(compilationUnit.errors, typechecker.errors);
             }
             if (compilationUnit.errors.length === 0) {
