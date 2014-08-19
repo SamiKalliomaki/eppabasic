@@ -11,37 +11,12 @@
     <link rel="stylesheet" href="editor/css/pastebin.css">
     <link rel="stylesheet" href="editor/css/manual.css">
     <link rel="stylesheet" href="editor/css/notifications.css">
-    
+
     <!-- Libraries -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
     <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/themes/smoothness/jquery-ui.css" />
-    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
-    <script src="ace/build/src/ace.js" type="text/javascript" charset="utf-8"></script>
     <script src="libs/marked.js" type="text/javascript" charset="utf-8"></script>
-    <script src="libs/i18next-1.7.3.min.js" type="text/javascript" charset="utf-8"></script>
-    <!--Compiler-->
-    <script src="compiler/framework.js"></script>
-    <script src="compiler/polyfill.js"></script>
-    <script src="compiler/nodes.js"></script>
-    <script src="compiler/types.js"></script>
-    <script src="compiler/operators.js"></script>
-    <script src="compiler/lexer.js"></script>
-    <script src="compiler/parser.js"></script>
-    <script src="compiler/typechecker.js"></script>
-    <script src="compiler/atomicchecker.js"></script>
-    <script src="compiler/compiler.js"></script>
-    <script src="compiler/toolchain.js"></script>
-    <!--Editor-->
-    <script src="editor/js/framework.js"></script>
-    <script src="editor/js/editor.js"></script>
-    <script src="editor/js/filedialog.js"></script>
-    <script src="editor/js/codecontrols.js"></script>
-    <script src="editor/js/filecontrols.js"></script>
-    <script src="editor/js/notifications.js"></script>
-    <script src="editor/js/usercontrols.js"></script>
-    <script src="editor/js/pastebin.js"></script>
-    <script src="editor/js/manual.js"></script> 
-    <script src="editor/js/main.js"></script>
+    <!-- Start the application -->
+    <script data-main="build/app" src="libs/requirejs.js"></script>
 </head>
 <body>
     <div id="header">
@@ -133,9 +108,7 @@
                     <ul class="file-list main-file-list"></ul>
                     <div class="share-box">
                         <h2 data-i18n="file-dialog.shared-with-me"></h2>
-                        <ul class="file-list shared-file-list">
-                            
-                        </ul>
+                        <ul class="file-list shared-file-list"></ul>
                     </div>
                 </div>
                 <form class="footer">

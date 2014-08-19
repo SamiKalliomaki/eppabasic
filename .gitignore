@@ -4,5 +4,8 @@ __pycache__/
 eppabasic_backend/database.db
 *.sublime-*
 
+node_modules/*
+build/*
+
 *.min.js
 *.min.js.map
