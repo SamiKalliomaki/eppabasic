@@ -29,7 +29,7 @@
                 if (cu.errors.length === 0)
                     this.toolchain.compile(cu);
 
-                this.sender.emit('parsed', [cu]);
+                this.sender.emit('parsed', [cu.errors]);
             } catch (e) {
                 this.sender.emit('internalerror', [e.message + '@' + e.filename + ' ' + e.lineNumber]);
             }

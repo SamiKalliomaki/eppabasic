@@ -241,11 +241,11 @@ define(function (require, exports, module) {
             worker.attachToDocument(session.getDocument());
 
             worker.on('parsed', function (res) {
-                var cu = res.data[0];
+                var errors = res.data[0];
 
                 session.clearAnnotations();
-                if (cu.errors.length !== 0) {
-                    this.showErrors(session, cu.errors);
+                if (errors.length !== 0) {
+                    this.showErrors(session, errors);
                 }
             }.bind(this));
             worker.on('internalerror', function (res) {
