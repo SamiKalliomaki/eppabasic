@@ -65,13 +65,16 @@ define(['./framework/compileerror'], function (CompileError) {
                 // This is an array -> for every dimesion, check type
                 definition.dimensions.forEach(function each(dim) {
                     dim.type = this.resolveExprType(dim, parent);
+                    if (!dim.type)
+                        return;
                     if (!dim.type.canCastTo(this.types.Integer))
                         this.errors.push(new CompileError(definition.line, 'errors.array-dimension-integer'));
                 }.bind(this));
             }
             if (definition.initial) {
                 // Initial is defined -> must not conflict with the type specified
-                if (!this.resolveExprType(definition.initial, parent).canCastTo(definition.type))
+                this.resolveExprType(definition.initial, parent);
+                if (definition.initial.type && !definition.initial.type.canCastTo(definition.type))
                     this.errors.push(new CompileError(definition.line, 'errors.cast-failed', { from: this.resolveExprType(definition.initial, parent), to: definition.type }));
             }
             // Tell the parent about this variable
@@ -95,11 +98,13 @@ define(['./framework/compileerror'], function (CompileError) {
             if (!variable)
                 this.errors.push(new CompileError(assignment.line, 'variable-undefined', { name: assignment.name }));
 
-            var type = variable.type;
+            var type = variable.type ? variable.type : null;
             // Test types for every index
             if (assignment.index) {
                 assignment.index.forEach(function each(index) {
                     index.type = this.resolveExprType(index, parent);
+                    if (!index.type)
+                        return;
                     if (!index.type.canCastTo(this.types.Integer))
                         this.errors.push(new CompileError(assignment.line, 'errors.array-index-integer'));
                 }.bind(this));
@@ -113,7 +118,7 @@ define(['./framework/compileerror'], function (CompileError) {
             this.resolveExprType(assignment.expr, parent);
 
             // Check that it matches the type of the variable it is assigned to
-            if (!assignment.expr.type.canCastTo(type))
+            if (assignment.expr.type && !assignment.expr.type.canCastTo(type))
                 this.errors.push(new CompileError(assignment.line, 'errors.cast-failed', { from: assignment.expr.type, to: type }));
         },
 
@@ -122,10 +127,16 @@ define(['./framework/compileerror'], function (CompileError) {
          */
         visitFor: function visitFor(loop, parent) {
             loop.variable.type = this.resolveExprType(loop.start, parent);
-            if (!this.resolveExprType(loop.stop, parent).canCastTo(loop.variable.type))
-                this.errors.push(new CompileError(loop.line, 'errors.for-start-end-type'));
-            if (!this.resolveExprType(loop.step, parent).canCastTo(loop.variable.type))
-                this.errors.push(new CompileError(loop.line, 'errors.for-iterator-step-type'));
+            this.resolveExprType(loop.stop, parent);
+            this.resolveExprType(loop.step, parent);
+
+            if (loop.variable.type) {
+                if (loop.stop.type && !loop.stop.type.canCastTo(loop.variable.type))
+                    this.errors.push(new CompileError(loop.line, 'errors.for-start-end-type'));
+
+                if (loop.step.type && !loop.step.type.canCastTo(loop.variable.type))
+                    this.errors.push(new CompileError(loop.line, 'errors.for-iterator-step-type'));
+            }
 
             // Adds a custom get variable for loop iterator
             loop.getVariable = function getVariable(name) {
@@ -143,7 +154,7 @@ define(['./framework/compileerror'], function (CompileError) {
          */
         visitIf: function visitIf(statement, parent) {
             this.resolveExprType(statement.expr, parent);
-            if (!statement.expr.type.canCastTo(this.types.Boolean))
+            if (statement.expr.type && !statement.expr.type.canCastTo(this.types.Boolean))
                 this.errors.push(new CompileError(statement.expr.line, 'errors.cast-failed', { from: statement.expr.type, to: this.types.Boolean }));
             this.visit(statement.trueStatement, parent);
             if (statement.falseStatement) {
@@ -203,10 +214,16 @@ define(['./framework/compileerror'], function (CompileError) {
         visitDoLoop: function visitDoLoop(loop, parent) {
             if (loop.beginCondition && loop.endCondition)
                 this.errors.push(new CompileError(loop.line, 'errors.do-multiple-conditions'));
-            if (loop.beginCondition)
+            if (loop.beginCondition) {
                 this.resolveExprType(loop.beginCondition, parent);
-            if (loop.endCondition)
+                if (loop.beginCondition.type && !loop.beginCondition.type.canCastTo(this.types.Boolean))
+                    this.errors.push(new CompileError(statement.expr.line, 'errors.cast-failed', { from: loop.beginCondition.type, to: this.types.Boolean }));
+            }
+            if (loop.endCondition) {
                 this.resolveExprType(loop.endCondition, parent);
+                if (loop.endCondition.type && !loop.endCondition.type.canCastTo(this.types.Boolean))
+                    this.errors.push(new CompileError(statement.expr.line, 'errors.cast-failed', { from: loop.endCondition.type, to: this.types.Boolean }));
+            }
             this.visit(loop.block, parent);
         },
 
@@ -233,23 +250,34 @@ define(['./framework/compileerror'], function (CompileError) {
                 case 'BinaryOp':
                     var leftType = this.resolveExprType(expr.left, context);
                     var rightType = this.resolveExprType(expr.right, context);
+                    if (!leftType || !rightType)
+                        return;
                     var operator = this.operators.getOperatorByType(leftType, expr.op, rightType);
-                    if (!operator)
+                    if (!operator) {
                         this.errors.push(new CompileError(expr.line, 'errors.binop-undefined', { left: leftType, op: expr.op, right: rightType }));
+                        return;
+                    }
 
                     expr.operator = operator;
                     return expr.type = operator.returnType;
 
                 case 'UnaryOp':
                     var type = this.resolveExprType(expr.expr, context);
+                    if (!type)
+                        return;
                     var operator = this.operators.getOperatorByType(type, expr.op);
-                    if (!operator)
+                    if (!operator) {
                         this.errors.push(new CompileError(expr.line, 'errors.unnop-undefined', { op: expr.op, type: type }));
+                        return;
+                    }
+
                     expr.operator = operator;
                     return expr.type = operator.returnType;
 
                 case 'IndexOp':
                     var arrayType = this.resolveExprType(expr.expr, context);
+                    if (!arrayType)
+                        return;
                     expr.index.forEach(function each(index) {
                         this.resolveExprType(index, context);
                         if (!index.type.canCastTo(this.types.Integer))
@@ -259,8 +287,11 @@ define(['./framework/compileerror'], function (CompileError) {
 
                 case 'Variable':
                     var variable = context.getVariable(expr.val);
-                    if (!variable)
+                    if (!variable) {
                         this.errors.push(new CompileError(expr.line, 'errors.variable-undefined', { name: expr.val }));
+                        return;
+                    }
+
                     expr.definition = variable;
                     return expr.type = variable.type;
 

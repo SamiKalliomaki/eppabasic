@@ -20,15 +20,19 @@
         this.onUpdate = function () {
             var code = this.doc.getValue();
 
-            // Parse the code
-            var cu = this.toolchain.parse(code);
-            // Typecheck
-            this.toolchain.check(cu);
-            // And finally compile
-            if (cu.errors.length === 0)
-                this.toolchain.compile(cu);
+            try {
+                // Parse the code
+                var cu = this.toolchain.parse(code);
+                // Typecheck
+                this.toolchain.check(cu);
+                // And finally compile
+                if (cu.errors.length === 0)
+                    this.toolchain.compile(cu);
 
-            this.sender.emit('parsed', [cu]);
+                this.sender.emit('parsed', [cu]);
+            } catch (e) {
+                this.sender.emit('internalerror', [e.message + '@' + e.filename + ' ' + e.lineNumber]);
+            }
         }
     }).call(EppaBasicWorker.prototype);
 });

@@ -148,7 +148,7 @@ define(['./absolutereference', './absolutestackreference', './constantreference'
         setCurrentFunction: function setCurrentFunction(entry) {
             this.func = entry;
             if (this.temporaries.some(function every(temp) { return temp.used; })) {
-                console.error(this.temporaries);
+                //console.error(this.temporaries);
                 throw new Error('Not all temporaries are freed: ' + this.temporaries.map(function (tmp) { return tmp.name; }).join(', '));
             }
             this.temporaries = [];

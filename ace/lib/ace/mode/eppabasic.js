@@ -248,6 +248,9 @@ define(function (require, exports, module) {
                     this.showErrors(session, cu.errors);
                 }
             }.bind(this));
+            worker.on('internalerror', function (res) {
+                console.error(res.data[0]);         // TODO Handle compiler internal errors
+            }.bind(this));
 
             return worker;
         }

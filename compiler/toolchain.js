@@ -25,7 +25,7 @@ define(['./types', './operators', './compiler', './parser', './typechecker', './
             try {
                 ast = parser.parse();
             } catch (e) {
-                console.log(e);
+                throw e;
             }
 
             if (parser.errors.length === 0) {
@@ -44,7 +44,7 @@ define(['./types', './operators', './compiler', './parser', './typechecker', './
                 try {
                     typechecker.check();
                 } catch (e) {
-                    console.log(e);
+                    throw e;
                 }
                 Array.prototype.push.apply(compilationUnit.errors, typechecker.errors);
             }
