@@ -22,11 +22,7 @@ define(['./types', './operators', './compiler', './parser', './typechecker', './
             var ast;
             var compiler;
 
-            try {
-                ast = parser.parse();
-            } catch (e) {
-                throw e;
-            }
+            ast = parser.parse();
 
             if (parser.errors.length === 0) {
                 compiler = this.getCompiler(ast);
@@ -41,11 +37,7 @@ define(['./types', './operators', './compiler', './parser', './typechecker', './
 
             if (compilationUnit.errors.length === 0) {
                 var typechecker = new Typechecker(ast, compiler.functions, this.operators, this.types);
-                try {
-                    typechecker.check();
-                } catch (e) {
-                    throw e;
-                }
+                typechecker.check();
                 Array.prototype.push.apply(compilationUnit.errors, typechecker.errors);
             }
             if (compilationUnit.errors.length === 0) {
