@@ -217,12 +217,12 @@ define(['./framework/compileerror'], function (CompileError) {
             if (loop.beginCondition) {
                 this.resolveExprType(loop.beginCondition, parent);
                 if (loop.beginCondition.type && !loop.beginCondition.type.canCastTo(this.types.Boolean))
-                    this.errors.push(new CompileError(statement.expr.line, 'errors.cast-failed', { from: loop.beginCondition.type, to: this.types.Boolean }));
+                    this.errors.push(new CompileError(loop.beginCondition.line, 'errors.cast-failed', { from: loop.beginCondition.type, to: this.types.Boolean }));
             }
             if (loop.endCondition) {
                 this.resolveExprType(loop.endCondition, parent);
                 if (loop.endCondition.type && !loop.endCondition.type.canCastTo(this.types.Boolean))
-                    this.errors.push(new CompileError(statement.expr.line, 'errors.cast-failed', { from: loop.endCondition.type, to: this.types.Boolean }));
+                    this.errors.push(new CompileError(loop.endCondition.line, 'errors.cast-failed', { from: loop.endCondition.type, to: this.types.Boolean }));
             }
             this.visit(loop.block, parent);
         },
