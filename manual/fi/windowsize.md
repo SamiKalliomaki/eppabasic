@@ -1,7 +1,7 @@
 `WindowSize`
 ==========
 
-Komento `WindowTitle` muuttaa ikkunan kokoa.
+Komento `WindowSize` muuttaa ikkunan kokoa.
 
 Esimerkki
 ----------
