@@ -26,6 +26,17 @@ define(['compiler/toolchain', 'ace/ace', 'i18n'], function (Toolchain, ace, i18n
             this.modified = true;
         },
         runCode: function runCode() {
+            function trySaveToStorage(storage, editor) {
+                if (storage) {
+                    storage.setItem('code', editor.getCode());
+                    storage.setItem('code-modified', editor.modified);
+                }
+            }
+
+            // FIXME Temporary solution, so code won't be lost if browser freezes...
+            trySaveToStorage(localStorage, this);
+            trySaveToStorage(sessionStorage, this);
+
             var cu = this.toolchain.getCompilationUnit(this.getCode());
 
             try {
