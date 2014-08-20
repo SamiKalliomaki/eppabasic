@@ -1,4 +1,4 @@
-﻿define(['jquery'], function ($) {
+﻿define(['jquery', './pastebin'], function ($, Pastebin) {
     function PasteControlsController(pasteControls, shareDialogWrapper, editor, notificationSystem) {
         this.pasteControls = $(pasteControls);
         this.shareButton = $('.share', pasteControls);
