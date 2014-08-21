@@ -4,7 +4,7 @@ define(function () {
         this.msg = msg;
         // Convert data types to string
         for (var d in data) {
-            if (data.hasOwnProperty(d)) {
+            if (data.hasOwnProperty(d) && data[d]) {
                 data[d] = data[d].toString();
             }
         }

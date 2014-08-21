@@ -98,7 +98,7 @@ define(['./framework/compileerror'], function (CompileError) {
             if (!variable)
                 this.errors.push(new CompileError(assignment.line, 'variable-undefined', { name: assignment.name }));
 
-            var type = variable.type ? variable.type : null;
+            var type = variable ? variable.type : null;
             // Test types for every index
             if (assignment.index) {
                 assignment.index.forEach(function each(index) {
@@ -108,7 +108,8 @@ define(['./framework/compileerror'], function (CompileError) {
                     if (!index.type.canCastTo(this.types.Integer))
                         this.errors.push(new CompileError(assignment.line, 'errors.array-index-integer'));
                 }.bind(this));
-                type = type.itemType;
+                if (type)
+                    type = type.itemType;
             }
 
             // Save the reference
@@ -318,6 +319,8 @@ define(['./framework/compileerror'], function (CompileError) {
                     var castCount = 0;
                     var j = params.length;
                     while (j--) {
+                        if (!params[j].type)
+                            return;             // In case of undefined parameter type the function is also undefined
                         if (params[j].type === this.functions[i].paramTypes[j])
                             continue;                   // Good, exact match
                         if (params[j].type.canCastTo(this.functions[i].paramTypes[j])) {
