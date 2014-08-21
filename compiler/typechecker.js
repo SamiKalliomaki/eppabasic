@@ -234,6 +234,8 @@ define(['./framework/compileerror'], function (CompileError) {
          * Resolves the type of the expression and caches it to the expression for later use
          */
         resolveExprType: function resolveExprType(expr, context) {
+            if (!expr)
+                return;                 // No expr to be type resolved
             if (expr.type)
                 return expr.type;
 
