@@ -17,5 +17,7 @@
 
 // Preload jquery
 require(['jquery', 'jqueryui', 'i18n', 'ace/ace']);
+// Preload locales
+require(['text!locales/en/translation.json', 'text!locales/fi/translation.json']);
 // Go to main
 require(['editor/main']);

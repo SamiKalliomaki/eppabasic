@@ -13,7 +13,21 @@ define(['jquery', 'i18n', './notifications', './manual', './editor', './usercont
 
         window.ebeditor = editor;
 
-        i18n.init({ fallbackLng: 'en-US' }, function (t) {
+        i18n.init({
+            cookieName: 'lang',
+            fallbackLng: 'en-US',
+            customLoad: function customLoad(lng, ns, options, loadComplete) {
+                var moduleName = 'text!locales/' + lng + '/' + ns + '.json';
+
+                if (!require.defined(moduleName))
+                    moduleName = 'text!locales/' + lng.substr(0, 2) + '/' + ns + '.json';
+                
+                if (require.defined(moduleName))
+                    loadComplete(null, JSON.parse(require(moduleName)));
+                else
+                    loadComplete(moduleName + ' no defined');
+            }
+        }, function (t) {
             $('#language-selection').val(i18n.options.lng);
 
             $('#language-selection').change(function () {
