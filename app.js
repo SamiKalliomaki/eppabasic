@@ -8,6 +8,7 @@
         jquery: '//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min',
         jqueryui: '//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min',
         i18n: 'libs/i18next.amd.withJQuery-1.7.3.min',
+        text: 'libs/requirejs_text',
         ace: 'ace/lib/ace'
     },
     shim: {
