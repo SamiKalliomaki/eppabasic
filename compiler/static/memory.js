@@ -136,3 +136,16 @@ function __memcoalesce(header) {
     // And finally put search pointer to this position to avoid confusion
     NEXT_BLOCK = header;
 }
+
+function __peek32(a) {
+    a = a | 0;
+    return MEMS32[a >> 2] | 0;
+}
+function __poke32(a, v) {
+    a = a | 0;
+    v = v | 0;
+    MEMS32[a >> 2] = v | 0;
+}
+function __memsize() {
+    return HEAP_SIZE | 0;
+}

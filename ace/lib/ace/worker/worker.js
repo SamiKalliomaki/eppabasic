@@ -90,8 +90,8 @@ window.define = function(id, deps, factory) {
         // 'module' as dependencies, to provide CommonJS compatibility.
         deps = ['require', 'exports', 'module'];
 
-    if (id.indexOf("text!") === 0) 
-        return;
+    //if (id.indexOf("text!") === 0) 
+    //    return;
     
     var req = function(childId) {
         return window.require(id, childId);
