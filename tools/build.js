@@ -1,6 +1,11 @@
 var requirejs = require('requirejs');
 var fs = require('fs');
 
+// Console parameters
+var argv = require('minimist')(process.argv.slice(2), {
+    'default': { optimize: 'none' }
+});
+
 var baseConfig = {
     baseUrl: '.',
     paths: {
@@ -12,7 +17,7 @@ var baseConfig = {
         text: 'libs/requirejs_text',
         ace: 'ace/lib/ace'
     },
-    optimize: 'none'
+    optimize: argv.optimize
 };
 
 function buildEditor() {
