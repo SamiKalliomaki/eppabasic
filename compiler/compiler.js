@@ -374,7 +374,7 @@ define(['require', './framework/compileerror', './compiler/context', './compiler
             buf.push('function __cp(){return CP|0;}');
 
             // String functions
-            buf.push(require('text!compiler/static/memory.js'));
+            buf.push(require('text!./static/string.js'));
             // Memory functions
             buf.push(require('text!./static/memory.js'));
 

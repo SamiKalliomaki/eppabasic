@@ -89,6 +89,41 @@ buildAceWorkers();
 buildAceModes();
 buildAceThemes();
 
+function buildRuntime() {
+    // The main page
+    var extra = {
+        name: 'runtime/app',
+        out: 'build/runtime/app.js',
+    }
+    var config = combine(baseConfig, extra);
+
+    requirejs.optimize(config, function (res) {
+        //console.log(res);
+        console.log('Succesfully compiled the runtime main program');
+    }, function (err) {
+        console.error(err);
+    });
+
+    // The worker
+    var extra = {
+        include: [
+            'libs/requirejs',
+            'runtime/worker/main'
+        ],
+        out: 'build/runtime/worker.js',
+    }
+    var config = combine(baseConfig, extra);
+
+    requirejs.optimize(config, function (res) {
+        //console.log(res);
+        console.log('Succesfully compiled the runtime worker');
+    }, function (err) {
+        console.error(err);
+    });
+}
+
+buildRuntime();
+
 function listJSFiles(path, filter) {
     if (!filter)
         filter = /_test/;
