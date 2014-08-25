@@ -340,7 +340,6 @@ define(['require', './framework/compileerror', './compiler/context', './compiler
             this.alignEntryLists();
 
             var buf = [];
-            buf.push('function Program(stdlib,env,heap){');
             buf.push('"use asm";');
             buf.push('var MEMU8=new stdlib.Uint8Array(heap);');
             buf.push('var MEMS32=new stdlib.Int32Array(heap);');
@@ -383,7 +382,6 @@ define(['require', './framework/compileerror', './compiler/context', './compiler
             buf.push(this.generateFTable());
             // Return functions
             buf.push('return {popCallStack: __popCallStack,init:__init,next:__next,breakExec:__breakExec,waitExec:__waitExec,sp:__sp,cp:__cp,memreserve:__memreserve};');
-            buf.push('}');
 
             return buf.join('\n');
         },

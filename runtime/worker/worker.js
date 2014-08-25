@@ -8,7 +8,8 @@
 
     Worker.prototype = {
         init: function init(code) {
-            console.log("Initialized:\n"+code);
+            this.Program = new Function('stdlib', 'env', 'heap', code);
+            console.log(this.Program.toString());
         }
     };
 
