@@ -75,7 +75,7 @@ define(['compiler/toolchain', 'ace/ace', 'i18n'], function (Toolchain, ace, i18n
             while (x1 > 0 && s.indexOf(line.charAt(x1 - 1)) != -1) x1--;
             while (x2 < line.length - 1 && s.indexOf(line.charAt(x2 + 1)) != -1) x2++;
             var k = line.substring(x1, x2 + 1).toLowerCase();
-            this.manual.openPage(k, 0);
+            this.manual.navigate('/commands/' + k);
         },
         showErrors: function showError(errors) {
             var annotations = [];

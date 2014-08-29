@@ -20,14 +20,14 @@ define(['jquery'], function ($) {
 
             if (href.substring(0, manualKey.length) == manualKey) {
                 var page = href.substring(manualKey.length);
-                me.openPage(page, 0);
+                me.navigate(page, 0);
             } else {
                 window.open(href);
             }
         });
 
         this.index.click(function index(e) {
-            this.openPage("index", 0);
+            this.navigate('/index', 0);
         }.bind(this));
 
         this.back.click(function back(e) {
@@ -46,6 +46,33 @@ define(['jquery'], function ($) {
                 this.manual.html(marked(data) + "<br><br>");
                 this.container.scrollTop(scrollY);
             }.bind(this));
+        },
+        navigate: function navigate(url) {
+            function resolveUrl(baseUrl, relUrl) {
+                var aParts = baseUrl.split('/');
+                var bParts = relUrl.split('/');
+
+                // Pop the old filename from the url
+                aParts.pop();
+
+                if (bParts[0] === '')
+                    aParts = [];                 // An absolute path
+
+                bParts.forEach(function (part) {
+                    if (part === '.')
+                        return;
+                    else if (part === '..')
+                        aParts.pop();
+                    else
+                        aParts.push(part);
+                });
+
+                return aParts.join('/');
+            }
+
+            this.currentUrl = this.currentUrl || '';
+            this.currentUrl = resolveUrl(this.currentUrl, url);
+            this.openPage(this.currentUrl, 0);
         }
     };
 
