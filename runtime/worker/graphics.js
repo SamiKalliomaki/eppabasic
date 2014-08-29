@@ -7,6 +7,10 @@
     }
 
     Graphics.prototype = {
+        setProgram: function setProgram(program) {
+            this.program = program;
+        },
+
         env: {
             circle: function circle(x, y, r) {
                 this.addCommand('circle', x, y, r);
@@ -28,8 +32,10 @@
             drawScreen: function drawScreen() {
                 // Send the commands
                 this.mirror.send('drawscreen', this.commandQueue);
-                // And clear the queue
+                // Clear the queue
                 this.commandQueue = [];
+                // And break the execution
+                this.program.breakExec();
             },
 
             fillCircle: function fillCircle(x, y, r) {

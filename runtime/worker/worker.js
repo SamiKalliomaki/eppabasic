@@ -22,12 +22,17 @@
             var external = this.createExternal();
             //console.log(code);
             this.program = Program(external.stdlib, external.env, external.heap);
+            external.after();
             this.program.init();
         },
 
         start: function start() {
             // TODO Use window.postMessage for 0ms delay
+            var last = (new Date()).getTime();
             function step() {
+                var now = (new Date()).getTime();
+                console.log(now - last);
+                last = now;
                 this.program.next();
                 setTimeout(step.bind(this), 0);
             }
@@ -56,10 +61,16 @@
             var graphics = new Graphics(this.mirror);
             graphics.extendEnv(env);
 
+
+            function after() {
+                graphics.setProgram(this.program);
+            }
+
             return {
                 stdlib: stdlib,
                 env: env,
-                heap: heap
+                heap: heap,
+                after: after.bind(this)
             };
         },
 
