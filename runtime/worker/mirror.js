@@ -4,8 +4,10 @@
             this.events = this.events || {};
 
             var listeners = this.events[name] || [];
-            if (!listeners.length)
+            if (!listeners.length) {
+                console.error('No listener assigned for event\'' + name + '\'');
                 return;
+            }
 
             listeners.forEach(function (listener) {
                 listener.apply(null, args);

@@ -5,7 +5,11 @@
     $(function () {
         // Get editor from the parent
         var editor = window.opener.ebeditor;
-        var runtime = new Runtime(editor);
+
+        var canvasHolder = $('#canvasHolder');
+
+        // Create the runtime
+        var runtime = new Runtime(editor, canvasHolder);
 
         // Return the runtime for the editor
         editor.setRuntime(runtime);

@@ -1,4 +1,6 @@
 ﻿define(['require', './worker', './mirror'], function (require) {
+    "use strict";
+
     var Worker = require('./worker');
     var Mirror = require('./mirror');
 

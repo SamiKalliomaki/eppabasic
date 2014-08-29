@@ -1,10 +1,13 @@
-﻿define(['require', './workerclient'], function (require) {
+﻿define(['require', './workerclient', './graphics'], function (require) {
     "use strict";
 
     var WorkerClient = require('./workerclient');
+    var Graphics = require('./graphics');
 
-    function Runtime(editor) {
+    function Runtime(editor, canvasHolder) {
         this.editor = editor;
+        this.canvasHolder = canvasHolder;
+
         this.openWorker();
     }
 
@@ -34,6 +37,8 @@
                 // so that it can send back the code.
                 this.editor.runtimeReady();
             }.bind(this));
+
+            this.graphics = new Graphics(this.worker, this.canvasHolder);
         }
     };
 
