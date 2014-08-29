@@ -22,7 +22,10 @@
         start: function start() {
             if (!this.worker)
                 throw new Error('Worker not initialize yet');
+            // Start the worker
             this.worker.send('start');
+            // And set the screen size
+            this.graphics.setSize(640, 480);
         },
 
 

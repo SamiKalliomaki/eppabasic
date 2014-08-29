@@ -5,19 +5,60 @@
 
     function Graphics(worker, canvasHolder) {
         this.worker = worker;
+        this.canvasHolder = canvasHolder;
+
         // Create the canvas
         this.canvas = $('<canvas/>');
         canvasHolder.append(this.canvas);
         this.ctx = this.canvas[0].getContext('2d');
 
+        // Create a buffer canvas for resizing
+        this.buffer = $('<canvas/>');
+        this.buffer.hide();
+        canvasHolder.append(this.buffer);
+        this.bufferCtx = this.buffer[0].getContext('2d');
+
         // Set default values for the drawing context
         this.clearColor = '#000';               // The background is black
         this.ctx.strokeStyle = '#fff';          // And the line color is white
 
-        this.worker.on('drawscreen', this.drawScreen.bind(this));
+        this.worker.on('drawscreen', this.onDrawScreen.bind(this));
     }
 
     Graphics.prototype = {
+        setSize: function setSize(width, height) {
+            // Copy the current image to a buffer
+            this.buffer.width(this.canvas.width());
+            this.buffer.height(this.canvas.height());
+            this.bufferCtx.drawImage(this.canvas[0], 0, 0);
+
+            // Set the canvas size
+            this.canvas[0].width = width;
+            this.canvas[0].height = height;
+
+            // Set the window size
+            var outerWidth = width + (window.outerWidth - window.innerWidth);
+            var outerHeight = height + (window.outerHeight - window.innerHeight);
+            window.resizeTo(outerWidth, outerHeight);
+
+            // Set the canvas to retain its aspect ratio
+            this.canvasHolder.width('100vw');
+            this.canvasHolder.height((100 / (width / height)) + 'vw');
+            this.canvasHolder.css('maxHeight', '100vh');
+            this.canvasHolder.css('maxWidth', (100 * width / height) + 'vh');
+
+            // Copy and scale the image back from the buffer
+            this.ctx.drawImage(this.buffer[0], 0, 0, this.canvas.width(), this.canvas.height());
+        },
+
+        onDrawScreen: function onDrawScreen(commands) {
+            commands.forEach(function (args) {
+                var name = args[0];
+                args = args[1];
+                this.commands[name].apply(this, args);
+            }.bind(this));
+        },
+
         commands: {
             circle: function circle(x, y, r) {
                 this.ctx.beginPath();
@@ -88,14 +129,6 @@
                 this.ctx.stroke();
             }
 
-        },
-
-        drawScreen: function drawScreen(commands) {
-            commands.forEach(function (args) {
-                var name = args[0];
-                args = args[1];
-                this.commands[name].apply(this, args);
-            }.bind(this));
         }
     };
 
