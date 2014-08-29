@@ -15,7 +15,7 @@ define(['./types', './operators', './compiler', './parser', './typechecker', './
     }
 
     Toolchain.prototype = {
-        getCompilationUnit: function(code) {
+        getCompilationUnit: function (code) {
             return new CompilationUnit(code);
         },
 
@@ -24,7 +24,7 @@ define(['./types', './operators', './compiler', './parser', './typechecker', './
 
             try {
                 compilationUnit.ast = parser.parse();
-            } catch(e) {
+            } catch (e) {
                 compilationUnit.errors = parser.errors;
                 throw e;
             }
@@ -43,7 +43,7 @@ define(['./types', './operators', './compiler', './parser', './typechecker', './
                 var typechecker = new Typechecker(ast, compiler.functions, this.operators, this.types);
                 try {
                     typechecker.check();
-                } catch(e) {
+                } catch (e) {
                     Array.prototype.push.apply(compilationUnit.errors, typechecker.errors);
                     throw e;
                 }
@@ -72,26 +72,26 @@ define(['./types', './operators', './compiler', './parser', './typechecker', './
 
         defineFunctions: function (compiler) {
             //// Drawing functions
-            //compiler.defineJsFunction('env.clearColor', true, 'ClearColor', [this.types.Integer, this.types.Integer, this.types.Integer]);
-            //compiler.defineJsFunction('env.lineColor', true, 'DrawColor', [this.types.Integer, this.types.Integer, this.types.Integer]);
-            //compiler.defineJsFunction('env.lineColor', true, 'LineColor', [this.types.Integer, this.types.Integer, this.types.Integer]);
-            //compiler.defineJsFunction('env.lineWidth', true, 'DrawWidth', [this.types.Integer]);
-            //compiler.defineJsFunction('env.fillColor', true, 'FillColor', [this.types.Integer, this.types.Integer, this.types.Integer]);
+            compiler.defineJsFunction('env.clearColor', true, 'ClearColor', [this.types.Integer, this.types.Integer, this.types.Integer]);
+            compiler.defineJsFunction('env.lineColor', true, 'DrawColor', [this.types.Integer, this.types.Integer, this.types.Integer]);
+            compiler.defineJsFunction('env.lineColor', true, 'LineColor', [this.types.Integer, this.types.Integer, this.types.Integer]);
+            compiler.defineJsFunction('env.lineWidth', true, 'DrawWidth', [this.types.Integer]);
+            compiler.defineJsFunction('env.fillColor', true, 'FillColor', [this.types.Integer, this.types.Integer, this.types.Integer]);
             compiler.defineJsFunction('env.line', true, 'DrawLine', [this.types.Integer, this.types.Integer, this.types.Integer, this.types.Integer]);
             compiler.defineJsFunction('env.line', true, 'Line', [this.types.Integer, this.types.Integer, this.types.Integer, this.types.Integer]);
-            //compiler.defineJsFunction('env.circle', true, 'DrawCircle', [this.types.Integer, this.types.Integer, this.types.Integer]);
-            //compiler.defineJsFunction('env.circle', true, 'Circle', [this.types.Integer, this.types.Integer, this.types.Integer]);
-            //compiler.defineJsFunction('env.fillCircle', true, 'FillCircle', [this.types.Integer, this.types.Integer, this.types.Integer]);
-            //compiler.defineJsFunction('env.rect', true, 'DrawRect', [this.types.Integer, this.types.Integer, this.types.Integer, this.types.Integer]);
-            //compiler.defineJsFunction('env.rect', true, 'Rect', [this.types.Integer, this.types.Integer, this.types.Integer, this.types.Integer]);
-            //compiler.defineJsFunction('env.fillRect', true, 'FillRect', [this.types.Integer, this.types.Integer, this.types.Integer, this.types.Integer]);
-            //compiler.defineJsFunction('env.triangle', true, 'Triangle', [this.types.Integer, this.types.Integer, this.types.Integer, this.types.Integer, this.types.Integer, this.types.Integer]);
-            //compiler.defineJsFunction('env.triangle', true, 'DrawTriangle', [this.types.Integer, this.types.Integer, this.types.Integer, this.types.Integer, this.types.Integer, this.types.Integer]);
-            //compiler.defineJsFunction('env.fillTriangle', true, 'FillTriangle', [this.types.Integer, this.types.Integer, this.types.Integer, this.types.Integer, this.types.Integer, this.types.Integer]);
-            //compiler.defineJsFunction('env.dot', true, 'DrawDot', [this.types.Integer, this.types.Integer]);
-            //compiler.defineJsFunction('env.dot', true, 'Dot', [this.types.Integer, this.types.Integer]);
-            //compiler.defineJsFunction('env.clear', true, 'ClearScreen', []);
-            //compiler.defineJsFunction('env.clear', true, 'Clear', []);
+            compiler.defineJsFunction('env.circle', true, 'DrawCircle', [this.types.Integer, this.types.Integer, this.types.Integer]);
+            compiler.defineJsFunction('env.circle', true, 'Circle', [this.types.Integer, this.types.Integer, this.types.Integer]);
+            compiler.defineJsFunction('env.fillCircle', true, 'FillCircle', [this.types.Integer, this.types.Integer, this.types.Integer]);
+            compiler.defineJsFunction('env.rect', true, 'DrawRect', [this.types.Integer, this.types.Integer, this.types.Integer, this.types.Integer]);
+            compiler.defineJsFunction('env.rect', true, 'Rect', [this.types.Integer, this.types.Integer, this.types.Integer, this.types.Integer]);
+            compiler.defineJsFunction('env.fillRect', true, 'FillRect', [this.types.Integer, this.types.Integer, this.types.Integer, this.types.Integer]);
+            compiler.defineJsFunction('env.triangle', true, 'Triangle', [this.types.Integer, this.types.Integer, this.types.Integer, this.types.Integer, this.types.Integer, this.types.Integer]);
+            compiler.defineJsFunction('env.triangle', true, 'DrawTriangle', [this.types.Integer, this.types.Integer, this.types.Integer, this.types.Integer, this.types.Integer, this.types.Integer]);
+            compiler.defineJsFunction('env.fillTriangle', true, 'FillTriangle', [this.types.Integer, this.types.Integer, this.types.Integer, this.types.Integer, this.types.Integer, this.types.Integer]);
+            compiler.defineJsFunction('env.dot', true, 'DrawDot', [this.types.Integer, this.types.Integer]);
+            compiler.defineJsFunction('env.dot', true, 'Dot', [this.types.Integer, this.types.Integer]);
+            compiler.defineJsFunction('env.clear', true, 'ClearScreen', []);
+            compiler.defineJsFunction('env.clear', true, 'Clear', []);
             compiler.defineJsFunction('env.drawScreen', true, 'DrawScreen', [], undefined, false);
 
             //compiler.defineJsFunction('env.drawText', true, 'DrawText', [this.types.Integer, this.types.Integer, this.types.String]);
