@@ -71,6 +71,22 @@ function buildAceModes() {
         });
     });
 }
+function buildAceExtensions() {
+    listJSFiles('ace/lib/ace/ext').forEach(function (name) {
+        var extra = {
+            name: 'ace/ext/' + name,
+            out: 'build/ext-' + name + '.js',
+        }
+        var config = combine(baseConfig, extra);
+
+        requirejs.optimize(config, function (res) {
+            //console.log(res);
+            console.log('Succesfully compiled the extension ' + name);
+        }, function (err) {
+            console.error(err);
+        });
+    });
+}
 function buildAceThemes() {
     listJSFiles('ace/lib/ace/theme').forEach(function (name) {
         var extra = {
@@ -92,6 +108,7 @@ deleteFolder('build');
 buildEditor();
 buildAceWorkers();
 buildAceModes();
+buildAceExtensions();
 buildAceThemes();
 
 function listJSFiles(path, filter) {
