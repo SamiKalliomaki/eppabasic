@@ -1,4 +1,4 @@
-﻿define(['require', './graphics'], function (require) {
+﻿define(['require', './graphics', '../polyfill'], function (require) {
     "use strict";
 
     // Settings
@@ -28,11 +28,7 @@
 
         start: function start() {
             // TODO Use window.postMessage for 0ms delay
-            var last = (new Date()).getTime();
             function step() {
-                var now = (new Date()).getTime();
-                console.log(now - last);
-                last = now;
                 this.program.next();
                 setTimeout(step.bind(this), 0);
             }
