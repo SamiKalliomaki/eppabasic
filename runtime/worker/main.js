@@ -1,4 +1,4 @@
-﻿define(['require', './worker', './mirror'], function (require) {
+﻿define(['require', './worker', './mirror', '../polyfill'], function (require) {
     "use strict";
 
     var Worker = require('./worker');
