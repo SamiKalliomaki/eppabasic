@@ -150,12 +150,12 @@ define(['./types', './operators', './compiler', './parser', './typechecker', './
             compiler.defineJsFunction('stdlib.Math.floor', true, 'Floor', [this.types.Double], this.types.Double);
             compiler.defineJsFunction('stdlib.Math.ceil', true, 'Ceil', [this.types.Double], this.types.Double);
 
-            //compiler.defineJsFunction('env.randInt', true, 'Rnd', [this.types.Integer, this.types.Integer], this.types.Integer);
-            //compiler.defineJsFunction('env.randDbl', true, 'Rnd', [], this.types.Double);
-            //compiler.defineJsFunction('env.randomize', true, 'Randomize', [this.types.Double]);
+            compiler.defineJsFunction('env.randInt', true, 'Rnd', [this.types.Integer, this.types.Integer], this.types.Integer);
+            compiler.defineJsFunction('env.randDbl', true, 'Rnd', [], this.types.Double);
+            compiler.defineJsFunction('env.randomize', true, 'Randomize', [this.types.Double]);
 
-            //compiler.defineJsFunction('env.round', true, 'Round', [this.types.Double], this.types.Double);
-            //compiler.defineJsFunction('env.round2', true, 'Round', [this.types.Double, this.types.Integer], this.types.Double);
+            compiler.defineJsFunction('env.round', true, 'Round', [this.types.Double], this.types.Double);
+            compiler.defineJsFunction('env.round2', true, 'Round', [this.types.Double, this.types.Integer], this.types.Double);
 
 
             //// String functions

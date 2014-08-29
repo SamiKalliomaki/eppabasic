@@ -1,4 +1,4 @@
-﻿define(['require', './graphics', '../polyfill'], function (require) {
+﻿define(['require', './graphics', './math', '../polyfill'], function (require) {
     "use strict";
 
     // Settings
@@ -20,7 +20,7 @@
         init: function init(code) {
             var Program = new Function('stdlib', 'env', 'heap', code);
             var external = this.createExternal();
-            //console.log(code);
+            console.log(code);
             this.program = Program(external.stdlib, external.env, external.heap);
             external.after();
             this.program.init();
@@ -56,6 +56,9 @@
 
             var graphics = new Graphics(this.mirror);
             graphics.extendEnv(env);
+
+            var math = new (require('./math'))(this.mirror);
+            math.extendEnv(env);
 
 
             function after() {
