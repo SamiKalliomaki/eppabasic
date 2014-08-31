@@ -1,4 +1,4 @@
-﻿define(['require', './graphics', './math', '../polyfill','./input'], function (require) {
+﻿define(['require', './graphics', './math', '../polyfill', './input', './time'], function (require) {
     "use strict";
 
     // Settings
@@ -8,6 +8,7 @@
 
     var Graphics = require('./graphics');
     var Input = require('./input');
+    var Time = require('./time');
 
     function Worker(mirror) {
         this.mirror = mirror;
@@ -48,7 +49,6 @@
             var env = {};
             env.heapSize = settings.heapSize;
             env.panic = this.panic.bind(this);
-            env.waitCond = function () { };
             env.integerToString = function (a) { };
             env.doubleToString = function (a) { };
 
@@ -63,8 +63,12 @@
             var input = new Input(this.mirror);
             input.extendEnv(env);
 
+            var time = new Time(this.mirror);
+            time.extendEnv(env);
+
             function after() {
                 graphics.setProgram(this.program);
+                time.setProgram(this.program);
             }
 
             return {

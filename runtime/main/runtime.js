@@ -1,4 +1,4 @@
-﻿define(['require', './workerclient', './graphics','./input'], function (require) {
+﻿define(['require', './workerclient', './graphics', './input'], function (require) {
     "use strict";
 
     var WorkerClient = require('./workerclient');
@@ -25,8 +25,6 @@
                 throw new Error('Worker not initialize yet');
             // Start the worker
             this.worker.send('start');
-            // And set the screen size
-            this.graphics.setSize(640, 480);
         },
 
 
@@ -36,14 +34,17 @@
             this.worker = new WorkerClient('../build/runtime/worker.js');
 
             this.worker.on('ready', function ready() {
+                // Setup the output and input when the worker is ready
+                this.graphics = new Graphics(this.worker, this.canvasHolder);
+                this.input = new Input(this.worker, this.canvasHolder, this.graphics.canvas);
+                // And set the screen size
+                this.graphics.setSize(640, 480);
+
                 // Finally when the worker is ready the whole
                 // runtime is ready. Tell that also to the editor
                 // so that it can send back the code.
                 this.editor.runtimeReady();
             }.bind(this));
-
-            this.graphics = new Graphics(this.worker, this.canvasHolder);
-            this.input = new Input(this.worker, this.canvasHolder, this.graphics.canvas);
         }
     };
 
