@@ -15,14 +15,6 @@
 \usepackage{framed}
 \pagestyle{plain}
 
-\lstset{language=C++,frame=single,basicstyle=\ttfamily \small,showstringspaces=false}
-\lstset{
-  literate={ö}{{\"o}}1
-           {ä}{{\"a}}1
-           {ü}{{\"u}}1
-}
-
-
 \date{\Large \today}
 
 \usepackage[a4paper,vmargin=30mm,hmargin=38mm,footskip=15mm]{geometry}
@@ -49,19 +41,307 @@
 \pagenumbering{arabic}
 \mainmatter
 
+\newcommand{\kuva}[1] {
+\begin{center}
+\includegraphics[scale=0.4]{#1.png}
+\end{center}
+}
+
 \chapter*{Johdanto}
 \markboth{\MakeUppercase{Johdanto}}{}
 \addcontentsline{toc}{chapter}{Johdanto}
 lol
 
-\newenvironment{task}[1]
-{
-\vspace{10pt}
-\begin{framed}
-\textbf{Tehtävä: #1}
 
-}
-{\end{framed}}
+\chapter{Ensimmäinen ohjelma}
 
+apina
+
+
+\begin{verbatim}
+apina
+banaani
+cembalo
+\end{verbatim}
+
+banaani
+
+\chapter{Luvut ja merkkijonot}
+
+Useimmat ohjelmat perustuvat pohjimmiltaan
+lukujen (esim. $31$ ja $-5$) ja merkkijonojen (esim. "banaani") käsittelyyn.
+Lukujen avulla voi laskea laskutoimituksia,
+ja merkkijonojen avulla voi esittää tekstiä.
+Tämä luku kertoo, kuinka lukuja ja merkkijonoja
+käsitellään EppaBasicissa.
+
+\section{Laskeminen}
+
+EppaBasicia voi käyttää laskimena kirjoittamalla laskun
+\texttt{Print}-komennon jälkeen.
+Esimerkiksi seuraava ohjelma laskee neljä laskua:
+
+\begin{verbatim}
+Print 2 + 5
+Print 55 - 209
+Print 3 * (4 + 5)
+Print 1 / 2
+\end{verbatim}
+
+Ohjelma tulostaa näytölle laskujen tulokset:
+
+\begin{verbatim}
+7
+-154
+27
+0.5
+\end{verbatim}
+
+Tavalliset laskutoimitukset ovat \texttt{+} (yhteenlasku),
+\texttt{-} (vähennyslasku), \texttt{*} (kertolasku)
+sekä \texttt{/} (jakolasku).
+Lisäksi merkki \texttt{\^} tarkoittaa potenssilaskua.
+Sulkujen avulla voi muuttaa laskujärjestystä
+kuten muutenkin matematiikassa.
+
+
+Huomaa, että EppaBasicissa (ja kaikissa muissakin
+ohjelmointikielissä) desimaaliluvuissa käytetään pistettä eikä pilkkua.
+
+\newpage
+\section{Merkkijono}
+
+Merkkijono tarkoittaa suunnilleen sama kuin teksti.
+Merkkijonon alussa on merkki \texttt{"},
+tämän jälkeen tulee varsinainen teksti,
+ja lopussa on vielä toinen merkki \texttt{"}.
+Esimerkiksi \texttt{"abc"}, \texttt{"Uolevi"}
+ja \texttt{"saippuakauppias"} ovat merkkijonoja.
+
+Esimerkiksi ohjelma
+
+\begin{verbatim}
+Print "apina"
+Print "banaani"
+Print "cembalo"
+\end{verbatim}
+
+tulostaa seuraavat merkkijonot:
+
+\begin{verbatim}
+apina
+banaani
+cembalo
+\end{verbatim}
+
+Seuraava ohjelma taas laskee, montako sekuntia on vuodessa:
+
+\begin{verbatim}
+Print "Sekuntien määrä vuodessa:"
+Print 365 * 24 * 60 * 60
+\end{verbatim}
+
+Ohjelman tulostus on seuraava:
+
+\begin{verbatim}
+Sekuntien määrä vuodessa:
+31536000
+\end{verbatim}
+
+\section{Muuttuja}
+
+Muuttujan ideana on, että siihen voi tallentaa
+muistiin ohjelmassa tarvittavan tiedon.
+Muuttujaan viitataan nimellä,
+jonka tulee muodostua merkeistä \texttt{a}--\texttt{z}, \texttt{A}--\texttt{Z}
+ja \texttt{0}--\texttt{9}. Nimen ensimmäinen merkki ei saa olla numero.
+
+Seuraavassa ohjelmassa muuttujaan \texttt{nimi}
+laitetaan ohjelman alussa päähenkilön nimi.
+Tämän jälkeen nimeä käytetään monessa kohdassa tarinaa.
+
+\begin{verbatim}
+Dim nimi = "Uolevi"
+Print "Tämän tarinan päähenkilö on " & nimi & "."
+Print nimi & " on urhea ritari kaukaisessa maassa."
+Print "Eräänä päivänä " & nimi & " nousi ratsulle varhain aamulla."
+Print "Oli aika jättää kotikylä."
+\end{verbatim}
+
+Ohjelma tulostaa tarinan näin:
+
+\begin{verbatim}
+Tämän tarinan päähenkilö on Uolevi.
+Uolevi on urhea ritari kaukaisessa maassa.
+Eräänä päivänä Uolevi nousi ratsulle varhain aamulla.
+Oli aika jättää kotikylä.
+\end{verbatim}
+
+Uuden muuttujan ottaa käyttöön komento \texttt{Dim},
+jonka yhteydessä annetaan muuttujan nimi ja alkusisältö.
+Tämän jälkeen muuttujaan voi viitata miten monta
+kertaa tahansa myöhemmin ohjelmassa.
+Muuttujan yhdistäminen tekstiin oikeisiin
+kohtiin onnistuu käyttämällä merkkiä \texttt{\&}.
+
+Tässä muuttujan hyötynä on,
+että jos päähenkilön nimi vaihtuu,
+muutos riittää päivittää yhteen paikkaan.
+Esimerkiksi jos päähenkilö onkin Maija,
+riittää muuttaa ohjelman aloitusriviksi
+
+\begin{verbatim}
+Dim nimi = "Maija"
+\end{verbatim}
+
+ja tarinasta tulee toisenlainen:
+
+\begin{verbatim}
+Tämän tarinan päähenkilö on Maija.
+Maija on urhea ritari kaukaisessa maassa.
+Eräänä päivänä Maija nousi ratsulle varhain aamulla.
+Oli aika jättää kotikylä.
+\end{verbatim}
+
+\section{Monta muuttujaa}
+
+Seuraavassa ohjelmassa on peräti kolme muuttujaa.
+Muuttujassa \texttt{nimi} on päähenkilön nimi kuten ennenkin.
+Tämän lisäksi muuttuja
+\texttt{vuosi} sisältää tarinassa meneillään olevan vuoden
+ja \texttt{ika} sisältää päähenkilön iän.
+
+Huomaa, että muuttujan nimi ei voi sisältää kirjaimia
+ä ja ö.
+Niinpä nimi \texttt{ikä} ei kelpaa muuttujaksi,
+vaan täytyy käyttää esimerkiksi nimeä \texttt{ika}.
+
+\begin{verbatim}
+Dim nimi = "Uolevi"
+Dim vuosi = 1672
+Dim ika = 23
+Print "Tämän tarinan päähenkilö on " & nimi & "."
+Print "Elämme vuotta " & vuosi & "."
+Print nimi & " on iältään " & ika & "-vuotias."
+Print "Hän syntyi siis vuonna " & vuosi - ika & "."
+\end{verbatim}
+
+Ohjelma tulostaa seuraavan tarinan:
+
+\begin{verbatim}
+Tämän tarinan päähenkilö on Uolevi.
+Elämme vuotta 1672.
+Uolevi on iältään 23-vuotias.
+Hän syntyi siis vuonna 1649.
+\end{verbatim}
+
+Ohjelma yhdistää ensin uusia muuttujia tekstiin
+samalla tavalla kuin ennenkin.
+Viimeisellä rivillä ohjelma laskee muuttujista
+\texttt{vuosi} ja \texttt{ika} päähenkilön syntymävuoden
+vähentämällä muuttujasta \texttt{vuosi} muuttujan \texttt{ika}.
+
+Jälleen tarinasta saa uudenlaisen vaihtamalla muuttujien sisällön.
+Esimerkiksi jos muuttujat ovat
+
+\begin{verbatim}
+Dim nimi = "Maija"
+Dim vuosi = 2050
+Dim ika = 98
+\end{verbatim}
+
+tarinasta tulee
+
+\begin{verbatim}
+Tämän tarinan päähenkilö on Maija.
+Elämme vuotta 2050.
+Maija on iältään 98-vuotias.
+Hän syntyi siis vuonna 1952.
+\end{verbatim}
+
+\section{Funktio}
+
+Funktion tarkoituksena on
+muuttaa jollain tavalla
+sille annettua tietoa.
+Sekä lukuihin että merkkijonoihin
+liittyvät omat funktionsa.
+
+Esimerkki lukuihin liittyvästä
+funktiosta on \texttt{Sqr},
+joka laskee luvun neliöjuuren.
+Esimerkiksi luvun 16 neliöjuuri on 4,
+joten ohjelma
+
+\begin{verbatim}
+Print Sqr(16)
+\end{verbatim}
+
+tuottaa seuraavan tuloksen:
+
+\begin{verbatim}
+4
+\end{verbatim}
+
+Seuraava ohjelma laskee neliöjuurella
+neliön pinta-alasta sen sivun pituuden.
+
+\begin{verbatim}
+Dim ala = 123
+Print "Jos neliön pinta-ala on " & ala & ","
+Print "sen sivun pituus on " & Sqr(ala) & "."
+\end{verbatim}
+
+Ohjelman tulostus on seuraava:
+
+\begin{verbatim}
+Jos neliön pinta-ala on 123,
+sen sivun pituus on 11.09053651.
+\end{verbatim}
+
+Seuraava ohjelma esittelee joitakin merkkijonofunktioita:
+
+\begin{verbatim}
+Dim nimi = "Uolevi"
+Print "Nimen pituus on " & Len(nimi) & " merkkiä."
+Print "Nimen alkuosa on " & Left(nimi, 3) & "."
+Print "Nimen loppuosa on " & Right(nimi, 3) & "."
+Print "Väärinpäin nimi on " & Reverse(nimi) & "."
+\end{verbatim}
+
+Ohjelman tulostus on seuraava:
+
+\begin{verbatim}
+Nimen pituus on 6 merkkiä.
+Nimen alkuosa on Uol.
+Nimen loppuosa on evi.
+Väärinpäin nimi on iveloU.
+\end{verbatim}
+
+Funktio \texttt{Len} laskee merkkijonon pituuden.
+Funktiot \texttt{Left} ja \texttt{Right}
+ottavat annetun määrän merkkejä
+merkkijonon alusta ja lopusta.
+Funktio \texttt{Reverse} taas kääntää merkkijonon väärinpäin.
+
+Löydät paljon lisää funktioita tutkimalla EppaBasicin komentolistaa.
+
+\chapter{Piirtäminen}
+
+\chapter{Ikkunat ja ehdot}
+
+\chapter{Toistaminen}
+
+\chapter{Animaatio}
+
+\chapter{Taulukko ja arvonta}
+
+\chapter{Pelin tekeminen}
+
+\kuva{mato}
+
+\chapter{Koodin osittelu}
+
+\chapter{Algoritmit}
 
 \end{document}
