@@ -1,0 +1,67 @@
+\documentclass[oneside,11pt,a4paper,finnish]{book}
+
+\usepackage[finnish,english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{listings}
+\usepackage[table]{xcolor}
+\usepackage[parfill]{parskip}
+\usepackage{tikz}
+%\usepackage{tikz-qtree}
+\usepackage{multicol}
+\usepackage{hyperref}
+\usepackage{array}
+\usepackage{fouriernc}
+\usepackage{graphicx}
+\usepackage{framed}
+\pagestyle{plain}
+
+\lstset{language=C++,frame=single,basicstyle=\ttfamily \small,showstringspaces=false}
+\lstset{
+  literate={ö}{{\"o}}1
+           {ä}{{\"a}}1
+           {ü}{{\"u}}1
+}
+
+
+\date{\Large \today}
+
+\usepackage[a4paper,vmargin=30mm,hmargin=38mm,footskip=15mm]{geometry}
+
+%\titlespacing*{\chapter} {0pt}{0pt}{40pt}
+
+\title{\Huge EppaBasic-käsikirja}
+\author{\Large Antti Laaksonen}
+
+\begin{document}
+
+\selectlanguage{finnish}
+
+\setcounter{page}{1}
+\pagenumbering{roman}
+
+\frontmatter
+\maketitle
+\setcounter{tocdepth}{0}
+\tableofcontents
+
+%\newpage
+\setcounter{page}{1}
+\pagenumbering{arabic}
+\mainmatter
+
+\chapter*{Johdanto}
+\markboth{\MakeUppercase{Johdanto}}{}
+\addcontentsline{toc}{chapter}{Johdanto}
+lol
+
+\newenvironment{task}[1]
+{
+\vspace{10pt}
+\begin{framed}
+\textbf{Tehtävä: #1}
+
+}
+{\end{framed}}
+
+
+\end{document}
