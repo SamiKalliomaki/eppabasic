@@ -128,7 +128,6 @@
                 this.ctx.lineTo(x1, y1);
                 this.ctx.stroke();
             }
-
         }
     };
 

@@ -1,4 +1,4 @@
-﻿define(['require', './graphics', './math', '../polyfill'], function (require) {
+﻿define(['require', './graphics', './math', '../polyfill','./input'], function (require) {
     "use strict";
 
     // Settings
@@ -7,7 +7,7 @@
     };
 
     var Graphics = require('./graphics');
-
+    var Input = require('./input');
 
     function Worker(mirror) {
         this.mirror = mirror;
@@ -60,6 +60,8 @@
             var math = new (require('./math'))(this.mirror);
             math.extendEnv(env);
 
+            var input = new Input(this.mirror);
+            input.extendEnv(env);
 
             function after() {
                 graphics.setProgram(this.program);

@@ -22,7 +22,7 @@
                 r = clamp(r, 0, 255);
                 g = clamp(g, 0, 255);
                 b = clamp(b, 0, 255);
-                var rgb = (r << 16) || (g << 8) || b;
+                var rgb = (r << 16) | (g << 8) | b;
                 this.addCommand('clearColor', rgb);
             },
 
@@ -45,7 +45,7 @@
                 r = clamp(r, 0, 255);
                 g = clamp(g, 0, 255);
                 b = clamp(b, 0, 255);
-                var rgb = (r << 16) || (g << 8) || b;
+                var rgb = (r << 16) | (g << 8) | b;
                 this.addCommand('fillColor', rgb);
             },
             fillRect: function fillRect(x, y, w, h) {
@@ -62,7 +62,7 @@
                 r = clamp(r, 0, 255);
                 g = clamp(g, 0, 255);
                 b = clamp(b, 0, 255);
-                var rgb = (r << 16) || (g << 8) || b;
+                var rgb = (r << 16) | (g << 8) | b;
                 this.addCommand('lineColor', rgb);
             },
             lineWidth: function lineWidth(x) {
