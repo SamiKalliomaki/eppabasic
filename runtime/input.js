@@ -78,6 +78,8 @@ Input.prototype = {
         if (!this.keyDown[e.keyCode])
             this.keysHit[e.keyCode] = true;
         this.keysDown[e.keyCode] = true;
+        if (e.keyCode === 119)
+            printscreen(this.canvasHolder);
         e.preventDefault();
         return false;
     },
