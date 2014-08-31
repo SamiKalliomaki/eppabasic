@@ -27,6 +27,12 @@
         },
         onKeyDown: function onKeyDown(e) {
             this.worker.send('keydown', e.keyCode);
+            if (e.keyCode === 122) {
+                if (document.fullscreenElement)
+                    document.exitFullscreen();
+                else
+                    document.body.requestFullscreen();
+            }
             e.preventDefault();
             return false;
         },

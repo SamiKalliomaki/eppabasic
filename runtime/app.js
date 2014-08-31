@@ -9,5 +9,8 @@
     }
 });
 
+// Require polyfill
+require(['libs/fullscreen-api-polyfill']);
+
 // Require main
 require(['runtime/main/main']);
