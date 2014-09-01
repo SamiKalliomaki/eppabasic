@@ -373,7 +373,7 @@ define(['./framework/compileerror', 'xregexp'], function (CompileError, XRegExp)
          * Parses a identifier (ie. variable names) token
          */
         identifierToken: function ideintifierToken() {
-            return this.scan(XRegExp('^(\\p{L}[\\p{L}\\p{N}]*)'), 'identifier');
+            return this.scan(XRegExp('^([_\\p{L}][_\\p{L}\\p{N}]*)'), 'identifier');
         },
 
         /*
