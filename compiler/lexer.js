@@ -1,5 +1,5 @@
 ﻿
-define(['./framework/compileerror'], function (CompileError) {
+define(['./framework/compileerror', 'xregexp'], function (CompileError, XRegExp) {
     function Lexer(input, produceUnexpectedTokens) {
         this.input = input || "";
         this.stash = [];
@@ -373,7 +373,7 @@ define(['./framework/compileerror'], function (CompileError) {
          * Parses a identifier (ie. variable names) token
          */
         identifierToken: function ideintifierToken() {
-            return this.scan(/^([A-Za-z][_\w]*)/, 'identifier');
+            return this.scan(XRegExp('^(\\p{L}[\\p{L}\\p{N}]*)'), 'identifier');
         },
 
         /*
