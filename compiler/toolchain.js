@@ -159,7 +159,7 @@ define(['./types', './operators', './compiler', './parser', './typechecker', './
 
 
             //// String functions
-            //compiler.defineJsFunction('env.asc', true, 'Asc', [this.types.String], this.types.Integer);
+            compiler.defineJsFunction('__strasc', false, 'Asc', [this.types.String], this.types.Integer);
             //compiler.defineJsFunction('env.chr', true, 'Chr', [this.types.Integer], this.types.String);
             //compiler.defineJsFunction('env.instr', true, 'InStr', [this.types.String, this.types.String], this.types.Integer);
             //compiler.defineJsFunction('env.instr2', true, 'InStr', [this.types.Integer, this.types.String, this.types.String], this.types.Integer);
