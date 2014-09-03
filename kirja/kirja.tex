@@ -42,6 +42,7 @@
 \mainmatter
 
 \newcommand{\kuva}[1] {
+\vspace{10px}
 \begin{center}
 \includegraphics[scale=0.4]{#1.png}
 \end{center}
@@ -327,6 +328,162 @@ Funktio \texttt{Reverse} taas kääntää merkkijonon väärinpäin.
 Löydät paljon lisää funktioita tutkimalla EppaBasicin komentolistaa.
 
 \chapter{Piirtäminen}
+
+Tämä luku kertoo grafiikan piirtämisestä EppaBasicilla.
+Piirtoalueena on ohjelman ikkuna,
+jonka koko on oletuksena 640x480 pikseliä.
+Vasemman ylänurkan x- ja y-koordinaatti on 0,
+ja koordinaatit kasvavat alaspäin ja oikealle.
+
+\section{Peruskuvioita}
+
+Seuraava koodi piirtää kuvan,
+jossa on ympyröitä ja suorakulmioita:
+
+\begin{verbatim}
+FillColor 255, 0, 0
+FillCircle 100, 150, 50
+FillCircle 200, 150, 20
+FillCircle 260, 150, 10
+FillColor 0, 255, 0
+FillRect 300, 200, 50, 50
+FillRect 250, 250, 50, 50
+FillRect 350, 250, 50, 50
+FillRect 300, 300, 50, 50
+\end{verbatim}
+
+Koodi tuottaa seuraavan kuvan:
+
+\kuva{kuva}
+
+\newpage
+Komento \texttt{FillColor} valitsee,
+mitä väriä käytetään kuvioiden piirtämiseen.
+Komennolle annetaan kolme lukua väliltä 0--255:
+punaisen, vihreän ja sinisen värin osuus
+piirtovärissä.
+
+Komento \texttt{FillCircle} piirtää ympyrän.
+Komennolla annetaan ensin ympyrän x- ja y-koordinaatti
+ja lopuksi ympyrän säde.
+Komento \texttt{FillRect} taas piirtää suorakulmion,
+kun sille annetaan
+vasemman ylänurkan x- ja y-koordinaatti
+sekä suorakulmion leveys ja korkeus.
+
+\section{Värit}
+
+Värien muodostaminen punaisen, vihreän ja sinisen
+sekoituksena vaatii hieman miettimistä.
+Tässä on joitakin tavallisia värejä:
+
+\newcommand{\vari}[3] {
+\hbox{\pdfliteral{#1 #2 #3 rg}\vrule height4mm width15mm depth0cm\pdfliteral{0 g}}
+}
+
+\begin{tabular}{lll}
+\textbf{sekoitus} & \textbf{väri} \\
+255, 0, 0 & \vari{1}{0}{0} \\
+0, 255, 0 & \vari{0}{1}{0} \\
+0, 0, 255 & \vari{0}{0}{1} \\
+255, 255, 0 & \vari{1}{1}{0} \\
+255, 0, 255 & \vari{1}{0}{1} \\
+0, 255, 255 & \vari{0}{1}{1} \\
+% \end{tabular}
+% \begin{tabular}{lll}
+% \textbf{sekoitus} & \textbf{väri} \\
+255, 128, 0 & \vari{1}{0.5}{0} \\
+128, 0, 255 & \vari{0.5}{0}{1} \\
+0, 255, 128 & \vari{0}{1}{0.5} \\
+0, 128, 255 & \vari{0}{0.5}{1} \\
+128, 255, 0 & \vari{0.5}{1}{0} \\
+255, 0, 128 & \vari{1}{0}{0.5} \\
+\end{tabular}
+
+Harmaasävyn saa aikaan valitsemalla jokaisen värin osan samaksi:
+
+\begin{tabular}{lll}
+\textbf{sekoitus} & \textbf{väri} \\
+0, 0, 0 & \vari{0}{0}{0} \\
+32, 32, 32 & \vari{0.125}{0.125}{0.125} \\
+64, 64, 64 & \vari{0.25}{0.25}{0.25} \\
+96, 96, 96 & \vari{0.375}{0.375}{0.375} \\
+128, 128, 128 & \vari{0.5}{0.5}{0.5} \\
+160, 160, 160 & \vari{0.625}{0.625}{0.625} \\
+192, 192, 192 & \vari{0.75}{0.75}{0.75} \\
+224, 224, 224 & \vari{0.875}{0.875}{0.875} \\
+255, 255, 255 & \vari{1}{1}{1} \\
+\end{tabular}
+
+Tällä tavalla muodostettua väriä sanotaan myös RGB-väriksi
+(englannin sanoista \textit{red}, \textit{green} ja \textit{blue}).
+
+\section{Reunakuviot}
+
+Tähän mennessä käytetyissä komennoissa alkuosa \texttt{Fill}
+tarkoittaa, että komento täyttää koko kuvion värillä.
+Jos komennon alkuosa onkin \texttt{Draw},
+komento piirtää vain kuvion reunan.
+
+Seuraava koodi piirtää reunakuvioita:
+
+\begin{verbatim}
+DrawColor 255, 0, 0
+DrawCircle 220, 250, 100
+DrawColor 0, 255, 0
+DrawRect 200, 200, 180, 80
+DrawColor 0, 0, 255
+DrawLine 300, 100, 100, 350
+\end{verbatim}
+
+Koodi tuottaa seuraavan kuvan:
+
+\kuva{kuva2}
+
+Komennot \texttt{DrawColor},
+\texttt{DrawCircle} ja \texttt{DrawRect}
+toimivat samalla logiikalla kuin
+aiemmat \texttt{Fill}-komennot.
+Lisäksi uutena kuviona on viiva,
+jonka piirtää komento \texttt{DrawLine}.
+Sille annetaan viivan päätepisteiden
+x- ja y-koordinaatit.
+
+\section{Tekstin piirtäminen}
+
+Komennolla \texttt{Print} voi piirtää
+tekstiä, mutta komennon rajoituksena on,
+että se tulostaa aina tekstiä rivi kerrallaan alaspäin
+ruudun vasemmasta ylänurkasta aloittaen.
+Komennolla \texttt{DrawText} voi piirtää
+tekstiä monipuolisemmin.
+
+Tekstiä voi piirtää esimerkiksi näin:
+
+\begin{verbatim}
+TextFont "Verdana"
+TextColor 128, 128, 255
+TextSize 80
+DrawText 100, 100, "EppaBasic"
+\end{verbatim}
+
+\newpage
+Koodi tuottaa seuraavan kuvan:
+
+\kuva{kuva3}
+
+Komennot \texttt{TextFont},
+\texttt{TextColor} ja \texttt{TextSize}
+valitsevat tekstin fontin, värin ja koon.
+Fonttivalikoima riippuu siitä,
+mitä fontteja käyttäjän koneella on.
+Yleisiä fontteja ovat esimerkiksi
+Arial, Courier, Times sekä Verdana.
+Komento \texttt{DrawText}
+piirtää tekstin, kun sille annetaan
+x- ja y-koordinaatti sekä teksti.
+
+
 
 \chapter{Ikkunat ja ehdot}
 
