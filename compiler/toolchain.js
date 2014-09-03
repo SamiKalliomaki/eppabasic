@@ -179,7 +179,7 @@ define(['./types', './operators', './compiler', './parser', './typechecker', './
 
             //// Time functions
             //compiler.defineJsFunction('env.timer', true, 'Timer', [], this.types.Double);
-            //compiler.defineJsFunction('env.wait', true, 'Wait', [this.types.Double], undefined, false);
+            compiler.defineJsFunction('env.wait', true, 'Wait', [this.types.Double], undefined, false);
 
             compiler.defineJsFunction('env.year', true, 'Year', [], this.types.Integer);
             compiler.defineJsFunction('env.month', true, 'Month', [], this.types.Integer);
