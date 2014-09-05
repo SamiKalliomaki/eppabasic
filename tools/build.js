@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 var requirejs = require('requirejs');
 var fs = require('fs');
 
