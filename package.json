@@ -1,0 +1,7 @@
+{
+	"dependencies": {
+		"requirejs": ">= 2.1.14",
+		"minimist": "1.1.0"
+	},
+	"private": true
+}
