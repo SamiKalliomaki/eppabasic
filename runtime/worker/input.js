@@ -14,9 +14,7 @@
         // Add listeners
         this.mirror.on('keydown', this.onKeyDown.bind(this));
         this.mirror.on('keyup', this.onKeyUp.bind(this));
-        this.mirror.on('mousemove', this.onMouseMove.bind(this));
-        this.mirror.on('mousedown', this.onMouseDown.bind(this));
-        this.mirror.on('mouseup', this.onMouseUp.bind(this));
+        this.mirror.on('mouse', this.onMouse.bind(this));
     }
 
     Input.prototype = {
@@ -28,32 +26,11 @@
         onKeyUp: function onKeyUp(keyCode) {
             this.keysDown[keyCode] = false;
         },
-        onMouseMove: function onMouseMove(x, y, buttons, button) {
+        onMouse: function onMouseUp(x, y, buttons, hit) {
             this.mouseX = x;
             this.mouseY = y;
-
-            if (buttons)
-                this.mouseButtons = buttons;
-            else
-                this.mouseButtons |= button;
-        },
-        onMouseDown: function onMouseDown(x, y, buttons, button) {
-            this.mouseX = x;
-            this.mouseY = y;
-
-            if (buttons)
-                this.mouseButtons = buttons;
-            else
-                this.mouseButtons |= button;
-        },
-        onMouseUp: function onMouseUp(x, y, buttons, button) {
-            this.mouseX = x;
-            this.mouseY = y;
-
-            if (buttons)
-                this.mouseButtons = buttons;
-            else
-                this.mouseButtons &= ~button;
+            this.mouseButtons = buttons;
+            this.mouseHit = hit;
         },
 
         env: {
