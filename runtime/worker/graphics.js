@@ -1,8 +1,9 @@
 ﻿define(['require'], function (require) {
     "use strict";
 
-    function Graphics(mirror) {
+    function Graphics(mirror, strutil) {
         this.mirror = mirror;
+        this.strutil = strutil;
         this.commandQueue = [];
 
         this.screenWidth = 0;
@@ -53,6 +54,14 @@
                 this.commandQueue = [];
                 // And break the execution
                 this.program.breakExec();
+            },
+            drawText: function drawText(x, y, str, align) {
+                str = this.strutil.fromEppaBasic(str);
+                this.addCommand('drawText', x, y, str, align);
+            },
+            drawTextAlign: function drawTextAlign(x, y, str, align) {
+                str = this.strutil.fromEppaBasic(str);
+                this.addCommand('drawText', x, y, str, align);
             },
 
             fillCircle: function fillCircle(x, y, r) {
@@ -120,6 +129,23 @@
                 this.addCommand('setWindowHeight', height);
             },
 
+            textAlign: function textAlign(align) {
+                this.addCommand('textAlign', align);
+            },
+            textColor: function textColor(r, g, b) {
+                r = clamp(r, 0, 255);
+                g = clamp(g, 0, 255);
+                b = clamp(b, 0, 255);
+                var rgb = (r << 16) | (g << 8) | b;
+                this.addCommand('textColor', rgb);
+            },
+            textFont: function textFont(str) {
+                str = this.strutil.fromEppaBasic(str);
+                this.addCommand('textFont', str);
+            },
+            textSize: function textSize(size) {
+                this.addCommand('textSize', size);
+            },
             triangle: function triangle(x1, y1, x2, y2, x3, y3) {
                 this.addCommand('triangle', x1, y1, x2, y2, x3, y3);
             }

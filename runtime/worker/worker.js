@@ -1,4 +1,4 @@
-﻿define(['require', './graphics', './math', '../polyfill', './input', './time'], function (require) {
+﻿define(['require', './graphics', './math', '../polyfill', './input', './time', '../utils/string'], function (require) {
     "use strict";
 
     // Settings
@@ -9,6 +9,7 @@
     var Graphics = require('./graphics');
     var Input = require('./input');
     var Time = require('./time');
+    var StringUtils = require('../utils/string');
 
     function Worker(mirror) {
         this.mirror = mirror;
@@ -53,8 +54,9 @@
             env.doubleToString = function (a) { };
 
             var heap = new ArrayBuffer(env.heapSize);
+            var strutil = new StringUtils(heap);
 
-            var graphics = new Graphics(this.mirror);
+            var graphics = new Graphics(this.mirror, strutil);
             graphics.extendEnv(env);
 
             var math = new (require('./math'))(this.mirror);
@@ -67,6 +69,7 @@
             time.extendEnv(env);
 
             function after() {
+                strutil.setProgram(this.program);
                 graphics.setProgram(this.program);
                 time.setProgram(this.program);
             }
