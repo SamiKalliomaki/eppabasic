@@ -512,7 +512,9 @@ var Editor = function(renderer, session) {
 
     this.$highlightBrackets = function() {
         if (this.session.$bracketHighlight) {
-            this.session.removeMarker(this.session.$bracketHighlight);
+            this.session.$bracketHighlight.forEach(function (highlight) {
+                this.session.removeMarker(highlight);
+            }.bind(this));
             this.session.$bracketHighlight = null;
         }
 
@@ -526,14 +528,22 @@ var Editor = function(renderer, session) {
         setTimeout(function() {
             self.$highlightPending = false;
 
-            var pos = self.session.findMatchingBracket(self.getCursorPosition());
-            if (pos) {
-                var range = new Range(pos.row, pos.column, pos.row, pos.column+1);
-            } else if (self.session.$mode.getMatching) {
-                var range = self.session.$mode.getMatching(self.session);
+            var pos1 = self.getCursorPosition();
+            if (pos1) {
+                var range1 = new Range(pos1.row, pos1.column-1, pos1.row, pos1.column);
             }
-            if (range)
-                self.session.$bracketHighlight = self.session.addMarker(range, "ace_bracket", "text");
+            var pos2 = self.session.findMatchingBracket(pos1);
+            if (pos2) {
+                var range2 = new Range(pos2.row, pos2.column, pos2.row, pos2.column+1);
+            } else if (self.session.$mode.getMatching) {
+                var range2 = self.session.$mode.getMatching(self.session);
+            }
+            if (range1 && range2) {
+                self.session.$bracketHighlight = [
+                    self.session.addMarker(range1, "ace_bracket", "text"),
+                    self.session.addMarker(range2, "ace_bracket", "text")
+                ];
+            }
         }, 50);
     };
 
