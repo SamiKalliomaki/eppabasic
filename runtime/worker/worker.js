@@ -29,9 +29,13 @@
         },
 
         start: function start() {
-            // TODO Use window.postMessage for 0ms delay
+            var lastStep = 0;
             function step() {
-                this.program.next();
+                var now = new Date().getTime();
+                if (lastStep + (1000 / 60) <= now) {
+                    this.program.next();
+                    lastStep = now;
+                }
                 setTimeout(step.bind(this), 0);
             }
             setTimeout(step.bind(this), 0);
