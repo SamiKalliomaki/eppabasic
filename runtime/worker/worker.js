@@ -1,4 +1,4 @@
-﻿define(['require', './graphics', './math', '../polyfill', './input', './time', '../utils/string'], function (require) {
+﻿define(['require', './graphics', './math', '../polyfill', './input', './time', './string', '../utils/string'], function (require) {
     "use strict";
 
     // Settings
@@ -54,8 +54,6 @@
             var env = {};
             env.heapSize = settings.heapSize;
             env.panic = this.panic.bind(this);
-            env.integerToString = function (a) { };
-            env.doubleToString = function (a) { };
 
             var heap = new ArrayBuffer(env.heapSize);
             var strutil = new StringUtils(heap);
@@ -71,6 +69,9 @@
 
             var time = new Time(this.mirror);
             time.extendEnv(env);
+
+            var string = new (require('./string'))(this.mirror, strutil);
+            string.extendEnv(env);
 
             function after() {
                 strutil.setProgram(this.program);

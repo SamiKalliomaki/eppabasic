@@ -5,7 +5,8 @@
     paths: {
         runtime: 'runtime',
         jquery: '//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min',
-        text: '../libs/requirejs_text'
+        text: '../libs/requirejs_text',
+        esrever: '../libs/esrever'
     }
 });
 

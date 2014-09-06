@@ -169,22 +169,23 @@ define(['./types', './operators', './compiler', './parser', './typechecker', './
 
             //// String functions
             compiler.defineJsFunction('__strasc', false, 'Asc', [this.types.String], this.types.Integer);
-            //compiler.defineJsFunction('env.chr', true, 'Chr', [this.types.Integer], this.types.String);
-            //compiler.defineJsFunction('env.instr', true, 'InStr', [this.types.String, this.types.String], this.types.Integer);
-            //compiler.defineJsFunction('env.instr2', true, 'InStr', [this.types.Integer, this.types.String, this.types.String], this.types.Integer);
-            //compiler.defineJsFunction('env.lcase', true, 'LCase', [this.types.String], this.types.String);
-            //compiler.defineJsFunction('env.len', true, 'Len', [this.types.String], this.types.Integer);
-            //compiler.defineJsFunction('env.left', true, 'Left', [this.types.String, this.types.Integer], this.types.String);
-            //compiler.defineJsFunction('env.match', true, 'Match', [this.types.String, this.types.String], this.types.Boolean);
-            //compiler.defineJsFunction('env.mid', true, 'Mid', [this.types.String, this.types.Integer], this.types.String);
-            //compiler.defineJsFunction('env.mid2', true, 'Mid', [this.types.String, this.types.Integer, this.types.Integer], this.types.String);
-            //compiler.defineJsFunction('env.repeat', true, 'Repeat', [this.types.String, this.types.Integer], this.types.String);
-            //compiler.defineJsFunction('env.replace', true, 'Replace', [this.types.String, this.types.String, this.types.String], this.types.String);
-            //compiler.defineJsFunction('env.right', true, 'Right', [this.types.String, this.types.Integer], this.types.String);
-            //compiler.defineJsFunction('env.reverse', true, 'Reverse', [this.types.String], this.types.String);
+            compiler.defineJsFunction('env.chr', true, 'Chr', [this.types.Integer], this.types.String);
+            compiler.defineJsFunction('env.instr', true, 'InStr', [this.types.String, this.types.String], this.types.Integer);
+            compiler.defineJsFunction('env.instr2', true, 'InStr', [this.types.Integer, this.types.String, this.types.String], this.types.Integer);
+            compiler.defineJsFunction('env.lcase', true, 'LCase', [this.types.String], this.types.String);
+            compiler.defineJsFunction('env.left', true, 'Left', [this.types.String, this.types.Integer], this.types.String);
+            compiler.defineJsFunction('env.len', true, 'Len', [this.types.String], this.types.Integer);
+            compiler.defineJsFunction('env.match', true, 'Match', [this.types.String, this.types.String], this.types.Boolean);
+            compiler.defineJsFunction('env.mid', true, 'Mid', [this.types.String, this.types.Integer], this.types.String);
+            compiler.defineJsFunction('env.mid', true, 'Mid', [this.types.String, this.types.Integer, this.types.Integer], this.types.String);
+            compiler.defineJsFunction('env.repeat', true, 'Repeat', [this.types.String, this.types.Integer], this.types.String);
+            compiler.defineJsFunction('env.replace', true, 'Replace', [this.types.String, this.types.String, this.types.String], this.types.String);
+            compiler.defineJsFunction('env.reverse', true, 'Reverse', [this.types.String], this.types.String);
+            compiler.defineJsFunction('env.right', true, 'Right', [this.types.String, this.types.Integer], this.types.String);
             //compiler.defineJsFunction('env.rot13', true, 'Rot13', [this.types.String], this.types.String);
-            //compiler.defineJsFunction('env.trim', true, 'Trim', [this.types.String], this.types.String);
-            //compiler.defineJsFunction('env.ucase', true, 'UCase', [this.types.String], this.types.String);
+            compiler.defineJsFunction('env.trim', true, 'Trim', [this.types.String], this.types.String);
+            compiler.defineJsFunction('env.ucase', true, 'UCase', [this.types.String], this.types.String);
+            compiler.defineJsFunction('env.val', true, 'Val', [this.types.String], this.types.Double);
 
             //// Time functions
             //compiler.defineJsFunction('env.timer', true, 'Timer', [], this.types.Double);
@@ -217,7 +218,6 @@ define(['./types', './operators', './compiler', './parser', './typechecker', './
 
             //// Casting
             compiler.defineJsFunction('__int', false, 'Int', [this.types.Integer], this.types.Integer);
-            //compiler.defineJsFunction('env.val', true, 'Val', [this.types.String], this.types.Double);
             //compiler.defineJsFunction('env.integerToString', true, 'Str', [this.types.Integer], this.types.String);
             //compiler.defineJsFunction('env.doubleToString', true, 'Str', [this.types.Double], this.types.String);
         }
