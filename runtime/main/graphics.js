@@ -68,7 +68,7 @@
             clear: function clear() {
                 var origStyle = this.ctx.fillStyle;
                 this.ctx.fillStyle = this.clearColor;
-                this.ctx.fillRect(0, 0, this.canvas.width(), this.canvas.height());
+                this.ctx.fillRect(0, 0, this.canvas[0].width, this.canvas[0].height);
                 this.ctx.fillStyle = origStyle;
                 //this.printX = 5;
                 //this.printY = 5;
