@@ -25,6 +25,10 @@
                 throw new Error('Worker not initialize yet');
             // Start the worker
             this.worker.send('start');
+
+            // And set the screen size
+            this.graphics.setSize(640, 480);
+            this.graphics.setResolution(640, 480);
         },
 
 
@@ -37,8 +41,6 @@
                 // Setup the output and input when the worker is ready
                 this.graphics = new Graphics(this.worker, this.canvasHolder);
                 this.input = new Input(this.worker, this.canvasHolder, this.graphics.canvas);
-                // And set the screen size
-                this.graphics.setSize(640, 480);
 
                 // Finally when the worker is ready the whole
                 // runtime is ready. Tell that also to the editor

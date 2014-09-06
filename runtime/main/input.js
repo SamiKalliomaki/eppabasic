@@ -24,6 +24,8 @@
     Input.prototype = {
         onResize: function onResize() {
             this.scale = this.canvas[0].width / this.canvasHolder[0].offsetWidth;
+            // Also tell the worker of the resize
+            this.worker.send('resize', this.canvasHolder[0].offsetWidth, this.canvasHolder[0].offsetHeight);
         },
         onKeyDown: function onKeyDown(e) {
             this.worker.send('keydown', e.keyCode);

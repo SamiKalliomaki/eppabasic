@@ -4,11 +4,28 @@
     function Graphics(mirror) {
         this.mirror = mirror;
         this.commandQueue = [];
+
+        this.screenWidth = 0;
+        this.screenHeight = 0;
+        this.windowWidth = 0
+        this.windowHeight = 0;
+
+        this.mirror.on('setresolution', this.onSetResolution.bind(this));
+        this.mirror.on('resize', this.onResize.bind(this));
     }
 
     Graphics.prototype = {
         setProgram: function setProgram(program) {
             this.program = program;
+        },
+
+        onResize: function onResize(width, height) {
+            this.windowWidth = width;
+            this.windowHeight = height;
+        },
+        onSetResolution: function onSetResolution(width, height) {
+            this.screenWidth = width;
+            this.screenHeight = height;
         },
 
         env: {
@@ -55,6 +72,19 @@
                 this.addCommand('fillTriangle', x1, y1, x2, y2, x3, y3);
             },
 
+            getScreenWidth: function getScreenWidth() {
+                return this.screenWidth;
+            },
+            getScreenHeight: function getScreenHeight() {
+                return this.screenHeight;
+            },
+            getWindowWidth: function getWindowWidth() {
+                return this.windowWidth;
+            },
+            getWindowHeight: function getWindowHeight() {
+                return this.windowHeight;
+            },
+
             line: function line(x1, y1, x2, y2) {
                 this.addCommand('line', x1, y1, x2, y2);
             },
@@ -71,6 +101,23 @@
 
             rect: function rect(x, y, w, h) {
                 this.addCommand('rect', x, y, w, h);
+            },
+
+            setScreenWidth: function setScreenWidth(width) {
+                this.screenWidth = width;
+                this.addCommand('setScreenWidth', width);
+            },
+            setScreenHeight: function setScreenHeight(height) {
+                this.screenHeight = height;
+                this.addCommand('setScreenHeight', height);
+            },
+            setWindowWidth: function setWindowWidth(width) {
+                this.windowWidth = width;
+                this.addCommand('setWindowWidth', width);
+            },
+            setWindowHeight: function setWindowHeight(height) {
+                this.windowHeight = height;
+                this.addCommand('setWindowHeight', height);
             },
 
             triangle: function triangle(x1, y1, x2, y2, x3, y3) {

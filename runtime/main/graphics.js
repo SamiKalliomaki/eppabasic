@@ -22,11 +22,34 @@
         this.clearColor = '#000';               // The background is black
         this.ctx.strokeStyle = '#fff';          // And the line color is white
 
+        this.screenWidth = 0;
+        this.screenHeight = 0;
+        this.windowWidth = 0
+        this.windowHeight = 0;
+
         this.worker.on('drawscreen', this.onDrawScreen.bind(this));
+        window.addEventListener('resize', this.onResize.bind(this));
     }
 
     Graphics.prototype = {
-        setSize: function setSize(width, height) {
+        onResize: function onResize() {
+            this.windowWidth = window.innerWidth;
+            this.windowHeight = window.innerHeight;
+        },
+        setSize: function setSize(width, height, fromWorker) {
+            this.windowWidth = width;
+            this.windowHeight = height;
+
+            // Set the window size
+            var outerWidth = width + (window.outerWidth - window.innerWidth);
+            var outerHeight = height + (window.outerHeight - window.innerHeight);
+            window.resizeTo(outerWidth, outerHeight);
+        },
+
+        setResolution: function setResolution(width, height, fromWorker) {
+            this.screenWidth = width;
+            this.screenHeight = height;
+
             // Copy the current image to a buffer
             this.buffer.width(this.canvas.width());
             this.buffer.height(this.canvas.height());
@@ -36,11 +59,6 @@
             this.canvas[0].width = width;
             this.canvas[0].height = height;
 
-            // Set the window size
-            var outerWidth = width + (window.outerWidth - window.innerWidth);
-            var outerHeight = height + (window.outerHeight - window.innerHeight);
-            window.resizeTo(outerWidth, outerHeight);
-
             // Set the canvas to retain its aspect ratio
             this.canvasHolder.width('100vw');
             this.canvasHolder.height((100 / (width / height)) + 'vw');
@@ -49,6 +67,10 @@
 
             // Copy and scale the image back from the buffer
             this.ctx.drawImage(this.buffer[0], 0, 0, this.canvas.width(), this.canvas.height());
+
+            // Finally tell the worker about the size change if nessessary
+            if (!fromWorker)
+                this.worker.send('setresolution', width, height);
         },
 
         onDrawScreen: function onDrawScreen(commands) {
@@ -118,6 +140,20 @@
                 this.ctx.beginPath();
                 this.ctx.rect(x, y, w, h);
                 this.ctx.stroke();
+            },
+
+            // TODO Set sizes for real!!!
+            setScreenWidth: function setScreenWidth(width) {
+                this.setResolution(width, this.screenHeight, true);
+            },
+            setScreenHeight: function setScreenHeight(height) {
+                this.setResolution(this.screenWidth, height, true);
+            },
+            setWindowWidth: function setWindowWidth(width) {
+                this.setSize(width, this.windowHeight);
+            },
+            setWindowHeight: function setWindowHeight(height) {
+                this.setSize(this.windowWidth, height);
             },
 
             triangle: function triangle(x1, y1, x2, y2, x3, y3) {
