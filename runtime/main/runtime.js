@@ -29,8 +29,12 @@
             this.worker.send('start');
 
             // And set the screen size
-            $(function onReady() {
-                this.graphics.setSize(0, 0);            // For firefox so that it sets the size exactly
+            $(document).ready(function onReady() {
+                var isChrome = navigator.userAgent.toLowerCase().indexOf('chrome') !== -1;
+                // For firefox so that it sets the size exactly
+                // Chrome sets the size to the minimum if setSize is called multiple times
+                if (!isChrome)
+                    this.graphics.setSize(0, 0);
                 this.graphics.setSize(640, 480);
                 this.graphics.setResolution(640, 480);
             }.bind(this));
