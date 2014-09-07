@@ -1,9 +1,10 @@
-﻿define(['require', './workerclient', './graphics', './input'], function (require) {
+﻿define(['require', './workerclient', './graphics', './input', './messages'], function (require) {
     "use strict";
 
     var WorkerClient = require('./workerclient');
     var Graphics = require('./graphics');
     var Input = require('./input');
+    var Messages = require('./messages');
 
     function Runtime(editor, canvasHolder) {
         this.editor = editor;
@@ -42,6 +43,7 @@
                 // Setup the output and input when the worker is ready
                 this.graphics = new Graphics(this.worker, this.canvasHolder);
                 this.input = new Input(this.worker, this.canvasHolder, this.graphics.canvas);
+                this.messages = new Messages(this.worker, this.canvasHolder);
 
                 // Finally when the worker is ready the whole
                 // runtime is ready. Tell that also to the editor

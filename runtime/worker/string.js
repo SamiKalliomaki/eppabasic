@@ -1,4 +1,6 @@
 ﻿define(['require', 'xregexp', 'esrever'], function (require) {
+    "use strict";
+
     var XRegExp = require('xregexp');
     var esrever = require('esrever');
 

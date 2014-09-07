@@ -16,15 +16,17 @@
     margin: auto;
 }
 
-    #canvasHolder > canvas, #canvasHolder > div {
+    #canvasHolder > canvas, #canvasHolder > .messagebox {
         position: relative;
         width: 100%;
         height: 100%;
         color: #fff;
     }
 
-    #canvasHolder > div {
+    #canvasHolder > .messagebox {
         z-index: 1;
+        background-color: #f0f;
+        display: none;
     }
 
 #error {

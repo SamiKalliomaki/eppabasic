@@ -52,6 +52,13 @@
             window.resizeTo(outerWidth, outerHeight);
         },
         setResolution: function setResolution(width, height, fromWorker) {
+            // Copy the context styles
+            var fillStyle = this.ctx.fillStyle;
+            var font = this.ctx.font;
+            var lineWidth = this.ctx.lineWidth;
+            var strokeStyle = this.ctx.strokeStyle;
+
+            // Remember the resolutin
             this.screenWidth = width;
             this.screenHeight = height;
 
@@ -76,6 +83,12 @@
             // Finally tell the worker about the size change if nessessary
             if (!fromWorker)
                 this.worker.send('setresolution', width, height);
+
+            // Copy the context styles back
+            this.ctx.fillStyle = fillStyle;
+            this.ctx.font = font;
+            this.ctx.lineWidth = lineWidth;
+            this.ctx.strokeStyle = strokeStyle;
         },
 
         onDrawScreen: function onDrawScreen(commands) {

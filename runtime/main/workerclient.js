@@ -46,7 +46,7 @@
 
             var index = listeners.indexOf(callback);
             if (index !== -1)
-                listeners.splice(index, i);
+                listeners.splice(index, 1);
         },
 
         send: function send(cmd, args) {

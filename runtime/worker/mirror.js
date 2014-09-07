@@ -1,4 +1,6 @@
 ﻿define(['require'], function (require) {
+    "use strict";
+
     function Mirror() {
         function emit(name, args) {
             this.events = this.events || {};
@@ -41,7 +43,7 @@
 
             var index = listeners.indexOf(callback);
             if (index !== -1)
-                listeners.splice(index, i);
+                listeners.splice(index, 1);
         },
 
         send: function send(cmd, args) {

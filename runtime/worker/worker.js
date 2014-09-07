@@ -1,4 +1,4 @@
-﻿define(['require', './graphics', './math', '../polyfill', './input', './time', './string', '../utils/string'], function (require) {
+﻿define(['require', './graphics', './math', '../polyfill', './input', './time', './string', './messages', '../utils/string'], function (require) {
     "use strict";
 
     // Settings
@@ -10,6 +10,7 @@
     var Input = require('./input');
     var Time = require('./time');
     var StringUtils = require('../utils/string');
+    var Messages = require('./messages');
 
     function Worker(mirror) {
         this.mirror = mirror;
@@ -18,6 +19,7 @@
         this.mirror.on('start', this.start.bind(this));
 
         this.nextCall = 0;
+        this.waitingResponse = false;
     }
 
     Worker.prototype = {
@@ -34,6 +36,9 @@
             var lastStep = 0;
             var f = step.bind(this);
             function step() {
+                if (this.waitingResponse)
+                    setTimeout(f, 1000 / 60);
+
                 var now = new Date().getTime();
                 if (now >= this.nextCall)
                     this.program.next();
@@ -45,6 +50,16 @@
 
         setDelay: function setDelay(time) {
             this.nextCall = (new Date().getTime()) + time;
+        },
+        waitResponse: function waitResponse(callback) {
+            var me = this;
+            function onResponse() {
+                callback.apply(null, arguments);
+                me.mirror.off('response', onResponse);
+                me.waitingResponse = false;
+            }
+            this.mirror.on('response', onResponse);
+            this.waitingResponse = true;
         },
 
         createExternal: function createExternal() {
@@ -79,10 +94,14 @@
             var string = new (require('./string'))(this.mirror, strutil);
             string.extendEnv(env);
 
+            var messages = new Messages(this.mirror, strutil, this.waitResponse.bind(this));
+            messages.extendEnv(env);
+
             function after() {
                 strutil.setProgram(this.program);
                 graphics.setProgram(this.program);
                 time.setProgram(this.program);
+                messages.setProgram(this.program);
             }
 
             return {

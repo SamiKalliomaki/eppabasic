@@ -101,11 +101,11 @@ define(['./types', './operators', './compiler', './parser', './typechecker', './
             compiler.defineJsFunction('env.textSize', true, 'TextSize', [this.types.Integer]);
             compiler.defineJsFunction('env.textAlign', true, 'TextAlign', [this.types.Integer]);
 
-            //compiler.defineJsFunction('env.message', true, 'Message', [this.types.String]);
-            //compiler.defineJsFunction('env.askNumber', true, 'AskNumber', [this.types.String], this.types.Double);
-            //compiler.defineJsFunction('env.askText', true, 'AskText', [this.types.String], this.types.String);
-            //compiler.defineJsFunction('env.askNumber', true, 'InputNumber', [this.types.String], this.types.Double);
-            //compiler.defineJsFunction('env.askText', true, 'InputText', [this.types.String], this.types.String);
+            compiler.defineJsFunction('env.message', true, 'Message', [this.types.String], undefined, false);
+            compiler.defineJsFunction('env.askNumber', true, 'AskNumber', [this.types.String], this.types.Double,false);
+            compiler.defineJsFunction('env.askText', true, 'AskText', [this.types.String], this.types.String,false);
+            compiler.defineJsFunction('env.askNumber', true, 'InputNumber', [this.types.String], this.types.Double);
+            compiler.defineJsFunction('env.askText', true, 'InputText', [this.types.String], this.types.String);
             //compiler.defineJsFunction('env.inputCancel', true, 'InputCancel', [], this.types.Boolean);
             compiler.defineJsFunction('env.setWindowTitle', true, 'WindowTitle', [this.types.String]);
             compiler.defineJsFunction('env.getWindowTitle', true, 'WindowTitle', [], this.types.String);
