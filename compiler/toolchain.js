@@ -188,7 +188,7 @@ define(['./types', './operators', './compiler', './parser', './typechecker', './
             compiler.defineJsFunction('env.val', true, 'Val', [this.types.String], this.types.Double);
 
             //// Time functions
-            //compiler.defineJsFunction('env.timer', true, 'Timer', [], this.types.Double);
+            compiler.defineJsFunction('env.timer', true, 'Timer', [], this.types.Double);
             compiler.defineJsFunction('env.wait', true, 'Wait', [this.types.Double], undefined, false);
 
             compiler.defineJsFunction('env.year', true, 'Year', [], this.types.Integer);
