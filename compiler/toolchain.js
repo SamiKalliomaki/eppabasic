@@ -207,7 +207,7 @@ define(['./types', './operators', './compiler', './parser', './typechecker', './
             compiler.defineJsFunction('env.mouseHit', true, 'MouseHit', [this.types.Integer], this.types.Boolean);
 
             //// Output
-            //compiler.defineJsFunction('env.printStr', true, 'Print', [this.types.String]);
+            compiler.defineJsFunction('env.print', true, 'Print', [this.types.String]);
 
             //// Casting
             compiler.defineJsFunction('__int', false, 'Int', [this.types.Integer], this.types.Integer);

@@ -122,6 +122,11 @@
                 this.addCommand('lineWidth', x);
             },
 
+            print: function print(str) {
+                str = this.strutil.fromEppaBasic(str);
+                this.addCommand('print', str);
+            },
+
             rect: function rect(x, y, w, h) {
                 this.addCommand('rect', x, y, w, h);
             },
