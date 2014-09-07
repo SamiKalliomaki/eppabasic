@@ -122,19 +122,10 @@ define(['./types', './operators', './compiler', './parser', './typechecker', './
             compiler.defineJsFunction('env.setScreenHeight', true, 'ScreenHeight', [this.types.Integer]);
             compiler.defineJsFunction('env.setScreenSize', true, 'ScreenSize', [this.types.Integer, this.types.Integer]);
 
-
-            //compiler.defineJsFunction('env.fullScreen', true, 'FullScreen', []);                  // Reserved for a better day
-
-
             //// Memory functions
             compiler.defineJsFunction('__peek32', false, 'Peek32', [this.types.Integer], this.types.Integer);
             compiler.defineJsFunction('__poke32', false, 'Poke32', [this.types.Integer, this.types.Integer]);
             compiler.defineJsFunction('__memsize', false, 'MemorySize', [], this.types.Integer);
-
-            //compiler.defineJsFunction('TEXT', [Types.Integer, Types.Integer, Types.String], 'text');
-
-            ////compiler.defineJsFunction('SHOWCONSOLE', [], 'showConsole');
-            ////compiler.defineJsFunction('HIDECONSOLE', [], 'hideConsole');
 
             //// Mathematical functions
             compiler.defineJsFunction('stdlib.Math.sin', true, 'Sin', [this.types.Double], this.types.Double);
@@ -159,7 +150,6 @@ define(['./types', './operators', './compiler', './parser', './typechecker', './
             compiler.defineJsFunction('env.round', true, 'Round', [this.types.Double], this.types.Double);
             compiler.defineJsFunction('env.round2', true, 'Round', [this.types.Double, this.types.Integer], this.types.Double);
 
-
             //// String functions
             compiler.defineJsFunction('__strasc', false, 'Asc', [this.types.String], this.types.Integer);
             compiler.defineJsFunction('env.chr', true, 'Chr', [this.types.Integer], this.types.String);
@@ -175,7 +165,7 @@ define(['./types', './operators', './compiler', './parser', './typechecker', './
             compiler.defineJsFunction('env.replace', true, 'Replace', [this.types.String, this.types.String, this.types.String], this.types.String);
             compiler.defineJsFunction('env.reverse', true, 'Reverse', [this.types.String], this.types.String);
             compiler.defineJsFunction('env.right', true, 'Right', [this.types.String, this.types.Integer], this.types.String);
-            //compiler.defineJsFunction('env.rot13', true, 'Rot13', [this.types.String], this.types.String);
+            compiler.defineJsFunction('env.rot13', true, 'Rot13', [this.types.String], this.types.String);
             compiler.defineJsFunction('env.trim', true, 'Trim', [this.types.String], this.types.String);
             compiler.defineJsFunction('env.ucase', true, 'UCase', [this.types.String], this.types.String);
             compiler.defineJsFunction('env.val', true, 'Val', [this.types.String], this.types.Double);
@@ -194,7 +184,6 @@ define(['./types', './operators', './compiler', './parser', './typechecker', './
             compiler.defineJsFunction('env.millisecond', true, 'MilliSecond', [], this.types.Integer);
             compiler.defineJsFunction('env.time', true, 'Time', [], this.types.String);
             compiler.defineJsFunction('env.date', true, 'Date', [], this.types.String);
-
 
             //// Input
             compiler.defineJsFunction('env.keyDown', true, 'KeyDown', [this.types.Integer], this.types.Boolean);

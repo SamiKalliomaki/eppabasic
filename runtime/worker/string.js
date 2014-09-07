@@ -4,12 +4,12 @@
     var XRegExp = require('xregexp');
     var esrever = require('esrever');
 
-    function String(mirror, strutil) {
+    function EbString(mirror, strutil) {
         this.mirror = mirror;
         this.strutil = strutil;
     }
 
-    String.prototype = {
+    EbString.prototype = {
         env: {
             chr: function chr(c) {
                 return this.strutil.toEppaBasic(String.fromCodePoint(x));
@@ -85,6 +85,11 @@
                 x = Math.min(str.length, x);
                 return this.strutil.toEppaBasic(str.substr(str.length - x));
             },
+            rot13: function rot13(str) {
+                str = this.strutil.fromEppaBasic(str);
+                str = str.replace(/[a-zA-Z]/g, function (c) { return String.fromCharCode((c <= "Z" ? 90 : 122) >= (c = c.charCodeAt(0) + 13) ? c : c - 26); });
+                return this.strutil.toEppaBasic(str);
+            },
 
             trim: function trim(str) {
                 str = this.strutil.fromEppaBasic(str);
@@ -122,5 +127,5 @@
         }
     };
 
-    return String;
+    return EbString;
 });

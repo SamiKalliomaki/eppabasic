@@ -43,7 +43,6 @@
 
                 var now = new Date().getTime();
                 if (now >= this.nextCall) {
-                    console.log(this.waitingResponse);
                     this.program.next();
                 }
 
