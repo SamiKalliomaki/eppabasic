@@ -68,17 +68,23 @@
                 this.ctx.stroke();
             },
 
-            setScreenWidth: function setScreenWidth(width) {
-                this.setResolution(width, this.screenHeight, true);
-            },
             setScreenHeight: function setScreenHeight(height) {
                 this.setResolution(this.screenWidth, height, true);
             },
-            setWindowWidth: function setWindowWidth(width) {
-                this.setSize(width, this.windowHeight);
+            setScreenSize: function setScreemSise(width, height) {
+                this.setResolution(width, height, true);
+            },
+            setScreenWidth: function setScreenWidth(width) {
+                this.setResolution(width, this.screenHeight, true);
             },
             setWindowHeight: function setWindowHeight(height) {
                 this.setSize(this.windowWidth, height);
+            },
+            setWindowSize: function setWindowSize(width, height) {
+                this.setSize(width, height);
+            },
+            setWindowWidth: function setWindowWidth(width) {
+                this.setSize(width, this.windowHeight);
             },
 
             triangle: function triangle(x1, y1, x2, y2, x3, y3) {

@@ -111,23 +111,16 @@ define(['./types', './operators', './compiler', './parser', './typechecker', './
             //compiler.defineJsFunction('env.getWindowTitle', true, 'WindowTitle', [], this.types.String);
 
             //// Screen size
-            //compiler.defineJsFunction('env.getWidth', true, 'Width', [], this.types.Integer);
-            //compiler.defineJsFunction('env.getWidth', true, 'WindowWidth', [], this.types.Integer);
-            //compiler.defineJsFunction('env.getHeight', true, 'Height', [], this.types.Integer);
-            //compiler.defineJsFunction('env.getHeight', true, 'WindowHeight', [], this.types.Integer);
-            //compiler.defineJsFunction('env.setWidth', true, 'Width', [this.types.Integer]);
-            //compiler.defineJsFunction('env.setWidth', true, 'WindowWidth', [this.types.Integer]);
-            //compiler.defineJsFunction('env.setHeight', true, 'Height', [this.types.Integer]);
-            //compiler.defineJsFunction('env.setHeight', true, 'WindowHeight', [this.types.Integer]);
-            //compiler.defineJsFunction('env.setSize', true, 'WindowSize', [this.types.Integer, this.types.Integer]);
             compiler.defineJsFunction('env.getWindowWidth', true, 'WindowWidth', [], this.types.Integer);
             compiler.defineJsFunction('env.setWindowWidth', true, 'WindowWidth', [this.types.Integer]);
             compiler.defineJsFunction('env.getWindowHeight', true, 'WindowHeight', [], this.types.Integer);
             compiler.defineJsFunction('env.setWindowHeight', true, 'WindowHeight', [this.types.Integer]);
+            compiler.defineJsFunction('env.setWindowSize', true, 'WindowSize', [this.types.Integer, this.types.Integer]);
             compiler.defineJsFunction('env.getScreenWidth', true, 'ScreenWidth', [], this.types.Integer);
             compiler.defineJsFunction('env.setScreenWidth', true, 'ScreenWidth', [this.types.Integer]);
             compiler.defineJsFunction('env.getScreenHeight', true, 'ScreenHeight', [], this.types.Integer);
             compiler.defineJsFunction('env.setScreenHeight', true, 'ScreenHeight', [this.types.Integer]);
+            compiler.defineJsFunction('env.setScreenSize', true, 'ScreenSize', [this.types.Integer, this.types.Integer]);
 
 
             //compiler.defineJsFunction('env.fullScreen', true, 'FullScreen', []);                  // Reserved for a better day

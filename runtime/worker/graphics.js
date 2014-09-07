@@ -95,17 +95,17 @@
                 this.addCommand('fillTriangle', x1, y1, x2, y2, x3, y3);
             },
 
-            getScreenWidth: function getScreenWidth() {
-                return this.screenWidth;
-            },
             getScreenHeight: function getScreenHeight() {
                 return this.screenHeight;
             },
-            getWindowWidth: function getWindowWidth() {
-                return this.windowWidth;
+            getScreenWidth: function getScreenWidth() {
+                return this.screenWidth;
             },
             getWindowHeight: function getWindowHeight() {
                 return this.windowHeight;
+            },
+            getWindowWidth: function getWindowWidth() {
+                return this.windowWidth;
             },
 
             line: function line(x1, y1, x2, y2) {
@@ -126,21 +126,31 @@
                 this.addCommand('rect', x, y, w, h);
             },
 
-            setScreenWidth: function setScreenWidth(width) {
-                this.screenWidth = width;
-                this.addCommand('setScreenWidth', width);
-            },
             setScreenHeight: function setScreenHeight(height) {
                 this.screenHeight = height;
                 this.addCommand('setScreenHeight', height);
             },
-            setWindowWidth: function setWindowWidth(width) {
-                this.windowWidth = width;
-                this.addCommand('setWindowWidth', width);
+            setScreenSize: function setScreenSize(width, height) {
+                this.screenWidth = width;
+                this.screenHeight = height;
+                this.addCommand('setScreenSize', width, height);
+            },
+            setScreenWidth: function setScreenWidth(width) {
+                this.screenWidth = width;
+                this.addCommand('setScreenWidth', width);
             },
             setWindowHeight: function setWindowHeight(height) {
                 this.windowHeight = height;
                 this.addCommand('setWindowHeight', height);
+            },
+            setWindowSize: function setWindowSize(width, height) {
+                this.windowWidth = width;
+                this.windowHeight = height;
+                this.addCommand('setWindowSize', width, height);
+            },
+            setWindowWidth: function setWindowWidth(width) {
+                this.windowWidth = width;
+                this.addCommand('setWindowWidth', width);
             },
 
             textAlign: function textAlign(align) {
