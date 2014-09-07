@@ -48,7 +48,6 @@
                 str = this.strutil.fromEppaBasic(str);
                 if (typeof b === 'undefined')
                     b = str.length;
-                console.log(str + ' ' + a + ' ' + b + '->' + str.substr(a - 1, b));
                 return this.strutil.toEppaBasic(str.substr(a - 1, b));
             },
 

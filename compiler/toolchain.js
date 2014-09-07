@@ -199,8 +199,8 @@ define(['./types', './operators', './compiler', './parser', './typechecker', './
             compiler.defineJsFunction('env.minute', true, 'Minute', [], this.types.Integer);
             compiler.defineJsFunction('env.second', true, 'Second', [], this.types.Integer);
             compiler.defineJsFunction('env.millisecond', true, 'MilliSecond', [], this.types.Integer);
-            //compiler.defineJsFunction('env.time', true, 'Time', [], this.types.String);
-            //compiler.defineJsFunction('env.date', true, 'Date', [], this.types.String);
+            compiler.defineJsFunction('env.time', true, 'Time', [], this.types.String);
+            compiler.defineJsFunction('env.date', true, 'Date', [], this.types.String);
 
 
             //// Input

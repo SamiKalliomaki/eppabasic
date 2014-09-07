@@ -51,6 +51,7 @@
                 // Send the commands
                 this.mirror.send('drawscreen', this.commandQueue);
                 // Clear the queue
+                delete this.commandQueue;
                 this.commandQueue = [];
                 // And break the execution
                 this.program.breakExec();

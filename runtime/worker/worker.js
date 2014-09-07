@@ -30,15 +30,12 @@
 
         start: function start() {
             var lastStep = 0;
+            var f = step.bind(this);
             function step() {
-                var now = new Date().getTime();
-                if (lastStep + (1000 / 60) <= now) {
-                    this.program.next();
-                    lastStep = now;
-                }
-                setTimeout(step.bind(this), 0);
+                this.program.next();
+                setTimeout(f, 0);
             }
-            setTimeout(step.bind(this), 0);
+            setTimeout(f, 0);
         },
 
         createExternal: function createExternal() {
@@ -67,7 +64,7 @@
             var input = new Input(this.mirror);
             input.extendEnv(env);
 
-            var time = new Time(this.mirror);
+            var time = new Time(this.mirror, strutil);
             time.extendEnv(env);
 
             var string = new (require('./string'))(this.mirror, strutil);

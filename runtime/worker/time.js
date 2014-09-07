@@ -1,8 +1,9 @@
 ﻿define(['require'], function (require) {
     "use strict";
 
-    function Time(mirror) {
+    function Time(mirror, strutil) {
         this.mirror = mirror;
+        this.strutil = strutil;
     }
 
     Time.prototype = {
@@ -20,12 +21,14 @@
                     minutes = '0' + minutes;
                 if (seconds < 10)
                     seconds = '0' + seconds;
+                return this.strutil.toEppaBasic(hours + ':' + minutes + ':' + seconds);
             },
             date: function date() {
                 var date = new Date();
                 var year = date.getFullYear();
                 var month = date.getMonth() + 1;
                 var day = date.getDate();
+                return this.strutil.toEppaBasic(day + '.' + month + '.' + year);
             },
             year: function year() {
                 return (new Date()).getFullYear();
