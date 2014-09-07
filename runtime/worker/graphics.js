@@ -1,15 +1,19 @@
 ﻿define(['require'], function (require) {
     "use strict";
 
-    function Graphics(mirror, strutil) {
+    function Graphics(mirror, strutil, setDelay) {
         this.mirror = mirror;
         this.strutil = strutil;
+        this.setDelay = setDelay;
         this.commandQueue = [];
 
         this.screenWidth = 0;
         this.screenHeight = 0;
         this.windowWidth = 0
         this.windowHeight = 0;
+
+        this.lastDrawScreen = 0;
+        this.limitterDelay = 1000 / 60;
 
         this.mirror.on('setresolution', this.onSetResolution.bind(this));
         this.mirror.on('resize', this.onResize.bind(this));
@@ -48,11 +52,20 @@
                 this.addCommand('dot', x, y);
             },
             drawScreen: function drawScreen() {
-                // Send the commands
-                this.mirror.send('drawscreen', this.commandQueue);
-                // Clear the queue
-                delete this.commandQueue;
-                this.commandQueue = [];
+                var now = new Date().getTime();
+                var delay = Math.max(this.lastDrawScreen + this.limitterDelay - now, 0);
+                this.lastDrawScreen = now + delay;
+                // Tell the program to wait before continuing running
+                this.setDelay(delay);
+
+                // Send the commands with a delay
+                setTimeout(function () {
+                    this.mirror.send('drawscreen', this.commandQueue);
+                    // Clear the queue
+                    delete this.commandQueue;
+                    this.commandQueue = [];
+                }.bind(this), delay);
+
                 // And break the execution
                 this.program.breakExec();
             },

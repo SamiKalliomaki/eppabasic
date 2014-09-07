@@ -243,9 +243,6 @@ define(['require', './framework/compileerror', './compiler/context', './compiler
             breakEntry.push('CP=(CP-4)|0;');
             breakEntry.push('return 0;');
 
-            var waitEntry = this.createEntry(this.generateFunctionName(), undefined, undefined, this.types.Integer);
-            waitEntry.push('if(__waitcond()|0)CP=(CP-4)|0;');
-            waitEntry.push('return 0;');
             // Create another special function which is used when execution is finished
             var endEntry = this.createEntry(this.generateFunctionName(), undefined, undefined, this.types.Integer);
             endEntry.push('return 0;');
@@ -348,7 +345,6 @@ define(['require', './framework/compileerror', './compiler/context', './compiler
             buf.push('var __imul=stdlib.Math.imul;');
             buf.push('var __pow=stdlib.Math.pow;');
             buf.push('var __panic=env.panic;');
-            buf.push('var __waitcond=env.waitCond;');
             buf.push('var __integerstring=env.integerToString;');
             buf.push('var __doublestring=env.doubleToString;');
             buf.push('var SP=0;');
@@ -367,7 +363,6 @@ define(['require', './framework/compileerror', './compiler/context', './compiler
             var mainEntryList = this.findEntryList([], this.types.Integer);
             buf.push('function __next(){while(' + mainEntryList.name + '[MEMU32[CP>>2]&' + mainEntryList.mask + ']()|0);}');
             buf.push('function __breakExec(){CP=(CP+4)|0;MEMU32[CP>>2]=' + breakEntry.index + ';}');
-            buf.push('function __waitExec(){CP=(CP+4)|0;MEMU32[CP>>2]=' + waitEntry.index + ';}');
             buf.push('function __int(a){a=a|0;return a|0;}');
             buf.push('function __sp(){return SP|0;}');
             buf.push('function __cp(){return CP|0;}');
@@ -381,7 +376,7 @@ define(['require', './framework/compileerror', './compiler/context', './compiler
             // Compile f-tables in the end
             buf.push(this.generateFTable());
             // Return functions
-            buf.push('return {popCallStack: __popCallStack,init:__init,next:__next,breakExec:__breakExec,waitExec:__waitExec,sp:__sp,cp:__cp,memreserve:__memreserve};');
+            buf.push('return {popCallStack: __popCallStack,init:__init,next:__next,breakExec:__breakExec,sp:__sp,cp:__cp,memreserve:__memreserve};');
 
             return buf.join('\n');
         },

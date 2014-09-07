@@ -1,9 +1,10 @@
 ﻿define(['require'], function (require) {
     "use strict";
 
-    function Time(mirror, strutil) {
+    function Time(mirror, strutil, setDelay) {
         this.mirror = mirror;
         this.strutil = strutil;
+        this.setDelay = setDelay;
     }
 
     Time.prototype = {
@@ -58,19 +59,9 @@
                 return (new Date()).getTime() / 1000;
             },
             wait: function wait(time) {
-                var endTime = (new Date()).getTime() + time * 1000;
-                this.setWaitCond(function waitCond() {
-                    return (new Date()).getTime() >= endTime;
-                })
-                this.program.waitExec();
+                this.setDelay(time * 1000);
+                this.program.breakExec();
             },
-            waitCond: function waitCond() {
-                return this.waitCond();
-            }
-        },
-
-        setWaitCond: function setWaitCond(cond) {
-            this.waitCond = cond;
         },
 
         extendEnv: function extendEnv(env) {

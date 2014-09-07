@@ -16,6 +16,8 @@
 
         this.mirror.on('init', this.init.bind(this));
         this.mirror.on('start', this.start.bind(this));
+
+        this.nextCall = 0;
     }
 
     Worker.prototype = {
@@ -32,10 +34,17 @@
             var lastStep = 0;
             var f = step.bind(this);
             function step() {
-                this.program.next();
-                setTimeout(f, 0);
+                var now = new Date().getTime();
+                if (now >= this.nextCall)
+                    this.program.next();
+
+                setTimeout(f, Math.max(this.nextCall - now - 1, 0));
             }
             setTimeout(f, 0);
+        },
+
+        setDelay: function setDelay(time) {
+            this.nextCall = (new Date().getTime()) + time;
         },
 
         createExternal: function createExternal() {
@@ -55,7 +64,7 @@
             var heap = new ArrayBuffer(env.heapSize);
             var strutil = new StringUtils(heap);
 
-            var graphics = new Graphics(this.mirror, strutil);
+            var graphics = new Graphics(this.mirror, strutil, this.setDelay.bind(this));
             graphics.extendEnv(env);
 
             var math = new (require('./math'))(this.mirror);
@@ -64,7 +73,7 @@
             var input = new Input(this.mirror);
             input.extendEnv(env);
 
-            var time = new Time(this.mirror, strutil);
+            var time = new Time(this.mirror, strutil, this.setDelay.bind(this));
             time.extendEnv(env);
 
             var string = new (require('./string'))(this.mirror, strutil);
