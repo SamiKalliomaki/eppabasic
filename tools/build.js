@@ -169,7 +169,6 @@ buildAceExtensions();
 buildAceThemes();
 
 function buildRuntime() {
-    // The main page
     var extra = {
         name: 'runtime/app',
         out: 'build/runtime/app.js',
@@ -182,8 +181,8 @@ function buildRuntime() {
     }, function (err) {
         console.error(err);
     });
-
-    // The worker
+}
+function buildRuntimeWorker() {
     var extra = {
         include: [
             'libs/requirejs',
@@ -194,14 +193,16 @@ function buildRuntime() {
     var config = combine(baseConfig, extra);
 
     requirejs.optimize(config, function (res) {
-        //console.log(res);
+        addWatch('runtime-worker', res.split('\n').slice(3), buildRuntimeWorker);
         console.log('Succesfully compiled the runtime worker');
     }, function (err) {
         console.error(err);
     });
+
 }
 
 buildRuntime();
+buildRuntimeWorker();
 
 function listJSFiles(path, filter) {
     if (!filter)
