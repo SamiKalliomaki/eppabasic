@@ -33,19 +33,9 @@
         },
         onKeyDown: function onKeyDown(e) {
             this.worker.send('keydown', e.keyCode);
-            if (e.keyCode === 122) {
-                if (document.fullscreenElement)
-                    document.exitFullscreen();
-                else
-                    document.body.requestFullscreen();
-            }
-            e.preventDefault();
-            return false;
         },
         onKeyUp: function onKeyUp(e) {
             this.worker.send('keyup', e.keyCode);
-            e.preventDefault();
-            return false;
         },
 
         onMouse: function onMouse(e) {
@@ -86,7 +76,6 @@
 
             this.worker.send('mouse', mouseX, mouseY, this.mouseButtons, this.mouseHit);
 
-            e.preventDefault();
             return false;
         }
     };

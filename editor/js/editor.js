@@ -56,9 +56,6 @@ define(['compiler/toolchain', 'ace/ace', 'i18n'], function (Toolchain, ace, i18n
             } else {
                 var compiled = this.toolchain.compile(cu);
                 this.run(compiled);
-                // Open the code to a new window/tab
-                var b = new Blob([compiled], { type: 'text/plain' });
-                window.open(URL.createObjectURL(b));
             }
         },
         run: function run(compiled) {

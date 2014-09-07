@@ -7,7 +7,10 @@
         this.worker = worker;
         this.canvasHolder = canvasHolder;
 
-        this.messageBox = this.canvasHolder.children('.messagebox');
+        this.messageBox = $('.messageBox', this.canvasHolder);
+        this.messageBoxText = $('.text', this.messageBox);
+        this.messageBoxInput = $('input[type="text"]', this.messageBox);
+        this.messageBoxButton = $('input[type="submit"]', this.messageBox);
 
         this.worker.on('askNumber', this.onAskNumber.bind(this));
         this.worker.on('askText', this.onAskText.bind(this));
@@ -15,16 +18,32 @@
     }
 
     Messages.prototype = {
+        askValue: function(msg, callback) {
+            this.messageBoxText.text(msg);
+            this.messageBoxInput.show();
+            this.messageBoxInput.val('');
+            this.messageBox.show();
+            this.messageBoxButton.one('click', function() {
+                callback(this.messageBoxInput.val());
+                this.messageBox.hide();
+            }.bind(this));
+        },
+
         onAskNumber: function onAskNumber(msg) {
-            this.worker.send('response', 10 /* Response */);
+            this.askValue(msg, function(val) {
+                this.worker.send('response', parseFloat(val));
+            }.bind(this));
         },
         onAskText: function onAskText(msg) {
-            this.worker.send('response', "Hello World!" /* Response */);
+            this.askValue(msg, function(val) {
+                this.worker.send('response', val);
+            }.bind(this));
         },
         onMessage: function onMessage(msg) {
-            this.messageBox.text(msg);
+            this.messageBoxText.text(msg);
+            this.messageBoxInput.hide();
             this.messageBox.show();
-            this.messageBox.one('click', function click() {
+            this.messageBoxButton.one('click', function() {
                 this.worker.send('response');
                 this.messageBox.hide();
             }.bind(this));
