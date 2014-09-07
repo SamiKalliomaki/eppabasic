@@ -410,7 +410,7 @@ define(['require', './framework/compileerror', './compiler/context', './compiler
             block.nodes.forEach(function each(node) {
                 switch (node.nodeType) {
                     case 'Comment':
-                        context.push('/*' + node.val + '*/')
+                        context.push('/*' + node.val.replace('*/', '*//*') + '*/')
                         break;
                     case 'For':
                         this.compileFor(node, context);
