@@ -50,7 +50,6 @@ function addWatch(handle, file, callback) {
             if (e !== 'change')
                 return;
             var callbacks = watchedFiles[file];
-            watchedFiles[file] = [];
             callbacks.forEach(function(callback) {
                 callback.callback();
             });
