@@ -11,6 +11,7 @@
         this.screenHeight = 0;
         this.windowWidth = 0
         this.windowHeight = 0;
+        this.windowTitle = 'Eppabasic Runtime';
 
         this.lastDrawScreen = 0;
         this.limitterDelay = 1000 / 60;
@@ -104,6 +105,9 @@
             getWindowHeight: function getWindowHeight() {
                 return this.windowHeight;
             },
+            getWindowTitle: function getWindowTitle() {
+                return this.strutil.toEppaBasic(this.windowTitle);
+            },
             getWindowWidth: function getWindowWidth() {
                 return this.windowWidth;
             },
@@ -155,6 +159,11 @@
                 this.windowWidth = width;
                 this.windowHeight = height;
                 this.addCommand('setWindowSize', width, height);
+            },
+            setWindowTitle: function setWindowTitle(str) {
+                str = this.strutil.fromEppaBasic(str);
+                this.windowTitle = str;
+                this.addCommand('setWindowTitle', str);
             },
             setWindowWidth: function setWindowWidth(width) {
                 this.windowWidth = width;

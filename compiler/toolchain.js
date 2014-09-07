@@ -107,8 +107,8 @@ define(['./types', './operators', './compiler', './parser', './typechecker', './
             //compiler.defineJsFunction('env.askNumber', true, 'InputNumber', [this.types.String], this.types.Double);
             //compiler.defineJsFunction('env.askText', true, 'InputText', [this.types.String], this.types.String);
             //compiler.defineJsFunction('env.inputCancel', true, 'InputCancel', [], this.types.Boolean);
-            //compiler.defineJsFunction('env.setWindowTitle', true, 'WindowTitle', [this.types.String]);
-            //compiler.defineJsFunction('env.getWindowTitle', true, 'WindowTitle', [], this.types.String);
+            compiler.defineJsFunction('env.setWindowTitle', true, 'WindowTitle', [this.types.String]);
+            compiler.defineJsFunction('env.getWindowTitle', true, 'WindowTitle', [], this.types.String);
 
             //// Screen size
             compiler.defineJsFunction('env.getWindowWidth', true, 'WindowWidth', [], this.types.Integer);

@@ -10,7 +10,6 @@
     }
 
     function drawText(x, y, str, align) {
-        console.log(str);
         if (typeof align === 'undefined')
             align = this.textAlign;
 
@@ -45,6 +44,10 @@
                 this.printOriginX = x;
                 this.printOriginY = y;
                 this.printOffsetY = 0;
+            },
+
+            setWindowTitle: function setWindowTitle(title) {
+                document.title = title;
             },
 
             textAlign: function textAlign(align) {
