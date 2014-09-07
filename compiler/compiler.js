@@ -363,8 +363,8 @@ define(['require', './framework/compileerror', './compiler/context', './compiler
             var mainEntryList = this.findEntryList([], this.types.Integer);
             buf.push('function __next(){while(' + mainEntryList.name + '[MEMU32[CP>>2]&' + mainEntryList.mask + ']()|0);}');
             buf.push('function __breakExec(){CP=(CP+4)|0;MEMU32[CP>>2]=' + breakEntry.index + ';}');
-            buf.push('function __pushStackInt(val){val=val|0;MEMS32[SP>>2]=val|0;SP=(SP+4)|0;}');
-            buf.push('function __pushStackDbl(val){val=+val;MEMF64[SP>>3]=+val;SP=(SP+8)|0;}');
+            buf.push('function __setStackInt(val){val=val|0;MEMS32[SP>>2]=val|0;}');
+            buf.push('function __setStackDbl(val){val=+val;MEMF64[SP>>3]=+val;}');
             buf.push('function __int(a){a=a|0;return a|0;}');
             buf.push('function __sp(){return SP|0;}');
             buf.push('function __cp(){return CP|0;}');
@@ -378,7 +378,7 @@ define(['require', './framework/compileerror', './compiler/context', './compiler
             // Compile f-tables in the end
             buf.push(this.generateFTable());
             // Return functions
-            buf.push('return {popCallStack: __popCallStack,pushStackInt:__pushStackInt,pushStackDbl:__pushStackDbl,init:__init,next:__next,breakExec:__breakExec,sp:__sp,cp:__cp,memreserve:__memreserve};');
+            buf.push('return {popCallStack: __popCallStack,setStackInt:__setStackInt,setStackDbl:__setStackDbl,init:__init,next:__next,breakExec:__breakExec,sp:__sp,cp:__cp,memreserve:__memreserve};');
 
             return buf.join('\n');
         },

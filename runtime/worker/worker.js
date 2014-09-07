@@ -36,12 +36,16 @@
             var lastStep = 0;
             var f = step.bind(this);
             function step() {
-                if (this.waitingResponse)
+                if (this.waitingResponse) {
                     setTimeout(f, 1000 / 60);
+                    return;
+                }
 
                 var now = new Date().getTime();
-                if (now >= this.nextCall)
+                if (now >= this.nextCall) {
+                    console.log(this.waitingResponse);
                     this.program.next();
+                }
 
                 setTimeout(f, Math.max(this.nextCall - now - 1, 0));
             }

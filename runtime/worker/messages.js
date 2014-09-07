@@ -19,7 +19,8 @@
                 this.program.breakExec();
                 this.waitResponse(function response(res) {
                     // Push the response to the stack
-                    this.program.pushStackDbl(+res);
+                    console.log(res);
+                    this.program.setStackDbl(+res);
                 }.bind(this));
             },
             askText: function askText(str) {
@@ -28,7 +29,7 @@
                 this.program.breakExec();
                 this.waitResponse(function response(res) {
                     // Push the response to the stack
-                    this.program.pushStackInt(this.strutil.toEppaBasic(res));
+                    this.program.setStackInt(this.strutil.toEppaBasic(res));
                 }.bind(this));
             },
 
