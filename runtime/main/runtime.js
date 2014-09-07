@@ -1,6 +1,7 @@
-﻿define(['require', './workerclient', './graphics', './input', './messages'], function (require) {
+﻿define(['require', 'jquery', './workerclient', './graphics', './input', './messages'], function (require) {
     "use strict";
 
+    var $ = require('jquery');
     var WorkerClient = require('./workerclient');
     var Graphics = require('./graphics');
     var Input = require('./input');
@@ -15,8 +16,8 @@
 
     Runtime.prototype = {
         close: function close() {
-            this.worker.send('')
-            window.close();
+            if (window && window.close)
+                window.close();
         },
         init: function init(code) {
             this.worker.send('init', code);
@@ -28,9 +29,11 @@
             this.worker.send('start');
 
             // And set the screen size
-            this.graphics.setSize(0, 0);
-            this.graphics.setSize(640, 480);
-            this.graphics.setResolution(640, 480);
+            $(function onReady() {
+                this.graphics.setSize(0, 0);            // For firefox so that it sets the size exactly
+                this.graphics.setSize(640, 480);
+                this.graphics.setResolution(640, 480);
+            }.bind(this));
         },
 
 
