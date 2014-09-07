@@ -24,14 +24,20 @@
             this.messageBoxInput.val('');
             this.messageBox.show();
             this.messageBoxButton.one('click', function() {
-                callback(this.messageBoxInput.val());
                 this.messageBox.hide();
+                callback(this.messageBoxInput.val());
             }.bind(this));
         },
 
         onAskNumber: function onAskNumber(msg) {
             this.askValue(msg, function(val) {
-                this.worker.send('response', parseFloat(val));
+                var output = parseFloat(val);
+
+                if(!isNaN(output)) {
+                    this.worker.send('response', output);
+                } else {
+                    this.onAskNumber(msg);
+                }
             }.bind(this));
         },
         onAskText: function onAskText(msg) {
