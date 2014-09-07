@@ -208,6 +208,7 @@ define(['./types', './operators', './compiler', './parser', './typechecker', './
 
             //// Output
             compiler.defineJsFunction('env.print', true, 'Print', [this.types.String]);
+            compiler.defineJsFunction('env.printLocation', true, 'PrintLocation', [this.types.Integer, this.types.Integer]);
 
             //// Casting
             compiler.defineJsFunction('__int', false, 'Int', [this.types.Integer], this.types.Integer);

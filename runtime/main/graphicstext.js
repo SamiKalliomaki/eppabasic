@@ -27,16 +27,24 @@
 
     GraphicsText.prototype = {
         commands: {
+            clear: function clear() {
+                this.printOffsetY = 0;
+            },
+
             drawText: drawText,
 
             print: function print(str) {
                 drawText.apply(this, [
                     this.printOriginX,
                     this.printOriginY + this.printOffsetY,
-                    str,
-                    1                   // Align left
+                    str
                 ]);
                 this.printOffsetY += this.textSize;
+            },
+            printLocation: function printLocation(x, y) {
+                this.printOriginX = x;
+                this.printOriginY = y;
+                this.printOffsetY = 0;
             },
 
             textAlign: function textAlign(align) {

@@ -126,6 +126,9 @@
                 str = this.strutil.fromEppaBasic(str);
                 this.addCommand('print', str);
             },
+            printLocation: function printLocation(x, y) {
+                this.addCommand('printLocation', x, y);
+            },
 
             rect: function rect(x, y, w, h) {
                 this.addCommand('rect', x, y, w, h);
