@@ -18,7 +18,6 @@ class SaveFileForm(Form):
 
         f = File.objects.get_or_create(directory=cd['directory'], name=cd['filename'])[0]
         f.content = cd['content']
-        print(f.content)
         f.save()
 
         return f
