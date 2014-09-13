@@ -1,5 +1,5 @@
 
-define(['./types', './operators', './compiler', './parser', './typechecker', './atomicchecker'], function (TypeContainer, OperatorContainer, Compiler, Parser, Typechecker, Atomicchecker) {
+define(['require', './types', './operators', './compiler', './parser', './typechecker', './atomicchecker', './constants'], function (require, TypeContainer, OperatorContainer, Compiler, Parser, Typechecker, Atomicchecker) {
     function CompilationUnit(code) {
         this.code = code;
         this.errors = [];
@@ -15,7 +15,7 @@ define(['./types', './operators', './compiler', './parser', './typechecker', './
     }
 
     Toolchain.prototype = {
-        getCompilationUnit: function(code) {
+        getCompilationUnit: function (code) {
             return new CompilationUnit(code);
         },
 
@@ -24,7 +24,7 @@ define(['./types', './operators', './compiler', './parser', './typechecker', './
 
             try {
                 compilationUnit.ast = parser.parse();
-            } catch(e) {
+            } catch (e) {
                 compilationUnit.errors = parser.errors;
                 throw e;
             }
@@ -40,10 +40,10 @@ define(['./types', './operators', './compiler', './parser', './typechecker', './
             var compiler = compilationUnit.compiler;
 
             if (compilationUnit.errors.length === 0) {
-                var typechecker = new Typechecker(ast, compiler.functions, this.operators, this.types);
+                var typechecker = new Typechecker(ast, compiler.functions, require('./constants')(this.types), this.operators, this.types);
                 try {
                     typechecker.check();
-                } catch(e) {
+                } catch (e) {
                     Array.prototype.push.apply(compilationUnit.errors, typechecker.errors);
                     throw e;
                 }

@@ -1,7 +1,7 @@
 ﻿/// <reference path="framework.js" />
 /// <reference path="types.js" />
 
-define(['./framework/compileerror'], function (CompileError) {
+define(['./framework/compileerror', './compiler/constantreference'], function (CompileError, CompilerConstantReference) {
     Nodes = {};
 
     /*
@@ -103,6 +103,25 @@ define(['./framework/compileerror'], function (CompileError) {
                 return this.parent.getVariable(name);
         },
         nodeType: 'Block'
+    };
+
+    Nodes.ParentNode = function ParentNode(constants) {
+        this.constants = [];
+        constants.forEach(function (constant) {
+            var def = new Nodes.VariableDefinition(constant.name, constant.type);
+            def.location = new CompilerConstantReference(constant.type);
+            def.location.setValue(constant.value);
+            def.constant = true;
+            this.constants.push(def);
+        }.bind(this));
+    };
+    Nodes.ParentNode.prototype = {
+        getVariable: function getVariable(name) {
+            return this.constants.find(function find(constant) {
+                return constant.name.toLowerCase() === name.toLowerCase();
+            });
+        },
+        nodeType:'ParentNode'
     };
 
     /*
