@@ -2,8 +2,13 @@
     "use strict";
 
     function Graphics2D() {
-        this.clearColor = '#000';               // The background is black
-        this.ctx.strokeStyle = '#fff';          // And the line color is white
+        function restart() {
+            this.clearColor = '#000';               // The background is black
+            this.ctx.strokeStyle = '#fff';          // And the line color is white
+            this.graphics2d.commands.clear.apply(this);
+        }
+        restart.apply(this);
+        this.worker.on('restart', restart.bind(this));
     }
 
     Graphics2D.prototype = {

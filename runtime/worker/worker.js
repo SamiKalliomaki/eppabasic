@@ -1,4 +1,4 @@
-﻿define(['require', './graphics', './math', '../polyfill', './input', './time', './string', './messages', '../utils/string'], function (require) {
+﻿define(['require', './graphics', './math', '../polyfill', './input', './time', './string', './messages', '../utils/string','./flowcontrol'], function (require) {
     "use strict";
 
     // Settings
@@ -11,6 +11,7 @@
     var Time = require('./time');
     var StringUtils = require('../utils/string');
     var Messages = require('./messages');
+    var FlowControl = require('./flowcontrol');
 
     function Worker(mirror) {
         this.mirror = mirror;
@@ -24,9 +25,13 @@
 
     Worker.prototype = {
         init: function init(code) {
+            if (!code)
+                code = this.code;
+            if (!code)
+                throw new Error('No code specified for the worker');
+            this.code = code;
             var Program = new Function('stdlib', 'env', 'heap', code);
             var external = this.createExternal();
-            //console.log(code);
             this.program = Program(external.stdlib, external.env, external.heap);
             external.after();
             this.program.init();
@@ -99,6 +104,9 @@
 
             var messages = new Messages(this.mirror, strutil, this.waitResponse.bind(this));
             messages.extendEnv(env);
+
+            var flowcontrol = new FlowControl(this.mirror, this.init.bind(this));
+            flowcontrol.extendEnv(env);
 
             function after() {
                 strutil.setProgram(this.program);

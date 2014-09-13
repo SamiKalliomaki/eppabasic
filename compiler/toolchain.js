@@ -203,6 +203,10 @@ define(['require', './types', './operators', './compiler', './parser', './typech
             compiler.defineJsFunction('__int', false, 'Int', [this.types.Integer], this.types.Integer);
             compiler.defineJsFunction('env.integerToString', true, 'Str', [this.types.Integer], this.types.String);
             compiler.defineJsFunction('env.doubleToString', true, 'Str', [this.types.Double], this.types.String);
+
+            //// Code flow functions
+            compiler.defineJsFunction('env.end', true, 'End', []);
+            compiler.defineJsFunction('env.restart', true, 'Restart', []);
         }
     }
 

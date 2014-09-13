@@ -57,6 +57,8 @@
                 // so that it can send back the code.
                 this.editor.runtimeReady();
             }.bind(this));
+
+            this.worker.on('end', this.close.bind(this));
         }
     };
 
