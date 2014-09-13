@@ -180,6 +180,7 @@ define(['jquery', 'i18n', './framework'], function ($, i18n, Framework) {
                         }
                     }
                     populateFileList(me.mainFileList, data['content']);
+                    me.formFilename.autocomplete({ source: data['content']['files'] });
                     if ('shared' in data) {
                         me.shareBox.show();
                         populateFileList(me.sharedFileList, data['shared']);
