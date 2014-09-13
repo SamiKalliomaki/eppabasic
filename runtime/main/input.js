@@ -21,6 +21,12 @@
         $(window).on('resize', this.onResize.bind(this));
         setTimeout(this.onResize.bind(this), 0);                    // Set the scale when the window is ready
 
+        // Prevent context menu
+        document.body.addEventListener('contextmenu', function contextMenu(e) {
+            e.preventDefault();
+            return false;
+        }, false);
+
         // Get focus to the canvas holder
         this.canvasHolder.focus();
     }
