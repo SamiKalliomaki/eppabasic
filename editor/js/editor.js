@@ -25,6 +25,9 @@ define(['compiler/toolchain', 'ace/ace', 'i18n'], function (Toolchain, ace, i18n
             this.ace.setValue(code, -1);
             this.modified = true;
         },
+        setRuntime: function setRuntime(runtime) {
+            this.runtime = runtime;
+        },
         runCode: function runCode() {
             function trySaveToStorage(storage, editor) {
                 if (storage) {
@@ -42,7 +45,7 @@ define(['compiler/toolchain', 'ace/ace', 'i18n'], function (Toolchain, ace, i18n
             try {
                 this.toolchain.parse(cu);
                 this.toolchain.check(cu);
-            } catch(e) {
+            } catch (e) {
                 console.error(e);
             }
 
@@ -51,14 +54,14 @@ define(['compiler/toolchain', 'ace/ace', 'i18n'], function (Toolchain, ace, i18n
                 this.showErrors(cu.errors);
                 this.ace.gotoLine(cu.errors[0].line);
             } else {
-                this.compiled = this.toolchain.compile(cu);
-                this.run();
+                var compiled = this.toolchain.compile(cu);
+                this.run(compiled);
             }
         },
-        run: function run() {
+        run: function run(compiled) {
             this.runtimeReady(function ready() {
-                this.window.ebruntime.init();
-                this.window.ebruntime.start();
+                this.runtime.init(compiled);
+                this.runtime.start();
             });
             this.openRuntime();
         },
@@ -88,11 +91,13 @@ define(['compiler/toolchain', 'ace/ace', 'i18n'], function (Toolchain, ace, i18n
         openRuntime: function openRuntime() {
             // Close opened window
             this.closeRuntime();
-            this.window = window.open('runtime/index.html', 'runtime', 'dependent,resizable', true);
+            window.open('runtime/index.html', 'runtime', 'dependent,resizable', true);
         },
         closeRuntime: function closeRuntime() {
-            if (this.window)
-                this.window.close();
+            if (this.runtime) {
+                this.runtime.close();
+                this.runtime = undefined;
+            }
         },
         runtimeReady: function runtimeReady(func) {
             if (func) {

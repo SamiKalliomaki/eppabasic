@@ -10,16 +10,6 @@
     }
 }
 
-if (!window.requestAnimationFrame) {
-    window.requestAnimationFrame = (function () {
-        return window.webkitRequestAnimationFrame
-            || window.mozRequestAnimationFrame
-            || window.msRequestAnimationFrame
-            || window.oRequestAnimationFrame
-            || function (func) { return setTimeout(func, 1.0 / 60); };
-    })();
-}
-
 /*! http://mths.be/fromcodepoint v0.1.0 by @mathias */
 if (!String.fromCodePoint) {
     (function () {
@@ -48,11 +38,11 @@ if (!String.fromCodePoint) {
             while (++index < length) {
                 var codePoint = Number(arguments[index]);
                 if (
-					!isFinite(codePoint) || // `NaN`, `+Infinity`, or `-Infinity`
-					codePoint < 0 || // not a valid Unicode code point
-					codePoint > 0x10FFFF || // not a valid Unicode code point
-					floor(codePoint) != codePoint // not an integer
-				) {
+                !isFinite(codePoint) || // `NaN`, `+Infinity`, or `-Infinity`
+                codePoint < 0 || // not a valid Unicode code point
+                codePoint > 0x10FFFF || // not a valid Unicode code point
+                floor(codePoint) != codePoint // not an integer
+                ) {
                     throw RangeError('Invalid code point: ' + codePoint);
                 }
                 if (codePoint <= 0xFFFF) { // BMP code point

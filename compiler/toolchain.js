@@ -95,44 +95,37 @@ define(['require', './types', './operators', './compiler', './parser', './typech
             compiler.defineJsFunction('env.drawScreen', true, 'DrawScreen', [], undefined, false);
 
             compiler.defineJsFunction('env.drawText', true, 'DrawText', [this.types.Integer, this.types.Integer, this.types.String]);
-            compiler.defineJsFunction('env.drawTextA', true, 'DrawText', [this.types.Integer, this.types.Integer, this.types.String, this.types.Integer]);
+            compiler.defineJsFunction('env.drawText', true, 'DrawText', [this.types.Integer, this.types.Integer, this.types.String, this.types.Integer]);
             compiler.defineJsFunction('env.textColor', true, 'TextColor', [this.types.Integer, this.types.Integer, this.types.Integer]);
             compiler.defineJsFunction('env.textFont', true, 'TextFont', [this.types.String]);
             compiler.defineJsFunction('env.textSize', true, 'TextSize', [this.types.Integer]);
             compiler.defineJsFunction('env.textAlign', true, 'TextAlign', [this.types.Integer]);
 
-            compiler.defineJsFunction('env.message', true, 'Message', [this.types.String]);
-            compiler.defineJsFunction('env.askNumber', true, 'AskNumber', [this.types.String], this.types.Double);
-            compiler.defineJsFunction('env.askText', true, 'AskText', [this.types.String], this.types.String);
-            compiler.defineJsFunction('env.askNumber', true, 'InputNumber', [this.types.String], this.types.Double);
-            compiler.defineJsFunction('env.askText', true, 'InputText', [this.types.String], this.types.String);
-            compiler.defineJsFunction('env.inputCancel', true, 'InputCancel', [], this.types.Boolean);
+            compiler.defineJsFunction('env.message', true, 'Message', [this.types.String], undefined, false);
+            compiler.defineJsFunction('env.askNumber', true, 'AskNumber', [this.types.String], this.types.Double, false);
+            compiler.defineJsFunction('env.askText', true, 'AskText', [this.types.String], this.types.String, false);
+            compiler.defineJsFunction('env.askNumber', true, 'InputNumber', [this.types.String], this.types.Double, false);
+            compiler.defineJsFunction('env.askText', true, 'InputText', [this.types.String], this.types.String, false);
+            //compiler.defineJsFunction('env.inputCancel', true, 'InputCancel', [], this.types.Boolean);
             compiler.defineJsFunction('env.setWindowTitle', true, 'WindowTitle', [this.types.String]);
             compiler.defineJsFunction('env.getWindowTitle', true, 'WindowTitle', [], this.types.String);
 
             //// Screen size
-            compiler.defineJsFunction('env.getWidth', true, 'Width', [], this.types.Integer);
-            compiler.defineJsFunction('env.getWidth', true, 'WindowWidth', [], this.types.Integer);
-            compiler.defineJsFunction('env.getHeight', true, 'Height', [], this.types.Integer);
-            compiler.defineJsFunction('env.getHeight', true, 'WindowHeight', [], this.types.Integer);
-            compiler.defineJsFunction('env.setWidth', true, 'Width', [this.types.Integer]);
-            compiler.defineJsFunction('env.setWidth', true, 'WindowWidth', [this.types.Integer]);
-            compiler.defineJsFunction('env.setHeight', true, 'Height', [this.types.Integer]);
-            compiler.defineJsFunction('env.setHeight', true, 'WindowHeight', [this.types.Integer]);
-            compiler.defineJsFunction('env.setSize', true, 'WindowSize', [this.types.Integer, this.types.Integer]);
-
-            //compiler.defineJsFunction('env.fullScreen', true, 'FullScreen', []);                  // Reserved for a better day
-
+            compiler.defineJsFunction('env.getWindowWidth', true, 'WindowWidth', [], this.types.Integer);
+            compiler.defineJsFunction('env.setWindowWidth', true, 'WindowWidth', [this.types.Integer]);
+            compiler.defineJsFunction('env.getWindowHeight', true, 'WindowHeight', [], this.types.Integer);
+            compiler.defineJsFunction('env.setWindowHeight', true, 'WindowHeight', [this.types.Integer]);
+            compiler.defineJsFunction('env.setWindowSize', true, 'WindowSize', [this.types.Integer, this.types.Integer]);
+            compiler.defineJsFunction('env.getScreenWidth', true, 'ScreenWidth', [], this.types.Integer);
+            compiler.defineJsFunction('env.setScreenWidth', true, 'ScreenWidth', [this.types.Integer]);
+            compiler.defineJsFunction('env.getScreenHeight', true, 'ScreenHeight', [], this.types.Integer);
+            compiler.defineJsFunction('env.setScreenHeight', true, 'ScreenHeight', [this.types.Integer]);
+            compiler.defineJsFunction('env.setScreenSize', true, 'ScreenSize', [this.types.Integer, this.types.Integer]);
 
             //// Memory functions
             compiler.defineJsFunction('__peek32', false, 'Peek32', [this.types.Integer], this.types.Integer);
             compiler.defineJsFunction('__poke32', false, 'Poke32', [this.types.Integer, this.types.Integer]);
             compiler.defineJsFunction('__memsize', false, 'MemorySize', [], this.types.Integer);
-
-            //compiler.defineJsFunction('TEXT', [Types.Integer, Types.Integer, Types.String], 'text');
-
-            ////compiler.defineJsFunction('SHOWCONSOLE', [], 'showConsole');
-            ////compiler.defineJsFunction('HIDECONSOLE', [], 'hideConsole');
 
             //// Mathematical functions
             compiler.defineJsFunction('stdlib.Math.sin', true, 'Sin', [this.types.Double], this.types.Double);
@@ -157,30 +150,25 @@ define(['require', './types', './operators', './compiler', './parser', './typech
             compiler.defineJsFunction('env.round', true, 'Round', [this.types.Double], this.types.Double);
             compiler.defineJsFunction('env.round2', true, 'Round', [this.types.Double, this.types.Integer], this.types.Double);
 
-            //compiler.defineJsFunction('SQRT', [Types.Double], 'sqrt', Types.Double);
-
-            //compiler.defineJsFunction('RANDOM', [], 'random', Types.Double);
-            //compiler.defineJsFunction('RANDINT', [Types.Integer, Types.Integer], 'randint', Types.Integer);
-
-
             //// String functions
-            compiler.defineJsFunction('env.asc', true, 'Asc', [this.types.String], this.types.Integer);
+            compiler.defineJsFunction('__strasc', false, 'Asc', [this.types.String], this.types.Integer);
             compiler.defineJsFunction('env.chr', true, 'Chr', [this.types.Integer], this.types.String);
             compiler.defineJsFunction('env.instr', true, 'InStr', [this.types.String, this.types.String], this.types.Integer);
             compiler.defineJsFunction('env.instr2', true, 'InStr', [this.types.Integer, this.types.String, this.types.String], this.types.Integer);
             compiler.defineJsFunction('env.lcase', true, 'LCase', [this.types.String], this.types.String);
-            compiler.defineJsFunction('env.len', true, 'Len', [this.types.String], this.types.Integer);
             compiler.defineJsFunction('env.left', true, 'Left', [this.types.String, this.types.Integer], this.types.String);
+            compiler.defineJsFunction('env.len', true, 'Len', [this.types.String], this.types.Integer);
             compiler.defineJsFunction('env.match', true, 'Match', [this.types.String, this.types.String], this.types.Boolean);
             compiler.defineJsFunction('env.mid', true, 'Mid', [this.types.String, this.types.Integer], this.types.String);
-            compiler.defineJsFunction('env.mid2', true, 'Mid', [this.types.String, this.types.Integer, this.types.Integer], this.types.String);
+            compiler.defineJsFunction('env.mid', true, 'Mid', [this.types.String, this.types.Integer, this.types.Integer], this.types.String);
             compiler.defineJsFunction('env.repeat', true, 'Repeat', [this.types.String, this.types.Integer], this.types.String);
             compiler.defineJsFunction('env.replace', true, 'Replace', [this.types.String, this.types.String, this.types.String], this.types.String);
-            compiler.defineJsFunction('env.right', true, 'Right', [this.types.String, this.types.Integer], this.types.String);
             compiler.defineJsFunction('env.reverse', true, 'Reverse', [this.types.String], this.types.String);
+            compiler.defineJsFunction('env.right', true, 'Right', [this.types.String, this.types.Integer], this.types.String);
             compiler.defineJsFunction('env.rot13', true, 'Rot13', [this.types.String], this.types.String);
             compiler.defineJsFunction('env.trim', true, 'Trim', [this.types.String], this.types.String);
             compiler.defineJsFunction('env.ucase', true, 'UCase', [this.types.String], this.types.String);
+            compiler.defineJsFunction('env.val', true, 'Val', [this.types.String], this.types.Double);
 
             //// Time functions
             compiler.defineJsFunction('env.timer', true, 'Timer', [], this.types.Double);
@@ -193,10 +181,9 @@ define(['require', './types', './operators', './compiler', './parser', './typech
             compiler.defineJsFunction('env.hour', true, 'Hour', [], this.types.Integer);
             compiler.defineJsFunction('env.minute', true, 'Minute', [], this.types.Integer);
             compiler.defineJsFunction('env.second', true, 'Second', [], this.types.Integer);
+            compiler.defineJsFunction('env.millisecond', true, 'MilliSecond', [], this.types.Integer);
             compiler.defineJsFunction('env.time', true, 'Time', [], this.types.String);
             compiler.defineJsFunction('env.date', true, 'Date', [], this.types.String);
-            //compiler.defineJsFunction('env.milliseconds', true, 'MilliSeconds', [], this.types.Integer);
-
 
             //// Input
             compiler.defineJsFunction('env.keyDown', true, 'KeyDown', [this.types.Integer], this.types.Boolean);
@@ -209,16 +196,11 @@ define(['require', './types', './operators', './compiler', './parser', './typech
             compiler.defineJsFunction('env.mouseHit', true, 'MouseHit', [this.types.Integer], this.types.Boolean);
 
             //// Output
-            //compiler.defineJsFunction('env.printInt', true, 'Print', [this.types.Integer]);
-            //compiler.defineJsFunction('env.printDbl', true, 'Print', [this.types.Double]);
-            compiler.defineJsFunction('env.printStr', true, 'Print', [this.types.String]);
-            //compiler.defineJsFunction('PRINT', [Types.String], 'print');
-            //compiler.defineJsFunction('PRINT', [Types.Double], 'printDbl');
-            //compiler.defineJsFunction('PRINT', [Types.Integer], 'printInt');
+            compiler.defineJsFunction('env.print', true, 'Print', [this.types.String]);
+            compiler.defineJsFunction('env.printLocation', true, 'PrintLocation', [this.types.Integer, this.types.Integer]);
 
             //// Casting
             compiler.defineJsFunction('__int', false, 'Int', [this.types.Integer], this.types.Integer);
-            compiler.defineJsFunction('env.val', true, 'Val', [this.types.String], this.types.Double);
             compiler.defineJsFunction('env.integerToString', true, 'Str', [this.types.Integer], this.types.String);
             compiler.defineJsFunction('env.doubleToString', true, 'Str', [this.types.Double], this.types.String);
         }

@@ -146,7 +146,7 @@ define(['./framework/compileerror', 'xregexp'], function (CompileError, XRegExp)
          * Parses a comment token from the input
          */
         commentToken: function commentToken() {
-            return this.scan(/^'[^\n]*/, 'comment');
+            return this.scan(/^'([^\n]*)/, 'comment');
         },
 
         /*
