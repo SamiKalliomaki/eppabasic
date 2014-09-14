@@ -11,6 +11,7 @@ define(function (require, exports, module) {
     var Lexer = require('compiler/lexer');
     var Toolchain = require('compiler/toolchain');
     var Compiler = require('compiler/compiler');
+    var VariableScopeList = require('compiler/variablescopelist');
     var i18n = require('i18n');
 
     function CustomTokenizer() {
@@ -242,6 +243,10 @@ define(function (require, exports, module) {
 
             worker.on('parsed', function (res) {
                 var errors = res.data[0];
+                var variableScopes = res.data[1] && new VariableScopeList(res.data[1]);
+
+                if (variableScopes)
+                    this.variableScopes = variableScopes;
 
                 session.clearAnnotations();
                 if (errors.length !== 0) {

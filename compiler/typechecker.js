@@ -2,7 +2,7 @@
 /// <reference path="types.js" />
 /// <reference path="types.js" />
 
-define(['./framework/compileerror', './nodes'], function (CompileError,Nodes) {
+define(['./framework/compileerror', './nodes'], function (CompileError, Nodes) {
     function Typechecker(ast, functions, constants, operators, types) {
         /// <param name='ast' type='Nodes.Block' />
         /// <param name='functions' type='Array' />
@@ -142,14 +142,6 @@ define(['./framework/compileerror', './nodes'], function (CompileError,Nodes) {
 
                 if (loop.step.type && !loop.step.type.canCastTo(loop.variable.type))
                     this.errors.push(new CompileError(loop.line, 'errors.for-iterator-step-type'));
-            }
-
-            // Adds a custom get variable for loop iterator
-            loop.getVariable = function getVariable(name) {
-                if (name.toLowerCase() === loop.variable.name.toLowerCase())
-                    return loop.variable;
-                if (parent)
-                    return parent.getVariable(name);
             }
 
             this.visit(loop.block, loop);

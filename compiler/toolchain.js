@@ -1,5 +1,5 @@
 
-define(['require', './types', './operators', './compiler', './parser', './typechecker', './atomicchecker', './constants'], function (require, TypeContainer, OperatorContainer, Compiler, Parser, Typechecker, Atomicchecker) {
+define(['require', './types', './operators', './compiler', './parser', './typechecker', './atomicchecker', './variablescopelist', './constants'], function (require, TypeContainer, OperatorContainer, Compiler, Parser, Typechecker, Atomicchecker, VariableScopeList) {
     function CompilationUnit(code) {
         this.code = code;
         this.errors = [];
@@ -56,6 +56,11 @@ define(['require', './types', './operators', './compiler', './parser', './typech
 
         compile: function (compilationUnit) {
             return compilationUnit.compiler.compile();
+        },
+
+        variableScopes: function variableScopes(compilationUnit) {
+            var ast = compilationUnit.ast;
+            return new VariableScopeList(ast);
         },
 
         getParser: function (code) {

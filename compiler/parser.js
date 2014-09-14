@@ -94,7 +94,7 @@ define(['./framework/compileerror', './nodes', './lexer'], function (CompileErro
          * Parses the whole input
          */
         parse: function parse() {
-            var block = new Nodes.Block(0);
+            var block = new Nodes.Block(0, Number.MAX_VALUE);
             while (this.peek().type !== 'eos') {
                 var next = this.peek();
                 if (next.type === 'newline') {
@@ -228,6 +228,7 @@ define(['./framework/compileerror', './nodes', './lexer'], function (CompileErro
                     case 'endfunction':
                     case 'endsub':
                     case 'loop':
+                        block.endLine = this.peek().line;
                         return block;
                 }
                 block.nodes.push(this.parseStatement());
@@ -248,6 +249,7 @@ define(['./framework/compileerror', './nodes', './lexer'], function (CompileErro
                 }
             }
 
+            block.endLine = this.peek().line;
             return block;
         },
 
@@ -286,11 +288,11 @@ define(['./framework/compileerror', './nodes', './lexer'], function (CompileErro
             var block = this.parseBlock();
 
             try {
-                var nextLine = this.expect('next').line;
+                var endLine = this.expect('next').line;
                 var variableNameToken = this.expect('identifier');
                 variableNameToken.identifierType = 'variable';
                 if (variable && variable.name !== variableNameToken.val)
-                    throw new CompileError(nextLine, 'Next statement must have same variable as the original for statement');
+                    throw new CompileError(endLine, 'Next statement must have same variable as the original for statement');
             } catch (e) {
                 if (e instanceof CompileError) {
                     this.errors.push(e);
@@ -299,7 +301,7 @@ define(['./framework/compileerror', './nodes', './lexer'], function (CompileErro
                 }
             }
 
-            return new Nodes.For(variable, block, start, stop, step, line);
+            return new Nodes.For(variable, block, start, stop, step, line, nextLendLineine);
         },
         /*
          * Parses an if statement
@@ -322,7 +324,7 @@ define(['./framework/compileerror', './nodes', './lexer'], function (CompileErro
             if (this.peek().type !== 'newline' && this.peek().type !== 'eos' && this.peek().type !== 'comment') {
                 // An oneline if
                 var statement = this.parseStatement();
-                return new Nodes.If(expr, new Nodes.Block([statement], statement.line), undefined, expr && expr.line);
+                return new Nodes.If(expr, new Nodes.Block([statement], statement.line, statement.line), undefined, expr && expr.line, expr && expr.line);
             }
 
             var trueStatement = this.parseBlock();

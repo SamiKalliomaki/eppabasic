@@ -66,5 +66,11 @@
         "lexer-unexpected-text": "Odottamaton teksti: '__text__'",
         "type-undefined": "Määrittelemätön tyyppi '__type__'",
         "constant-set": "Vakiolle '__name__' ei voi asettaa arvoa"
+    },
+    "autocomplete": {
+        "type": {
+            "function": "Funktio",
+            "variable": "Muuttuja"
+        }
     }
 }

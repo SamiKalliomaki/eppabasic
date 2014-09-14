@@ -66,5 +66,11 @@
         "lexer-unexpected-text": "Unexpected text: '__text__'",
         "type-undefined": "Undefined type '__type__'",
         "constant-set": "Constant '__name__' value can't be set"
+    },
+    "autocomplete": {
+        "type": {
+            "function": "Function",
+            "variable": "Variable"
+        }
     }
 }

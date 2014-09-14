@@ -7,15 +7,27 @@ define(['./framework/compileerror', './compiler/constantreference'], function (C
     /*
      * Creates a new ast for node
      */
-    Nodes.For = function For(variable, block, start, stop, step, line) {
+    Nodes.For = function For(variable, block, start, stop, step, line, endLine) {
         this.variable = variable;
         this.block = block;
         this.start = start;
         this.stop = stop;
         this.step = step;
         this.line = line;
+        this.endLine = endLine;
     };
     Nodes.For.prototype = {
+        getVariable: function getVariable(name) {
+            if (name.toLowerCase() === loop.variable.name.toLowerCase())
+                return this.variable;
+            if (parent)
+                return parent.getVariable(name);
+        },
+        getVariables: function getVariables() {
+            if (this.parent)
+                return [this.variable].concat(this.parent.getVariables());
+            return [this.variable];
+        },
         nodeType: 'For'
     };
 
@@ -70,16 +82,18 @@ define(['./framework/compileerror', './compiler/constantreference'], function (C
     /*
      * Creates a new ast block node
      */
-    Nodes.Block = function Block(nodes, line) {
+    Nodes.Block = function Block(nodes, line, endLine) {
         /// <field name='nodes' type='Array' />
         /// <field name='line' type='Number' />
         /// <field name='type' type='BaseType' />
         if (typeof nodes === 'number') {
+            endLine = line;
             line = nodes;
             nodes = [];
         }
         this.nodes = nodes;
         this.line = line;
+        this.endLine = endLine;
 
         this.variables = [];
         this.parent = undefined;
@@ -102,6 +116,11 @@ define(['./framework/compileerror', './compiler/constantreference'], function (C
             if (this.parent)
                 return this.parent.getVariable(name);
         },
+        getVariables: function getVariables() {
+            if (this.parent)
+                return this.variables.concat(this.parent.getVariables());
+            return this.variables;
+        },
         nodeType: 'Block'
     };
 
@@ -121,7 +140,10 @@ define(['./framework/compileerror', './compiler/constantreference'], function (C
                 return constant.name.toLowerCase() === name.toLowerCase();
             });
         },
-        nodeType:'ParentNode'
+        getVariables: function getVariables() {
+            return this.constants;
+        },
+        nodeType: 'ParentNode'
     };
 
     /*
