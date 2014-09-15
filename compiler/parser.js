@@ -301,7 +301,7 @@ define(['./framework/compileerror', './nodes', './lexer'], function (CompileErro
                 }
             }
 
-            return new Nodes.For(variable, block, start, stop, step, line, nextLendLineine);
+            return new Nodes.For(variable, block, start, stop, step, line, endLine);
         },
         /*
          * Parses an if statement

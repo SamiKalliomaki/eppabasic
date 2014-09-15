@@ -15,13 +15,15 @@ define(['./framework/compileerror', './compiler/constantreference'], function (C
         this.step = step;
         this.line = line;
         this.endLine = endLine;
+
+        this.parent = undefined;
     };
     Nodes.For.prototype = {
         getVariable: function getVariable(name) {
-            if (name.toLowerCase() === loop.variable.name.toLowerCase())
+            if (name.toLowerCase() === this.variable.name.toLowerCase())
                 return this.variable;
-            if (parent)
-                return parent.getVariable(name);
+            if (this.parent)
+                return this.parent.getVariable(name);
         },
         getVariables: function getVariables() {
             if (this.parent)

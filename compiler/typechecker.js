@@ -132,6 +132,7 @@ define(['./framework/compileerror', './nodes'], function (CompileError, Nodes) {
          * Visits a for loop
          */
         visitFor: function visitFor(loop, parent) {
+            loop.parent = parent;
             loop.variable.type = this.resolveExprType(loop.start, parent);
             this.resolveExprType(loop.stop, parent);
             this.resolveExprType(loop.step, parent);
