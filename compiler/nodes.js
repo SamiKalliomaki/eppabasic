@@ -238,12 +238,13 @@ define(['./framework/compileerror', './compiler/constantreference'], function (C
     /*
      * Creates a new ast function definition node 
      */
-    Nodes.FunctionDefinition = function FunctionDefinition(name, params, type, block, line) {
+    Nodes.FunctionDefinition = function FunctionDefinition(name, params, type, block, line, endLine) {
         this.name = name;
         this.params = params;
         this.type = type;
         this.block = block;
         this.line = line;
+        this.endLine = endLine;
     }
     Nodes.FunctionDefinition.prototype = {
         nodeType: 'FunctionDefinition'

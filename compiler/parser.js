@@ -521,7 +521,7 @@ define(['./framework/compileerror', './nodes', './lexer'], function (CompileErro
             var block = this.parseBlock();
 
             try {
-                this.expect('endfunction');
+                var endLine = this.expect('endfunction').line;
             } catch (e) {
                 if (e instanceof CompileError) {
                     this.errors.push(e);
@@ -530,7 +530,7 @@ define(['./framework/compileerror', './nodes', './lexer'], function (CompileErro
                 }
             }
 
-            return new Nodes.FunctionDefinition(name, params, type, block, line);
+            return new Nodes.FunctionDefinition(name, params, type, block, line, endLine);
         },
         /*
          * Parses a return statement
@@ -577,7 +577,7 @@ define(['./framework/compileerror', './nodes', './lexer'], function (CompileErro
             var block = this.parseBlock();
 
             try {
-                this.expect('endsub');
+                var endLine = this.expect('endsub').line;
             } catch (e) {
                 if (e instanceof CompileError) {
                     this.errors.push(e);
@@ -585,7 +585,7 @@ define(['./framework/compileerror', './nodes', './lexer'], function (CompileErro
                     throw e;
                 }
             }
-            return new Nodes.FunctionDefinition(name, params, undefined, block, line);
+            return new Nodes.FunctionDefinition(name, params, undefined, block, line, endLine);
         },
 
         /*

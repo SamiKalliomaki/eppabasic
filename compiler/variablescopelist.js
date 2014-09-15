@@ -7,6 +7,7 @@
             var changes = [];
 
             function visitBlock(block) {
+                var added = [];
                 block.nodes.forEach(function each(node) {
                     if (typeof node === 'undefined')
                         return;                 // Skip undefined
@@ -28,14 +29,18 @@
                         case 'For':
                             visitFor(node);
                             break;
+                        case 'FunctionDefinition':
+                            visitFunctionDefinition(node);
+                            break;
                         case 'VariableDefinition':
                             addVariable(node.line, node.name);
+                            added.push(node);
                             break;
                     }
                 });
 
                 // Remove all defined varibles
-                block.variables.forEach(function (variable) {
+                added.forEach(function each(variable) {
                     removeVariable(block.endLine, variable.name);
                 });
             }
@@ -43,6 +48,15 @@
                 addVariable(loop.line, loop.variable.name);
                 visitBlock(loop.block);
                 removeVariable(loop.endLine, loop.variable.name);
+            }
+            function visitFunctionDefinition(definition) {
+                definition.params.forEach(function each(param) {
+                    addVariable(definition.line, param.name);
+                });
+                visitBlock(definition.block);
+                definition.params.forEach(function each(param) {
+                    removeVariable(definition.endLine, param.name);
+                });
             }
 
             function addVariable(line, name) {
@@ -71,6 +85,14 @@
 
     VariableScopeList.prototype = {
         getVariables: function getVariables(line) {
+            /*console.log(this.changes.map(function (l, i) {
+                if (l) {
+                    return i + ': ' + l.map(function (c) {
+                        return (c.type === 'add' ? '+' : '-') + c.name;
+                    }).join();
+                }
+            }).filter(function (l) { return l; }).join('\n'));*/
+
             var visibleVariables = [];
             for (var i in this.changes) {
                 if (i >= line)
@@ -89,6 +111,7 @@
                         visibleVariables.splice(last, 1);
                     }
                 });
+                //console.log(i + ': ' + visibleVariables.map(function (v) { return v.name; }).join());
             }
             return visibleVariables;
         },
