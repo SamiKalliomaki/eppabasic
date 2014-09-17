@@ -1,4 +1,4 @@
-﻿define(function () {
+﻿define(['./basereference'], function (BaseReference) {
     function CompilerConstantReference(type, context) {
         /// <param name='type' type='BaseType' />
         /// <param name='context' type='CompilerContext' />
@@ -10,18 +10,17 @@
         setValue: function setValue(value, context) {
             if (!context)
                 context = this.context;
-            if (typeof value !== "string")
-                value = value.getValue();
-            else
-                value = this.type.cast(value);
-            this.value = value;
+
+            this.value = this.castValue(value, this.type);
         },
         getValue: function getValue() {
-            return this.type.cast(this.value);
+            return this.value;
         },
         freeRef: function freeRef(real) { },
         refType: 'const'
     };
+
+    extend(CompilerConstantReference.prototype, BaseReference.prototype);
 
     return CompilerConstantReference;
 });
