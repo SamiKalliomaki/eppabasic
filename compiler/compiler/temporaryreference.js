@@ -13,7 +13,11 @@
         setValue: function setValue(value, context) {
             if (!context)
                 context = this.context;
-            var code = this.name + '=' + value.type.castTo(value.getValue(), this.type) + ';';
+            if (typeof value !== "string")
+                value = value.type.castTo(value.getValue(), this.type);
+            else
+                value = this.type.cast(value);
+            var code = this.name + '=' + value + ';';
             context.push(code);
         },
         getValue: function getValue() {

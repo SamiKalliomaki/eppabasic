@@ -22,7 +22,11 @@
                 mem = 'MEMF64';
                 shift = 3;
             }
-            context.push(mem + '[((SP-' + (context.stackOffset - this.offset) + ')|0)>>' + shift + ']=' + value.type.castTo(value.getValue(), this.type) + ';');
+            if (typeof value !== "string")
+                value = value.type.castTo(value.getValue(), this.type);
+            else
+                value = this.type.cast(value);
+            context.push(mem + '[((SP-' + (context.stackOffset - this.offset) + ')|0)>>' + shift + ']=' + value + ';');
         },
         getValue: function getValue() {
             var mem = 'MEMS32';

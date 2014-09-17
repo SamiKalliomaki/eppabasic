@@ -19,7 +19,11 @@
                 mem = 'MEMF64';
                 shift = 3;
             }
-            context.push(mem + '[((' + this.offset.getValue() + ')|0)>>' + shift + ']=' + value.type.castTo(value.getValue(), this.type) + ';');
+            if (typeof value !== "string")
+                value = value.type.castTo(value.getValue(), this.type);
+            else
+                value = this.type.cast(value);
+            context.push(mem + '[((' + this.offset.getValue() + ')|0)>>' + shift + ']=' + value + ';');
         },
         getValue: function getValue() {
             var mem = 'MEMS32';

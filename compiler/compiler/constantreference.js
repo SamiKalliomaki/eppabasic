@@ -12,6 +12,8 @@
                 context = this.context;
             if (typeof value !== "string")
                 value = value.getValue();
+            else
+                value = this.type.cast(value);
             this.value = value;
         },
         getValue: function getValue() {
