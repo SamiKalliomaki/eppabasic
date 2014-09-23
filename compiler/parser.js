@@ -508,6 +508,8 @@ define(['./framework/compileerror', './nodes', './lexer'], function (CompileErro
                 var typeTok = this.expect('identifier');
                 typeTok.identifierType = 'type';
                 type = this.types.getTypeByName(typeTok.val);
+                if (!type)
+                    this.errors.push(new CompileError(line, 'errors.type-undefined', { type: typeTok.val }));
             } catch (e) {
                 if (e instanceof CompileError) {
                     this.errors.push(e);
