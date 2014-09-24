@@ -57,6 +57,11 @@
         "index": "Etusivu",
         "back": "Takaisin"
     },
+    "news": {
+        "title": "Uutiset",
+        "loading": "Ladataan uutisia...",
+        "no-news": "Ei uutisia juuri nyt"
+    },
     "errors": {
         "sub-return-expr": "Aliohjelmalla ei voi olla paluuarvoa",
         "variable-redefinition": "Muuttuja '__name__' on jo olemassa",

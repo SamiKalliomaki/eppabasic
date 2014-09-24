@@ -136,6 +136,7 @@ INSTALLED_APPS = (
     'users',
     'filesystem',
     'pastebin',
+    'news',
 )
 
 AUTH_USER_MODEL = 'users.CustomUser'
@@ -180,3 +181,5 @@ EMAIL_HOST_USER = ''
 EMAIL_HOST_PASSWORD = ''
 EMAIL_PORT = ''
 EMAIL_USE_TLS = True
+
+FRONTPAGE_NEWS_COUNT = 3

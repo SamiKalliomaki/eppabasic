@@ -1,6 +1,7 @@
 #manual
 {
 	color: white;
+	padding-bottom: 30px;
 }
 
 #manual h1
@@ -39,12 +40,12 @@
 	padding-right: 0.2em;
 }
 
-#manual :first-child
+#manual > :first-child
 {
 	margin-top: 0;
 }
 
-#manual :last-child
+#manual > :last-child
 {
 	margin-bottom: 0;
 }

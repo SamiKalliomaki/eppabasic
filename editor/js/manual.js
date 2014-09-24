@@ -1,4 +1,4 @@
-define(['jquery'], function ($) {
+define(['jquery', 'i18n', './framework'], function ($, i18n, Framework) {
     function Manual(manualContainer, lang) {
         manualContainer = $(manualContainer);
         this.container = manualContainer;
@@ -39,18 +39,58 @@ define(['jquery'], function ($) {
     }
 
     Manual.prototype = {
+        generateNewsSection: function() {
+            return '<h1>' + i18n.t('news.title') + '</h1><div class="news">' + i18n.t('news.loading') + '</div>';
+        },
+        populateNewsSection: function() {
+            var me = this;
+
+            Framework.simpleGet('eb/news/get/' + this.lang + '/', '', function(data) {
+                var newsDiv = $('.news', me.manual);
+                newsDiv.empty();
+
+                data['posts'].forEach(function(post) {
+                    var postElem = $('<div/>', { });
+                    postElem.append($('<h2/>', {
+                        text: post['title']
+                    }));
+                    postElem.append(marked(post['content']));
+                    newsDiv.append(postElem);
+                });
+
+                if(data['posts'].length === 0) {
+                    newsDiv.append($('<p/>', {
+                        text: i18n.t('news.no-news')
+                    }));
+                }
+            });
+        },
         openPage: function (page, scrollY) {
             $.get('manual/' + this.lang + '/' + page + '.md', function (data) {
+                var header = '';
+                if(page == 'index') {
+                    header = this.generateNewsSection();
+                }
+
                 this.history.push(page);
                 this.scrollHistory.push(this.container.scrollTop());
-                this.manual.html(marked(data) + "<br><br>");
+                this.manual.html(header + marked(data));
                 this.container.scrollTop(scrollY);
+
+                if(page == 'index') {
+                    this.populateNewsSection();
+                }
             }.bind(this));
         },
         navigate: function navigate(url) {
             function resolveUrl(baseUrl, relUrl) {
                 var aParts = baseUrl.split('/');
                 var bParts = relUrl.split('/');
+
+                if(bParts.length >= 1 && bParts[0] === '') {
+                    bParts.shift();
+                    return bParts.join('/');
+                }
 
                 // Pop the old filename from the url
                 aParts.pop();
