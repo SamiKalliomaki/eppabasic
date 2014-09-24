@@ -1,5 +1,17 @@
 ﻿
 define(['./framework/compileerror', 'xregexp'], function (CompileError, XRegExp) {
+    // Add horizontal whitespace token to regex
+    XRegExp.addToken(
+        /\\h/,
+        function (match, scope) {
+            var range = '\\t\\u0020\\u00A0\\u1680\\u180E\\u2000-\\u200A\\u202F\\u205F\\u3000';
+            return scope === XRegExp.INSIDE_CLASS ?
+                renge : '[' + range + ']';
+        },
+         XRegExp.INSIDE_CLASS | XRegExp.OUTSIDE_CLASS
+    );
+    console.log(XRegExp('^End\\h*Function\\b', 'i'));
+
     function Lexer(input, produceUnexpectedTokens) {
         this.input = input || "";
         this.stash = [];
@@ -220,140 +232,140 @@ define(['./framework/compileerror', 'xregexp'], function (CompileError, XRegExp)
          * Parses for token
          */
         forToken: function forToken() {
-            return this.scan(/^FOR\b/i, 'for');
+            return this.scan(/^For\b/i, 'for');
         },
 
         /*
          * Parses a "TO" token from the input
          */
         toToken: function toToken() {
-            return this.scan(/^TO\b/i, 'to');
+            return this.scan(/^To\b/i, 'to');
         },
 
         /*
          * Parses a "STEP" token from the input
          */
         stepToken: function stepToken() {
-            return this.scan(/^STEP\b/i, 'step');
+            return this.scan(/^Step\b/i, 'step');
         },
 
         /*
          * Parses a "NEXT" token from the input
          */
         nextToken: function nextToken() {
-            return this.scan(/^NEXT\b/i, 'next');
+            return this.scan(/^Next\b/i, 'next');
         },
 
         /*
         * Parses a "DO" token from the input
         */
         doToken: function doToken() {
-            return this.scan(/^DO\b/i, 'do');
+            return this.scan(/^Do\b/i, 'do');
         },
 
         /*
         * Parses a "LOOP" token from the input
         */
         loopToken: function loopToken() {
-            return this.scan(/^LOOP\b/i, 'loop');
+            return this.scan(/^Loop\b/i, 'loop');
         },
 
         /*
         * Parses a "UNTIL" token from the input
         */
         untilToken: function untilToken() {
-            return this.scan(/^UNTIL\b/i, 'until');
+            return this.scan(/^Until\b/i, 'until');
         },
 
         /*
         * Parses a "WHILE" token from the input
         */
         whileToken: function whileToken() {
-            return this.scan(/^WHILE\b/i, 'while');
+            return this.scan(/^While\b/i, 'while');
         },
 
         /*
          * Parses a "IF" token from the input
          */
         ifToken: function ifToken() {
-            return this.scan(/^IF\b/i, 'if');
+            return this.scan(/^If\b/i, 'if');
         },
 
         /*
          * Parses a "THEN" token from the input
          */
         thenToken: function thenToken() {
-            return this.scan(/^THEN\b/i, 'then');
+            return this.scan(/^Then\b/i, 'then');
         },
 
         /*
          * Parses a "ELSEIF" token from the input
          */
         elseIfToken: function elseIfToken() {
-            return this.scan(/^ELSEIF\b/i, 'elseif');
+            return this.scan(XRegExp('^Else\\h*If\\b', 'i'), 'elseif');
         },
 
         /*
          * Parses a "ELSE" token from the input
          */
         elseToken: function elseToken() {
-            return this.scan(/^ELSE\b/i, 'else');
+            return this.scan(/^Else\b/i, 'else');
         },
 
         /*
          * Parses a "ENDIF" token from the input
          */
         endIfToken: function endIfToken() {
-            return this.scan(/^END +IF\b/i, 'endif');
+            return this.scan(XRegExp('^End\\h*If\\b', 'i'), 'endif');
         },
 
         /*
          * Parses a "DIM" token from the input
          */
         dimToken: function dimToken() {
-            return this.scan(/^DIM\b/i, 'dim');
+            return this.scan(/^Dim\b/i, 'dim');
         },
 
         /*
          * Parses a "AS" token from the input
          */
         asToken: function asToken() {
-            return this.scan(/^AS\b/i, 'as');
+            return this.scan(/^As\b/i, 'as');
         },
 
         /*
          * Parses a "FUNCTION" token from the input
          */
         functionToken: function functionToken() {
-            return this.scan(/^FUNCTION\b/i, 'function');
+            return this.scan(/^Function\b/i, 'function');
         },
 
         /*
          * Parses a "RETURN" token from the input
          */
         returnToken: function returnToken() {
-            return this.scan(/^RETURN\b/i, 'return');
+            return this.scan(/^Return\b/i, 'return');
         },
 
         /*
          * Parses a "END FUNCTION" token from the input
          */
         endFunctionToken: function endFunctionToken() {
-            return this.scan(/^END +FUNCTION\b/i, 'endfunction');
+            return this.scan(XRegExp('^End\\h*Function\\b', 'i'), 'endfunction');
         },
 
         /*
          * Parses a "SUB" token from the input
          */
         subToken: function subToken() {
-            return this.scan(/^SUB\b/i, 'sub');
+            return this.scan(/^Sub\b/i, 'sub');
         },
 
         /*
          * Parses a "END SUB" token from the input
          */
         endSubToken: function endSubToken() {
-            return this.scan(/^END +SUB\b/i, 'endsub');
+            return this.scan(XRegExp('^End\\h*Sub\\b', 'i'), 'endsub');
         },
 
         /*
@@ -380,7 +392,7 @@ define(['./framework/compileerror', 'xregexp'], function (CompileError, XRegExp)
          * Parses a newline from the input
          */
         newlineToken: function newlineToken() {
-            var res = this.scan(/^\s*?\n/, 'newline');
+            var res = this.scan(XRegExp('^\\h*?\\n'), 'newline');
             if (res) {
                 ++this.lineno;
                 return res;
@@ -391,7 +403,7 @@ define(['./framework/compileerror', 'xregexp'], function (CompileError, XRegExp)
          * Parses whitespace token
          */
         whitespaceToken: function whitespaceToken() {
-            return this.scan(/^\s+/i, 'whitespace');
+            return this.scan(XRegExp('^\\h+'), 'whitespace');
         },
 
         /*
