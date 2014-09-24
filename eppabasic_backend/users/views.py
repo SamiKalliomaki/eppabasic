@@ -7,6 +7,8 @@ from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.forms import AuthenticationForm, PasswordResetForm
 from eppabasic_backend.views import AjaxView
 from users.forms import RegistrationForm
+from users.models import CustomUser
+from analysis.models import Entry as AnalysisEntry
 
 class LoginView(AjaxView):
     form_class = AuthenticationForm
@@ -40,8 +42,10 @@ class RegistrationView(AjaxView):
 class GetUserView(View):
     def get(self, request, *args, **kwargs):
         if request.user.is_authenticated():
+            AnalysisEntry(user=CustomUser.objects.get(id=request.user.id)).save()
             return JsonResponse({'authenticated': True, 'username': request.user.username})
         else:
+            AnalysisEntry(user=None).save()
             return JsonResponse({'authenticated': False})
 
 class PasswordResetView(AjaxView):

@@ -137,6 +137,7 @@ INSTALLED_APPS = (
     'filesystem',
     'pastebin',
     'news',
+    'analysis',
 )
 
 AUTH_USER_MODEL = 'users.CustomUser'
