@@ -1,14 +1,13 @@
-define(['jquery', './framework'], function ($, Framework) {
+define(['jquery', './framework', './paginator'], function ($, Framework, Paginator) {
     function UserControlsController(userControls) {
         this.userControls = $(userControls);
         this.loginBox = $('.login-box', this.userControls);
         this.currentUser = $('.current-user', this.userControls);
         this.loginLink = $('.login-link', this.userControls);
         this.logoutLink = $('.logout-link', this.userControls);
-        this.registerLink = $('.register-link', this.userControls);
-        this.alreadyRegisteredLink = $('.already-registered-link', this.userControls);
         this.loginForm = $('.login-form', this.userControls);
         this.registerForm = $('.register-form', this.userControls);
+        this.passwordResetForm = $('.password-reset-form', this.userControls);
         this.errorBoxes = $('.error-box', this.userControls);
         this.frozen = false;
         this.loginBoxVisible = false;
@@ -48,24 +47,6 @@ define(['jquery', './framework'], function ($, Framework) {
             }
         });
 
-        this.registerLink.on('click', function (e) {
-            e.preventDefault();
-
-            if (!me.frozen) {
-                me.loginForm.hide();
-                me.registerForm.show();
-            }
-        });
-
-        this.alreadyRegisteredLink.on('click', function (e) {
-            e.preventDefault();
-
-            if (!me.frozen) {
-                me.loginForm.show();
-                me.registerForm.hide();
-            }
-        });
-
         this.loginForm.on('submit', function (e) {
             e.preventDefault();
 
@@ -91,6 +72,21 @@ define(['jquery', './framework'], function ($, Framework) {
                     Framework.fillFormErrors(me.registerForm, data['errors']);
                     me.unfreeze();
                 }
+            });
+        });
+
+        this.passwordResetForm.on('submit', function(e) {
+            e.preventDefault();
+
+            me.freeze();
+            Framework.submitForm(me.passwordResetForm, 'eb/user/password_reset/', function (data) {
+                if (data['result'] === 'success') {
+                    Paginator.setPage(me.loginBox, 'reset-sent');
+                } else {
+                    Framework.fillFormErrors(me.passwordResetForm, data['errors']);  
+                }
+
+                me.unfreeze();
             });
         });
     }
@@ -171,8 +167,7 @@ define(['jquery', './framework'], function ($, Framework) {
             });
 
             this.loginBox.hide();
-            this.loginForm.show();
-            this.registerForm.hide();
+            Paginator.setPage(this.loginBox, 'login');
             this.errorBoxes.hide();
             $('.field-error', this.userControls).remove();
             this.unfreeze();

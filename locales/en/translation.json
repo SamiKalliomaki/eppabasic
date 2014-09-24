@@ -13,7 +13,8 @@
         "username": "Username:",
         "password": "Password:",
         "submit": "Login",
-        "register-link": "No account? Register"
+        "register-link": "No account? Register",
+        "forgot-password-link": "Forgotten password?"
     },
     "register": {
         "username": "Username:",
@@ -22,6 +23,15 @@
         "password-again": "Password again:",
         "submit": "Register",
         "already-registered-link": "Already registered? Login"
+    },
+    "password-reset": {
+        "help": "We can send a link to your email that you can use to reset your password. Please enter the email you used to register the account and click submit.",
+        "email": "Email:",
+        "submit": "Submit",
+        "login-link": "Login"
+    },
+    "reset-sent": {
+        "help": "Reset link has been sent to the email if an account was registered with this email."
     },
     "file-dialog": {
         "shared-with-me": "Shared with me",

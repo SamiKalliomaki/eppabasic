@@ -4,10 +4,11 @@ import os
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
-SUB_SITE = 'EppaBasic/eb/'
+PROJECT_DIR = 'EppaBasic/'
+SUB_SITE = PROJECT_DIR + 'eb/'
 
 ADMINS = (
-    # ('Your Name', 'your_email@example.com'),
+    ('Sami Kalliomäki', 'admin@eppabasic.fi'),
 )
 
 MANAGERS = ADMINS
@@ -172,3 +173,10 @@ LOGGING = {
 
 TEST_RUNNER = 'django.test.runner.DiscoverRunner'
 USE_X_FORWARDED_HOST = True
+LOGIN_URL = '/' + PROJECT_DIR
+
+EMAIL_HOST = ''
+EMAIL_HOST_USER = ''
+EMAIL_HOST_PASSWORD = ''
+EMAIL_PORT = ''
+EMAIL_USE_TLS = True

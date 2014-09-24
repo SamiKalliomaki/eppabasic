@@ -13,7 +13,8 @@
         "username": "Käyttäjänimi:",
         "password": "Salasana:",
         "submit": "Kirjaudu",
-        "register-link": "Ei tiliä? Rekisteröidy"
+        "register-link": "Ei tiliä? Rekisteröidy",
+        "forgot-password-link": "Unohtuiko salasana?"
     },
     "register": {
         "username": "Käyttäjänimi:",
@@ -22,6 +23,15 @@
         "password-again": "Salasana uudestaan:",
         "submit": "Rekisteröidy",
         "already-registered-link": "Oletko jo käyttäjä? Kirjaudu sisään"
+    },
+    "password-reset": {
+        "help": "Voimme lähettää sähköpostiisi linkin, jota voit käyttää salasanan vaihtamiseen. Syötä sähköposti, jota käytit tunnuksen rekisteröimiseen ja paina lähetä.",
+        "email": "Sähköposti:",
+        "submit": "Lähetä",
+        "login-link": "Kirjaudu sisään"
+    },
+    "reset-sent": {
+        "help": "Linkki salasanan vaihtamiseen on lähetetty sähköpostiin, jos kyseisellä sähköpostilla on rekisteröity tunnus."
     },
     "file-dialog": {
         "shared-with-me": "Jaettu minulle",

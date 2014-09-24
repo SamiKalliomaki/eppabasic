@@ -62,9 +62,9 @@
 	position: absolute;
 	right: 0;
 	top: 50px;
-	padding: 0 10px 20px 10px;
+	padding: 0 15px 20px 20px;
 
-	width: 318px;
+	width: 350px;
 
 	border-left: 1px solid #495692;
 	border-bottom: 1px solid #495692;
@@ -73,13 +73,14 @@
 	line-height: normal;
 }
 
-.top-right-box form a
+.top-right-box a
 {
 	color: white;
-	margin-left: 20px;
+	display: block;
+	margin: 2px 0;
 }
 
-.top-right-box form label
+.top-right-box label
 {
 	box-sizing: border-box;
 	-webkit-box-sizing: border-box;
@@ -91,7 +92,7 @@
 	width: 40%;
 }
 
-.top-right-box form input
+.top-right-box input
 {
 	box-sizing: border-box;
 	-webkit-box-sizing: border-box;
@@ -99,22 +100,22 @@
 	width: 58%;
 }
 
-.top-right-box form .input-field
+.top-right-box .input-field, .top-right-box p
 {
 	margin: 10px 0;
 }
 
-.top-right-box form .submit-box
+.top-right-box .submit-box
 {
 	text-align: right;
 }
 
-.top-right-box form input[type="submit"]
+.top-right-box input[type="submit"]
 {
 	width: 100px;
 }
 
-.top-right-box form .error-box
+.top-right-box .error-box
 {
 	color: white;
 	border: 1px solid #660000;
@@ -122,11 +123,16 @@
 	background-color: #220000;
 }
 
-.top-right-box form .field-error
+.top-right-box .field-error
 {
 	text-align: right;
 	color: #FFAAAA;
 	font-size: 12px;
+}
+
+.top-right-box p
+{
+	color: white;
 }
 
 #user-controls

@@ -4,7 +4,7 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
 from django.contrib.auth import login, logout, authenticate
-from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.forms import AuthenticationForm, PasswordResetForm
 from eppabasic_backend.views import AjaxView
 from users.forms import RegistrationForm
 
@@ -43,3 +43,11 @@ class GetUserView(View):
             return JsonResponse({'authenticated': True, 'username': request.user.username})
         else:
             return JsonResponse({'authenticated': False})
+
+class PasswordResetView(AjaxView):
+    form_class = PasswordResetForm
+
+    def form_valid(self, form):
+        form.save(None, 'password_reset_subject.txt', 'password_reset_email.html')
+
+        return JsonResponse({'result': 'success', 'email': form.cleaned_data['email']})

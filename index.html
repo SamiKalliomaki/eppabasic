@@ -45,8 +45,8 @@
                 <a class="logout-link" href="#"><span class="current-user"></span>, <span data-i18n="header.logout"></span></a>
                 <a class="pending-link" href="#">...</a>
             </div>
-            <div class="login-box top-right-box">
-                <form class="login-form">
+            <div class="login-box top-right-box paginated">
+                <form class="login-form page" data-page="login">
                     <div class="error-box"></div>
                     <div class="input-field">
                         <label for="login-username" data-i18n="login.username"></label>
@@ -59,9 +59,10 @@
                     <div class="submit-box">
                         <input type="submit" data-i18n="[value]login.submit">
                     </div>
-                    <a href="#" class="register-link" data-i18n="login.register-link"></a>
+                    <a href="#" class="page-change" data-page="register" data-i18n="login.register-link"></a>
+                    <a href="#" class="page-change" data-page="password-reset" data-i18n="login.forgot-password-link">Asd</a>
                 </form>
-                <form class="register-form">
+                <form class="register-form page" data-page="register">
                     <div class="error-box"></div>
                     <div class="input-field">
                         <label for="register-username" data-i18n="register.username"></label>
@@ -82,8 +83,24 @@
                     <div class="submit-box">
                         <input type="submit" data-i18n="[value]register.submit">
                     </div>
-                    <a href="#" class="already-registered-link" data-i18n="register.already-registered-link"></a>
+                    <a href="#" class="page-change" data-page="login" data-i18n="register.already-registered-link"></a>
                 </form>
+                <form class="password-reset-form page" data-page="password-reset">
+                    <div class="error-box"></div>
+                    <p data-i18n="password-reset.help"></p>
+                    <div class="input-field">
+                        <label for="password-reset-email" data-i18n="password-reset.email"></label>
+                        <input type="email" name="email" id="password-reset-email"><br>
+                    </div>
+                    <div class="submit-box">
+                        <input type="submit" data-i18n="[value]password-reset.submit">
+                    </div>
+                    <a href="#" class="page-change" data-page="login" data-i18n="password-reset.login-link"></a>
+                </form>
+                <div class="page" data-page="reset-sent">
+                    <p data-i18n="reset-sent.help"></p>
+                    <a href="#" class="page-change" data-page="login" data-i18n="password-reset.login-link"></a>
+                </div>
             </div>
         </div>
         <div class="clear"></div>
