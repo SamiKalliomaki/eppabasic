@@ -199,7 +199,7 @@ function buildRuntime() {
     });
 }
 
-buildRuntime();
+//buildRuntime();
 
 function listJSFiles(path, filter) {
     if (!filter)
