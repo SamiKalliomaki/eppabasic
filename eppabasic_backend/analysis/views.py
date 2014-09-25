@@ -3,9 +3,6 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.utils.decorators import method_decorator
 from django.views.generic import View
 from django.db.models import Count
-from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
-from matplotlib.figure import Figure
-from matplotlib.dates import DateFormatter
 from datetime import datetime, timedelta
 from analysis.models import Entry as AnalysisEntry
 
@@ -16,6 +13,9 @@ class GraphView(View):
         return super().dispatch(request, *args, **kwargs)
 
     def get(self, request):
+        from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+        from matplotlib.figure import Figure
+        from matplotlib.dates import DateFormatter
         def getData(format):
             data = AnalysisEntry.objects.extra({'time2': 'strftime("' + format + '",time)'}).values('time2').order_by().annotate(count=Count('id'))
             times = []
