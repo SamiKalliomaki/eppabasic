@@ -10,7 +10,6 @@ define(['./framework/compileerror', 'xregexp'], function (CompileError, XRegExp)
         },
          XRegExp.INSIDE_CLASS | XRegExp.OUTSIDE_CLASS
     );
-    console.log(XRegExp('^End\\h*Function\\b', 'i'));
 
     function Lexer(input, produceUnexpectedTokens) {
         this.input = input || "";
