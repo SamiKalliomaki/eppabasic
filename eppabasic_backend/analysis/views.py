@@ -10,7 +10,7 @@ class GraphView(View):
 
     @method_decorator(staff_member_required)
     def dispatch(self, request, *args, **kwargs):
-        return super().dispatch(request, *args, **kwargs)
+        return super(GraphView, self).dispatch(request, *args, **kwargs)
 
     def get(self, request):
         from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
