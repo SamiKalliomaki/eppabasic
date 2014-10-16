@@ -964,7 +964,7 @@ define(['require', './framework/compileerror', './compiler/context', './compiler
                 if (!expr.atomic || !atomic) {
                     // This expr is not atomic so push every earlier expression to the stack if it is not there already
                     res = res.map(function each(ref) {
-                        if (ref.refType !== 'stack' && ref.refType !== 'const') {           // TODO Check that works with no-free
+                        if (ref.refType !== 'stack' && ref.refType !== 'absstack' && ref.refType !== 'const') {           // TODO Check that works with no-free
                             // Push this to the top of the stack
                             var stackRef = context.reserveStack(ref.type);
                             stackRef.setValue(ref);
