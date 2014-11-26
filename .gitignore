@@ -6,6 +6,7 @@ eppabasic_backend/database.db
 
 node_modules/*
 build/*
+doc/*
 
 *.min.js
 *.min.js.map
