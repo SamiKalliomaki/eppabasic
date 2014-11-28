@@ -65,7 +65,7 @@ walk('./test', function (err, testFiles) {
                         if (e instanceof AssertationError)
                             console.log('Test "' + moduleName + '.' + name + '" failed: ' + e.message);
                         else
-                            console.log('Internal error: ' + e.message);
+                            console.error('Internal error:\n\t' + e.stack.replace(/\n/, '\n\t'));
                     }
                 }
             }

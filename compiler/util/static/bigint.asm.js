@@ -1,5 +1,4 @@
 ﻿
-
 /**
  * Integers are saved in little endian array.
  * Each item in the array are saved as 32 bit unsigned integers.
@@ -237,8 +236,8 @@ function intmul(A, B) {
     Bl = HEAP32U[B >> 2];
 
     // Find if numbers are negative
-    An = HEAP32U[(A + Al) >> 2] & 0x80000000 != 0;
-    Bn = HEAP32U[(B + Bl) >> 2] & 0x80000000 != 0;
+    An = (HEAP32U[(A + Al) >> 2] & 0x80000000) != 0;
+    Bn = (HEAP32U[(B + Bl) >> 2] & 0x80000000) != 0;
 
     // Reserve size for the result
     Rl = Al + Bl | 0;
@@ -251,23 +250,34 @@ function intmul(A, B) {
 
     for (; (i | 0) < (Bl << 1) ; i = i + 2 | 0) {
         c = 0;
-        b = (i | 0) < (Bl | 0) ? HEAP16U[(B + i) >> 2] : (Bn ? 0xffffffff : 0);
+        b = (i | 0) < (Bl | 0) ? HEAP32U[(B + i) >> 2] : (Bn ? 0xffffffff : 0);
+        if ((i & 2) == 0)
+            b = b & 0xffff;
+        else
+            b = b >>> 16;
 
-        for (; (j | 0) < (Al << 1) ; j = j + 2 | 0) {
+        for (j = 0; (j | 0) < (Al << 1) ; j = j + 2 | 0) {
             if ((i + j | 0) >= (Rl | 0)) continue;
-            a = (j | 0) < (Al | 0) ? HEAP16U[(A + j) >> 2] : (An ? 0xffffffff : 0);
+            a = (j | 0) < (Al | 0) ? HEAP32U[(A + j) >> 2] : (An ? 0xffffffff : 0);
+
+            if ((j & 2) == 0)
+                a = a & 0xffff;
+            else
+                a = a >>> 16;
 
             r = (imul(a | 0, b | 0) | 0) + c | 0;
 
-            HEAP16U[(R + i + j) >> 1] = r & 0xffff;
+            HEAP16U[(R + i + j) >> 1] += r & 0xffff;
             c = r >>> 16;
         }
     }
 
     // Restore R
     R = R - 4 | 0;
-    // Adjust Rl
-    while ((HEAP32U[(R + Rl) >> 2] == 0) | ((HEAP32U[(R + Rl) >> 2] == 0xffffffff) & (HEAP32U[(R + Rl - 4) >> 2] & 0x80000000 != 0)))
+    // Remove heading zeros
+    while (((HEAP32U[(R + Rl) >> 2] == 0) & ((Rl | 0) > 4)))
+        Rl = Rl - 4 | 0;
+    while (((HEAP32U[(R + Rl) >> 2] | 0) == (0xffffffff | 0)) & ((HEAP32U[(R + Rl - 4) >> 2] & 0x80000000) != 0) & ((Rl | 0) > 4))
         Rl = Rl - 4 | 0;
 
     // Save the R length

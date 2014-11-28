@@ -11,10 +11,27 @@
         'return{init:heapinit,alloc:alloc,add:intadd,sub:intsub,mul:intmul};'
         );
 
+    if (!Math.imul) {
+        Math.imul = function imul(a, b) {
+            var ah = (a >>> 16) & 0xffff;
+            var al = a & 0xffff;
+            var bh = (b >>> 16) & 0xffff;
+            var bl = b & 0xffff;
+            // the shift by 0 fixes the sign on the high part
+            // the final |0 converts the unsigned value into a signed value
+            return ((al * bl) + (((ah * bl + al * bh) << 16) >>> 0) | 0);
+        }
+    }
+
     function createAsm() {
         var heap = new ArrayBuffer(1024 * 1024);
+        var stdlib = {
+            Uint16Array: Uint16Array,
+            Uint32Array: Uint32Array,
+            Math: Math
+        };
         var HEAP32U = new Uint32Array(heap);
-        var bi = new BigIntAsm(global, null, heap);
+        var bi = new BigIntAsm(stdlib, null, heap);
         bi.init(heap.byteLength);
 
         // Some helper functions
@@ -182,7 +199,7 @@
             // Hope that bigger numbers work...
         },
 
-        subZeroNegTest: function subZeroTest(assert) {
+        subZeroNegTest: function subZeroNegTest(assert) {
 
             var bi = createAsm();
 
@@ -215,6 +232,61 @@
                 var b = bi.pushInts([0x000000004, 0x00000000]);
                 var t = bi.sub(b, a);
                 bi.assertInts(t, [data.r.length * 4].concat(data.r), assert.Error, 'Substract number from zero to yield negative number');
+            });
+        },
+
+        mulZeroTest: function mulZeroTest(assert) {
+            var bi = createAsm();
+
+            var nums = [
+                [0x00000000, 0x00000000],
+                [0x00000000, 0x00000001],
+                [0x00000000, 0x10000000],
+                [0x00000000, 0xffffffff],
+                [0x00000001, 0x00000000],
+                [0x10000000, 0x00000000],
+                [0xffffffff, 0xffffffff],
+                [0xbca83d50, 0xfa393af9],
+                [0x31415926, 0x53589793],
+                [0xadfc3f57, 0xfc2a81b8],
+                [0x13456789, 0x10111213],
+                [0x31211101, 0x98765432],
+            ];
+            nums.forEach(function (num) {
+                var a = bi.pushInts([0x000000004, 0x00000000]);
+                var b = bi.pushInts([num.length * 4].concat(num));
+                var t = bi.mul(a, b);
+                bi.assertInts(t, [0x000000004, 0x00000000], assert.Error, 'Multiply zero by a number');
+                var t = bi.mul(b, a);
+                bi.assertInts(t, [0x000000004, 0x00000000], assert.Error, 'Multiply number by zero');
+            });
+        },
+
+        mulOneTest: function mulZeroTest(assert) {
+            var bi = createAsm();
+
+            var nums = [
+                [0x00000000],
+                [0x00000001],
+                [0x00000000, 0x00000001],
+                [0x00000000, 0x10000000],
+                [0x00000000, 0xffffffff],
+                [0x00000001],
+                [0x10000000],
+                [0xffffffff],
+                [0xbca83d50, 0xfa393af9],
+                [0x31415926, 0x53589793],
+                [0xadfc3f57, 0xfc2a81b8],
+                [0x13456789, 0x10111213],
+                [0x31211101, 0x98765432],
+            ];
+            nums.forEach(function (num) {
+                var a = bi.pushInts([0x000000004, 0x00000001]);
+                var b = bi.pushInts([num.length * 4].concat(num));
+                var t = bi.mul(a, b);
+                bi.assertInts(t, [num.length * 4].concat(num), assert.Error, 'Multiply one by a number');
+                var t = bi.mul(b, a);
+                bi.assertInts(t, [num.length * 4].concat(num), assert.Error, 'Multiply number by one');
             });
         },
     };
