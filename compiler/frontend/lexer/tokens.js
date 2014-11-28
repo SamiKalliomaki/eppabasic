@@ -27,13 +27,7 @@ define(['require'], function (require) {
         this.text = captures[0];
     };
     Token.prototype = {
-        /**
-         * Does nothing
-         * @memberOf module:compiler/frontend/lexer/tokens.Token
-         * @instance
-         */
-        no: function no() { }
-    }
+    };
 
     /**
      * A token containing only whitespaces
