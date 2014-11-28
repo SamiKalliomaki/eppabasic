@@ -1,21 +1,24 @@
-﻿define(['require'], function (require) {
+﻿define(['require', 'libs/xregexp'], function (require) {
     "use strict";
+
+    var XRegExp = require('libs/xregexp');
 
     /**
      * A rule for the lexer
      *
      * @class
-     * @param {regex} pattern - A pattern which the token should match
+     * @param {string} pattern - A pattern which the token should match.
+     *                           String is transformed to regexp with XRegExp-library.
      * @param {compiler/frontend/lexer/token} type - A token type which the rule should match to
      * @memberOf module:compiler/frontend/lexer
      */
     function Rule(pattern, type) {
         /**
          * Pattern saved in rule
-         * @member {regex}
+         * @member {regexp}
          * @private
          */
-        this.pattern = pattern;
+        this.pattern = XRegExp(pattern);
         /**
          * Type of token
          * @member {compiler/frontend/lexer/toke}
