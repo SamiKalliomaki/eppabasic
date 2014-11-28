@@ -54,10 +54,11 @@ walk('./test', function (err, testFiles) {
         // Require the file with it dependencies
         var moduleName = path.join(path.dirname(testFile), path.basename(testFile, '.js')).replace(/\\/g, '/');
         testRequire([moduleName], function (testSuite) {
-            console.log("Testing suite " + path.basename(testFile, '.js'));
+            console.log("Testing suite: " + path.basename(testFile, '.js'));
 
             for (name in testSuite) {
                 if (/Test$/.exec(name) && testSuite.hasOwnProperty(name)) {
+                    console.log('\tRunning: ' + name);
                     try {
                         testSuite[name](assert);
                     } catch (e) {
@@ -102,5 +103,6 @@ var assert = {
         if (got !== null) {
             throw new AssertationError("Got '" + got + "' but expected null: " + msg);
         }
-    }
+    },
+    Error: AssertationError
 };
