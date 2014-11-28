@@ -60,9 +60,132 @@ define(['require'], function (require) {
     EOSToken.prototype = new Token(-1, ['']);
     EOSToken.prototype.constructor = EOSToken;
 
+    /**
+     * Comment token
+     *
+     * @class
+     * @param {number} line - The line the token is located
+     * @param {string[]} captures - An array of captures returned by regexp.match
+     * @memberOf module:compiler/frontend/lexer/tokens
+     * @extends module:compiler/frontend/lexer/tokens.Token
+     */
+    function CommentToken(line, captures) {
+        Token.call(this, line, captures);
+        /**
+         * The text written in the comment
+         * @type {string}
+         */
+        this.message = captures[1];
+    };
+
+    CommentToken.prototype = new Token(-1, ['']);
+    CommentToken.prototype.constructor = CommentToken;
+
+    /**
+     * Operator token
+     *
+     * @class
+     * @param {number} line - The line the token is located
+     * @param {string[]} captures - An array of captures returned by regexp.match
+     * @memberOf module:compiler/frontend/lexer/tokens
+     * @extends module:compiler/frontend/lexer/tokens.Token
+     */
+    function OperatorToken(line, captures) {
+        Token.call(this, line, captures);
+        /**
+         * The type of the token
+         * @type {string}
+         */
+        this.type = captures[1];
+    };
+
+    OperatorToken.prototype = new Token(-1, ['']);
+    OperatorToken.prototype.constructor = OperatorToken;
+
+    /**
+     * Number token
+     *
+     * @class
+     * @param {number} line - The line the token is located
+     * @param {string[]} captures - An array of captures returned by regexp.match
+     * @memberOf module:compiler/frontend/lexer/tokens
+     * @extends module:compiler/frontend/lexer/tokens.Token
+     */
+    function NumberToken(line, captures) {
+        Token.call(this, line, captures);
+        /**
+         * The value of the number
+         * @type {string}
+         */
+        this.value = parseFloat(captures[1]);       // TODO Change to bigint
+    };
+
+    NumberToken.prototype = new Token(-1, ['']);
+    NumberToken.prototype.constructor = NumberToken;
+
+    /**
+     * String token
+     *
+     * @class
+     * @param {number} line - The line the token is located
+     * @param {string[]} captures - An array of captures returned by regexp.match
+     * @memberOf module:compiler/frontend/lexer/tokens
+     * @extends module:compiler/frontend/lexer/tokens.Token
+     */
+    function StringToken(line, captures) {
+        Token.call(this, line, captures);
+        /**
+         * The value of the string
+         * @type {string}
+         */
+        ''.replace()
+        this.value = captures[1].replace(/""/g, '"');
+    };
+
+    StringToken.prototype = new Token(-1, ['']);
+    StringToken.prototype.constructor = StringToken;
+
+    /**
+     * Comma token
+     *
+     * @class
+     * @param {number} line - The line the token is located
+     * @param {string[]} captures - An array of captures returned by regexp.match
+     * @memberOf module:compiler/frontend/lexer/tokens
+     * @extends module:compiler/frontend/lexer/tokens.Token
+     */
+    function CommaToken(line, captures) {
+        Token.call(this, line, captures);
+    };
+
+    CommaToken.prototype = new Token(-1, ['']);
+    CommaToken.prototype.constructor = CommaToken;
+
+    /**
+     * Parenthesis token
+     *
+     * @class
+     * @param {number} line - The line the token is located
+     * @param {string[]} captures - An array of captures returned by regexp.match
+     * @memberOf module:compiler/frontend/lexer/tokens
+     * @extends module:compiler/frontend/lexer/tokens.Token
+     */
+    function ParenthesisToken(line, captures) {
+        Token.call(this, line, captures);
+    };
+
+    ParenthesisToken.prototype = new Token(-1, ['']);
+    ParenthesisToken.prototype.constructor = ParenthesisToken;
+
     return {
         EOSToken: EOSToken,
         Token: Token,
         WhitespaceToken: WhitespaceToken,
+        CommentToken: CommentToken,
+        OperatorToken: OperatorToken,
+        NumberToken: NumberToken,
+        StringToken: StringToken,
+        CommaToken: CommaToken,
+        ParenthesisToken: ParenthesisToken,
     };
 });

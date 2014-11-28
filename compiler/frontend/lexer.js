@@ -12,6 +12,6 @@ define(['require', './lexer/tokens', './lexer/lexer', './lexer/rule'], function 
     return {
         Lexer: Lexer,
         Rule: Rule,
-        Tokens: Tokens
+        tokens: Tokens
     };
 });
