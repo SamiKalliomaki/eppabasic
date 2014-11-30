@@ -262,7 +262,7 @@
             });
         },
 
-        mulOneTest: function mulZeroTest(assert) {
+        mulOneTest: function mulOneTest(assert) {
             var bi = createAsm();
 
             var nums = [
@@ -287,6 +287,28 @@
                 bi.assertInts(t, [num.length * 4].concat(num), assert.Error, 'Multiply one by a number');
                 var t = bi.mul(b, a);
                 bi.assertInts(t, [num.length * 4].concat(num), assert.Error, 'Multiply number by one');
+            });
+        },
+
+        mulCarryTest: function mulCarryTest(assert) {
+            var bi = createAsm();
+
+            var data = [
+                // Multiply by 10
+                { a: [0x10000000], b: [0x0000000A], r: [0xA0000000] },
+                { a: [0x12345678], b: [0x0000000A], r: [0xB60B60B0] },
+                { a: [0x80000000], b: [0x0000000A], r: [0x00000000, 0xFFFFFFFB] },
+                { a: [0x98765432], b: [0x0000000A], r: [0xF49F49F4, 0xFFFFFFFB] },
+                { a: [0x87654321, 0x13121110], b: [0x0000000A], r: [0x49F49F4A, 0xBEB4AAA5] },
+            ];
+
+            data.forEach(function (data) {
+                var a = bi.pushInts([data.a.length * 4].concat(data.a));
+                var b = bi.pushInts([data.b.length * 4].concat(data.b));
+                var t = bi.mul(a, b);
+                bi.assertInts(t, [data.r.length * 4].concat(data.r), assert.Error, 'Mul carry test');
+                var t = bi.mul(b, a);
+                bi.assertInts(t, [data.r.length * 4].concat(data.r), assert.Error, 'Mul carry test');
             });
         },
     };
