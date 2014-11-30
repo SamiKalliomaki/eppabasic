@@ -70,57 +70,36 @@
         addZeroTest: function addZeroTest(assert) {
             var bi = createAsm();
 
-            // One digit
-            var nums = [
-                0x00000000,
-                0xffffffff,
-                0x0f0f0f0f,
-                0xf0f0f0f0,
-                0x00000001,
-                0xfd3a5815,
-                0x31415926,
-                0x13371337,
-            ];
-            nums.forEach(function (num) {
-                var a = bi.pushInts([0x000000004, 0x00000000]);
-                var b = bi.pushInts([0x000000004, num]);
-                var t = bi.add(a, b);
-                bi.assertInts(t, [0x000000004, num], assert.Error, 'Add one long to zero');
-                var t = bi.add(b, a);
-                bi.assertInts(t, [0x000000004, num], assert.Error, 'Add zero to one long');
-            });
+            var data = [
+                // Special cases
+                { a: [] },                              //  0
+                { a: [0x00000001] },                    //  1
+                { a: [0xffffffff] },                    // -1
+                { a: [0x80000000, 0x00000000] },        //  2147483648
+                { a: [0x80000000] },                    // -2147483648
 
-            // Two digits
-            var nums = [
-                [0x00000000, 0x00000000],
-                [0x00000000, 0x00000001],
-                [0x00000000, 0x10000000],
-                [0x00000000, 0xffffffff],
-                [0x00000001, 0x00000000],
-                [0x10000000, 0x00000000],
-                [0xffffffff, 0xffffffff],
-                [0xbca83d50, 0xfa393af9],
-                [0x31415926, 0x53589793],
-                [0xadfc3f57, 0xfc2a81b8],
-                [0x13456789, 0x10111213],
-                [0x31211101, 0x98765432],
+                // Some random tests
+                { a: [0x0f0f0f0f] },                    //  252645135
+                { a: [0xf0f0f0f0] },                    // -252645136
+                { a: [0xfd3a5815] },                    // -46508011
+                { a: [0x31415926] },                    //  826366246
+                { a: [0x13371337] },                    //  322376503
+                { a: [0x00000000, 0x00000001] },        //  4294967296
+                { a: [0x00000000, 0xffffffff] },        // -4294967296
+                { a: [0x00000000, 0x10000000] },        // -9223372036854775808
+                { a: [0xbca83d50, 0xfa393af9] },        // -416236646268650160
+                { a: [0x31415926, 0x53589793] },        //  5358979331415926
+                { a: [0xadfc3f57, 0xfc2a81b8] },        // -276265796936908969
+                { a: [0x13456789, 0x10111213] },        //  1157726452347922313
+                { a: [0x31211101, 0x98765432] },        // -7460683158143299327
             ];
-            nums.forEach(function (num) {
-                var a = bi.pushInts([0x000000004, 0x00000000]);
-                var b = bi.pushInts([0x000000008].concat(num));
+            data.forEach(function (data) {
+                var a = bi.pushInts([data.a.length * 4].concat(data.a));
+                var b = bi.pushInts([0x00000000]);      // Zero
                 var t = bi.add(a, b);
-                bi.assertInts(t, [0x000000008].concat(num), assert.Error, 'Add two long to zero');
+                bi.assertInts(t, [data.a.length * 4].concat(data.a), assert.Error, 'Add number to zero');
                 var t = bi.add(b, a);
-                bi.assertInts(t, [0x000000008].concat(num), assert.Error, 'Add zero to two long');
-            });
-            nums.forEach(function (num) {
-                // With ill-formed a
-                var a = bi.pushInts([0x000000008, 0x00000000, 0x00000000]);
-                var b = bi.pushInts([0x000000008].concat(num));
-                var t = bi.add(a, b);
-                bi.assertInts(t, [0x000000008].concat(num), assert.Error, 'Add two long to ill-formed zero');
-                var t = bi.add(b, a);
-                bi.assertInts(t, [0x000000008].concat(num), assert.Error, 'Add ill-formed zero to two long');
+                bi.assertInts(t, [data.a.length * 4].concat(data.a), assert.Error, 'Add zero to number');
             });
 
             // Hope that bigger numbers work...
@@ -150,50 +129,35 @@
             var bi = createAsm();
 
             // One digit
-            var nums = [
-                0x00000000,
-                0xffffffff,
-                0x0f0f0f0f,
-                0xf0f0f0f0,
-                0x00000001,
-                0xfd3a5815,
-                0x31415926,
-                0x13371337,
-            ];
-            nums.forEach(function (num) {
-                var a = bi.pushInts([0x000000004, 0x00000000]);
-                var b = bi.pushInts([0x000000004, num]);
-                var t = bi.sub(b, a);
-                bi.assertInts(t, [0x000000004, num], assert.Error, 'Substract zero from one long');
-            });
+            var data = [
+                // Special cases
+                { a: [] },                              //  0
+                { a: [0x00000001] },                    //  1
+                { a: [0xffffffff] },                    // -1
+                { a: [0x80000000, 0x00000000] },        //  2147483648
+                { a: [0x80000000] },                    // -2147483648
 
-            // Two digits
-            var nums = [
-                //[0x00000000, 0x00000000],
-                [0x00000000, 0x00000001],
-                [0x00000000, 0x10000000],
-                [0x00000000, 0xffffffff],
-                //[0x00000001, 0x00000000],
-                //[0x10000000, 0x00000000],
-                [0xffffffff, 0xffffffff],
-                [0xbca83d50, 0xfa393af9],
-                [0x31415926, 0x53589793],
-                [0xadfc3f57, 0xfc2a81b8],
-                [0x13456789, 0x10111213],
-                [0x31211101, 0x98765432],
+                // Some random tests
+                { a: [0x0f0f0f0f] },                    //  252645135
+                { a: [0xf0f0f0f0] },                    // -252645136
+                { a: [0xfd3a5815] },                    // -46508011
+                { a: [0x31415926] },                    //  826366246
+                { a: [0x13371337] },                    //  322376503
+
+                { a: [0x00000000, 0x00000001] },        //  4294967296
+                { a: [0x00000000, 0xffffffff] },        // -4294967296
+                { a: [0x00000000, 0x10000000] },        // -9223372036854775808
+                { a: [0xbca83d50, 0xfa393af9] },        // -416236646268650160
+                { a: [0x31415926, 0x53589793] },        //  5358979331415926
+                { a: [0xadfc3f57, 0xfc2a81b8] },        // -276265796936908969
+                { a: [0x13456789, 0x10111213] },        //  1157726452347922313
+                { a: [0x31211101, 0x98765432] },        // -7460683158143299327
             ];
-            nums.forEach(function (num) {
-                var a = bi.pushInts([0x000000004, 0x00000000]);
-                var b = bi.pushInts([0x000000008].concat(num));
-                var t = bi.sub(b, a);
-                bi.assertInts(t, [0x000000008].concat(num), assert.Error, 'Substract zero from two long');
-            });
-            nums.forEach(function (num) {
-                // With ill-formed a
-                var a = bi.pushInts([0x000000008, 0x00000000, 0x00000000]);
-                var b = bi.pushInts([0x000000008].concat(num));
-                var t = bi.sub(b, a);
-                bi.assertInts(t, [0x000000008].concat(num), assert.Error, 'Sbustract ill-formed zero from two long');
+            data.forEach(function (data) {
+                var a = bi.pushInts([data.a.length * 4].concat(data.a));
+                var b = bi.pushInts([0x00000000]);      // Zero
+                var t = bi.sub(a, b);
+                bi.assertInts(t, [data.a.length * 4].concat(data.a), assert.Error, 'Substract zero from number');
             });
 
             // Hope that bigger numbers work...
@@ -204,32 +168,31 @@
             var bi = createAsm();
 
             var data = [
-                { a: [0x00000000], r: [0x00000000] },
-                { a: [0x00000001], r: [0xffffffff] },
-                { a: [0xffffffff], r: [0x00000001] },
-                { a: [0x0f0f0f0f], r: [0xf0f0f0f1] },
-                { a: [0xf0f0f0f0], r: [0x0f0f0f10] },
-                { a: [0xfd3a5815], r: [0x02c5a7eb] },
-                { a: [0x31415926], r: [0xcebea6da] },
-                { a: [0x13371337], r: [0xecc8ecc9] },
+                // Special cases
+                { a: [], r: [] },                                               //  0
+                { a: [0x00000001], r: [0xffffffff] },                           //  1
+                { a: [0xffffffff], r: [0x00000001] },                           // -1
+                { a: [0x80000000, 0x00000000], r: [0x80000000] },               //  2147483648
+                { a: [0x80000000], r: [0x80000000, 0x00000000] },               // -2147483648
 
-                { a: [0x00000000], r: [0x00000000] },
-                { a: [0x00000000, 0x00000001], r: [0x00000000, 0xffffffff] },
-                { a: [0x00000000, 0x10000000], r: [0x00000000, 0xf0000000] },
-                { a: [0x00000000, 0xffffffff], r: [0x00000000, 0x00000001] },
-                { a: [0x00000001, 0x00000000], r: [0xffffffff] },
-                { a: [0x10000000, 0x00000000], r: [0xf0000000] },
-                { a: [0xffffffff], r: [0x00000001] },
-                { a: [0xffffffff, 0xfffffffe], r: [0x00000001, 0x00000001] },
-                //{ a: [0xbca83d50, 0xfa393af9], r: [] },
-                { a: [0x31415926, 0x53589793], r: [0xCEBEA6DA, 0xACA7686C] },
-                //{ a: [0xadfc3f57, 0xfc2a81b8], r: [] },
-                //{ a: [0x13456789, 0x10111213], r: [] },
-                //{ a: [0x31211101, 0x98765432], r: [] },
+                // Some random numbers
+                { a: [0x0f0f0f0f], r: [0xf0f0f0f1] },                           //  252645135
+                { a: [0xf0f0f0f0], r: [0x0f0f0f10] },                           // -252645136
+                { a: [0xfd3a5815], r: [0x02c5a7eb] },                           // -46508011
+                { a: [0x31415926], r: [0xcebea6da] },                           //  826366246
+                { a: [0x13371337], r: [0xecc8ecc9] },                           //  322376503
+                { a: [0x00000000, 0x00000001], r: [0x00000000, 0xffffffff] },   //  4294967296
+                { a: [0x00000000, 0xffffffff], r: [0x00000000, 0x00000001] },   // -4294967296
+                { a: [0x00000000, 0x10000000], r: [0x00000000, 0xf0000000] },   // -9223372036854775808
+                { a: [0x10000000], r: [0xf0000000] },                           //  268435456
+                { a: [0xffffffff], r: [0x00000001] },                           //  8589934591
+                { a: [0xffffffff, 0xfffffffe], r: [0x00000001, 0x00000001] },   // -4294967297
+                { a: [0x31415926, 0x53589793], r: [0xCEBEA6DA, 0xACA7686C] },   //  5358979331415926
+
             ];
             data.forEach(function (data) {
                 var a = bi.pushInts([data.a.length * 4].concat(data.a));
-                var b = bi.pushInts([0x000000004, 0x00000000]);
+                var b = bi.pushInts([0x000000000]);
                 var t = bi.sub(b, a);
                 bi.assertInts(t, [data.r.length * 4].concat(data.r), assert.Error, 'Substract number from zero to yield negative number');
             });
@@ -238,55 +201,72 @@
         mulZeroTest: function mulZeroTest(assert) {
             var bi = createAsm();
 
-            var nums = [
-                [0x00000000, 0x00000000],
-                [0x00000000, 0x00000001],
-                [0x00000000, 0x10000000],
-                [0x00000000, 0xffffffff],
-                [0x00000001, 0x00000000],
-                [0x10000000, 0x00000000],
-                [0xffffffff, 0xffffffff],
-                [0xbca83d50, 0xfa393af9],
-                [0x31415926, 0x53589793],
-                [0xadfc3f57, 0xfc2a81b8],
-                [0x13456789, 0x10111213],
-                [0x31211101, 0x98765432],
+            var data = [
+                // Special cases
+                { a: [] },                              //  0
+                { a: [0x00000001] },                    //  1
+                { a: [0xffffffff] },                    // -1
+                { a: [0x80000000, 0x00000000] },        //  2147483648
+                { a: [0x80000000] },                    // -2147483648
+
+                // Some random tests
+                { a: [0x0f0f0f0f] },                    //  252645135
+                { a: [0xf0f0f0f0] },                    // -252645136
+                { a: [0xfd3a5815] },                    // -46508011
+                { a: [0x31415926] },                    //  826366246
+                { a: [0x13371337] },                    //  322376503
+                { a: [0x00000000, 0x00000001] },        //  4294967296
+                { a: [0x00000000, 0xffffffff] },        // -4294967296
+                { a: [0x00000000, 0x10000000] },        // -9223372036854775808
+                { a: [0xbca83d50, 0xfa393af9] },        // -416236646268650160
+                { a: [0x31415926, 0x53589793] },        //  5358979331415926
+                { a: [0xadfc3f57, 0xfc2a81b8] },        // -276265796936908969
+                { a: [0x13456789, 0x10111213] },        //  1157726452347922313
+                { a: [0x31211101, 0x98765432] },        // -7460683158143299327
             ];
-            nums.forEach(function (num) {
-                var a = bi.pushInts([0x000000004, 0x00000000]);
-                var b = bi.pushInts([num.length * 4].concat(num));
+            data.forEach(function (data) {
+                var a = bi.pushInts([data.a.length * 4].concat(data.a));
+                var b = bi.pushInts([0x00000000]);      // Zero
                 var t = bi.mul(a, b);
-                bi.assertInts(t, [0x000000004, 0x00000000], assert.Error, 'Multiply zero by a number');
+                bi.assertInts(t, [0x00000000], assert.Error, 'Multiply number by zero');
                 var t = bi.mul(b, a);
-                bi.assertInts(t, [0x000000004, 0x00000000], assert.Error, 'Multiply number by zero');
+                bi.assertInts(t, [0x00000000], assert.Error, 'Multiply zero by number');
             });
         },
 
         mulOneTest: function mulOneTest(assert) {
             var bi = createAsm();
 
-            var nums = [
-                [0x00000000],
-                [0x00000001],
-                [0x00000000, 0x00000001],
-                [0x00000000, 0x10000000],
-                [0x00000000, 0xffffffff],
-                [0x00000001],
-                [0x10000000],
-                [0xffffffff],
-                [0xbca83d50, 0xfa393af9],
-                [0x31415926, 0x53589793],
-                [0xadfc3f57, 0xfc2a81b8],
-                [0x13456789, 0x10111213],
-                [0x31211101, 0x98765432],
+            var data = [
+                // Special cases
+                { a: [] },                              //  0
+                { a: [0x00000001] },                    //  1
+                { a: [0xffffffff] },                    // -1
+                { a: [0x80000000, 0x00000000] },        //  2147483648
+                { a: [0x80000000] },                    // -2147483648
+
+                // Some random tests
+                { a: [0x0f0f0f0f] },                    //  252645135
+                { a: [0xf0f0f0f0] },                    // -252645136
+                { a: [0xfd3a5815] },                    // -46508011
+                { a: [0x31415926] },                    //  826366246
+                { a: [0x13371337] },                    //  322376503
+                { a: [0x00000000, 0x00000001] },        //  4294967296
+                { a: [0x00000000, 0xffffffff] },        // -4294967296
+                { a: [0x00000000, 0x10000000] },        // -9223372036854775808
+                { a: [0xbca83d50, 0xfa393af9] },        // -416236646268650160
+                { a: [0x31415926, 0x53589793] },        //  5358979331415926
+                { a: [0xadfc3f57, 0xfc2a81b8] },        // -276265796936908969
+                { a: [0x13456789, 0x10111213] },        //  1157726452347922313
+                { a: [0x31211101, 0x98765432] },        // -7460683158143299327
             ];
-            nums.forEach(function (num) {
+            data.forEach(function (data) {
                 var a = bi.pushInts([0x000000004, 0x00000001]);
-                var b = bi.pushInts([num.length * 4].concat(num));
+                var b = bi.pushInts([data.a.length * 4].concat(data.a));
                 var t = bi.mul(a, b);
-                bi.assertInts(t, [num.length * 4].concat(num), assert.Error, 'Multiply one by a number');
+                bi.assertInts(t, [data.a.length * 4].concat(data.a), assert.Error, 'Multiply one by a number');
                 var t = bi.mul(b, a);
-                bi.assertInts(t, [num.length * 4].concat(num), assert.Error, 'Multiply number by one');
+                bi.assertInts(t, [data.a.length * 4].concat(data.a), assert.Error, 'Multiply number by one');
             });
         },
 
@@ -295,11 +275,11 @@
 
             var data = [
                 // Multiply by 10
-                { a: [0x10000000], b: [0x0000000A], r: [0xA0000000] },
-                { a: [0x12345678], b: [0x0000000A], r: [0xB60B60B0] },
+                { a: [0x10000000], b: [0x0000000A], r: [0xA0000000, 0x00000000] },
+                { a: [0x12345678], b: [0x0000000A], r: [0xB60B60B0, 0x00000000] },
                 { a: [0x80000000], b: [0x0000000A], r: [0x00000000, 0xFFFFFFFB] },
                 { a: [0x98765432], b: [0x0000000A], r: [0xF49F49F4, 0xFFFFFFFB] },
-                { a: [0x87654321, 0x13121110], b: [0x0000000A], r: [0x49F49F4A, 0xBEB4AAA5] },
+                { a: [0x87654321, 0x13121110], b: [0x0000000A], r: [0x49F49F4A, 0xBEB4AAA5, 0x00000000] },
             ];
 
             data.forEach(function (data) {
