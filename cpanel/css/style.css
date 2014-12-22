@@ -1,0 +1,27 @@
+body
+{
+	padding-top: 70px;
+}
+
+.service-status .status
+{
+	display: none;
+}
+
+.service-status.fetching	.status.fetching	{ display: inline; }
+.service-status.online		.status.online		{ display: inline; }
+.service-status.offline		.status.offline		{ display: inline; }
+.service-status.idle		.status.idle		{ display: inline; }
+.service-status.working		.status.working		{ display: inline; }
+
+#action-panel .btn
+{
+	display: block;
+	width: 100%;
+}
+
+#log
+{
+	width: 100%;
+	height: 400px;
+}
