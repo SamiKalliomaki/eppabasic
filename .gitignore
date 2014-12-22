@@ -13,5 +13,5 @@ static
 *.min.js
 *.min.js.map
 
-.htaccess
+/.htaccess
 eppabasic_backend/eppabasic_backend/settings.py
