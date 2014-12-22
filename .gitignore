@@ -6,6 +6,11 @@ eppabasic_backend/database.db
 
 node_modules/*
 build/*
+virtenv/*
+tools/settings.ini
 
 *.min.js
 *.min.js.map
+
+.htaccess
+eppabasic_backend/eppabasic_backend/settings.py
