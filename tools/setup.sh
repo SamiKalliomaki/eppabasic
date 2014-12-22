@@ -30,6 +30,8 @@ echo "cpanel_server_port=$CPANEL_SERVER_PORT"			>> settings.ini
 
 cd ..
 $VIRTUALENV_BIN -p "$PYTHON_BIN" virtenv
+cp tools/.htaccess virtenv/
+
 source virtenv/bin/activate
 
 # Setup virtualenv
@@ -37,9 +39,8 @@ pip install django
 
 deactivate
 
-mkdir static
+mkdir -p static
 STATIC_ROOT=`readlink -f static`
-
 
 rm -f .htaccess
 rm -f eppabasic_backend/eppabasic_backend/settings.py
@@ -54,3 +55,4 @@ sed -i 's|INSERT_PROJECT_DIR_HERE|'$PROJECT_DIR'|' .htaccess eppabasic_backend/e
 sed -i 's|INSERT_STATIC_ROOT_HERE|'$STATIC_ROOT'|' eppabasic_backend/eppabasic_backend/settings.py
 
 npm install requirejs minimist
+cp tools/.htaccess node_modules/
