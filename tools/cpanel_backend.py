@@ -2,11 +2,14 @@ import json
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from threading import Thread, RLock, Condition
 from time import sleep
+from hashlib import sha256
 import subprocess
 import configparser
+import datetime
 
 config = configparser.ConfigParser()
 config.read('settings.ini')
+password = 'password'
 
 class Log:
 	def __init__(self):
@@ -140,6 +143,25 @@ class MyRequestHandler(BaseHTTPRequestHandler):
 			data = json.loads(data_str)
 		except ValueError:
 			print(data_str)
+
+		frame = datetime.timedelta(minutes=5)
+		now = datetime.datetime.utcnow()
+		past_limit = now - frame
+		future_limit = now + frame
+
+		verification = sha256((str(data['date']) + password + data['actions']).encode()).hexdigest()
+		date = datetime.datetime.utcfromtimestamp(int(data['date']))
+
+		print(past_limit, date, future_limit, verification, data['pass'])
+
+		if date <= past_limit or date >= future_limit or verification != data['pass']:
+			self.send_response(401)
+			self.send_header("Content-type", "application/json")
+			self.end_headers()
+
+			self.wfile.write(json.dumps({'error': 'Authentication error'}).encode())
+
+			return
 
 		for action in data.get('actions', '').split(','):
 			if action in actions:

@@ -3,6 +3,38 @@ body
 	padding-top: 70px;
 }
 
+.row-centered
+{
+    text-align:center;
+}
+
+.col-centered
+{
+    display:inline-block;
+    float:none;
+    /* reset the text-align */
+    text-align:left;
+    /* inline-block space fix */
+    margin-right:-4px;
+}
+
+#password-label
+{
+	box-sizing: border-box;
+	width: calc(30% - 2px);
+}
+
+#password
+{
+	box-sizing: border-box;
+	width: calc(70% - 2px);
+}
+
+#main-content
+{
+	display: none;
+}
+
 .service-status .status
 {
 	display: none;

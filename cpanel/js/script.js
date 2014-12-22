@@ -1,4 +1,13 @@
 $(function() {
+    var password = '';
+
+    function genHashData(actions) {
+        var date = Math.round((new Date).getTime() / 1000);
+        var pass = sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(date + password + actions));
+
+        return { date: date, pass: pass, actions: actions };
+    }
+
     function setStatus(target, newStatus) {
         target.removeClass('fetching'   );
         target.removeClass('online'     );
@@ -30,7 +39,9 @@ $(function() {
     }
 
     function doRequest(actions) {
-        $.post('backend/', JSON.stringify({ actions: actions }), function(response) {
+        var d = genHashData(actions);
+
+        $.post('backend/', JSON.stringify(d), function(response) {
             fillResponse(response);
         });
     }
@@ -39,9 +50,25 @@ $(function() {
         doRequest($(this).data('action'));
     });
 
-    (function(){
-        doRequest();
+    $('form').submit(function(e) {
+        e.preventDefault();
 
-        setTimeout(arguments.callee, 1000);
-    })();
+        password = $('#password').val();
+        var d = genHashData('');
+
+        $.post('backend/', JSON.stringify(d), function(response) {
+            // Success, correct password
+
+            $('#login-content').slideUp();
+            $('#main-content').fadeIn();
+
+            (function(){
+                doRequest('');
+
+                setTimeout(arguments.callee, 1000);
+            })();
+        }).fail(function() {
+            $('form')[0].reset();
+        });
+    });
 });
