@@ -3,6 +3,10 @@ from http.server import HTTPServer, BaseHTTPRequestHandler
 from threading import Thread, RLock, Condition
 from time import sleep
 import subprocess
+import configparser
+
+config = configparser.ConfigParser()
+config.read('settings.ini')
 
 class Log:
 	def __init__(self):
@@ -26,8 +30,11 @@ class Action():
 		self.action = action
 
 
+def get_screen_name():
+	return config['eppabasic']['screen_name'] + 'eppabasic'
+
 def is_backend_running():
-	return subprocess.Popen(['/bin/bash', '-c', 'screen -list | grep -w "eppabasic"'], stdout=subprocess.PIPE).stdout.read() != b''
+	return subprocess.Popen(['/bin/bash', '-c', 'screen -list | grep -w "' + get_screen_name() + '"'], stdout=subprocess.PIPE).stdout.read() != b''
 
 def do_run(log, cmd):
 	proc = subprocess.Popen(['/bin/bash', '-c', cmd], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -43,11 +50,11 @@ def start_backend(log):
 		log.add('Backend is already running')
 		return
 
-	do_run(log, 'cd ../eppabasic_backend/; source ../virtenv/bin/activate; screen -dmS eppabasic')
-	do_run(log, 'screen -S eppabasic -X stuff "python manage.py runserver --noreload localhost:34502\n"')
+	do_run(log, 'cd ../eppabasic_backend/; source ../virtenv/bin/activate; screen -dmS ' + get_screen_name())
+	do_run(log, 'screen -S ' + get_screen_name() + ' -X stuff "python manage.py runserver --noreload ' + config['eppabasic']['app_server_domain'] + '\n"')
 
 def stop_backend(log):
-	do_run(log, 'screen -S eppabasic -X stuff "^C\nexit\n"')
+	do_run(log, 'screen -S ' + get_screen_name() + ' -X stuff "^C\nexit\n"')
 	sleep(0.1)
 
 def git_pull(log):
@@ -56,16 +63,19 @@ def git_pull(log):
 def build_js(log):
 	do_run(log, 'cd ..; rm -rf build; node ./tools/build.js --optimize=uglify2')
 
-def run_migrations(log):
+def run_migrate(log):
 	do_run(log, 'cd ../eppabasic_backend/; source ../virtenv/bin/activate; python manage.py migrate')
 
+def run_collectstatic(log):
+	do_run(log, 'cd ../eppabasic_backend/; source ../virtenv/bin/activate; python manage.py collectstatic --noinput')
 
 actions = {}
 actions['start-backend'] = Action('Start backend', start_backend)
 actions['stop-backend'] = Action('Stop backend', stop_backend)
 actions['git-pull'] = Action('Git pull', git_pull)
 actions['build-js'] = Action('Rebuild JavaScript', build_js)
-actions['migrate'] = Action('Run migrations', run_migrations)
+actions['migrate'] = Action('Run migrations', run_migrate)
+actions['collectstatic'] = Action('Collect static files', run_collectstatic)
 
 class WorkerThread(Thread):
 	def __init__(self):
@@ -143,7 +153,7 @@ class MyRequestHandler(BaseHTTPRequestHandler):
 		self.wfile.write(json.dumps(report).encode())
 
 def run(server_class=HTTPServer, handler_class=BaseHTTPRequestHandler):
-    server_address = ('', 34512)
+    server_address = (config['eppabasic']['cpanel_server_host'], int(config['eppabasic']['cpanel_server_port']))
     httpd = server_class(server_address, handler_class)
     httpd.serve_forever()
 
