@@ -55,7 +55,7 @@
 				<div class="col-xs-12 col-md-4">
 					<div class="panel panel-default">
 						<div class="panel-heading">
-							<h3 class="panel-title">Operation queue <button class="btn btn-xs btn-warning pull-right"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Cancel queue</button></h3>
+							<h3 class="panel-title">Operation queue</h3>
 						</div>
 						<div class="panel-body">
 							<div class="list-group" id="queue">
@@ -70,11 +70,12 @@
 							<h3 class="panel-title">Actions</h3>
 						</div>
 						<div class="panel-body">
-							<p><button class="btn btn-primary" data-action="start-backend">Full upgrade</button></p>
-							<p><button class="btn btn-default" data-action="start-backend">Frontend upgrade</button></p>
-							<p><button class="btn btn-default" data-action="start-backend">Backend upgrade</button></p>
+							<p><button class="btn btn-primary" data-action="stop-backend,git-pull,migrate,start-backend,build-js">Full upgrade</button></p>
+							<p><button class="btn btn-default" data-action="git-pull,build-js">Frontend upgrade</button></p>
+							<p><button class="btn btn-default" data-action="stop-backend,git-pull,migrate,start-backend">Backend upgrade</button></p>
 							<p><button class="btn btn-default" data-action="git-pull">Git pull</button></p>
-							<p><button class="btn btn-default" data-action="start-backend">Rebuild JavaScript</button></p>
+							<p><button class="btn btn-default" data-action="migrate">Run migrations</button></p>
+							<p><button class="btn btn-default" data-action="build-js">Rebuild JavaScript</button></p>
 						</div>
 					</div>
 				</div>
@@ -86,7 +87,7 @@
 							<h3 class="panel-title">Log</h3>
 						</div>
 						<div class="panel-body">
-							<textarea id="log">
+							<textarea id="log" disabled="true">
 								Fetching...
 							</textarea>
 						</div>

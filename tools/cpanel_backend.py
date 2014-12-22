@@ -51,13 +51,21 @@ def stop_backend(log):
 	sleep(0.1)
 
 def git_pull(log):
-	do_run(log, 'cd ..; git stash; git fetch; git reset --hard FETCH_HEAD; git stash apply')
+	do_run(log, 'cd ..; git stash; git pull; git stash apply')
+
+def build_js(log):
+	do_run(log, 'cd ..; rm -rf build; node ./tools/build.js --optimize=uglify2')
+
+def run_migrations(log):
+	do_run(log, 'cd ../eppabasic_backend/; source ../virtenv/bin/activate; python manage.py migrate')
 
 
 actions = {}
 actions['start-backend'] = Action('Start backend', start_backend)
 actions['stop-backend'] = Action('Stop backend', stop_backend)
 actions['git-pull'] = Action('Git pull', git_pull)
+actions['build-js'] = Action('Rebuild JavaScript', build_js)
+actions['migrate'] = Action('Run migrations', run_migrations)
 
 class WorkerThread(Thread):
 	def __init__(self):

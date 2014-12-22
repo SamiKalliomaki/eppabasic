@@ -42,6 +42,6 @@ $(function() {
     (function(){
         doRequest();
 
-        setTimeout(arguments.callee, 100);
+        setTimeout(arguments.callee, 1000);
     })();
 });
