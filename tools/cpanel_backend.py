@@ -152,8 +152,6 @@ class MyRequestHandler(BaseHTTPRequestHandler):
 		verification = sha256((str(data['date']) + password + data['actions']).encode()).hexdigest()
 		date = datetime.datetime.utcfromtimestamp(int(data['date']))
 
-		print(past_limit, date, future_limit, verification, data['pass'])
-
 		if date <= past_limit or date >= future_limit or verification != data['pass']:
 			self.send_response(401)
 			self.send_header("Content-type", "application/json")
