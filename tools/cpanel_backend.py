@@ -135,6 +135,17 @@ class MyRequestHandler(BaseHTTPRequestHandler):
 
 		return report
 
+	def verify_auth(self, data):
+		frame = datetime.timedelta(minutes=5)
+		now = datetime.datetime.utcnow()
+		past_limit = now - frame
+		future_limit = now + frame
+
+		verification = sha256((str(data['date']) + password + data['actions']).encode()).hexdigest()
+		date = datetime.datetime.utcfromtimestamp(int(data['date']))
+
+		return date >= past_limit and date <= future_limit and verification == data['pass']
+
 	def do_POST(self):
 		data_length = int(self.headers['Content-Length'] or 0)
 		data_str = self.rfile.read(data_length).decode()
@@ -144,15 +155,7 @@ class MyRequestHandler(BaseHTTPRequestHandler):
 		except ValueError:
 			print(data_str)
 
-		frame = datetime.timedelta(minutes=5)
-		now = datetime.datetime.utcnow()
-		past_limit = now - frame
-		future_limit = now + frame
-
-		verification = sha256((str(data['date']) + password + data['actions']).encode()).hexdigest()
-		date = datetime.datetime.utcfromtimestamp(int(data['date']))
-
-		if date <= past_limit or date >= future_limit or verification != data['pass']:
+		if not self.verify_auth(data):
 			self.send_response(401)
 			self.send_header("Content-type", "application/json")
 			self.end_headers()
