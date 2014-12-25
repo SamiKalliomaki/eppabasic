@@ -9,7 +9,7 @@ import datetime
 
 config = configparser.ConfigParser()
 config.read('settings.ini')
-password = 'password'
+password = config['cpanel']['password']
 
 class Log:
 	def __init__(self):
@@ -34,7 +34,7 @@ class Action():
 
 
 def get_screen_name():
-	return config['eppabasic']['screen_name'] + 'eppabasic'
+	return config['backend']['screen_prefix'] + 'eppabasic'
 
 def is_backend_running():
 	return subprocess.Popen(['/bin/bash', '-c', 'screen -list | grep -w "' + get_screen_name() + '"'], stdout=subprocess.PIPE).stdout.read() != b''
@@ -54,7 +54,7 @@ def start_backend(log):
 		return
 
 	do_run(log, 'cd ../eppabasic_backend/; source ../virtenv/bin/activate; screen -dmS ' + get_screen_name())
-	do_run(log, 'screen -S ' + get_screen_name() + ' -X stuff "python manage.py runserver --noreload ' + config['eppabasic']['app_server_domain'] + '\n"')
+	do_run(log, 'screen -S ' + get_screen_name() + ' -X stuff "python manage.py runserver --noreload ' + config['backend']['domain'] + '\n"')
 
 def stop_backend(log):
 	do_run(log, 'screen -S ' + get_screen_name() + ' -X stuff "^C\nexit\n"')
@@ -176,7 +176,7 @@ class MyRequestHandler(BaseHTTPRequestHandler):
 		self.wfile.write(json.dumps(report).encode())
 
 def run(server_class=HTTPServer, handler_class=BaseHTTPRequestHandler):
-    server_address = (config['eppabasic']['cpanel_server_host'], int(config['eppabasic']['cpanel_server_port']))
+    server_address = (config['cpanel']['host'], int(config['cpanel']['port']))
     httpd = server_class(server_address, handler_class)
     httpd.serve_forever()
 
