@@ -7,6 +7,10 @@ import subprocess
 import configparser
 import datetime
 
+# https://stackoverflow.com/questions/35817/how-to-escape-os-system-calls-in-python
+def shellquote(s):
+    return "'" + s.replace("'", "'\\''") + "'"
+
 config = configparser.ConfigParser()
 config.read('settings.ini')
 password = config['cpanel']['password']
@@ -39,6 +43,7 @@ def get_screen_name():
 def is_backend_running():
 	return subprocess.Popen(['/bin/bash', '-c', 'screen -list | grep -w "' + get_screen_name() + '"'], stdout=subprocess.PIPE).stdout.read() != b''
 
+
 def do_run(log, cmd):
 	proc = subprocess.Popen(['/bin/bash', '-c', cmd], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
@@ -48,7 +53,7 @@ def do_run(log, cmd):
 	for line in proc.stderr:
 		log.add(line.rstrip().decode())
 
-def start_backend(log):
+def start_backend(params, log):
 	if is_backend_running():
 		log.add('Backend is already running')
 		return
@@ -56,21 +61,25 @@ def start_backend(log):
 	do_run(log, 'cd ../eppabasic_backend/; source ../virtenv/bin/activate; screen -dmS ' + get_screen_name())
 	do_run(log, 'screen -S ' + get_screen_name() + ' -X stuff "python manage.py runserver --noreload ' + config['backend']['domain'] + '\n"')
 
-def stop_backend(log):
+def stop_backend(params, log):
 	do_run(log, 'screen -S ' + get_screen_name() + ' -X stuff "^C\nexit\n"')
 	sleep(0.1)
 
-def git_pull(log):
+def git_pull(params, log):
 	do_run(log, 'cd ..; git stash; git pull; git stash apply')
 
-def build_js(log):
+def build_js(params, log):
 	do_run(log, 'cd ..; rm -rf build; node ./tools/build.js --optimize=uglify2')
 
-def run_migrate(log):
+def run_migrate(params, log):
 	do_run(log, 'cd ../eppabasic_backend/; source ../virtenv/bin/activate; python manage.py migrate')
 
-def run_collectstatic(log):
+def run_collectstatic(params, log):
 	do_run(log, 'cd ../eppabasic_backend/; source ../virtenv/bin/activate; python manage.py collectstatic --noinput')
+
+def git_checkout(params, log):
+	do_run(log, 'cd ..; git stash; git checkout ' + shellquote(params['branch']) + '; git stash apply')
+
 
 actions = {}
 actions['start-backend'] = Action('Start backend', start_backend)
@@ -79,6 +88,7 @@ actions['git-pull'] = Action('Git pull', git_pull)
 actions['build-js'] = Action('Rebuild JavaScript', build_js)
 actions['migrate'] = Action('Run migrations', run_migrate)
 actions['collectstatic'] = Action('Collect static files', run_collectstatic)
+actions['git-checkout'] = Action('Git checkout', git_checkout)
 
 class WorkerThread(Thread):
 	def __init__(self):
@@ -100,8 +110,8 @@ class WorkerThread(Thread):
 
 			if stuff:
 				self.status = 'working'
-				self.log.add('Executing "' + stuff.pretty_name + '"')
-				stuff.action(self.log)
+				self.log.add('Executing "' + stuff['action'].pretty_name + '" with params ' + str(stuff['params']))
+				stuff['action'].action(stuff['params'], self.log)
 
 				with self.work_lock:
 					self.work.pop(0)
@@ -112,11 +122,11 @@ class WorkerThread(Thread):
 
 	def get_queue(self):
 		with self.work_lock:
-			return [stuff.pretty_name for stuff in self.work]
+			return [stuff['action'].pretty_name for stuff in self.work]
 
-	def add_work(self, stuff):
+	def add_work(self, action, params):
 		with self.work_lock:
-			self.work.append(stuff)
+			self.work.append({ 'action': action, 'params': params })
 
 		with self.cond:
 			self.cond.notify()
@@ -136,12 +146,12 @@ class MyRequestHandler(BaseHTTPRequestHandler):
 		return report
 
 	def verify_auth(self, data):
-		frame = datetime.timedelta(minutes=5)
+		frame = datetime.timedelta(minutes=1)
 		now = datetime.datetime.utcnow()
 		past_limit = now - frame
 		future_limit = now + frame
 
-		verification = sha256((str(data['date']) + password + data['actions']).encode()).hexdigest()
+		verification = sha256((str(data['date']) + password + ','.join([a['action'] for a in data['actions']])).encode()).hexdigest()
 		date = datetime.datetime.utcfromtimestamp(int(data['date']))
 
 		return date >= past_limit and date <= future_limit and verification == data['pass']
@@ -164,9 +174,9 @@ class MyRequestHandler(BaseHTTPRequestHandler):
 
 			return
 
-		for action in data.get('actions', '').split(','):
-			if action in actions:
-				worker.add_work(actions[action])
+		for action in data.get('actions', []):
+			if action['action'] in actions:
+				worker.add_work(actions[action['action']], action['params'])
 
 		self.send_response(200)
 		self.send_header("Content-type", "application/json")

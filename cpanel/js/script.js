@@ -1,9 +1,28 @@
 $(function() {
+    var actionParams = {
+        'git-checkout': [
+            {
+                'name': 'branch',
+                'text': 'Enter the name of the branch to checkout.'
+            }
+        ]
+    };
+
     var password = '';
+
+    function stringifyActions(actions) {
+        var str = '';
+
+        $.each(actions, function(index, action) {
+            str += (str != '' ? ',' : '') + action['action'];
+        });
+
+        return str;
+    }
 
     function genHashData(actions) {
         var date = Math.round((new Date).getTime() / 1000);
-        var pass = sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(date + password + actions));
+        var pass = sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(date + password + stringifyActions(actions)));
 
         return { date: date, pass: pass, actions: actions };
     }
@@ -47,7 +66,24 @@ $(function() {
     }
 
     $('button').click(function() {
-        doRequest($(this).data('action'));
+        var actionStr = $(this).data('action');
+        var actionList = actionStr.split(',');
+        var actions = [];
+
+        $.each(actionList, function(index, value) {
+            var action = value;
+            var params = {};
+
+            if(action in actionParams) {
+                $.each(actionParams[action], function(index2, param) {
+                    params[param['name']] = prompt(param['text']);
+                });
+            }
+
+            actions.push({ action: action, params: params });
+        });
+
+        doRequest(actions);
     });
 
     $('form').submit(function(e) {
@@ -63,7 +99,7 @@ $(function() {
             $('#main-content').fadeIn();
 
             (function(){
-                doRequest('');
+                doRequest([]);
 
                 setTimeout(arguments.callee, 1000);
             })();
