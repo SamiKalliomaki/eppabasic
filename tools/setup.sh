@@ -37,7 +37,7 @@ echo "host="					>> settings.ini
 echo "port="					>> settings.ini
 echo ""
 
-echo "[email]"					>> settings.ini		
+echo "[email]"					>> settings.ini
 echo "host="					>> settings.ini
 echo "port="					>> settings.ini
 echo "user="					>> settings.ini
