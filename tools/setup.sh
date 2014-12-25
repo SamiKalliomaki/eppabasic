@@ -43,6 +43,7 @@ echo "port="					>> settings.ini
 echo "user="					>> settings.ini
 echo "password="				>> settings.ini
 echo "use_tls=yes"				>> settings.ini
+echo "default_from="			>> settings.ini
 echo ""							>> settings.ini
 
 echo "[backend]"				>> settings.ini

@@ -187,4 +187,6 @@ EMAIL_HOST_PASSWORD = config['email']['password']
 EMAIL_PORT = config['email']['port']
 EMAIL_USE_TLS = config['email'].getboolean('use_tls')
 
+DEFAULT_FROM_EMAIL = config['email']['default_from']
+
 FRONTPAGE_NEWS_COUNT = 3
