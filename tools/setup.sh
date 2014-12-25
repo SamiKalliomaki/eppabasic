@@ -28,6 +28,15 @@ echo "static_root=$STATIC_ROOT"	>> settings.ini
 echo "secret_key=$SECRET_KEY"	>> settings.ini
 echo ""							>> settings.ini
 
+echo "[db]"						>> settings.ini
+echo "engine=django.db.backends.sqlite3" >> settings.ini
+echo "name=database.db"			>> settings.ini
+echo "user="					>> settings.ini
+echo "password="				>> settings.ini
+echo "host="					>> settings.ini
+echo "port="					>> settings.ini
+echo ""
+
 echo "[email]"					>> settings.ini		
 echo "host="					>> settings.ini
 echo "port="					>> settings.ini
