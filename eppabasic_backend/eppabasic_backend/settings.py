@@ -1,27 +1,31 @@
 import os
+import configparser
+
+config = configparser.ConfigParser()
+config.read('../tools/settings.ini')
 
 # Django settings for eppabasic_backend project.
 
-DEBUG = True
+DEBUG = config['eppabasic'].getboolean('debug')
 TEMPLATE_DEBUG = DEBUG
-PROJECT_DIR = 'EppaBasic/'
+PROJECT_DIR = config['eppabasic']['project_dir']
 SUB_SITE = PROJECT_DIR + 'eb/'
 
 ADMINS = (
-    ('Sami Kalliomäki', 'admin@eppabasic.fi'),
+    (config['eppabasic']['admin_name'], config['eppabasic']['admin_email']),
 )
 
 MANAGERS = ADMINS
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'database.db',                      # Or path to database file if using sqlite3.
+        'ENGINE': config['db']['engine'],      # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+        'NAME': config['db']['name'],          # Or path to database file if using sqlite3.
         # The following settings are not used with sqlite3:
-        'USER': '',
-        'PASSWORD': '',
-        'HOST': '',                      # Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
-        'PORT': '',                      # Set to empty string for default.
+        'USER': config['db']['user'],
+        'PASSWORD': config['db']['password'],
+        'HOST': config['db']['host'],          # Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
+        'PORT': config['db']['port'],          # Set to empty string for default.
     }
 }
 
@@ -30,7 +34,7 @@ BASE_DIR = os.getcwd()
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [ config['eppabasic']['domain'] ]
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -68,11 +72,11 @@ MEDIA_URL = ''
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/var/www/example.com/static/"
-STATIC_ROOT = ''
+STATIC_ROOT = config['eppabasic']['static_root']
 
 # URL prefix for static files.
 # Example: "http://example.com/static/", "http://static.example.com/"
-STATIC_URL = '/EppaBasic/static/'
+STATIC_URL = '/' + PROJECT_DIR + 'static/'
 
 # Additional locations of static files
 STATICFILES_DIRS = (
@@ -90,7 +94,7 @@ STATICFILES_FINDERS = (
 )
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = '&%()zxds(dg&681^0uo%8r48auo)m6z!l$&^0%wf13&zqh!2mk'
+SECRET_KEY = config['eppabasic']['secret_key']
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
@@ -177,10 +181,12 @@ TEST_RUNNER = 'django.test.runner.DiscoverRunner'
 USE_X_FORWARDED_HOST = True
 LOGIN_URL = '/' + PROJECT_DIR
 
-EMAIL_HOST = ''
-EMAIL_HOST_USER = ''
-EMAIL_HOST_PASSWORD = ''
-EMAIL_PORT = ''
-EMAIL_USE_TLS = True
+EMAIL_HOST = config['email']['host']
+EMAIL_HOST_USER = config['email']['user']
+EMAIL_HOST_PASSWORD = config['email']['password']
+EMAIL_PORT = config['email']['port']
+EMAIL_USE_TLS = config['email'].getboolean('use_tls')
+
+DEFAULT_FROM_EMAIL = config['email']['default_from']
 
 FRONTPAGE_NEWS_COUNT = 3
