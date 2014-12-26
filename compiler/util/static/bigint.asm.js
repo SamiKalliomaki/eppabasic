@@ -582,3 +582,34 @@ function intdec(A) {
     // And return it
     return R | 0;
 }
+
+/**
+ * Returns the sign of the integer
+ */
+function intsign(A) {
+    A = A | 0;
+    // Length of numbers
+    var Al = 0;
+
+    // Read the lenghts of the numbers
+    Al = HEAP32U[A >> 2];
+
+    if ((Al | 0) == 0)
+        return 0;           // Number is zero
+
+    if (HEAP32U[(A + Al) >> 2] & 0x80000000)
+        return -1;          // Negative
+    return 1;               // Positive
+}
+
+function intcmp(A, B) {
+    A = A | 0;
+    B = B | 0;
+    var tmp = 0;
+    var sign = 0;
+
+    tmp = intsub(A, B);
+    sign = intsign(tmp);
+    free(tmp);
+    return sign;
+}
