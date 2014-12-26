@@ -375,7 +375,20 @@ function intdiv(A, B) {
     var tmp = 0;
     var c = 0;
     var c2 = 0;
+    var sign = 0;
+    var Afree = 0;
+    var Bfree = 0;
 
+    if (intsign(A) < 0) {
+        A = intneg(A | 0) | 0;
+        sign = ~sign;
+        Afree = 1;
+    }
+    if (intsign(B) < 0) {
+        B = intneg(B | 0) | 0;
+        sign = ~sign;
+        Bfree = 1;
+    }
 
     // Read the lenghts of the numbers
     Al = HEAP32U[A >> 2];
@@ -433,6 +446,15 @@ function intdiv(A, B) {
     // The result is in Lo
     // Free everythin else
     free(Hi | 0);
+    if (Afree)
+        free(A | 0);
+    if (Bfree)
+        free(B | 0);
+    if (sign) {
+        tmp = intneg(Lo);
+        free(Lo | 0);
+        Lo = tmp | 0;
+    }
 
     return Lo | 0;
 }
@@ -602,6 +624,13 @@ function intsign(A) {
     return 1;               // Positive
 }
 
+/*
+ * Compares two integers
+ * Returns:
+ *     1 if the first one is greater
+ *     0 if the numbers are equal
+ *    -1 if the second one is greater
+ */
 function intcmp(A, B) {
     A = A | 0;
     B = B | 0;
@@ -612,4 +641,18 @@ function intcmp(A, B) {
     sign = intsign(tmp);
     free(tmp);
     return sign;
+}
+
+/*
+ * Negates an integer
+ */
+function intneg(A) {
+    A = A | 0;
+    var ZERO = 0;
+    var R = 0;
+    ZERO = alloc(4) | 0;
+    HEAP32U[ZERO >> 2] = 0;
+    R = intsub(ZERO | 0, B | 0) | 0;
+    free(ZERO);
+    return R;
 }
