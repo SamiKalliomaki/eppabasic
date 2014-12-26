@@ -391,7 +391,7 @@ define(['./framework/compileerror', 'xregexp'], function (CompileError, XRegExp)
          * Parses a newline from the input
          */
         newlineToken: function newlineToken() {
-            var res = this.scan(XRegExp('^\\h*?\\n'), 'newline');
+            var res = this.scan(XRegExp('^\\h*?\\r?\\n'), 'newline');
             if (res) {
                 ++this.lineno;
                 return res;
