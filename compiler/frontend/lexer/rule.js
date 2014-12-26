@@ -18,7 +18,7 @@
         this.pattern = XRegExp(pattern, 'i');
         /**
          * Type of token
-         * @member {compiler/frontend/lexer/toke}
+         * @member {module:compiler/frontend/lexer/tokens.Token}
          * @private
          */
         this.type = type;

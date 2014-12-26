@@ -5,7 +5,21 @@
 define(['require', './frontend/lexer'], function (require, lexer) {
     "use strict";
 
-    return {
+    /**
+     * Contains all the parts of the compiler. This is the class that is visible to the end user.
+     * @class
+     * @memberOf module:compiler/toolchain
+     */
+    var Toolchain = function() {
+        /**
+         * The lexer instance
+         * @member
+         * @type {module:compiler/frontend/lexer.Lexer}
+         */
+        this.lexer = this.createLexer();
+    }
+
+    Toolchain.prototype = {
         /**
          * Advances the lexer by one token and returns it.
          * @param {module:compiler/compilationUnit.CompilationUnit} cu - The compilation unit for which the frontend is run
@@ -35,4 +49,6 @@ define(['require', './frontend/lexer'], function (require, lexer) {
             return new lexer.Lexer(cu, rules);
         }
     };
+
+    return Toolchain;
 });
