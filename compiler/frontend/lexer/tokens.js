@@ -42,7 +42,7 @@ define(['require'], function (require) {
         Token.call(this, line, captures);
     };
 
-    WhitespaceToken.prototype = new Token(-1, ['']);
+    WhitespaceToken.prototype = Object.create(Token.prototype);
     WhitespaceToken.prototype.constructor = WhitespaceToken;
 
     /**
@@ -57,7 +57,7 @@ define(['require'], function (require) {
         Token.call(this, line, ['']);
     };
 
-    EOSToken.prototype = new Token(-1, ['']);
+    EOSToken.prototype = Object.create(Token.prototype);
     EOSToken.prototype.constructor = EOSToken;
 
     /**
@@ -78,7 +78,7 @@ define(['require'], function (require) {
         this.message = captures[1];
     };
 
-    CommentToken.prototype = new Token(-1, ['']);
+    CommentToken.prototype = Object.create(Token.prototype);
     CommentToken.prototype.constructor = CommentToken;
 
     /**
@@ -99,7 +99,7 @@ define(['require'], function (require) {
         this.type = captures[1];
     };
 
-    OperatorToken.prototype = new Token(-1, ['']);
+    OperatorToken.prototype = Object.create(Token.prototype);
     OperatorToken.prototype.constructor = OperatorToken;
 
     /**
@@ -120,7 +120,7 @@ define(['require'], function (require) {
         this.value = parseFloat(captures[1]);       // TODO Change to bigint
     };
 
-    NumberToken.prototype = new Token(-1, ['']);
+    NumberToken.prototype = Object.create(Token.prototype);
     NumberToken.prototype.constructor = NumberToken;
 
     /**
@@ -142,7 +142,7 @@ define(['require'], function (require) {
         this.value = captures[1].replace(/""/g, '"');
     };
 
-    StringToken.prototype = new Token(-1, ['']);
+    StringToken.prototype = Object.create(Token.prototype);
     StringToken.prototype.constructor = StringToken;
 
     /**
@@ -158,7 +158,7 @@ define(['require'], function (require) {
         Token.call(this, line, captures);
     };
 
-    CommaToken.prototype = new Token(-1, ['']);
+    CommaToken.prototype = Object.create(Token.prototype);
     CommaToken.prototype.constructor = CommaToken;
 
     /**
@@ -174,7 +174,7 @@ define(['require'], function (require) {
         Token.call(this, line, captures);
     };
 
-    ParenthesisToken.prototype = new Token(-1, ['']);
+    ParenthesisToken.prototype = Object.create(Token.prototype);
     ParenthesisToken.prototype.constructor = ParenthesisToken;
 
     return {
