@@ -292,6 +292,75 @@
             });
         },
 
+        divOneTest: function divOneTest(assert) {
+            var bi = createAsm();
+
+            var data = [
+                // Special cases
+                { a: [] },                              //  0
+                { a: [0x00000001] },                    //  1
+                { a: [0xffffffff] },                    // -1
+                { a: [0x80000000, 0x00000000] },        //  2147483648
+                { a: [0x80000000] },                    // -2147483648
+
+                // Some random tests
+                { a: [0x0f0f0f0f] },                    //  252645135
+                { a: [0xf0f0f0f0] },                    // -252645136
+                { a: [0xfd3a5815] },                    // -46508011
+                { a: [0x31415926] },                    //  826366246
+                { a: [0x13371337] },                    //  322376503
+                { a: [0x00000000, 0x00000001] },        //  4294967296
+                { a: [0x00000000, 0xffffffff] },        // -4294967296
+                { a: [0x00000000, 0x10000000] },        // -9223372036854775808
+                { a: [0xbca83d50, 0xfa393af9] },        // -416236646268650160
+                { a: [0x31415926, 0x53589793] },        //  5358979331415926
+                { a: [0xadfc3f57, 0xfc2a81b8] },        // -276265796936908969
+                { a: [0x13456789, 0x10111213] },        //  1157726452347922313
+                { a: [0x31211101, 0x98765432] },        // -7460683158143299327
+            ];
+            data.forEach(function (data) {
+                var a = bi.pushInts([0x000000004, 0x00000001]);
+                var b = bi.pushInts([data.a.length * 4].concat(data.a));
+                var t = bi.mul(b, a);
+                bi.assertInts(t, [data.a.length * 4].concat(data.a), assert.Error, 'Divide number by one');
+            });
+        },
+
+        divBySelfTest: function divBySelfTest(assert) {
+            var bi = createAsm();
+
+            var data = [
+                // Special cases
+                { a: [] },                              //  0
+                { a: [0x00000001] },                    //  1
+                { a: [0xffffffff] },                    // -1
+                { a: [0x80000000, 0x00000000] },        //  2147483648
+                { a: [0x80000000] },                    // -2147483648
+
+                // Some random tests
+                { a: [0x0f0f0f0f] },                    //  252645135
+                { a: [0xf0f0f0f0] },                    // -252645136
+                { a: [0xfd3a5815] },                    // -46508011
+                { a: [0x31415926] },                    //  826366246
+                { a: [0x13371337] },                    //  322376503
+                { a: [0x00000000, 0x00000001] },        //  4294967296
+                { a: [0x00000000, 0xffffffff] },        // -4294967296
+                { a: [0x00000000, 0x10000000] },        // -9223372036854775808
+                { a: [0xbca83d50, 0xfa393af9] },        // -416236646268650160
+                { a: [0x31415926, 0x53589793] },        //  5358979331415926
+                { a: [0xadfc3f57, 0xfc2a81b8] },        // -276265796936908969
+                { a: [0x13456789, 0x10111213] },        //  1157726452347922313
+                { a: [0x31211101, 0x98765432] },        // -7460683158143299327
+            ];
+            data.forEach(function (data) {
+                var a = bi.pushInts([data.a.length * 4].concat(data.a));
+                var b = bi.pushInts([data.a.length * 4].concat(data.a));
+                var ONE = bi.pushInts([0x000000004, 0x00000001]);
+                var t = bi.mul(a, b);
+                bi.assertInts(t, ONE, assert.Error, 'Divide by self');
+            });
+        },
+
         incTest: function incTest(assert) {
             var bi = createAsm();
 
