@@ -8,7 +8,7 @@
         'var HEAP_END=0;' +
         require('text!compiler/util/static/heap.asm.js') +
         require('text!compiler/util/static/bigint.asm.js') +
-        'return{init:heapinit,alloc:alloc,add:intadd,sub:intsub,mul:intmul};'
+        'return{init:heapinit,alloc:alloc,add:intadd,sub:intsub,mul:intmul,div:intdiv,inc:intinc,dec:intdec};'
         );
 
     if (!Math.imul) {
@@ -291,5 +291,41 @@
                 bi.assertInts(t, [data.r.length * 4].concat(data.r), assert.Error, 'Mul carry test');
             });
         },
+
+        incTest: function incTest(assert) {
+            var bi = createAsm();
+
+            var data = [
+                // Special cases
+                { a: [], r: [0x00000001] },                                     //  0
+                { a: [0x00000001], r: [0x00000002] },                           //  1
+                { a: [0xffffffff], r: [] },                                     // -1
+                { a: [0x80000000, 0x00000000], r: [0x80000001, 0x00000000] },   //  2147483648
+                { a: [0x80000000], r: [0x80000001] },                           // -2147483648
+            ];
+            data.forEach(function (data) {
+                var a = bi.pushInts([data.a.length * 4].concat(data.a));
+                var t = bi.inc(a);
+                bi.assertInts(t, [data.r.length * 4].concat(data.r), assert.Error, 'Increase number by one');
+            });
+        },
+
+        decTest: function decTest(assert) {
+            var bi = createAsm();
+
+            var data = [
+                // Special cases
+                { a: [], r: [0xffffffff] },                                     //  0
+                { a: [0x00000001], r: [] },                                     //  1
+                { a: [0xffffffff], r: [0xfffffffe] },                           // -1
+                { a: [0x80000000, 0x00000000], r: [0x7fffffff] },               //  2147483648
+                { a: [0x80000000], r: [0x7fffffff, 0xffffffff] },               // -2147483648
+            ];
+            data.forEach(function (data) {
+                var a = bi.pushInts([data.a.length * 4].concat(data.a));
+                var t = bi.dec(a);
+                bi.assertInts(t, [data.r.length * 4].concat(data.r), assert.Error, 'Decrease number by one');
+            });
+        }
     };
 });

@@ -356,16 +356,229 @@ function intmul(A, B) {
 }
 
 /**
- * Performs a simple division
+ * Performs a simple division using binary search
  */
-function div(A, B) {
+function intdiv(A, B) {
     // Locations of numbers
     A = A | 0;
     B = B | 0;
-    var R = 0;
+    var Hi = 0;
+    var Mi = 0;
+    var Lo = 0;
     // Length of numbers
     var Al = 0;
     var Bl = 0;
+    var Hil = 0;
+    var Lol = 0;
+    // Variables
+    var i = 0;
+    var tmp = 0;
+    var c = 0;
+    var c2 = 0;
+
+
+    // Read the lenghts of the numbers
+    Al = HEAP32U[A >> 2];
+    Bl = HEAP32U[B >> 2];
+
+    // Low is 0 for the begining
+    Lol = 0;
+    Lo = alloc((Lol + 4) | 0) | 0;
+    HEAP32U[Lo >> 2] = Lol;
+    // High is A for the begining
+    Hil = Al;
+    Hi = alloc((Hil + 4) | 0) | 0;
+    HEAP32U[Hi >> 2] = Hil;
+    for (; (i | 0) < (Hil | 0) ; i = (i + 4) | 0) {
+        HEAP32U[(Hi + 4 + i) >> 2] = HEAP32U[(A + 4 + i) >> 2];
+    }
+
+    while ((intcmp(Lo | 0, Hi | 0) | 0) < 0) {
+        // Mi = Lo + Hi
+        Mi = intadd(Lo | 0, Hi | 0) | 0;
+        // tmp = Lo + Hi + 1
+        tmp = intinc(Mi | 0) | 0;
+        //free(Mi | 0);                 // Use the reserved area to store tmp/2
+        // Mi = (Lo + Hi + 1)/2
+        c = 0;
+        // Shift right by 1 to get /2
+        for (i = HEAP32U[Mi >> 2] | 0; (i | 0) > 0; i = (i - 4) | 0) {
+            c2 = HEAP32U[(tmp + i) >> 2] | 0;
+            HEAP32U[(Mi + i) >> 2] = (c << 31) | (c2 >>> 1);
+            c = c2 & 1;
+        }
+        intnorm(Mi);
+        // Free excess memory
+        free(tmp | 0);
+
+        // tmp = B * Mi
+        tmp = intmul(B | 0, Mi | 0) | 0;
+        // If A > B * Mi
+        if ((intcmp(A | 0, tmp | 0) | 0) > 0) {
+            free(tmp | 0);
+            // Hi = Mi - 1
+            free(Hi | 0);
+            Hi = intdec(Mi | 0) | 0;
+        } else {
+            free(tmp | 0);
+            // Lo = Mi
+            free(Lo);
+            Lo = Mi | 0;
+        }
+
+        // Free excess memory
+        free(Mi | 0);
+    }
+
+    // The result is in Lo
+    // Free everythin else
+    free(Hi | 0);
+
+    return Lo | 0;
+}
+
+/**
+ * Increases the number by one
+ */
+function intinc(A) {
+    // Locations of numbers
+    A = A | 0;
+    var R = 0;
+    // Length of numbers
+    var Al = 0;
     var Rl = 0;
 
+    var t = 0;      // Temporary
+    var i = 0;      // Index
+    var c = 0;      // Carry
+    var a = 0;      // A piece of A
+    var r = 0;      // A piece of R
+
+    // Read the lenghts of the numbers
+    Al = HEAP32U[A >> 2];
+
+    // Reserve memory for R
+    Rl = Al + 4 | 0;
+    R = alloc(Rl + 4 | 0) | 0;
+
+    // Move pointers to point to the start of the data
+    A = A + 4 | 0;
+    R = R + 4 | 0;
+
+    // What to add
+    c = 1;
+
+    for (; (i | 0) < (Al | 0) ; i = i + 4 | 0) {
+        // Load
+        a = HEAP32U[(A + i) >> 2] | 0;
+        // Lower bits
+        t = ((a & 0xffff) + c) | 0;
+        // Upper bits
+        r = (a >>> 16) + (t >>> 16) | 0;
+        // Save
+        HEAP32U[(R + i) >> 2] = (t & 0xffff) | (r << 16);
+        // Carry
+        c = r >>> 16;
+    }
+    // Negative numbers are only getting shorter while positives can grow
+    if (
+        ((Al | 0) == 0) |
+        (
+            ((Al | 0) > 0) &
+            ((HEAP32U[(A + Al - 4) >> 2] & 0x80000000) == 0)
+        )
+        )
+        HEAP32U[(R + i) >> 2] = c | 0;
+    else
+        Rl = Rl - 4 | 0;
+    // Move result to point back to the right place
+    R = R - 4 | 0;
+    // Save the R length
+    HEAP32U[R >> 2] = Rl;
+    // Normalize it
+    intnorm(R | 0);
+    // And return it
+    return R | 0;
+}
+
+/**
+ * Decreases the number by one
+ */
+function intdec(A) {
+    // Locations of numbers
+    A = A | 0;
+    var R = 0;
+    // Length of numbers
+    var Al = 0;
+    var Rl = 0;
+
+    var t = 0;      // Temporary
+    var i = 0;      // Index
+    var c = 0;      // Carry
+    var a = 0;      // A piece of A
+    var r = 0;      // A piece of R
+
+    // Read the lenghts of the numbers
+    Al = HEAP32U[A >> 2];
+
+    // Reserve memory for the R
+    Rl = Al + 4 | 0;
+    R = alloc(Rl + 4 | 0) | 0;
+
+    // Move pointers to point to the start of the data
+    A = A + 4 | 0;
+    R = R + 4 | 0;
+
+    // What to substract
+    c = 0xffffffff;
+
+    for (; (i | 0) < (Al | 0) ; i = i + 4 | 0) {
+        // Load
+        a = HEAP32U[(A + i) >> 2] | 0;
+        // Lower bits
+        t = ((a & 0xffff) + c) | 0;
+        // Upper bits
+        r = (a >>> 16) + (t >> 16) | 0;
+        // Save
+        HEAP32U[(R + i) >> 2] = (t & 0xffff) | (r << 16);
+        // Carry
+        c = r >> 16;
+    }
+
+    if (HEAP32U[(A + Al - 4) >> 2] & 0x80000000) {
+        // A is negative
+        for (; (i | 0) < (Rl | 0) ; i = i + 4 | 0) {
+            a = 0xffffffff;
+            // Lower bits
+            t = ((a & 0xffff) + c) | 0;
+            // Upper bits
+            r = (a >>> 16) + (t >> 16) | 0;
+            // Save
+            HEAP32U[(R + i) >> 2] = (t & 0xffff) | (r << 16);
+            // Carry
+            c = r >> 16;
+        }
+    } else {
+        // A is positive
+        for (; (i | 0) < (Rl | 0) ; i = i + 4 | 0) {
+            a = 0;
+            // Lower bits
+            t = ((a & 0xffff) + c) | 0;
+            // Upper bits
+            r = (a >>> 16) + (t >> 16) | 0;
+            // Save
+            HEAP32U[(R + i) >> 2] = (t & 0xffff) | (r << 16);
+            // Carry
+            c = r >> 16;
+        }
+    }
+
+    // Move result to point back to the right place
+    R = R - 4 | 0;
+    // Save the R length
+    HEAP32U[R >> 2] = Rl;
+    // Normalize it
+    intnorm(R | 0);
+    // And return it
+    return R | 0;
 }
