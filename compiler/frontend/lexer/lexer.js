@@ -1,7 +1,5 @@
-﻿define(['require', './tokens'], function (require) {
+﻿define(['require', './tokens'], function (require, Tokens) {
     "use strict";
-
-    var Tokens = require('./tokens');
 
     /**
      * A simple, regex based lexer

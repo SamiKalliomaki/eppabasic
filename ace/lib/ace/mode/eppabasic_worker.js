@@ -1,6 +1,6 @@
 ﻿define(function (require, exports, module) {
     "use strict";
-    var oop = require("../lib/oop");
+    /*var oop = require("../lib/oop");
     var Mirror = require("../worker/mirror").Mirror;
 
     // Eppabasic compiler parts
@@ -36,5 +36,5 @@
 
             this.sender.emit('parsed', [cu.errors]);
         }
-    }).call(EppaBasicWorker.prototype);
+    }).call(EppaBasicWorker.prototype);*/
 });

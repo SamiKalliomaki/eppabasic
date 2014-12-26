@@ -1,8 +1,5 @@
-﻿define(['require', 'libs/xregexp'], function (require) {
+﻿define(['require', 'libs/xregexp'], function (require, XRegExp) {
     "use strict";
-
-    var XRegExp = require('libs/xregexp');
-
     /**
      * A rule for the lexer
      *

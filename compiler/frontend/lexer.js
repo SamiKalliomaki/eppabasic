@@ -2,12 +2,8 @@
  * Lexer for EppaBasic
  * @module compiler/frontend/lexer
  */
-define(['require', './lexer/tokens', './lexer/lexer', './lexer/rule'], function (require) {
+define(['require', './lexer/tokens', './lexer/lexer', './lexer/rule'], function (require, Tokens, Lexer, Rule) {
     "use strict";
-
-    var Tokens = require('./lexer/tokens');
-    var Lexer = require('./lexer/lexer');
-    var Rule = require('./lexer/rule');
 
     return {
         Lexer: Lexer,

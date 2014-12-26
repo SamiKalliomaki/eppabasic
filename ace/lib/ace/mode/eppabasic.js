@@ -1,7 +1,7 @@
 define(function (require, exports, module) {
     "use strict";
 
-    var oop = require("../lib/oop");
+    /*var oop = require("../lib/oop");
     var TextMode = require("./text").Mode;
     var WorkerClient = require("../worker/worker_client").WorkerClient;
 
@@ -216,21 +216,6 @@ define(function (require, exports, module) {
                 doc.replace(new Range(row, 0, row, indent.length), newIndent);
             }
         };
-
-        /*this.createWorker = function(session) {
-            var worker = new WorkerClient(["ace"], "ace/mode/eppabasic_worker", "EppaBasicWorker");
-            worker.attachToDocument(session.getDocument());
-    
-            worker.on("errors", function(results) {
-                session.setAnnotations(results.data);
-            });
-    
-            worker.on("terminate", function() {
-                session.clearAnnotations();
-            });
-    
-            return worker;
-        };*/
     };
     oop.inherits(Mode, TextMode);
 
@@ -270,5 +255,5 @@ define(function (require, exports, module) {
         };
     }).call(Mode.prototype);
 
-    exports.Mode = Mode;
+    exports.Mode = Mode;*/
 });

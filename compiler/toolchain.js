@@ -2,10 +2,8 @@
  * A collection of functions for handling CompilationUnit
  * @module compiler/toolchain
  */
-define(['require'], function (require) {
+define(['require', './frontend/lexer'], function (require, lexer) {
     "use strict";
-
-    var lexer = require('./frontend/lexer');
 
     return {
         /**
