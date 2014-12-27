@@ -53,7 +53,7 @@ walk('./test', function (err, testFiles) {
 
         // Require the file with it dependencies
         var moduleName = path.join(path.dirname(testFile), path.basename(testFile, '.js')).replace(/\\/g, '/');
-        testRequire([moduleName], function (testSuite) {
+        testRequire([moduleName, 'polyfill'], function (testSuite) {
             console.log("Testing suite: " + path.basename(testFile, '.js'));
 
             for (name in testSuite) {
@@ -62,10 +62,12 @@ walk('./test', function (err, testFiles) {
                     try {
                         testSuite[name](assert);
                     } catch (e) {
-                        if (e instanceof AssertationError)
+                        if (e instanceof AssertationError) {
                             console.log('Test "' + moduleName + '.' + name + '" failed: ' + e.message);
-                        else
+                        } else {
+                            console.error(e);
                             console.error('Internal error:\n\t' + e.stack.replace(/\n/, '\n\t'));
+                        }
                     }
                 }
             }
@@ -81,9 +83,13 @@ AssertationError.prototype.constructor = AssertationError;
 
 var assert = {
     'arrayLength': function (array, expect, msg) {
-        if(array.length !== expect) {
+        if (array.length !== expect) {
             throw new AssertationError("Expected array length to be " + expect + " but it was " + array.length + ": " + msg);
         }
+    },
+    'equals': function (got, expect, msg) {
+        if (!Object.is(got, expect))
+            throw new AssertationError("Expected '" + expect + "' but got '" + got + "': " + msg);
     },
     'instanceof': function (got, expect, msg) {
         if (!(got instanceof expect)) {
@@ -107,6 +113,11 @@ var assert = {
     'null': function (got, msg) {
         if (got !== null) {
             throw new AssertationError("Got '" + got + "' but expected null: " + msg);
+        }
+    },
+    'undefined': function (got, msg) {
+        if (got !== undefined) {
+            throw new AssertationError("Got '" + got + "' but expected undefined: " + msg);
         }
     },
     Error: AssertationError

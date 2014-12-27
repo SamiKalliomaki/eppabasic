@@ -53,9 +53,9 @@ define([], function () {
      * @memberOf module:compiler/util/hashes
      */
     function hash(obj) {
-        if (obj instanceof Number)
-            return obj;
-        if (obj instanceof String) {
+        if (typeof obj === 'number')
+            return (obj * 123456789) | 0;
+        if (typeof obj === 'string') {
             // Strings are hashed using FNV-1a
             var h = 2166136261 | 0;
             for (var i = 0; i < obj.length; i++) {
@@ -95,6 +95,21 @@ define([], function () {
         return Object.is(a, b);
     }
 
+
+    /**
+    * Computes the positive modulo of two numbers
+    * 
+    * @param {number} a - The number which is divided
+    * @param {number} b - The number by which is divided
+    * @returns {number} The positive modulo of a/b
+    * 
+    * @private
+    * @memberOf module:compiler/util/hashes
+    */
+    function posmod(a, b) {
+        return ((a % b) + b) % b;
+    }
+
     /**
      * A collection of key-value pairs
      * @class
@@ -125,8 +140,8 @@ define([], function () {
          */
         set: function set(key, value) {
             // Compute the hash and the index
-            var hash = hash(key);
-            var index = hash % this.table.length;
+            var h = hash(key);
+            var index = posmod(h, this.table.length);
 
             // Check that there exists a collision table
             if (!this.table[index])
@@ -143,7 +158,7 @@ define([], function () {
                     k: key,
                     v: undefined
                 };
-                this.table.push(entry);
+                this.table[index].push(entry);
             }
 
             // Finally set the value
@@ -162,8 +177,8 @@ define([], function () {
          */
         get: function get(key) {
             // Compute the hash and the index
-            var hash = hash(key);
-            var index = hash % this.table.length;
+            var h = hash(key);
+            var index = posmod(h, this.table.length);
 
             // Check that there exists a collision table
             if (!this.table[index])

@@ -17,9 +17,12 @@
     }
 });
 
-// Preload jquery
-require(['jquery', 'jqueryui', 'i18n', 'ace/ace']);
-// Preload locales
-require(['text!locales/en/translation.json', 'text!locales/fi/translation.json']);
-// Go to main
-require(['editor/main']);
+// Preload some libraries and localse
+require([
+    'jquery', 'jqueryui', 'i18n', 'ace/ace', 'polyfill',
+    'text!locales/en/translation.json', 'text!locales/fi/translation.json'],
+    function () {
+        // After libraries are loaded, go to main
+        require(['editor/main']);
+    }
+);
