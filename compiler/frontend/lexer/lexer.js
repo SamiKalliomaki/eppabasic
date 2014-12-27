@@ -1,121 +1,73 @@
-﻿define(['require', './tokens'], function (require, Tokens) {
+﻿define(['require', './tokens'], function (require, tokens) {
     "use strict";
 
     /**
      * A simple, regex based lexer
      *
      * @class
-     * @param {module:compiler/compilationUnit.CompilationUnit} cu - The compilation unit to compile
+     * @extends {module:compiler/compilationPhase.CompilationPhase}
      * @param {module:compiler/frontend/lexer.Rule[]} rules - Rules used in lexical analysis
      * @memberOf module:compiler/frontend/lexer
      */
-    var Lexer = function Lexer(cu, rules) {
-        /**
-         * Current input of the lexer. Is reduced when the lexer is advanced.
-         * @private
-         */
-        this.input = cu.source;
+    var Lexer = function Lexer(rules) {
         /**
          * The rules the lexer follows.
+         * @member
          * @private
+         * @type {module:compiler/frontend/lexer.Rule[]}
          */
         this.rules = rules;
-
-        /**
-         * For storing pre-fetched tokens
-         * @private
-         */
-        this.stash = [];
-        /**
-         * The current line of the lexer
-         * @private
-         */
-        this.line = 0;
     }
 
 
-    Lexer.prototype = {
-        /**
-         * Advances the lexer by one token and returns it.
-         * @returns {module:compiler/frontend/lexer/tokens.Token} The token popped from the source
-         * @memberOf module:compiler/frontend/lexer.Lexer
-         * @instance
-         */
-        advance: function advance() {
-            if (this.stash.length <= 0)
-                this.stashToken();
-            return this.popStash();
-        },
+    /**
+     * Executes the lexer. Results in tokens being stored in cu.tokens.
+     * @instance
+     * @param {module:compiler/compilationUnit.CompilationUnit} cu
+     * @memberOf module:compiler/frontend/lexer.Lexer
+     */
+    Lexer.prototype.run = function run(cu) {
+        var input = cu.source;
+        var line = 1;
+        var token = tokens.Token(-1, ['']);
 
-        /**
-         * Peeks a token from the distance of n tokens and returns it without advancing the lexer.
-         * @param {number} [n=1] - The number of tokens to peek in the future.
-         * @returns {module:compiler/frontend/lexer/tokens.Token} The token peeked from n token in the future
-         * @memberOf module:compiler/frontend/lexer.Lexer
-         * @instance
-         */
-        peek: function peek(n) {
-            if (n === undefined)
-                n = 1;
-            var fetch = n - this.stash.length;
-            while (fetch-- > 0) this.stashToken();
-            return this.stash[--n];
-        },
+        cu.tokens = [];
 
-        /**
-         * Pops a token from the stash.
-         * @returns {?module:compiler/frontend/lexer/tokens.Token} The token at the front of the stash. If no such token exists, returns null.
-         * @private
-         * @memberOf module:compiler/frontend/lexer.Lexer
-         * @instance
-         */
-        popStash: function popStash() {
-            if (this.stash.length <= 0)
-                return null;
-            return this.stash.shift();
-        },
+        while(!(token instanceof tokens.EOSToken)) {
+            token = this.nextToken(input);
+            cu.tokens.push(token);
 
-        /**
-         * Adds a token to the stash.
-         * @private
-         * @memberOf module:compiler/frontend/lexer.Lexer
-         * @instance
-         */
-        stashToken: function stashToken() {
-            var token;
+            if(token instanceof tokens.EOLToken) {
+                line++;
+            }
+        }
+    };
 
-            do {
-                token = this.nextToken();
-            } while (token.type instanceof Tokens.WhitespaceToken);
+    /**
+     * Get the next token from the input
+     * @private
+     * @param {string} input Source code. This gets consumed.
+     * @param {number} line Current line.
+     * @returns {module:compiler/frontend/lexer/tokens.Token} The next token in the input
+     * @memberOf module:compiler/frontend/lexer.Lexer
+     */
+    Lexer.prototype.nextToken = function nextToken(input, line) {
+        // First try if the source has already ended
+        if (input.length <= 0)
+            return new tokens.EOSToken(line);
 
-            this.stash.push(token);
-        },
+        // Otherwise go through the rules and find the comforting rule
+        var rule = this.rules.find(function (rule) {
+            return rule.test(input);
+        }, this);
 
-        /**
-         * Get the next token from the input
-         * @returns {module:compiler/frontend/lexer/tokens.Token} The next token in the input
-         * @private
-         * @memberOf module:compiler/frontend/lexer.Lexer
-         * @instance
-         */
-        nextToken: function nextToken() {
-            // First try if the source has already ended
-            if (this.input.length <= 0)
-                return new Tokens.EOSToken(this.line);
+        // Get the captures
+        var captures = rule.capture(input);
+        // Consume the input
+        input = input.substr(captures[0].length);
 
-            // Otherwise go through the rules and find the comforting rule
-            var rule = this.rules.find(function (rule) {
-                return rule.test(this.input);
-            }, this);
-
-            // Get the captures
-            var captures = rule.capture(this.input);
-            // Consume the input
-            this.input = this.input.substr(captures[0].length);
-
-            var token = new rule.type(this.line, captures);
-            return token;
-        },
+        var token = new rule.type(line, captures);
+        return token;
     };
 
     return Lexer;

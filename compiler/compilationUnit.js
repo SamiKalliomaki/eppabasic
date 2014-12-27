@@ -1,6 +1,6 @@
 ﻿/**
  * Module containing CompilationUnit class
- * @module compiler/compilationUnit
+ * @module
  */
 define([], function () {
     /**
@@ -11,7 +11,16 @@ define([], function () {
      * @memberOf module:compiler/compilationUnit
      */
     function CompilationUnit(source) {
+        /**
+         * The program source code
+         * @type {string}
+         */
         this.source = source;
+
+        /**
+         * Errors that have ocurred during compilation process
+         * @type {module:compiler/compilationError.CompilationError[]}
+         */
         this.errors = [];
     }
 

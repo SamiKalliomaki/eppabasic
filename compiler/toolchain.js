@@ -1,5 +1,5 @@
 ﻿/**
- * A collection of functions for handling CompilationUnit
+ * Module containing Toolchain class
  * @module compiler/toolchain
  */
 define(['require', './frontend/lexer'], function (require, lexer) {
@@ -12,11 +12,11 @@ define(['require', './frontend/lexer'], function (require, lexer) {
      */
     var Toolchain = function() {
         /**
-         * The lexer instance
+         * Compilation phases to be run on the code
          * @member
-         * @type {module:compiler/frontend/lexer.Lexer}
+         * @type {module:compiler/compilationPhase.CompilationPhase[]}
          */
-        this.lexer = this.createLexer();
+        this.lexer = [ this.createLexer() ];
     }
 
     Toolchain.prototype = {
@@ -38,6 +38,8 @@ define(['require', './frontend/lexer'], function (require, lexer) {
          */
         createLexer: function createLexer(cu) {
             var rules = [
+                new lexer.Rule('^[^\S\n]*', lexer.tokens.WhitespaceToken),
+                new lexer.Rule('^\r?\n', lexer.tokens.EOLToken),
                 new lexer.Rule('^(\'[^\n]*)', lexer.tokens.CommentToken),
                 new lexer.Rule('^(<>|<=?|>=?|=|\+|-|\*|\/|\\|\^|&|MOD\b|AND\b|OR\b|XOR\b|NOT\b)', lexer.tokens.OperatorToken),
                 new lexer.Rule('^(\\d+(?:\\.\\d+)?)', lexer.tokens.NumberToken),

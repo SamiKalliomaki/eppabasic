@@ -80,6 +80,11 @@ AssertationError.prototype = new Error;
 AssertationError.prototype.constructor = AssertationError;
 
 var assert = {
+    'arrayLength': function (array, expect, msg) {
+        if(array.length !== expect) {
+            throw new AssertationError("Expected array length to be " + expect + " but it was " + array.length + ": " + msg);
+        }
+    },
     'instanceof': function (got, expect, msg) {
         if (!(got instanceof expect)) {
             var gottype;

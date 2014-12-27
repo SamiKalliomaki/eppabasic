@@ -6,8 +6,12 @@
     return {
         eosTest: function eosTest(assert) {
             var cu = new CompilationUnit('');
-            var lexer = new Lexer(cu, []);
-            assert.instanceof(lexer.advance(), tokens.EOSToken, 'lexer.advance with empty input should return EOSToken');
+            var lexer = new Lexer([]);
+
+            lexer.run(cu);
+
+            assert.arrayLength(cu.tokens, 1, 'lexer ran with empty input should return exactly one token')
+            assert.instanceof(cu.tokens[0], tokens.EOSToken, 'lexer ran with empty input should return EOSToken');
         }
     };
 });

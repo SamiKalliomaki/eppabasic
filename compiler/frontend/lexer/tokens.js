@@ -26,8 +26,24 @@ define(['require'], function (require) {
          */
         this.text = captures[0];
     };
+
     Token.prototype = {
     };
+
+    /**
+     * End Of Source token
+     *
+     * @class
+     * @param {number} line - The line the token is located
+     * @memberOf module:compiler/frontend/lexer/tokens
+     * @extends module:compiler/frontend/lexer/tokens.Token
+     */
+    function EOSToken(line) {
+        Token.call(this, line, ['']);
+    };
+
+    EOSToken.prototype = Object.create(Token.prototype);
+    EOSToken.prototype.constructor = EOSToken;
 
     /**
      * A token containing only whitespaces
@@ -46,19 +62,20 @@ define(['require'], function (require) {
     WhitespaceToken.prototype.constructor = WhitespaceToken;
 
     /**
-     * End Of Source token
+     * End of line token
      *
      * @class
-     * @param {number} line - The line the token is located
-     * @memberOf module:compiler/frontend/lexer/tokens
      * @extends module:compiler/frontend/lexer/tokens.Token
+     * @param {number} line - The line the token is located
+     * @param {string[]} captures - An array of captures returned by regexp.match
+     * @memberOf module:compiler/frontend/lexer/tokens
      */
-    function EOSToken(line) {
-        Token.call(this, line, ['']);
-    };
+    function EOLToken(line, captures) {
+        Token.call(this, line, captures);
+    }
 
-    EOSToken.prototype = Object.create(Token.prototype);
-    EOSToken.prototype.constructor = EOSToken;
+    EOLToken.prototype = Object.create(Token.prototype);
+    EOLToken.prototype.constructor = EOLToken;
 
     /**
      * Comment token
@@ -178,9 +195,10 @@ define(['require'], function (require) {
     ParenthesisToken.prototype.constructor = ParenthesisToken;
 
     return {
-        EOSToken: EOSToken,
         Token: Token,
+        EOSToken: EOSToken,
         WhitespaceToken: WhitespaceToken,
+        EOLToken: EOLToken,
         CommentToken: CommentToken,
         OperatorToken: OperatorToken,
         NumberToken: NumberToken,
