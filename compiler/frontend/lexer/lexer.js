@@ -21,6 +21,8 @@
 
     Lexer.prototype = Object.create(compilationPhase.CompilationPhase.prototype);
 
+    Lexer.prototype.constructor = Lexer;
+
     /**
      * Executes the lexer. Results in tokens being stored in cu.tokens.
      * @instance
