@@ -1,0 +1,23 @@
+{
+    "tags": {
+        "allowUnknownTags": true
+    },
+    "source": {
+        "includePattern": ".+\\.js(doc)?$",
+        "excludePattern": "(^|\\/|\\\\)_",
+		"exclude": [ "./ace/", "./doc/", "./build/", "./node_modules/", "./libs", "./locales/", "./manual/" ],
+		"include": [ "." ]
+    },
+    "plugins": [],
+    "templates": {
+        "cleverLinks": false,
+        "monospaceLinks": false,
+        "default": {
+            "outputSourceFiles": true
+        }
+    },
+	"opts": {
+		"destination": "./doc/",
+		"recurse": true
+	}
+}
