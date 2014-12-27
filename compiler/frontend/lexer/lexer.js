@@ -1,4 +1,4 @@
-﻿define(['require', './tokens'], function (require, tokens) {
+﻿define(['require', './tokens', 'compiler/compilationPhase'], function (require, tokens, compilationPhase) {
     "use strict";
 
     /**
@@ -19,6 +19,7 @@
         this.rules = rules;
     }
 
+    Lexer.prototype = Object.create(compilationPhase.CompilationPhase.prototype);
 
     /**
      * Executes the lexer. Results in tokens being stored in cu.tokens.
