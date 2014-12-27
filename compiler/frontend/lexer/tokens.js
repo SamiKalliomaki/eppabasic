@@ -155,7 +155,6 @@ define(['require'], function (require) {
          * The value of the string
          * @type {string}
          */
-        ''.replace()
         this.value = captures[1].replace(/""/g, '"');
     };
 
