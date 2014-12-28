@@ -198,6 +198,82 @@ define([], function () {
         }
     };
 
+    /**
+     * A collection of unique values
+     * @class
+     * @param {number} size=1024 - Size of the hash table
+     * @memberOf module:compiler/util/hashes
+     */
+    var Set = function Set(size) {
+        if (!size)
+            size = 1024;
+
+        /**
+         * The hash table
+         * @type object[]
+         * @private
+         */
+        this.table = new Array(size);
+    }
+
+    Set.prototype = {
+        /**
+         * Inserts a value to the set
+         * 
+         * @param {object} value - The value to be inserted
+         * 
+         * @instance
+         * @memberOf module:compiler/util/hashes.Set
+         */
+        insert: function insert(value) {
+            // Compute the hash and the index
+            var h = hash(value);
+            var index = posmod(h, this.table.length);
+
+            // Check that there exists a collision table
+            if (!this.table[index])
+                this.table[index] = [];
+
+            // Find if the value already exists
+            var entry = this.table[index].find(function (entry) {
+                return equals(value, entry);
+            });
+
+            // If not, then add the value to the set
+            if (!entry) {
+                this.table[index].push(value);
+            }
+        },
+
+
+        /**
+         * Checks if the set has the specific value
+         * 
+         * @param {module:compiler/util/hashes.Hashable|number|string|object} value - The value to be checked
+         * @return {boolean) Boolean representing if the set has the value
+         * 
+         * @instance
+         * @memberOf module:compiler/util/hashes.Set
+         */
+        has: function has(value) {
+            // Compute the hash and the index
+            var h = hash(value);
+            var index = posmod(h, this.table.length);
+
+            // Check that there exists a collision table
+            if (!this.table[index])
+                return undefined;
+
+            // Find if the value already exists
+            var entry = this.table[index].find(function (entry) {
+                return equals(value, entry);
+            });
+
+            // Return true if found
+            return entry !== undefined;
+        }
+    };
+
     return {
         Hashable: Hashable,
         Map: Map
