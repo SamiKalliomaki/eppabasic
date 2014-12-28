@@ -10,13 +10,13 @@ define(['require', './frontend/lexer'], function (require, lexer) {
      * @class
      * @memberOf module:compiler/toolchain
      */
-    var Toolchain = function() {
+    var Toolchain = function () {
         /**
          * Compilation phases to be run on the code
          * @member
          * @type {module:compiler/compilationPhase.CompilationPhase[]}
          */
-        this.lexer = [ this.createLexer() ];
+        this.lexer = [this.createLexer()];
     }
 
     Toolchain.prototype = {

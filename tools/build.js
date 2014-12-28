@@ -19,6 +19,7 @@ var baseConfig = {
         xregexp: 'libs/xregexp',
         i18n: 'libs/i18next.amd.withJQuery-1.7.3.min',
         text: 'libs/requirejs_text',
+        esrever: 'libs/esrever',
         ace: 'ace/lib/ace'
     },
     optimize: argv.optimize
@@ -192,7 +193,7 @@ function buildRuntime() {
     var config = combine(baseConfig, extra);
 
     requirejs.optimize(config, function (res) {
-        //console.log(res);
+        addWatch('runtime', res.split('\n').slice(3), buildRuntime);
         console.log('Succesfully compiled the runtime worker');
     }, function (err) {
         console.error(err);
