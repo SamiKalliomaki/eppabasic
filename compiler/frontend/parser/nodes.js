@@ -55,7 +55,7 @@ define(['./parseError', 'compiler/frontend/lexer/tokens'], function (parseError,
             Node.call(this);
         }
         Object.setPrototypeOf(TerminalNode, Node);
-        TerminalNode.prototype = Object.create(Node.prototype, { constructor: { value: Node } });
+        TerminalNode.prototype = Object.create(Node.prototype, { constructor: { value: TerminalNode } });
 
         // Create set of first tokens
         TerminalNode.prototype.first = new Set();
@@ -145,7 +145,7 @@ define(['./parseError', 'compiler/frontend/lexer/tokens'], function (parseError,
             Token.call(this);
         }
         Object.setPrototypeOf(GeneralNode, Node);
-        GeneralNode.prototype = Object.create(Node.prototype, { constructor: { value: Node } });
+        GeneralNode.prototype = Object.create(Node.prototype, { constructor: { value: GeneralNode } });
 
         // Combine alternative first sets
         var alternativeFirsts = getAlternativeFirsts(alternatives);
