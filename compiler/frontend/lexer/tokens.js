@@ -6,7 +6,7 @@ define(['require'], function (require) {
     "use strict";
 
     /**
-     * A token of source code
+     * Abstract base type for all tokens
      *
      * @class
      * @param {number} line - The line the token is located
@@ -28,10 +28,45 @@ define(['require'], function (require) {
     };
 
     Token.prototype = {
+        /**
+         * The pattern the token must match
+         * 
+         * @type {RegExp}
+         * @static
+         * @memberOf module:compiler/frontend/lexer/tokens.Token
+         */
+        pattern: null
     };
 
     /**
-     * End Of Source token
+     * A helper function for creating token constructors.
+     * 
+     * @param {RegExp} pattern - Pattern the token must match
+     * 
+     * @private
+     * @static
+     * @memberOf module:compiler/frontend/lexer/tokens
+     */
+    function makeToken(pattern) {
+        // Extend Token
+        function NewToken(line, captures) {
+            Token.call(this, line, captures);
+        }
+        Object.setPrototypeOf(NewToken, Token);
+        NewToken.prototype = Object.create(Token.prototype, { constructor: { value: NewToken } });
+
+        // Setup static values
+        NewToken.prototype.pattern = pattern;
+
+        return NewToken;
+    }
+
+    // --- Special tokens ---
+    /**
+     * Token representing an end of source
+     * 
+     * @param {number} line - The line the token is located
+     * @param {string[]} captures - An array of captures returned by regexp.match
      *
      * @class
      * @param {number} line - The line the token is located
@@ -45,164 +80,444 @@ define(['require'], function (require) {
     EOSToken.prototype = Object.create(Token.prototype);
     EOSToken.prototype.constructor = EOSToken;
 
+    // --- Mass Tokens ---
     /**
-     * A token containing only whitespaces
-     *
-     * @class
+     * Token representing an end of line
+     * 
      * @param {number} line - The line the token is located
      * @param {string[]} captures - An array of captures returned by regexp.match
+     * 
+     * @class
      * @memberOf module:compiler/frontend/lexer/tokens
      * @extends module:compiler/frontend/lexer/tokens.Token
      */
-    function WhitespaceToken(line, captures) {
-        Token.call(this, line, captures);
-    };
-
-    WhitespaceToken.prototype = Object.create(Token.prototype);
-    WhitespaceToken.prototype.constructor = WhitespaceToken;
-
+    var EOLToken = makeToken('^(\r?\n)');
     /**
-     * End of line token
-     *
-     * @class
-     * @extends module:compiler/frontend/lexer/tokens.Token
-     * @param {number} line - The line the token is located
-     * @param {string[]} captures - An array of captures returned by regexp.match
-     * @memberOf module:compiler/frontend/lexer/tokens
+     * @constant {RegExp} pattern
+     * @default /^(\r?\n)/
+     * @memberOf module:compiler/frontend/lexer/tokens.NumberToken
      */
-    function EOLToken(line, captures) {
-        Token.call(this, line, captures);
-    }
-
-    EOLToken.prototype = Object.create(Token.prototype);
-    EOLToken.prototype.constructor = EOLToken;
 
     /**
-     * Comment token
-     *
-     * @class
+     * Token representing a number
+     * 
      * @param {number} line - The line the token is located
      * @param {string[]} captures - An array of captures returned by regexp.match
+     * 
+     * @class
      * @memberOf module:compiler/frontend/lexer/tokens
      * @extends module:compiler/frontend/lexer/tokens.Token
      */
-    function CommentToken(line, captures) {
-        Token.call(this, line, captures);
-        /**
-         * The text written in the comment
-         * @type {string}
-         */
-        this.message = captures[1];
-    };
-
-    CommentToken.prototype = Object.create(Token.prototype);
-    CommentToken.prototype.constructor = CommentToken;
+    var NumberToken = makeToken('^(\\d+(?:\\.\\d+)?)');
+    /**
+     * @constant {RegExp} pattern
+     * @default /^(\d+(?:\.\d+)?)/
+     * @memberOf module:compiler/frontend/lexer/tokens.NumberToken
+     */
 
     /**
-     * Operator token
-     *
-     * @class
+     * Token representing a string
+     * 
      * @param {number} line - The line the token is located
      * @param {string[]} captures - An array of captures returned by regexp.match
+     * 
+     * @class
      * @memberOf module:compiler/frontend/lexer/tokens
      * @extends module:compiler/frontend/lexer/tokens.Token
      */
-    function OperatorToken(line, captures) {
-        Token.call(this, line, captures);
-        /**
-         * The type of the token
-         * @type {string}
-         */
-        this.type = captures[1];
-    };
-
-    OperatorToken.prototype = Object.create(Token.prototype);
-    OperatorToken.prototype.constructor = OperatorToken;
+    var StringToken = makeToken('^"((?:""|[^"])*)"');
+    /**
+     * @constant {RegExp} pattern
+     * @default /^"((?:""|[^"])*)"/
+     * @memberOf module:compiler/frontend/lexer/tokens.StringToken
+     */
 
     /**
-     * Number token
-     *
-     * @class
+     * Token representing an identifier
+     * 
      * @param {number} line - The line the token is located
      * @param {string[]} captures - An array of captures returned by regexp.match
+     * 
+     * @class
      * @memberOf module:compiler/frontend/lexer/tokens
      * @extends module:compiler/frontend/lexer/tokens.Token
      */
-    function NumberToken(line, captures) {
-        Token.call(this, line, captures);
-        /**
-         * The value of the number
-         * @type {string}
-         */
-        this.value = parseFloat(captures[1]);       // TODO Change to bigint
-    };
-
-    NumberToken.prototype = Object.create(Token.prototype);
-    NumberToken.prototype.constructor = NumberToken;
+    var IdentifierToken = makeToken('^([_\\p{L}][_\\p{L}\\p{N}]*)');
+    /**
+     * @constant {RegExp} pattern
+     * @default /^([_\p{L}][_\p{L}\p{N}]*)/
+     * @memberOf module:compiler/frontend/lexer/tokens.IdentifierToken
+     */
 
     /**
-     * String token
-     *
-     * @class
+     * Token representing a left bracket
+     * 
      * @param {number} line - The line the token is located
      * @param {string[]} captures - An array of captures returned by regexp.match
+     * 
+     * @class
      * @memberOf module:compiler/frontend/lexer/tokens
      * @extends module:compiler/frontend/lexer/tokens.Token
      */
-    function StringToken(line, captures) {
-        Token.call(this, line, captures);
-        /**
-         * The value of the string
-         * @type {string}
-         */
-        this.value = captures[1].replace(/""/g, '"');
-    };
-
-    StringToken.prototype = Object.create(Token.prototype);
-    StringToken.prototype.constructor = StringToken;
+    var LeftBracketToken = makeToken('^(\\[)');
+    /**
+     * @constant {RegExp} pattern
+     * @default /^(\[)/
+     * @memberOf module:compiler/frontend/lexer/tokens.LeftBracketToken
+     */
 
     /**
-     * Comma token
-     *
-     * @class
+     * Token representing a right bracket
+     * 
      * @param {number} line - The line the token is located
      * @param {string[]} captures - An array of captures returned by regexp.match
+     * 
+     * @class
      * @memberOf module:compiler/frontend/lexer/tokens
      * @extends module:compiler/frontend/lexer/tokens.Token
      */
-    function CommaToken(line, captures) {
-        Token.call(this, line, captures);
-    };
-
-    CommaToken.prototype = Object.create(Token.prototype);
-    CommaToken.prototype.constructor = CommaToken;
+    var RightBracketToken = makeToken('^(\\])');
+    /**
+     * @constant {RegExp} pattern
+     * @default /^(\])/
+     * @memberOf module:compiler/frontend/lexer/tokens.RightBracketToken
+     */
 
     /**
-     * Parenthesis token
-     *
-     * @class
+     * Token representing a left parenthesis
+     * 
      * @param {number} line - The line the token is located
      * @param {string[]} captures - An array of captures returned by regexp.match
+     * 
+     * @class
      * @memberOf module:compiler/frontend/lexer/tokens
      * @extends module:compiler/frontend/lexer/tokens.Token
      */
-    function ParenthesisToken(line, captures) {
-        Token.call(this, line, captures);
-    };
+    var LeftParenthesisToken = makeToken('^(\\()');
+    /**
+     * @constant {RegExp} pattern
+     * @default /^(\()/
+     * @memberOf module:compiler/frontend/lexer/tokens.LeftParenthesisToken
+     */
 
-    ParenthesisToken.prototype = Object.create(Token.prototype);
-    ParenthesisToken.prototype.constructor = ParenthesisToken;
+    /**
+     * Token representing a right parenthesis
+     * 
+     * @param {number} line - The line the token is located
+     * @param {string[]} captures - An array of captures returned by regexp.match
+     * 
+     * @class
+     * @memberOf module:compiler/frontend/lexer/tokens
+     * @extends module:compiler/frontend/lexer/tokens.Token
+     */
+    var RightParenthesisToken = makeToken('^(\\))');
+    /**
+     * @constant {RegExp} pattern
+     * @default /^(\))/
+     * @memberOf module:compiler/frontend/lexer/tokens.RightParenthesisToken
+     */
+
+    /**
+     * Token representing a comma
+     * 
+     * @param {number} line - The line the token is located
+     * @param {string[]} captures - An array of captures returned by regexp.match
+     * 
+     * @class
+     * @memberOf module:compiler/frontend/lexer/tokens
+     * @extends module:compiler/frontend/lexer/tokens.Token
+     */
+    var CommaToken = makeToken('^(,)');
+    /**
+     * @constant {RegExp} pattern
+     * @default /^(,)/
+     * @memberOf module:compiler/frontend/lexer/tokens.CommaToken
+     */
+
+    /**
+     * Token representing a not operator
+     * 
+     * @param {number} line - The line the token is located
+     * @param {string[]} captures - An array of captures returned by regexp.match
+     * 
+     * @class
+     * @memberOf module:compiler/frontend/lexer/tokens
+     * @extends module:compiler/frontend/lexer/tokens.Token
+     */
+    var NotToken = makeToken('^(Not)');
+    /**
+     * @constant {RegExp} pattern
+     * @default /^(Not)/
+     * @memberOf module:compiler/frontend/lexer/tokens.NotToken
+     */
+
+    /**
+     * Token representing a power operator
+     * 
+     * @param {number} line - The line the token is located
+     * @param {string[]} captures - An array of captures returned by regexp.match
+     * 
+     * @class
+     * @memberOf module:compiler/frontend/lexer/tokens
+     * @extends module:compiler/frontend/lexer/tokens.Token
+     */
+    var PowToken = makeToken('^(\\^)');
+    /**
+     * @constant {RegExp} pattern
+     * @default /^(\^)/
+     * @memberOf module:compiler/frontend/lexer/tokens.PowToken
+     */
+
+    /**
+     * Token representing a multiplication operator
+     * 
+     * @param {number} line - The line the token is located
+     * @param {string[]} captures - An array of captures returned by regexp.match
+     * 
+     * @class
+     * @memberOf module:compiler/frontend/lexer/tokens
+     * @extends module:compiler/frontend/lexer/tokens.Token
+     */
+    var MultiplicationToken = makeToken('^(\\*)');
+    /**
+     * @constant {RegExp} pattern
+     * @default /^(\*)/
+     * @memberOf module:compiler/frontend/lexer/tokens.MultiplicationToken
+     */
+
+    /**
+     * Token representing a division operator
+     * 
+     * @param {number} line - The line the token is located
+     * @param {string[]} captures - An array of captures returned by regexp.match
+     * 
+     * @class
+     * @memberOf module:compiler/frontend/lexer/tokens
+     * @extends module:compiler/frontend/lexer/tokens.Token
+     */
+    var DivisionToken = makeToken('^(\\/)');
+    /**
+     * @constant {RegExp} pattern
+     * @default /^(\/)/
+     * @memberOf module:compiler/frontend/lexer/tokens.DivisionToken
+     */
+
+    /**
+     * Token representing an integer division operator
+     * 
+     * @param {number} line - The line the token is located
+     * @param {string[]} captures - An array of captures returned by regexp.match
+     * 
+     * @class
+     * @memberOf module:compiler/frontend/lexer/tokens
+     * @extends module:compiler/frontend/lexer/tokens.Token
+     */
+    var IntegerDivisionToken = makeToken('^(\\\\)');
+    /**
+     * @constant {RegExp} pattern
+     * @default /^(\\)/
+     * @memberOf module:compiler/frontend/lexer/tokens.IntegerDivisionToken
+     */
+
+    /**
+     * Token representing a modulo operator
+     * 
+     * @param {number} line - The line the token is located
+     * @param {string[]} captures - An array of captures returned by regexp.match
+     * 
+     * @class
+     * @memberOf module:compiler/frontend/lexer/tokens
+     * @extends module:compiler/frontend/lexer/tokens.Token
+     */
+    var ModToken = makeToken('^(Mod)');
+    /**
+     * @constant {RegExp} pattern
+     * @default /^(Mod)/
+     * @memberOf module:compiler/frontend/lexer/tokens.ModToken
+     */
+
+    /**
+     * Token representing a plus operator
+     * 
+     * @param {number} line - The line the token is located
+     * @param {string[]} captures - An array of captures returned by regexp.match
+     * 
+     * @class
+     * @memberOf module:compiler/frontend/lexer/tokens
+     * @extends module:compiler/frontend/lexer/tokens.Token
+     */
+    var PlusToken = makeToken('^(\\+)');
+    /**
+     * @constant {RegExp} pattern
+     * @default /^(\+)/
+     * @memberOf module:compiler/frontend/lexer/tokens.PlusToken
+     */
+
+    /**
+     * Token representing a minus operator
+     * 
+     * @param {number} line - The line the token is located
+     * @param {string[]} captures - An array of captures returned by regexp.match
+     * 
+     * @class
+     * @memberOf module:compiler/frontend/lexer/tokens
+     * @extends module:compiler/frontend/lexer/tokens.Token
+     */
+    var MinusToken = makeToken('^(-)');
+    /**
+     * @constant {RegExp} pattern
+     * @default /^(-)/
+     * @memberOf module:compiler/frontend/lexer/tokens.MinusToken
+     */
+
+    /**
+     * Token representing an equal operator
+     * 
+     * @param {number} line - The line the token is located
+     * @param {string[]} captures - An array of captures returned by regexp.match
+     * 
+     * @class
+     * @memberOf module:compiler/frontend/lexer/tokens
+     * @extends module:compiler/frontend/lexer/tokens.Token
+     */
+    var EqualToken = makeToken('^(=)');
+    /**
+     * @constant {RegExp} pattern
+     * @default /^(=)/
+     * @memberOf module:compiler/frontend/lexer/tokens.EqualToken
+     */
+
+    /**
+     * Token representing a not equal operator
+     * 
+     * @param {number} line - The line the token is located
+     * @param {string[]} captures - An array of captures returned by regexp.match
+     * 
+     * @class
+     * @memberOf module:compiler/frontend/lexer/tokens
+     * @extends module:compiler/frontend/lexer/tokens.Token
+     */
+    var NotEqualToken = makeToken('^(<>)');
+    /**
+     * @constant {RegExp} pattern
+     * @default /^(<>)/
+     * @memberOf module:compiler/frontend/lexer/tokens.NotEqualToken
+     */
+
+    /**
+     * Token representing a less than operator
+     * 
+     * @param {number} line - The line the token is located
+     * @param {string[]} captures - An array of captures returned by regexp.match
+     * 
+     * @class
+     * @memberOf module:compiler/frontend/lexer/tokens
+     * @extends module:compiler/frontend/lexer/tokens.Token
+     */
+    var LessThanToken = makeToken('^(<)');
+    /**
+     * @constant {RegExp} pattern
+     * @default /^(<)/
+     * @memberOf module:compiler/frontend/lexer/tokens.LessThanToken
+     */
+
+    /**
+     * Token representing a less than or equal operator
+     * 
+     * @param {number} line - The line the token is located
+     * @param {string[]} captures - An array of captures returned by regexp.match
+     * 
+     * @class
+     * @memberOf module:compiler/frontend/lexer/tokens
+     * @extends module:compiler/frontend/lexer/tokens.Token
+     */
+    var LessThanOrEqualToken = makeToken('^(<=)');
+    /**
+     * @constant {RegExp} pattern
+     * @default /^(<>)/
+     * @memberOf module:compiler/frontend/lexer/tokens.LessThanOrEqualToken
+     */
+
+    /**
+     * Token representing a greater than operator
+     * 
+     * @param {number} line - The line the token is located
+     * @param {string[]} captures - An array of captures returned by regexp.match
+     * 
+     * @class
+     * @memberOf module:compiler/frontend/lexer/tokens
+     * @extends module:compiler/frontend/lexer/tokens.Token
+     */
+    var GreaterThanToken = makeToken('^(<)');
+    /**
+     * @constant {RegExp} pattern
+     * @default /^(<)/
+     * @memberOf module:compiler/frontend/lexer/tokens.GreaterThanToken
+     */
+
+    /**
+     * Token representing a greater than or equal operator
+     * 
+     * @param {number} line - The line the token is located
+     * @param {string[]} captures - An array of captures returned by regexp.match
+     * 
+     * @class
+     * @memberOf module:compiler/frontend/lexer/tokens
+     * @extends module:compiler/frontend/lexer/tokens.Token
+     */
+    var GreaterThanOrEqualToken = makeToken('^(<=)');
+    /**
+     * @constant {RegExp} pattern
+     * @default /^(<>)/
+     * @memberOf module:compiler/frontend/lexer/tokens.GreaterThanOrEqualToken
+     */
+
+    ///**
+    // * Comment token
+    // *
+    // * @class
+    // * @param {number} line - The line the token is located
+    // * @param {string[]} captures - An array of captures returned by regexp.match
+    // * @memberOf module:compiler/frontend/lexer/tokens
+    // * @extends module:compiler/frontend/lexer/tokens.Token
+    // */
+    //function CommentToken(line, captures) {
+    //    Token.call(this, line, captures);
+    //    /**
+    //     * The text written in the comment
+    //     * @type {string}
+    //     */
+    //    this.message = captures[1];
+    //};
+
+    //CommentToken.prototype = Object.create(Token.prototype);
+    //CommentToken.prototype.constructor = CommentToken;
 
     return {
-        Token: Token,
-        EOSToken: EOSToken,
-        WhitespaceToken: WhitespaceToken,
-        EOLToken: EOLToken,
-        CommentToken: CommentToken,
-        OperatorToken: OperatorToken,
-        NumberToken: NumberToken,
-        StringToken: StringToken,
         CommaToken: CommaToken,
-        ParenthesisToken: ParenthesisToken,
+        DivisionToken: DivisionToken,
+        EOLToken: EOLToken,
+        EOSToken: EOSToken,
+        EqualToken: EqualToken,
+        GreaterThanOrEqualToken: GreaterThanOrEqualToken,
+        GreaterThenToken: GreaterThanToken,
+        IdentifierToken: IdentifierToken,
+        IntegerDivisionToken: IntegerDivisionToken,
+        LeftBracketToken: LeftBracketToken,
+        LeftParenthesisToken: LeftParenthesisToken,
+        LessThanOrEqualToken: LessThanOrEqualToken,
+        LessThanToken: LessThanToken,
+        MinusToken: MinusToken,
+        ModToken: ModToken,
+        MultiplicationToken: MultiplicationToken,
+        NotEqualToken: NotEqualToken,
+        NotToken: NotToken,
+        NumberToken: NumberToken,
+        PlusToken: PlusToken,
+        PowToken: PowToken,
+        RightBracketToken: RightBracketToken,
+        RightParenthesisToken: RightParenthesisToken,
+        StringToken: StringToken,
+        Token: Token
     };
 });
