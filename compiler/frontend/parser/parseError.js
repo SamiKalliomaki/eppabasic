@@ -5,4 +5,8 @@ define([], function() {
     }
 
     ParseError.prototype.name = 'Parse Error';
+
+    return {
+        ParseError: ParseError
+    };
 });

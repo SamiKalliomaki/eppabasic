@@ -52,7 +52,7 @@ define(['require'], function (require) {
         function NewToken(line, captures) {
             Token.call(this, line, captures);
         }
-        Object.setPrototypeOf(NewToken, Token);
+        //Object.setPrototypeOf(NewToken, Token);
         NewToken.prototype = Object.create(Token.prototype, { constructor: { value: NewToken } });
 
         // Setup static values

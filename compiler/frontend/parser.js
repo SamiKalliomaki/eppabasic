@@ -24,7 +24,7 @@ define(['require', 'compiler/compilationPhase', './parser/nodes'], function(requ
     Parser.prototype.run = function run(cu) {
         var tokens = cu.tokens;
 
-        cu.syntaxTreeRoot = new nodes.ProgramNode();
+        cu.syntaxTreeRoot = new nodes.BaseLevelBlockNode();
 
         var predictionStack = [ cu.syntaxTreeRoot ];
 

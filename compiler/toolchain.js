@@ -2,7 +2,7 @@
  * Module containing Toolchain class
  * @module compiler/toolchain
  */
-define(['require', './frontend/lexer'], function (require, lexer) {
+define(['require', './frontend/lexer', './frontend/parser'], function (require, lexer) {
     "use strict";
 
     /**

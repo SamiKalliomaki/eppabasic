@@ -30,34 +30,32 @@
      * @memberOf module:compiler/frontend/lexer.Lexer
      */
     Lexer.prototype.run = function run(cu) {
-        var input = cu.source;
-        var line = 1;
-        var token = tokens.Token(-1, ['']);
+        var token = new tokens.Token(-1, ['']);
+
+        this.input = cu.source;
+        this.line = 1;
 
         cu.tokens = [];
 
         while(!(token instanceof tokens.EOSToken)) {
-            token = this.nextToken(input);
+            token = this.nextToken();
             cu.tokens.push(token);
-
-            if(token instanceof tokens.EOLToken) {
-                line++;
-            }
         }
+
+        delete this.input;
+        delete this.line;
     };
 
     /**
-     * Get the next token from the input
+     * Get the next token from this.input. Keeps track of the current line in this.line;
      * @private
-     * @param {string} input Source code. This gets consumed.
-     * @param {number} line Current line.
      * @returns {module:compiler/frontend/lexer/tokens.Token} The next token in the input
      * @memberOf module:compiler/frontend/lexer.Lexer
      */
-    Lexer.prototype.nextToken = function nextToken(input, line) {
+    Lexer.prototype.nextToken = function nextToken() {
         // First try if the source has already ended
-        if (input.length <= 0)
-            return new tokens.EOSToken(line);
+        if (this.input.length <= 0)
+            return new tokens.EOSToken(this.line);
 
         // Otherwise go through the rules and find the comforting rule
         var rule = this.rules.find(function (rule) {
@@ -65,11 +63,16 @@
         }, this);
 
         // Get the captures
-        var captures = rule.capture(input);
+        var captures = rule.capture(this.input);
         // Consume the input
-        input = input.substr(captures[0].length);
+        this.input = this.input.substr(captures[0].length);
 
-        var token = new rule.type(line, captures);
+        var token = new rule.type(this.line, captures);
+
+        if(token instanceof tokens.EOLToken) {
+            this.line++;
+        }
+
         return token;
     };
 

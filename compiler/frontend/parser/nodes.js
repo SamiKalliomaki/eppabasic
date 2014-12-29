@@ -21,7 +21,7 @@ define(['./parseError', 'compiler/frontend/lexer/tokens'], function (parseError,
      * @type {Set<module:compiler/frontend/lexer/tokens.Token>}
      * @memberOf module:compiler/frontend/parser.Node
      */
-    Node.prototype.first = {};
+    Node.prototype.first = new Set();
     /**
      * Something else
      */
@@ -258,40 +258,40 @@ define(['./parseError', 'compiler/frontend/lexer/tokens'], function (parseError,
 
 
     // --- BNF ---
-    NumberNode = makeTerminalNode(tokens.NumberToken);
-    StringNode = makeTerminalNode(tokens.StringToken);
-    IdentifierNode = makeTerminalNode(tokens.IdentifierToken);
-    LeftBracketNode = makeTerminalNode(tokens.LeftBracketToken);
-    RightBracketNode = makeTerminalNode(tokens.RightBracketToken);
-    LeftParenthesisNode = makeTerminalNode(tokens.LeftParenthesisToken);
-    RightParenthesisNode = makeTerminalNode(tokens.RightParenthesisToken);
-    CommaNode = makeTerminalNode(tokens.CommaToken);
-    NotNode = makeTerminalNode(tokens.NotToken);
-    PowNode = makeTerminalNode(tokens.PowToken);
-    MultiplicationNode = makeTerminalNode(tokens.MultiplicationToken);
-    DivisionNode = makeTerminalNode(tokens.DivisionToken);
-    IntegerDivisionNode = makeTerminalNode(tokens.IntegerDivisionToken);
-    ModNode = makeTerminalNode(tokens.ModToken);
-    PlusNode = makeTerminalNode(tokens.PlusToken);
-    MinusNode = makeTerminalNode(tokens.MinusToken);
-    EqualNode = makeTerminalNode(tokens.EqualToken);
-    NotEqualNode = makeTerminalNode(tokens.NowEqualToken);
-    LessThanNode = makeTerminalNode(tokens.LessThanToken);
-    LessThanOrEqualNode = makeTerminalNode(tokens.LessThanOrEqualToken);
-    GreaterThanNode = makeTerminalNode(tokens.GreaterThanToken);
-    GreaterThanOrEqualNode = makeTerminalNode(tokens.GreaterThanOrEqualToken);
+    var NumberNode = makeTerminalNode(tokens.NumberToken);
+    var StringNode = makeTerminalNode(tokens.StringToken);
+    var IdentifierNode = makeTerminalNode(tokens.IdentifierToken);
+    var LeftBracketNode = makeTerminalNode(tokens.LeftBracketToken);
+    var RightBracketNode = makeTerminalNode(tokens.RightBracketToken);
+    var LeftParenthesisNode = makeTerminalNode(tokens.LeftParenthesisToken);
+    var RightParenthesisNode = makeTerminalNode(tokens.RightParenthesisToken);
+    var CommaNode = makeTerminalNode(tokens.CommaToken);
+    var NotNode = makeTerminalNode(tokens.NotToken);
+    var PowNode = makeTerminalNode(tokens.PowToken);
+    var MultiplicationNode = makeTerminalNode(tokens.MultiplicationToken);
+    var DivisionNode = makeTerminalNode(tokens.DivisionToken);
+    var IntegerDivisionNode = makeTerminalNode(tokens.IntegerDivisionToken);
+    var ModNode = makeTerminalNode(tokens.ModToken);
+    var PlusNode = makeTerminalNode(tokens.PlusToken);
+    var MinusNode = makeTerminalNode(tokens.MinusToken);
+    var EqualNode = makeTerminalNode(tokens.EqualToken);
+    var NotEqualNode = makeTerminalNode(tokens.NotEqualToken);
+    var LessThanNode = makeTerminalNode(tokens.LessThanToken);
+    var LessThanOrEqualNode = makeTerminalNode(tokens.LessThanOrEqualToken);
+    var GreaterThanNode = makeTerminalNode(tokens.GreaterThanToken);
+    var GreaterThanOrEqualNode = makeTerminalNode(tokens.GreaterThanOrEqualToken);
 
 
-    ExpressionNode = makeDummyNode([tokens.LeftParenthesisToken, tokens.NotToken, tokens.NumberToken, tokens.StringToken, tokens.IdentifierToken, tokens.minusToken], false);
-    Expression7Node = makeDummyNode([tokens.LeftParenthesisToken, tokens.NotToken, tokens.NumberToken, tokens.StringToken, tokens.IdentifierToken, tokens.minusToken], false);
+    var ExpressionNode = makeDummyNode([tokens.LeftParenthesisToken, tokens.NotToken, tokens.NumberToken, tokens.StringToken, tokens.IdentifierToken, tokens.minusToken], false);
+    var Expression7Node = makeDummyNode([tokens.LeftParenthesisToken, tokens.NotToken, tokens.NumberToken, tokens.StringToken, tokens.IdentifierToken, tokens.minusToken], false);
+    var TypeNode = makeDummyNode([tokens.IdentifierToken, tokens.LeftParenthesisToken], false);
 
-
-    ConstantNode = makeGeneralNode([
+    var ConstantNode = makeGeneralNode([
         [NumberNode],
-        [GeneralNode]
+        [StringNode]
     ]);
 
-    VariableReferenceNode = makeNodeWithRepeat(
+    var VariableReferenceNode = makeNodeWithRepeat(
         [
             [IdentifierNode]
         ],
@@ -300,17 +300,21 @@ define(['./parseError', 'compiler/frontend/lexer/tokens'], function (parseError,
         ]
     );
 
-    ParameterListNode = makeNodeWithRepeat(
+    var NonEmptyParameterList = makeNodeWithRepeat(
         [
-            [ExpressionNode],
-            []
+            [ExpressionNode]
         ],
         [
             [CommaNode, ExpressionNode]
         ]
     );
 
-    FunctionCallNode = makeGeneralNode([
+    var ParameterListNode = makeGeneralNode([
+        [NonEmptyParameterList],
+        []
+    ]);
+
+    var FunctionCallNode = makeGeneralNode([
         [VariableReferenceNode, LeftParenthesisNode, ParameterListNode, RightParenthesisNode]
     ]);
 
@@ -323,18 +327,18 @@ define(['./parseError', 'compiler/frontend/lexer/tokens'], function (parseError,
         [IdentifierNode]
     ]).prototype;
 
-    Expression6Node = makeNodeWithRepeat(
+    var Expression6Node = makeNodeWithRepeat(
         [
-            [Expression7Node],
+            [Expression7Node]
         ],
         [
             [PowNode, Expression7Node]
         ]
     );
 
-    Expression5Node = makeNodeWithRepeat(
+    var Expression5Node = makeNodeWithRepeat(
         [
-            [Expression6Node],
+            [Expression6Node]
         ],
         [
             [MultiplicationNode, Expression6Node],
@@ -343,4 +347,125 @@ define(['./parseError', 'compiler/frontend/lexer/tokens'], function (parseError,
             [ModNode, Expression6Node]
         ]
     );
+
+    var Expression4Node = makeNodeWithRepeat(
+        [
+            [Expression5Node]
+        ],
+        [
+            [PlusNode, Expression5Node],
+            [MinusNode, Expression5Node]
+        ]
+    );
+
+    var Expression3Node = makeNodeWithRepeat(
+        [
+            [Expression4Node]
+        ],
+        [
+            [ConcatNode, Expression4Node]
+        ]
+    );
+
+    var Expression2Node = makeNodeWithRepeat(
+        [
+            [Expression3Node]
+        ],
+        [
+            [EqualNode, Expression3Node],
+            [NotEqualNode, Expression3Node],
+            [LessThanNode, Expression3Node],
+            [LessThanOrEqualNode, Expression3Node],
+            [GreaterThanNode, Expression3Node],
+            [GreaterThanEqualNode, Expression3Node]
+        ]
+    );
+
+    var Expression1Node = makeNodeWithRepeat(
+        [
+            [Expression2Node]
+        ],
+        [
+            [OrNode, Expression2Node],
+            [AndNode, Expression2Node],
+            [XorNode, Expression2Node]
+        ]
+    );
+
+    ExpressionNode.prototype = makeGeneralNode([[Expression1Node]]).prototype;
+
+    var NonEmptyTypeListNode = makeNodeWithRepeat(
+        [
+            [TypeNode]
+        ],
+        [
+            [CommaNode, TypeNode]
+        ]
+    );
+
+    var TypeListNode = makeGeneralNode([
+        [NonEmptyTypeListNode],
+        []
+    ]);
+
+    var TypeNode = makeNodeWithRepeat(
+        [
+            [IdentifierNode],
+            [LeftParenthesisNode, TypeListNode, RightParenthesisNode]
+        ],
+        [
+            [LeftBracketNode, NumberNode, RightBracketNode],
+            [LeftParenthesisNode, TypeListNode, RightParenthesisNode]
+        ]
+    );
+
+    var TypeSpecifierNode = makeGeneralNode([
+        [AsNode, TypeNode]
+    ]);
+
+    var InitializerNode = makeGeneralNode([
+        [EqualNode, ExpressionNode]
+    ]);
+
+    var VariableDefinitionNode;
+    var VariableAssignmentNode;
+    var BaseFunctionCallNode;
+    var ReturnStatementNode;
+
+    // TODO: more
+    var StatementNode = makeGeneralNode([
+        [ FunctionCallNode ]
+    ]);
+
+    // TODO: more
+    var BlockStatementNode = makeGeneralNode([
+        [ StatementNode ]
+    ]);
+
+    var BlockNode = makeNodeWithRepeat(
+        [
+            [ BlockStatementNode ]
+        ],
+        [
+            []
+        ]
+    );
+
+    // TODO: more
+    var BaseLevelStatement = makeGeneralNode([
+        [ BlockStatementNode ]
+    ]);
+
+    var BaseLevelBlockNode = makeNodeWithRepeat(
+        [
+            [ BlockStatementNode ]
+        ],
+        [
+            []
+        ]
+    );
+
+    return {
+        BaseLevelBlockNode: BaseLevelBlockNode
+    };
 });
