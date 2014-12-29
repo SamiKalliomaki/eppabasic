@@ -28,11 +28,36 @@ define(['require', 'compiler/compilationPhase', './parser/nodes'], function(requ
 
         var predictionStack = [ cu.syntaxTreeRoot ];
 
-        while(predictionStack.length > 0) {
-            var newItems = predictionStack.shift().doMove();
+        while (predictionStack.length > 0) {
+            predictionStack.forEach(function (asd) {
+                console.log('Stack: ' + asd.constructor.typeName);
+            });
+            this.printSyntaxTree(cu.syntaxTreeRoot);
+
+            var node = predictionStack.shift();
+            var newItems = node.doMove(cu.tokens);
             predictionStack = newItems.concat(predictionStack);
         }
     };
+    
+    Parser.prototype.printSyntaxTree = function printSyntaxTree(tree, level) {
+        level = level | 0;
+        
+        var str = '';
+        
+        for (var i = 1; i < level; i++) {
+            str += '| ';
+        }
+        
+        if (level !== 0)
+            str += '|-';
+
+        console.log(str + tree.constructor.typeName);
+
+        tree.childNodes.forEach(function (child) {
+            this.printSyntaxTree(child, level + 1);
+        }, this);
+    }
 
     return {
         Parser: Parser

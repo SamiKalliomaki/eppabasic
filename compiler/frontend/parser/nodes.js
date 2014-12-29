@@ -49,13 +49,19 @@ define(['./parseError', 'compiler/frontend/lexer/tokens'], function (parseError,
      * @static
      * @memberOf module:compiler/frontend/parser
      */
-    function makeTerminalNode(token) {
+    function makeTerminalNode(name, token) {
         // Create a new TerminalNode class extended from Node
         function TerminalNode() {
             Node.call(this);
         }
         Object.setPrototypeOf(TerminalNode, Node);
         TerminalNode.prototype = Object.create(Node.prototype, { constructor: { value: TerminalNode } });
+        TerminalNode.typeName = name;
+        
+        if (token === undefined)
+            throw Error("Token cannot be undefined.");
+        else
+            console.log(token.prototype.pattern);
 
         // Create set of first tokens
         TerminalNode.prototype.first = new Set();
@@ -70,6 +76,8 @@ define(['./parseError', 'compiler/frontend/lexer/tokens'], function (parseError,
                 // If not, throw an error
                 throw new ParseError();
             }
+
+            return [];
         }
 
         return TerminalNode;
@@ -89,24 +97,22 @@ define(['./parseError', 'compiler/frontend/lexer/tokens'], function (parseError,
     function getAlternativeFirst(alternative) {
         // Create the return set
         var first = new Set();
+        
+        var goneBad = false;
 
         // Go through alternatives
-        alternative.forEach(function (alternative) {
+        alternative.forEach(function (node) {
+            if (goneBad)
+                return;
+
             // Copy every element to the result
-            alternative.first.forEach(function (token) {
+            node.prototype.first.forEach(function (token) {
                 first.add(token);
             });
+
+            if (!node.canBeEmpty)
+                goneBad = true;
         });
-
-        // TODO: ORIGINAL
-        for (var i = 0; i < alternative.length; i++) {
-            for (var f in alternative[i].first) {
-                first[f] = true;
-            }
-
-            if (!alternative[i].canBeEmpty)
-                break;
-        }
 
         return first;
     }
@@ -116,9 +122,12 @@ define(['./parseError', 'compiler/frontend/lexer/tokens'], function (parseError,
     }
 
     function addSetToSet(from, to) {
-        for (var f in from) {
-            to[f] = true;
-        }
+        from.forEach(function (f) {
+            if (f === undefined)
+                throw new Error("Refusing to add undefined");
+
+            to.add(f);
+        });
     }
 
     function addSetsToSet(sets, set) {
@@ -139,13 +148,16 @@ define(['./parseError', 'compiler/frontend/lexer/tokens'], function (parseError,
      * @static
      * @memberOf module:compiler/frontend/parser
      */
-    function makeGeneralNode(alternatives) {
+    function makeGeneralNode(name, alternatives) {
         // Create a new GeneralNode class extended from Node
         function GeneralNode() {
-            Token.call(this);
+            Node.call(this);
         }
+
         Object.setPrototypeOf(GeneralNode, Node);
         GeneralNode.prototype = Object.create(Node.prototype, { constructor: { value: GeneralNode } });
+        GeneralNode.typeName = name;
+        GeneralNode.prototype.first = new Set();
 
         // Combine alternative first sets
         var alternativeFirsts = getAlternativeFirsts(alternatives);
@@ -172,15 +184,22 @@ define(['./parseError', 'compiler/frontend/lexer/tokens'], function (parseError,
         GeneralNode.prototype.doMove = function doMove(tokens) {
             // Go through all alternatives
             for (var i = 0; i < alternatives.length; i++) {
-                for (var f in alternativeFirsts[i]) {
+                var result = null;
+
+                alternativeFirsts[i].forEach(function (f) {
+                    console.log(f.prototype.pattern);
+
                     if (tokens[0] instanceof f) {
                         for (var j = 0; j < alternatives[i].length; j++) {
                             this.childNodes.push(new alternatives[i][j]);
                         }
-
-                        return this.childNodes;
+                        
+                        result = this.childNodes;
                     }
-                }
+                }, this);
+
+                if (result)
+                    return result;
             }
 
             if (this.canBeEmpty) {
@@ -193,8 +212,8 @@ define(['./parseError', 'compiler/frontend/lexer/tokens'], function (parseError,
         return GeneralNode;
     }
 
-    function makeNodeWithRepeat(alternatives, repeatAlternatives) {
-        GeneralNode = makeGeneralNode(alternatives);
+    function makeNodeWithRepeat(name, alternatives, repeatAlternatives) {
+        var GeneralNode = makeGeneralNode(name + 'GeneralNode', alternatives);
 
         function RepeatNode() {
             GeneralNode.call(this);
@@ -206,8 +225,14 @@ define(['./parseError', 'compiler/frontend/lexer/tokens'], function (parseError,
             this.parent = parent;
         }
 
-        RepeatNode.prototype = Object.create(GeneralNode.prototype);
-        PossibleRepeatNode.prototype = Object.create(GeneralNode.prototype);
+        RepeatNode.prototype = Object.create(GeneralNode.prototype, { constructor: { value: RepeatNode } });
+        RepeatNode.typeName = name;
+        RepeatNode.prototype.first = new Set();
+        addSetToSet(GeneralNode.prototype.first, RepeatNode.prototype.first);
+        PossibleRepeatNode.prototype = Object.create(GeneralNode.prototype, { constructor: { value: PossibleRepeatNode } });
+        PossibleRepeatNode.typeName = name + 'PossibleRepeatNode';
+        PossibleRepeatNode.prototype.first = new Set();
+        addSetToSet(GeneralNode.prototype.first, PossibleRepeatNode.prototype.first);
 
         var repeatAlternativeFirsts = getAlternativeFirsts(repeatAlternatives);
 
@@ -244,11 +269,12 @@ define(['./parseError', 'compiler/frontend/lexer/tokens'], function (parseError,
         return RepeatNode;
     }
 
-    function makeDummyNode(first, canBeEmpty) {
+    function makeDummyNode(name, first, canBeEmpty) {
         function DummyNode() {
-
+            Node.call(this);
         }
-
+        
+        DummyNode.typeName = name;
         DummyNode.prototype.first = first;
         DummyNode.prototype.canBeEmpty = canBeEmpty;
 
@@ -258,40 +284,45 @@ define(['./parseError', 'compiler/frontend/lexer/tokens'], function (parseError,
 
 
     // --- BNF ---
-    var NumberNode = makeTerminalNode(tokens.NumberToken);
-    var StringNode = makeTerminalNode(tokens.StringToken);
-    var IdentifierNode = makeTerminalNode(tokens.IdentifierToken);
-    var LeftBracketNode = makeTerminalNode(tokens.LeftBracketToken);
-    var RightBracketNode = makeTerminalNode(tokens.RightBracketToken);
-    var LeftParenthesisNode = makeTerminalNode(tokens.LeftParenthesisToken);
-    var RightParenthesisNode = makeTerminalNode(tokens.RightParenthesisToken);
-    var CommaNode = makeTerminalNode(tokens.CommaToken);
-    var NotNode = makeTerminalNode(tokens.NotToken);
-    var PowNode = makeTerminalNode(tokens.PowToken);
-    var MultiplicationNode = makeTerminalNode(tokens.MultiplicationToken);
-    var DivisionNode = makeTerminalNode(tokens.DivisionToken);
-    var IntegerDivisionNode = makeTerminalNode(tokens.IntegerDivisionToken);
-    var ModNode = makeTerminalNode(tokens.ModToken);
-    var PlusNode = makeTerminalNode(tokens.PlusToken);
-    var MinusNode = makeTerminalNode(tokens.MinusToken);
-    var EqualNode = makeTerminalNode(tokens.EqualToken);
-    var NotEqualNode = makeTerminalNode(tokens.NotEqualToken);
-    var LessThanNode = makeTerminalNode(tokens.LessThanToken);
-    var LessThanOrEqualNode = makeTerminalNode(tokens.LessThanOrEqualToken);
-    var GreaterThanNode = makeTerminalNode(tokens.GreaterThanToken);
-    var GreaterThanOrEqualNode = makeTerminalNode(tokens.GreaterThanOrEqualToken);
+    var NumberNode = makeTerminalNode('NumberNode', tokens.NumberToken);
+    var StringNode = makeTerminalNode('StringNode', tokens.StringToken);
+    var IdentifierNode = makeTerminalNode('IdentifierNode', tokens.IdentifierToken);
+    var LeftBracketNode = makeTerminalNode('LeftBracketNode', tokens.LeftBracketToken);
+    var RightBracketNode = makeTerminalNode('RightBracketNode', tokens.RightBracketToken);
+    var LeftParenthesisNode = makeTerminalNode('LeftParenthesisNode', tokens.LeftParenthesisToken);
+    var RightParenthesisNode = makeTerminalNode('RightParenthesisNode', tokens.RightParenthesisToken);
+    var CommaNode = makeTerminalNode('CommaNode', tokens.CommaToken);
+    var NotNode = makeTerminalNode('NotNode', tokens.NotToken);
+    var PowNode = makeTerminalNode('PowNode', tokens.PowToken);
+    var MultiplicationNode = makeTerminalNode('MultiplicationNode', tokens.MultiplicationToken);
+    var DivisionNode = makeTerminalNode('DivisionNode', tokens.DivisionToken);
+    var IntegerDivisionNode = makeTerminalNode('IntegerDivisionNode', tokens.IntegerDivisionToken);
+    var ModNode = makeTerminalNode('ModNode', tokens.ModToken);
+    var PlusNode = makeTerminalNode('PlusNode', tokens.PlusToken);
+    var MinusNode = makeTerminalNode('MinusNode', tokens.MinusToken);
+    var EqualNode = makeTerminalNode('EqualNode', tokens.EqualToken);
+    var NotEqualNode = makeTerminalNode('NotEqualNode', tokens.NotEqualToken);
+    var LessThanNode = makeTerminalNode('LessThanNode', tokens.LessThanToken);
+    var LessThanOrEqualNode = makeTerminalNode('LessThanOrEqualNode', tokens.LessThanOrEqualToken);
+    var GreaterThanNode = makeTerminalNode('GreaterThanNode', tokens.GreaterThanToken);
+    var GreaterThanOrEqualNode = makeTerminalNode('GreaterThanOrEqualNode', tokens.GreaterThanOrEqualToken);
+    var ConcatNode = makeTerminalNode('ConcatNode', tokens.ConcatToken);
+    var OrNode = makeTerminalNode('OrNode', tokens.OrToken);
+    var AndNode = makeTerminalNode('AndNode', tokens.AndToken);
+    var XorNode = makeTerminalNode('XorNode', tokens.XorToken);
+    var AsNode = makeTerminalNode('AsNode', tokens.AsToken);
 
 
-    var ExpressionNode = makeDummyNode([tokens.LeftParenthesisToken, tokens.NotToken, tokens.NumberToken, tokens.StringToken, tokens.IdentifierToken, tokens.minusToken], false);
-    var Expression7Node = makeDummyNode([tokens.LeftParenthesisToken, tokens.NotToken, tokens.NumberToken, tokens.StringToken, tokens.IdentifierToken, tokens.minusToken], false);
-    var TypeNode = makeDummyNode([tokens.IdentifierToken, tokens.LeftParenthesisToken], false);
+    var ExpressionNode = makeDummyNode('ExpressionNode', [tokens.LeftParenthesisToken, tokens.NotToken, tokens.NumberToken, tokens.StringToken, tokens.IdentifierToken, tokens.MinusToken], false);
+    var Expression7Node = makeDummyNode('Expression7Node', [tokens.LeftParenthesisToken, tokens.NotToken, tokens.NumberToken, tokens.StringToken, tokens.IdentifierToken, tokens.MinusToken], false);
+    var TypeNode = makeDummyNode('TypeNode', [tokens.IdentifierToken, tokens.LeftParenthesisToken], false);
 
-    var ConstantNode = makeGeneralNode([
+    var ConstantNode = makeGeneralNode('ConstantNode', [
         [NumberNode],
         [StringNode]
     ]);
 
-    var VariableReferenceNode = makeNodeWithRepeat(
+    var VariableReferenceNode = makeNodeWithRepeat('VariableReferenceNode', 
         [
             [IdentifierNode]
         ],
@@ -300,7 +331,7 @@ define(['./parseError', 'compiler/frontend/lexer/tokens'], function (parseError,
         ]
     );
 
-    var NonEmptyParameterList = makeNodeWithRepeat(
+    var NonEmptyParameterListNode = makeNodeWithRepeat('NonEmptyParameterListNode',
         [
             [ExpressionNode]
         ],
@@ -309,16 +340,16 @@ define(['./parseError', 'compiler/frontend/lexer/tokens'], function (parseError,
         ]
     );
 
-    var ParameterListNode = makeGeneralNode([
-        [NonEmptyParameterList],
+    var ParameterListNode = makeGeneralNode('ParameterListNode', [
+        [NonEmptyParameterListNode],
         []
     ]);
 
-    var FunctionCallNode = makeGeneralNode([
+    var FunctionCallNode = makeGeneralNode('FunctionCallNode', [
         [VariableReferenceNode, LeftParenthesisNode, ParameterListNode, RightParenthesisNode]
     ]);
 
-    Expression7Node.prototype = makeGeneralNode([
+    Expression7Node.prototype = makeGeneralNode('Expression7Node', [
         [LeftParenthesisNode, ExpressionNode, RightParenthesisNode],
         [NotNode, Expression7Node],
         [MinusNode, Expression7Node],
@@ -327,7 +358,7 @@ define(['./parseError', 'compiler/frontend/lexer/tokens'], function (parseError,
         [IdentifierNode]
     ]).prototype;
 
-    var Expression6Node = makeNodeWithRepeat(
+    var Expression6Node = makeNodeWithRepeat('Expression6Node', 
         [
             [Expression7Node]
         ],
@@ -336,7 +367,7 @@ define(['./parseError', 'compiler/frontend/lexer/tokens'], function (parseError,
         ]
     );
 
-    var Expression5Node = makeNodeWithRepeat(
+    var Expression5Node = makeNodeWithRepeat('Expression5Node', 
         [
             [Expression6Node]
         ],
@@ -348,7 +379,7 @@ define(['./parseError', 'compiler/frontend/lexer/tokens'], function (parseError,
         ]
     );
 
-    var Expression4Node = makeNodeWithRepeat(
+    var Expression4Node = makeNodeWithRepeat('Expression4Node', 
         [
             [Expression5Node]
         ],
@@ -358,7 +389,7 @@ define(['./parseError', 'compiler/frontend/lexer/tokens'], function (parseError,
         ]
     );
 
-    var Expression3Node = makeNodeWithRepeat(
+    var Expression3Node = makeNodeWithRepeat('Expression3Node', 
         [
             [Expression4Node]
         ],
@@ -367,7 +398,7 @@ define(['./parseError', 'compiler/frontend/lexer/tokens'], function (parseError,
         ]
     );
 
-    var Expression2Node = makeNodeWithRepeat(
+    var Expression2Node = makeNodeWithRepeat('Expression2Node', 
         [
             [Expression3Node]
         ],
@@ -377,11 +408,11 @@ define(['./parseError', 'compiler/frontend/lexer/tokens'], function (parseError,
             [LessThanNode, Expression3Node],
             [LessThanOrEqualNode, Expression3Node],
             [GreaterThanNode, Expression3Node],
-            [GreaterThanEqualNode, Expression3Node]
+            [GreaterThanOrEqualNode, Expression3Node]
         ]
     );
 
-    var Expression1Node = makeNodeWithRepeat(
+    var Expression1Node = makeNodeWithRepeat('Expression1Node', 
         [
             [Expression2Node]
         ],
@@ -392,9 +423,9 @@ define(['./parseError', 'compiler/frontend/lexer/tokens'], function (parseError,
         ]
     );
 
-    ExpressionNode.prototype = makeGeneralNode([[Expression1Node]]).prototype;
+    ExpressionNode.prototype = makeGeneralNode('ExpressionNode', [[Expression1Node]]).prototype;
 
-    var NonEmptyTypeListNode = makeNodeWithRepeat(
+    var NonEmptyTypeListNode = makeNodeWithRepeat('NonEmptyTypeListNode', 
         [
             [TypeNode]
         ],
@@ -403,12 +434,12 @@ define(['./parseError', 'compiler/frontend/lexer/tokens'], function (parseError,
         ]
     );
 
-    var TypeListNode = makeGeneralNode([
+    var TypeListNode = makeGeneralNode('TypeListNode', [
         [NonEmptyTypeListNode],
         []
     ]);
 
-    var TypeNode = makeNodeWithRepeat(
+    var TypeNode = makeNodeWithRepeat('TypeNode', 
         [
             [IdentifierNode],
             [LeftParenthesisNode, TypeListNode, RightParenthesisNode]
@@ -419,11 +450,11 @@ define(['./parseError', 'compiler/frontend/lexer/tokens'], function (parseError,
         ]
     );
 
-    var TypeSpecifierNode = makeGeneralNode([
+    var TypeSpecifierNode = makeGeneralNode('TypeSpecifierNode', [
         [AsNode, TypeNode]
     ]);
 
-    var InitializerNode = makeGeneralNode([
+    var InitializerNode = makeGeneralNode('InitializerNode', [
         [EqualNode, ExpressionNode]
     ]);
 
@@ -433,16 +464,16 @@ define(['./parseError', 'compiler/frontend/lexer/tokens'], function (parseError,
     var ReturnStatementNode;
 
     // TODO: more
-    var StatementNode = makeGeneralNode([
+    var StatementNode = makeGeneralNode('StatementNode', [
         [ FunctionCallNode ]
     ]);
 
     // TODO: more
-    var BlockStatementNode = makeGeneralNode([
+    var BlockStatementNode = makeGeneralNode('BlockStatementNode', [
         [ StatementNode ]
     ]);
 
-    var BlockNode = makeNodeWithRepeat(
+    var BlockNode = makeNodeWithRepeat('BlockNode', 
         [
             [ BlockStatementNode ]
         ],
@@ -452,18 +483,19 @@ define(['./parseError', 'compiler/frontend/lexer/tokens'], function (parseError,
     );
 
     // TODO: more
-    var BaseLevelStatement = makeGeneralNode([
+    var BaseLevelStatementNode = makeGeneralNode('BaseLevelStatementNode', [
         [ BlockStatementNode ]
     ]);
 
-    var BaseLevelBlockNode = makeNodeWithRepeat(
+    var BaseLevelBlockNode = makeNodeWithRepeat('BaseLevelBlockNode', 
         [
-            [ BlockStatementNode ]
+            [ BaseLevelStatementNode ]
         ],
         [
             []
         ]
     );
+    
 
     return {
         BaseLevelBlockNode: BaseLevelBlockNode

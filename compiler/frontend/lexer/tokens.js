@@ -448,10 +448,10 @@ define(['require'], function (require) {
      * @memberOf module:compiler/frontend/lexer/tokens
      * @extends module:compiler/frontend/lexer/tokens.Token
      */
-    var GreaterThanToken = makeToken('^(<)');
+    var GreaterThanToken = makeToken('^(>)');
     /**
      * @constant {RegExp} pattern
-     * @default /^(<)/
+     * @default /^(>)/
      * @memberOf module:compiler/frontend/lexer/tokens.GreaterThanToken
      */
 
@@ -465,12 +465,99 @@ define(['require'], function (require) {
      * @memberOf module:compiler/frontend/lexer/tokens
      * @extends module:compiler/frontend/lexer/tokens.Token
      */
-    var GreaterThanOrEqualToken = makeToken('^(<=)');
+    var GreaterThanOrEqualToken = makeToken('^(>=)');
     /**
      * @constant {RegExp} pattern
-     * @default /^(<>)/
+     * @default /^(>=)/
      * @memberOf module:compiler/frontend/lexer/tokens.GreaterThanOrEqualToken
      */
+
+
+    /**
+     * Token representing concat operator
+     * 
+     * @param {number} line - The line the token is located
+     * @param {string[]} captures - An array of captures returned by regexp.match
+     * 
+     * @class
+     * @memberOf module:compiler/frontend/lexer/tokens
+     * @extends module:compiler/frontend/lexer/tokens.Token
+     */
+    var ConcatToken = makeToken('^(&)');
+    /**
+     * @constant {RegExp} pattern
+     * @default /^(&)/
+     * @memberOf module:compiler/frontend/lexer/tokens.ConcatToken
+     */
+
+    /**
+     * Token representing or operator
+     * 
+     * @param {number} line - The line the token is located
+     * @param {string[]} captures - An array of captures returned by regexp.match
+     * 
+     * @class
+     * @memberOf module:compiler/frontend/lexer/tokens
+     * @extends module:compiler/frontend/lexer/tokens.Token
+     */
+    var OrToken = makeToken('^(or)');
+    /**
+     * @constant {RegExp} pattern
+     * @default /^(or)/
+     * @memberOf module:compiler/frontend/lexer/tokens.OrToken
+     */
+
+    /**
+     * Token representing and operator
+     * 
+     * @param {number} line - The line the token is located
+     * @param {string[]} captures - An array of captures returned by regexp.match
+     * 
+     * @class
+     * @memberOf module:compiler/frontend/lexer/tokens
+     * @extends module:compiler/frontend/lexer/tokens.Token
+     */
+    var AndToken = makeToken('^(and)');
+    /**
+     * @constant {RegExp} pattern
+     * @default /^(and)/
+     * @memberOf module:compiler/frontend/lexer/tokens.AndToken
+     */
+
+    /**
+     * Token representing xor operator
+     * 
+     * @param {number} line - The line the token is located
+     * @param {string[]} captures - An array of captures returned by regexp.match
+     * 
+     * @class
+     * @memberOf module:compiler/frontend/lexer/tokens
+     * @extends module:compiler/frontend/lexer/tokens.Token
+     */
+    var XorToken = makeToken('^(xor)');
+    /**
+     * @constant {RegExp} pattern
+     * @default /^(xor)/
+     * @memberOf module:compiler/frontend/lexer/tokens.XorToken
+     */
+
+    /**
+     * Token representing as
+     * 
+     * @param {number} line - The line the token is located
+     * @param {string[]} captures - An array of captures returned by regexp.match
+     * 
+     * @class
+     * @memberOf module:compiler/frontend/lexer/tokens
+     * @extends module:compiler/frontend/lexer/tokens.Token
+     */
+    var AsToken = makeToken('^(as)');
+    /**
+     * @constant {RegExp} pattern
+     * @default /^(as)/
+     * @memberOf module:compiler/frontend/lexer/tokens.AsToken
+     */
+
 
     ///**
     // * Comment token
@@ -500,7 +587,7 @@ define(['require'], function (require) {
         EOSToken: EOSToken,
         EqualToken: EqualToken,
         GreaterThanOrEqualToken: GreaterThanOrEqualToken,
-        GreaterThenToken: GreaterThanToken,
+        GreaterThanToken: GreaterThanToken,
         IdentifierToken: IdentifierToken,
         IntegerDivisionToken: IntegerDivisionToken,
         LeftBracketToken: LeftBracketToken,
@@ -518,6 +605,11 @@ define(['require'], function (require) {
         RightBracketToken: RightBracketToken,
         RightParenthesisToken: RightParenthesisToken,
         StringToken: StringToken,
+        ConcatToken: ConcatToken,
+        OrToken: OrToken,
+        AndToken: AndToken,
+        XorToken: XorToken,
+        AsToken: AsToken,
         Token: Token
     };
 });
