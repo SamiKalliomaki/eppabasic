@@ -47,13 +47,14 @@ define(['require', 'xregexp'], function (require, XRegExp) {
      * @static
      * @memberOf module:compiler/frontend/lexer/tokens
      */
-    function makeToken(pattern) {
+    function makeToken(name, pattern) {
         // Extend Token
         function NewToken(line, captures) {
             Token.call(this, line, captures);
         }
-        //Object.setPrototypeOf(NewToken, Token);
+
         NewToken.prototype = Object.create(Token.prototype, { constructor: { value: NewToken } });
+        NewToken.typeName = name;
 
         // Setup static values
         NewToken.prototype.pattern = new XRegExp(pattern);
@@ -79,6 +80,7 @@ define(['require', 'xregexp'], function (require, XRegExp) {
 
     EOSToken.prototype = Object.create(Token.prototype);
     EOSToken.prototype.constructor = EOSToken;
+    EOSToken.typeName = 'EOSToken';
 
     // --- Mass Tokens ---
     /**
@@ -91,7 +93,7 @@ define(['require', 'xregexp'], function (require, XRegExp) {
      * @memberOf module:compiler/frontend/lexer/tokens
      * @extends module:compiler/frontend/lexer/tokens.Token
      */
-    var EOLToken = makeToken('^(\r?\n)');
+    var EOLToken = makeToken('EOLToken', '^(\r?\n)');
     /**
      * @constant {RegExp} pattern
      * @default /^(\r?\n)/
@@ -108,7 +110,7 @@ define(['require', 'xregexp'], function (require, XRegExp) {
      * @memberOf module:compiler/frontend/lexer/tokens
      * @extends module:compiler/frontend/lexer/tokens.Token
      */
-    var NumberToken = makeToken('^(\\d+(?:\\.\\d+)?)');
+    var NumberToken = makeToken('NumberToken', '^(\\d+(?:\\.\\d+)?)');
     /**
      * @constant {RegExp} pattern
      * @default /^(\d+(?:\.\d+)?)/
@@ -125,7 +127,7 @@ define(['require', 'xregexp'], function (require, XRegExp) {
      * @memberOf module:compiler/frontend/lexer/tokens
      * @extends module:compiler/frontend/lexer/tokens.Token
      */
-    var StringToken = makeToken('^"((?:""|[^"])*)"');
+    var StringToken = makeToken('StringToken', '^"((?:""|[^"])*)"');
     /**
      * @constant {RegExp} pattern
      * @default /^"((?:""|[^"])*)"/
@@ -142,7 +144,7 @@ define(['require', 'xregexp'], function (require, XRegExp) {
      * @memberOf module:compiler/frontend/lexer/tokens
      * @extends module:compiler/frontend/lexer/tokens.Token
      */
-    var IdentifierToken = makeToken('^([_\\p{L}][_\\p{L}\\p{N}]*)');
+    var IdentifierToken = makeToken('IdentifierToken', '^([_\\p{L}][_\\p{L}\\p{N}]*)');
     /**
      * @constant {RegExp} pattern
      * @default /^([_\p{L}][_\p{L}\p{N}]*)/
@@ -159,7 +161,7 @@ define(['require', 'xregexp'], function (require, XRegExp) {
      * @memberOf module:compiler/frontend/lexer/tokens
      * @extends module:compiler/frontend/lexer/tokens.Token
      */
-    var LeftBracketToken = makeToken('^(\\[)');
+    var LeftBracketToken = makeToken('LeftBracketToken', '^(\\[)');
     /**
      * @constant {RegExp} pattern
      * @default /^(\[)/
@@ -176,7 +178,7 @@ define(['require', 'xregexp'], function (require, XRegExp) {
      * @memberOf module:compiler/frontend/lexer/tokens
      * @extends module:compiler/frontend/lexer/tokens.Token
      */
-    var RightBracketToken = makeToken('^(\\])');
+    var RightBracketToken = makeToken('RightBracketToken', '^(\\])');
     /**
      * @constant {RegExp} pattern
      * @default /^(\])/
@@ -193,7 +195,7 @@ define(['require', 'xregexp'], function (require, XRegExp) {
      * @memberOf module:compiler/frontend/lexer/tokens
      * @extends module:compiler/frontend/lexer/tokens.Token
      */
-    var LeftParenthesisToken = makeToken('^(\\()');
+    var LeftParenthesisToken = makeToken('LeftParenthesisToken', '^(\\()');
     /**
      * @constant {RegExp} pattern
      * @default /^(\()/
@@ -210,7 +212,7 @@ define(['require', 'xregexp'], function (require, XRegExp) {
      * @memberOf module:compiler/frontend/lexer/tokens
      * @extends module:compiler/frontend/lexer/tokens.Token
      */
-    var RightParenthesisToken = makeToken('^(\\))');
+    var RightParenthesisToken = makeToken('RightParenthesisToken', '^(\\))');
     /**
      * @constant {RegExp} pattern
      * @default /^(\))/
@@ -227,7 +229,7 @@ define(['require', 'xregexp'], function (require, XRegExp) {
      * @memberOf module:compiler/frontend/lexer/tokens
      * @extends module:compiler/frontend/lexer/tokens.Token
      */
-    var CommaToken = makeToken('^(,)');
+    var CommaToken = makeToken('CommaToken', '^(,)');
     /**
      * @constant {RegExp} pattern
      * @default /^(,)/
@@ -244,7 +246,7 @@ define(['require', 'xregexp'], function (require, XRegExp) {
      * @memberOf module:compiler/frontend/lexer/tokens
      * @extends module:compiler/frontend/lexer/tokens.Token
      */
-    var NotToken = makeToken('^(Not)');
+    var NotToken = makeToken('NotToken', '^(Not)');
     /**
      * @constant {RegExp} pattern
      * @default /^(Not)/
@@ -261,7 +263,7 @@ define(['require', 'xregexp'], function (require, XRegExp) {
      * @memberOf module:compiler/frontend/lexer/tokens
      * @extends module:compiler/frontend/lexer/tokens.Token
      */
-    var PowToken = makeToken('^(\\^)');
+    var PowToken = makeToken('PowToken', '^(\\^)');
     /**
      * @constant {RegExp} pattern
      * @default /^(\^)/
@@ -278,7 +280,7 @@ define(['require', 'xregexp'], function (require, XRegExp) {
      * @memberOf module:compiler/frontend/lexer/tokens
      * @extends module:compiler/frontend/lexer/tokens.Token
      */
-    var MultiplicationToken = makeToken('^(\\*)');
+    var MultiplicationToken = makeToken('MultiplicationToken', '^(\\*)');
     /**
      * @constant {RegExp} pattern
      * @default /^(\*)/
@@ -295,7 +297,7 @@ define(['require', 'xregexp'], function (require, XRegExp) {
      * @memberOf module:compiler/frontend/lexer/tokens
      * @extends module:compiler/frontend/lexer/tokens.Token
      */
-    var DivisionToken = makeToken('^(\\/)');
+    var DivisionToken = makeToken('DivisionToken', '^(\\/)');
     /**
      * @constant {RegExp} pattern
      * @default /^(\/)/
@@ -312,7 +314,7 @@ define(['require', 'xregexp'], function (require, XRegExp) {
      * @memberOf module:compiler/frontend/lexer/tokens
      * @extends module:compiler/frontend/lexer/tokens.Token
      */
-    var IntegerDivisionToken = makeToken('^(\\\\)');
+    var IntegerDivisionToken = makeToken('IntegerDivisionToken', '^(\\\\)');
     /**
      * @constant {RegExp} pattern
      * @default /^(\\)/
@@ -329,7 +331,7 @@ define(['require', 'xregexp'], function (require, XRegExp) {
      * @memberOf module:compiler/frontend/lexer/tokens
      * @extends module:compiler/frontend/lexer/tokens.Token
      */
-    var ModToken = makeToken('^(Mod)');
+    var ModToken = makeToken('ModToken', '^(Mod)');
     /**
      * @constant {RegExp} pattern
      * @default /^(Mod)/
@@ -346,7 +348,7 @@ define(['require', 'xregexp'], function (require, XRegExp) {
      * @memberOf module:compiler/frontend/lexer/tokens
      * @extends module:compiler/frontend/lexer/tokens.Token
      */
-    var PlusToken = makeToken('^(\\+)');
+    var PlusToken = makeToken('PlusToken', '^(\\+)');
     /**
      * @constant {RegExp} pattern
      * @default /^(\+)/
@@ -363,7 +365,7 @@ define(['require', 'xregexp'], function (require, XRegExp) {
      * @memberOf module:compiler/frontend/lexer/tokens
      * @extends module:compiler/frontend/lexer/tokens.Token
      */
-    var MinusToken = makeToken('^(-)');
+    var MinusToken = makeToken('MinusToken', '^(-)');
     /**
      * @constant {RegExp} pattern
      * @default /^(-)/
@@ -380,7 +382,7 @@ define(['require', 'xregexp'], function (require, XRegExp) {
      * @memberOf module:compiler/frontend/lexer/tokens
      * @extends module:compiler/frontend/lexer/tokens.Token
      */
-    var EqualToken = makeToken('^(=)');
+    var EqualToken = makeToken('EqualToken', '^(=)');
     /**
      * @constant {RegExp} pattern
      * @default /^(=)/
@@ -397,7 +399,7 @@ define(['require', 'xregexp'], function (require, XRegExp) {
      * @memberOf module:compiler/frontend/lexer/tokens
      * @extends module:compiler/frontend/lexer/tokens.Token
      */
-    var NotEqualToken = makeToken('^(<>)');
+    var NotEqualToken = makeToken('NotEqualToken', '^(<>)');
     /**
      * @constant {RegExp} pattern
      * @default /^(<>)/
@@ -414,7 +416,7 @@ define(['require', 'xregexp'], function (require, XRegExp) {
      * @memberOf module:compiler/frontend/lexer/tokens
      * @extends module:compiler/frontend/lexer/tokens.Token
      */
-    var LessThanToken = makeToken('^(<)');
+    var LessThanToken = makeToken('LessThanToken', '^(<)');
     /**
      * @constant {RegExp} pattern
      * @default /^(<)/
@@ -431,7 +433,7 @@ define(['require', 'xregexp'], function (require, XRegExp) {
      * @memberOf module:compiler/frontend/lexer/tokens
      * @extends module:compiler/frontend/lexer/tokens.Token
      */
-    var LessThanOrEqualToken = makeToken('^(<=)');
+    var LessThanOrEqualToken = makeToken('LessThanOrEqualToken', '^(<=)');
     /**
      * @constant {RegExp} pattern
      * @default /^(<>)/
@@ -448,7 +450,7 @@ define(['require', 'xregexp'], function (require, XRegExp) {
      * @memberOf module:compiler/frontend/lexer/tokens
      * @extends module:compiler/frontend/lexer/tokens.Token
      */
-    var GreaterThanToken = makeToken('^(>)');
+    var GreaterThanToken = makeToken('GreaterThanToken', '^(>)');
     /**
      * @constant {RegExp} pattern
      * @default /^(>)/
@@ -465,7 +467,7 @@ define(['require', 'xregexp'], function (require, XRegExp) {
      * @memberOf module:compiler/frontend/lexer/tokens
      * @extends module:compiler/frontend/lexer/tokens.Token
      */
-    var GreaterThanOrEqualToken = makeToken('^(>=)');
+    var GreaterThanOrEqualToken = makeToken('GreaterThanOrEqualToken', '^(>=)');
     /**
      * @constant {RegExp} pattern
      * @default /^(>=)/
@@ -483,7 +485,7 @@ define(['require', 'xregexp'], function (require, XRegExp) {
      * @memberOf module:compiler/frontend/lexer/tokens
      * @extends module:compiler/frontend/lexer/tokens.Token
      */
-    var ConcatToken = makeToken('^(&)');
+    var ConcatToken = makeToken('ConcatToken', '^(&)');
     /**
      * @constant {RegExp} pattern
      * @default /^(&)/
@@ -500,7 +502,7 @@ define(['require', 'xregexp'], function (require, XRegExp) {
      * @memberOf module:compiler/frontend/lexer/tokens
      * @extends module:compiler/frontend/lexer/tokens.Token
      */
-    var OrToken = makeToken('^(or)');
+    var OrToken = makeToken('OrToken', '^(or)');
     /**
      * @constant {RegExp} pattern
      * @default /^(or)/
@@ -517,7 +519,7 @@ define(['require', 'xregexp'], function (require, XRegExp) {
      * @memberOf module:compiler/frontend/lexer/tokens
      * @extends module:compiler/frontend/lexer/tokens.Token
      */
-    var AndToken = makeToken('^(and)');
+    var AndToken = makeToken('AndToken', '^(and)');
     /**
      * @constant {RegExp} pattern
      * @default /^(and)/
@@ -534,7 +536,7 @@ define(['require', 'xregexp'], function (require, XRegExp) {
      * @memberOf module:compiler/frontend/lexer/tokens
      * @extends module:compiler/frontend/lexer/tokens.Token
      */
-    var XorToken = makeToken('^(xor)');
+    var XorToken = makeToken('XorToken', '^(xor)');
     /**
      * @constant {RegExp} pattern
      * @default /^(xor)/
@@ -551,7 +553,7 @@ define(['require', 'xregexp'], function (require, XRegExp) {
      * @memberOf module:compiler/frontend/lexer/tokens
      * @extends module:compiler/frontend/lexer/tokens.Token
      */
-    var AsToken = makeToken('^(as)');
+    var AsToken = makeToken('AsToken', '^(as)');
     /**
      * @constant {RegExp} pattern
      * @default /^(as)/

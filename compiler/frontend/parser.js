@@ -29,10 +29,10 @@ define(['require', 'compiler/compilationPhase', './parser/nodes'], function(requ
         var predictionStack = [ cu.syntaxTreeRoot ];
 
         while (predictionStack.length > 0) {
-            predictionStack.forEach(function (asd) {
+            /*predictionStack.forEach(function (asd) {
                 console.log('Stack: ' + asd.constructor.typeName);
             });
-            this.printSyntaxTree(cu.syntaxTreeRoot);
+            this.printSyntaxTree(cu.syntaxTreeRoot);*/
 
             var node = predictionStack.shift();
             var newItems = node.doMove(cu.tokens);

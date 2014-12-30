@@ -20,7 +20,6 @@
         this.tokens = tokens;
     }
 
-    Object.setPrototypeOf(Lexer, compilationPhase.CompilationPhase);
     Lexer.prototype = Object.create(compilationPhase.CompilationPhase.prototype, { constructor: { value: Lexer } });
 
     /**
