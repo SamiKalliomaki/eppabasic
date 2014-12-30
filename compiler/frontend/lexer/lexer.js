@@ -6,44 +6,52 @@
      *
      * @class
      * @extends {module:compiler/compilationPhase.CompilationPhase}
-     * @param {module:compiler/frontend/lexer.Rule[]} rules - Rules used in lexical analysis
+     * @param {module:compiler/frontend/lexer.Token[]} tokens
+     * - Tokens returned by lexical analysis. Tokens are matched in the order they are in the array.
      * @memberOf module:compiler/frontend/lexer
      */
-    var Lexer = function Lexer(rules) {
+    var Lexer = function Lexer(tokens) {
         /**
-         * The rules the lexer follows.
+         * The tokens the lexer supports.
          * @member
          * @private
          * @type {module:compiler/frontend/lexer.Rule[]}
          */
-        this.rules = rules;
+        this.tokens = tokens;
     }
 
-    Lexer.prototype = Object.create(compilationPhase.CompilationPhase.prototype);
-
-    Lexer.prototype.constructor = Lexer;
+    Object.setPrototypeOf(Lexer, compilationPhase.CompilationPhase);
+    Lexer.prototype = Object.create(compilationPhase.CompilationPhase.prototype, { constructor: { value: Lexer } });
 
     /**
      * Executes the lexer. Results in tokens being stored in cu.tokens.
+     * 
      * @instance
-     * @param {module:compiler/compilationUnit.CompilationUnit} cu
+     * @param {module:compiler/compilationUnit.CompilationUnit} cu - Compilation unit the lexer uses
      * @memberOf module:compiler/frontend/lexer.Lexer
      */
     Lexer.prototype.run = function run(cu) {
-        var token = new tokens.Token(-1, ['']);
+        // The token being processed
+        var token = null;
 
+        // Initialize the state of the lexer
         this.input = cu.source;
         this.line = 1;
 
+        // Tokens end up here
         cu.tokens = [];
 
-        while(!(token instanceof tokens.EOSToken)) {
-            token = this.nextToken();
-            cu.tokens.push(token);
+        try {
+            // Go through tokens until end of source
+            while (!(token instanceof tokens.EOSToken)) {
+                token = this.nextToken();
+                cu.tokens.push(token);
+            }
+        } finally {
+            // Finally return the current state
+            delete this.input;
+            delete this.line;
         }
-
-        delete this.input;
-        delete this.line;
     };
 
     /**
@@ -57,19 +65,20 @@
         if (this.input.length <= 0)
             return new tokens.EOSToken(this.line);
 
-        // Otherwise go through the rules and find the comforting rule
-        var rule = this.rules.find(function (rule) {
-            return rule.test(input);
+        // Go throug all tokens
+        var tokenType = this.tokens.find(function (token) {
+            // And try if it matches
+            return !!token.pattern.exec(this.input);
         }, this);
 
         // Get the captures
-        var captures = rule.capture(this.input);
+        var captures = tokenType.pattern.exec(this.input);
         // Consume the input
         this.input = this.input.substr(captures[0].length);
-
-        var token = new rule.type(this.line, captures);
-
-        if(token instanceof tokens.EOLToken) {
+        // Create the token
+        var token = new tokenType(this.line, captures);
+        // If the token is end of line, increase the line count
+        if (token instanceof tokens.EOLToken) {
             this.line++;
         }
 

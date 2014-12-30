@@ -2,7 +2,7 @@
  * Contais all tokens used in EppaBasic
  * @module compiler/frontend/lexer/tokens
  */
-define(['require'], function (require) {
+define(['require', 'xregexp'], function (require, XRegExp) {
     "use strict";
 
     /**
@@ -56,7 +56,7 @@ define(['require'], function (require) {
         NewToken.prototype = Object.create(Token.prototype, { constructor: { value: NewToken } });
 
         // Setup static values
-        NewToken.prototype.pattern = pattern;
+        NewToken.prototype.pattern = new XRegExp(pattern);
 
         return NewToken;
     }
