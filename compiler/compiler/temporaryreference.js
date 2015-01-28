@@ -1,4 +1,4 @@
-﻿define(function () {
+﻿define(['./basereference'], function (BaseReference) {
     function CompilerTemporaryReference(type, name, context) {
         /// <param name='type' type='BaseType' />
         /// <param name='name' type='String' />
@@ -13,7 +13,9 @@
         setValue: function setValue(value, context) {
             if (!context)
                 context = this.context;
-            var code = this.name + '=' + value.type.castTo(value.getValue(), this.type) + ';';
+
+            var code = this.name + '=' + this.castValue(value, this.type) + ';';
+
             context.push(code);
         },
         getValue: function getValue() {
@@ -31,6 +33,8 @@
         },
         refType: 'temp'
     };
+
+    extend(CompilerTemporaryReference.prototype, BaseReference.prototype);
 
     return CompilerTemporaryReference;
 });

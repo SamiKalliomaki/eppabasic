@@ -1,4 +1,4 @@
-﻿define(function () {
+﻿define(['./memoryreference'], function (MemoryReference) {
     function CompilerStackReference(type, offset, reserved, context) {
         /// <param name='type' type='BaseType' />
         /// <param name='offset' type='Number' />
@@ -12,26 +12,8 @@
         this.refCount = 1;
     }
     CompilerStackReference.prototype = {
-        setValue: function setValue(value, context) {
-            if (!context)
-                context = this.context;
-
-            var mem = 'MEMS32';
-            var shift = 2;
-            if (this.type === this.types.Double) {
-                mem = 'MEMF64';
-                shift = 3;
-            }
-            context.push(mem + '[((SP-' + (context.stackOffset - this.offset) + ')|0)>>' + shift + ']=' + value.type.castTo(value.getValue(), this.type) + ';');
-        },
-        getValue: function getValue() {
-            var mem = 'MEMS32';
-            var shift = 2;
-            if (this.type === this.types.Double) {
-                mem = 'MEMF64';
-                shift = 3;
-            }
-            return this.type.cast(mem + '[((SP-' + (this.context.stackOffset - this.offset) + ')|0)>>' + shift + ']');
+        getMem: function(context) {
+            return this.getMemByOffset('SP-' + (context.stackOffset - this.offset));
         },
         freeRef: function freeRef(real) {
             if (real !== false)
@@ -53,6 +35,8 @@
         },
         refType: 'stack'
     };
+
+    extend(CompilerStackReference.prototype, MemoryReference.prototype);
 
     return CompilerStackReference;
 })
