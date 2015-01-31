@@ -21,8 +21,8 @@
         this.bufferCtx = this.buffer[0].getContext('2d');
 
         // Set some default values for the context
-        this.screenWidth = 0;
-        this.screenHeight = 0;
+        this.canvasWidth = 0;
+        this.canvasHeight = 0;
         this.windowWidth = 0
         this.windowHeight = 0;
 
@@ -59,8 +59,8 @@
             var strokeStyle = this.ctx.strokeStyle;
 
             // Remember the resolutin
-            this.screenWidth = width;
-            this.screenHeight = height;
+            this.canvasWidth = width;
+            this.canvasHeight = height;
 
             // Copy the current image to a buffer
             this.buffer.width(this.canvas.width());

@@ -121,11 +121,11 @@ define(['require', './types', './operators', './compiler', './parser', './typech
             compiler.defineJsFunction('env.getWindowHeight', true, 'WindowHeight', [], this.types.Integer);
             compiler.defineJsFunction('env.setWindowHeight', true, 'WindowHeight', [this.types.Integer]);
             compiler.defineJsFunction('env.setWindowSize', true, 'WindowSize', [this.types.Integer, this.types.Integer]);
-            compiler.defineJsFunction('env.getScreenWidth', true, 'ScreenWidth', [], this.types.Integer);
-            compiler.defineJsFunction('env.setScreenWidth', true, 'ScreenWidth', [this.types.Integer]);
-            compiler.defineJsFunction('env.getScreenHeight', true, 'ScreenHeight', [], this.types.Integer);
-            compiler.defineJsFunction('env.setScreenHeight', true, 'ScreenHeight', [this.types.Integer]);
-            compiler.defineJsFunction('env.setScreenSize', true, 'ScreenSize', [this.types.Integer, this.types.Integer]);
+            compiler.defineJsFunction('env.getCanvasWidth', true, 'CanvasWidth', [], this.types.Integer);
+            compiler.defineJsFunction('env.setCanvasWidth', true, 'CanvasWidth', [this.types.Integer]);
+            compiler.defineJsFunction('env.getCanvasHeight', true, 'CanvasHeight', [], this.types.Integer);
+            compiler.defineJsFunction('env.setCanvasHeight', true, 'CanvasHeight', [this.types.Integer]);
+            compiler.defineJsFunction('env.setCanvasSize', true, 'CanvasSize', [this.types.Integer, this.types.Integer]);
 
             //// Memory functions
             compiler.defineJsFunction('__peek32', false, 'Peek32', [this.types.Integer], this.types.Integer);

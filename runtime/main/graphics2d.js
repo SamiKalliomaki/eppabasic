@@ -73,14 +73,14 @@
                 this.ctx.stroke();
             },
 
-            setScreenHeight: function setScreenHeight(height) {
-                this.setResolution(this.screenWidth, height, true);
+            setCanvasHeight: function setCanvasHeight(height) {
+                this.setResolution(this.canvasWidth, height, true);
             },
-            setScreenSize: function setScreemSise(width, height) {
+            setCanvasSize: function setCanvasSise(width, height) {
                 this.setResolution(width, height, true);
             },
-            setScreenWidth: function setScreenWidth(width) {
-                this.setResolution(width, this.screenHeight, true);
+            setCanvasWidth: function setCanvasWidth(width) {
+                this.setResolution(width, this.canvasHeight, true);
             },
             setWindowHeight: function setWindowHeight(height) {
                 this.setSize(this.windowWidth, height);
