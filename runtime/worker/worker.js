@@ -35,6 +35,8 @@
             this.program = Program(external.stdlib, external.env, external.heap);
             external.after();
             this.program.init();
+
+            this.external = external;
         },
 
         start: function start() {
@@ -47,11 +49,12 @@
                 }
 
                 var now = new Date().getTime();
-                if (now >= this.nextCall) {
-                    this.program.next();
+                if (now >= this.nextCall && !this.program.next()) {
+                    // Program ended
+                    this.external.env.drawScreen();
+                } else {
+                    setTimeout(f, Math.max(this.nextCall - now - 1, 0));
                 }
-
-                setTimeout(f, Math.max(this.nextCall - now - 1, 0));
             }
             setTimeout(f, 0);
         },
