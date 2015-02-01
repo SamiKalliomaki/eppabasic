@@ -1,4 +1,8 @@
-﻿body {
+﻿html, body {
+    height: 100%;
+}
+
+body {
     /* No margins on the side */
     margin: 0;
     padding: 0;
@@ -14,6 +18,9 @@
     left: 0;
     right: 0;
     margin: auto;
+    
+    height: 100%;
+    overflow: hidden;
 }
 
     #canvasHolder > canvas, #canvasHolder > .messagebox {
