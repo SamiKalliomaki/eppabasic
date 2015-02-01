@@ -2,14 +2,15 @@
 /// <reference path="types.js" />
 /// <reference path="types.js" />
 
-define(['./framework/compileerror'], function (CompileError) {
-    function Typechecker(ast, functions, operators, types) {
+define(['./framework/compileerror', './nodes'], function (CompileError, Nodes) {
+    function Typechecker(ast, functions, constants, operators, types) {
         /// <param name='ast' type='Nodes.Block' />
         /// <param name='functions' type='Array' />
         /// <param name='operators' type='OperatorContainer' />
         /// <param name='types' type='Type' />
         this.ast = ast;
         this.functions = functions;
+        this.constants = constants;
         this.operators = operators;
         this.types = types;
         this.errors = [];
@@ -20,7 +21,7 @@ define(['./framework/compileerror'], function (CompileError) {
          * Checks types of the ast
          */
         check: function check() {
-            this.visit(this.ast);
+            this.visit(this.ast, new Nodes.ParentNode(this.constants));
         },
 
         /*
@@ -96,7 +97,11 @@ define(['./framework/compileerror'], function (CompileError) {
             var variable = parent.getVariable(assignment.name);
             // Check that it exists
             if (!variable)
-                this.errors.push(new CompileError(assignment.line, 'variable-undefined', { name: assignment.name }));
+                this.errors.push(new CompileError(assignment.line, 'errors.variable-undefined', { name: assignment.name }));
+            // Check that not a constant
+            if (variable.constant)
+                this.errors.push(new CompileError(assignment.line, 'errors.constant-set', { name: assignment.name }));
+
 
             var type = variable ? variable.type : null;
             // Test types for every index
@@ -127,6 +132,7 @@ define(['./framework/compileerror'], function (CompileError) {
          * Visits a for loop
          */
         visitFor: function visitFor(loop, parent) {
+            loop.parent = parent;
             loop.variable.type = this.resolveExprType(loop.start, parent);
             this.resolveExprType(loop.stop, parent);
             this.resolveExprType(loop.step, parent);
@@ -137,14 +143,6 @@ define(['./framework/compileerror'], function (CompileError) {
 
                 if (loop.step.type && !loop.step.type.canCastTo(loop.variable.type))
                     this.errors.push(new CompileError(loop.line, 'errors.for-iterator-step-type'));
-            }
-
-            // Adds a custom get variable for loop iterator
-            loop.getVariable = function getVariable(name) {
-                if (name.toLowerCase() === loop.variable.name.toLowerCase())
-                    return loop.variable;
-                if (parent)
-                    return parent.getVariable(name);
             }
 
             this.visit(loop.block, loop);

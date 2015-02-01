@@ -19,6 +19,7 @@ var baseConfig = {
         xregexp: 'libs/xregexp',
         i18n: 'libs/i18next.amd.withJQuery-1.7.3.min',
         text: 'libs/requirejs_text',
+        esrever: 'libs/esrever',
         ace: 'ace/lib/ace'
     },
     optimize: argv.optimize
@@ -167,7 +168,6 @@ buildAceExtensions();
 buildAceThemes();
 
 function buildRuntime() {
-    // The main page
     var extra = {
         name: 'runtime/app',
         out: 'build/runtime/app.js',
@@ -180,8 +180,8 @@ function buildRuntime() {
     }, function (err) {
         console.error(err);
     });
-
-    // The worker
+}
+function buildRuntimeWorker() {
     var extra = {
         include: [
             'libs/requirejs',
@@ -192,14 +192,15 @@ function buildRuntime() {
     var config = combine(baseConfig, extra);
 
     requirejs.optimize(config, function (res) {
-        //console.log(res);
+        addWatch('runtime-worker', res.split('\n').slice(3), buildRuntimeWorker);
         console.log('Succesfully compiled the runtime worker');
     }, function (err) {
         console.error(err);
     });
 }
 
-//buildRuntime();
+buildRuntime();
+buildRuntimeWorker();
 
 function listJSFiles(path, filter) {
     if (!filter)

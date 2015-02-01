@@ -3,19 +3,25 @@
 /// <reference path="../compiler/types.js" />
 /// <reference path="../compiler/compiler.js" />
 
-define(['compiler/toolchain', 'ace/ace', 'i18n'], function (Toolchain, ace, i18n) {
+define(['compiler/toolchain', 'ace/ace', 'i18n', './autocompleter'], function (Toolchain, ace, i18n, Autocompleter) {
     function Editor(editorName, manual) {
         this.toolchain = new Toolchain();
         this.manual = manual;
         this.editorName = editorName;
+
+        // Create ace editor
         this.ace = ace.edit(editorName);
+        // Set theme and mode
         this.ace.setTheme('ace/theme/chaos');
         this.ace.getSession().setMode('ace/mode/eppabasic');
+        // Some other settings
         this.ace.setShowPrintMargin(false);
         this.modified = false;
         this.ace.on('change', function () {
             this.modified = true;
         }.bind(this));
+        // Autocompletion
+        this.autocompleter = new Autocompleter(ace, this.ace);
     }
     Editor.prototype = {
         getCode: function getCode() {
@@ -24,6 +30,9 @@ define(['compiler/toolchain', 'ace/ace', 'i18n'], function (Toolchain, ace, i18n
         setCode: function setCode(code) {
             this.ace.setValue(code, -1);
             this.modified = true;
+        },
+        setRuntime: function setRuntime(runtime) {
+            this.runtime = runtime;
         },
         runCode: function runCode() {
             function trySaveToStorage(storage, editor) {
@@ -42,7 +51,7 @@ define(['compiler/toolchain', 'ace/ace', 'i18n'], function (Toolchain, ace, i18n
             try {
                 this.toolchain.parse(cu);
                 this.toolchain.check(cu);
-            } catch(e) {
+            } catch (e) {
                 console.error(e);
             }
 
@@ -51,14 +60,14 @@ define(['compiler/toolchain', 'ace/ace', 'i18n'], function (Toolchain, ace, i18n
                 this.showErrors(cu.errors);
                 this.ace.gotoLine(cu.errors[0].line);
             } else {
-                this.compiled = this.toolchain.compile(cu);
-                this.run();
+                var compiled = this.toolchain.compile(cu);
+                this.run(compiled);
             }
         },
-        run: function run() {
+        run: function run(compiled) {
             this.runtimeReady(function ready() {
-                this.window.ebruntime.init();
-                this.window.ebruntime.start();
+                this.runtime.init(compiled);
+                this.runtime.start();
             });
             this.openRuntime();
         },
@@ -88,11 +97,13 @@ define(['compiler/toolchain', 'ace/ace', 'i18n'], function (Toolchain, ace, i18n
         openRuntime: function openRuntime() {
             // Close opened window
             this.closeRuntime();
-            this.window = window.open('runtime/index.html', 'runtime', 'dependent,resizable', true);
+            window.open('runtime/index.html', 'runtime', 'dependent,resizable', true);
         },
         closeRuntime: function closeRuntime() {
-            if (this.window)
-                this.window.close();
+            if (this.runtime) {
+                this.runtime.close();
+                this.runtime = undefined;
+            }
         },
         runtimeReady: function runtimeReady(func) {
             if (func) {

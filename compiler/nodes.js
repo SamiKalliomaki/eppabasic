@@ -1,21 +1,35 @@
 ﻿/// <reference path="framework.js" />
 /// <reference path="types.js" />
 
-define(['./framework/compileerror'], function (CompileError) {
+define(['./framework/compileerror', './compiler/constantreference'], function (CompileError, CompilerConstantReference) {
     Nodes = {};
 
     /*
      * Creates a new ast for node
      */
-    Nodes.For = function For(variable, block, start, stop, step, line) {
+    Nodes.For = function For(variable, block, start, stop, step, line, endLine) {
         this.variable = variable;
         this.block = block;
         this.start = start;
         this.stop = stop;
         this.step = step;
         this.line = line;
+        this.endLine = endLine;
+
+        this.parent = undefined;
     };
     Nodes.For.prototype = {
+        getVariable: function getVariable(name) {
+            if (name.toLowerCase() === this.variable.name.toLowerCase())
+                return this.variable;
+            if (this.parent)
+                return this.parent.getVariable(name);
+        },
+        getVariables: function getVariables() {
+            if (this.parent)
+                return [this.variable].concat(this.parent.getVariables());
+            return [this.variable];
+        },
         nodeType: 'For'
     };
 
@@ -70,16 +84,18 @@ define(['./framework/compileerror'], function (CompileError) {
     /*
      * Creates a new ast block node
      */
-    Nodes.Block = function Block(nodes, line) {
+    Nodes.Block = function Block(nodes, line, endLine) {
         /// <field name='nodes' type='Array' />
         /// <field name='line' type='Number' />
         /// <field name='type' type='BaseType' />
         if (typeof nodes === 'number') {
+            endLine = line;
             line = nodes;
             nodes = [];
         }
         this.nodes = nodes;
         this.line = line;
+        this.endLine = endLine;
 
         this.variables = [];
         this.parent = undefined;
@@ -102,7 +118,34 @@ define(['./framework/compileerror'], function (CompileError) {
             if (this.parent)
                 return this.parent.getVariable(name);
         },
+        getVariables: function getVariables() {
+            if (this.parent)
+                return this.variables.concat(this.parent.getVariables());
+            return this.variables;
+        },
         nodeType: 'Block'
+    };
+
+    Nodes.ParentNode = function ParentNode(constants) {
+        this.constants = [];
+        constants.forEach(function (constant) {
+            var def = new Nodes.VariableDefinition(constant.name, constant.type);
+            def.location = new CompilerConstantReference(constant.type);
+            def.location.setValue(constant.value);
+            def.constant = true;
+            this.constants.push(def);
+        }.bind(this));
+    };
+    Nodes.ParentNode.prototype = {
+        getVariable: function getVariable(name) {
+            return this.constants.find(function find(constant) {
+                return constant.name.toLowerCase() === name.toLowerCase();
+            });
+        },
+        getVariables: function getVariables() {
+            return this.constants;
+        },
+        nodeType: 'ParentNode'
     };
 
     /*
@@ -195,12 +238,13 @@ define(['./framework/compileerror'], function (CompileError) {
     /*
      * Creates a new ast function definition node 
      */
-    Nodes.FunctionDefinition = function FunctionDefinition(name, params, type, block, line) {
+    Nodes.FunctionDefinition = function FunctionDefinition(name, params, type, block, line, endLine) {
         this.name = name;
         this.params = params;
         this.type = type;
         this.block = block;
         this.line = line;
+        this.endLine = endLine;
     }
     Nodes.FunctionDefinition.prototype = {
         nodeType: 'FunctionDefinition'

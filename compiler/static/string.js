@@ -88,3 +88,43 @@ function __strneq(a, b) {
     d = (1 - c) | 0;
     return d | 0;
 }
+
+function __strasc(a) {
+    a = a | 0;
+    var len = 0;
+    var i = 0;
+    var char = 0;
+    var end = 0;
+
+    if (!(a | 0))
+        return -1;          // No string
+
+    // Get the length of the string
+    len = MEMS32[a >> 2] | 0;
+    if (!(len | 0))
+        return -1;          // The string is empty
+
+    // A pointer to the end of the string
+    end = (a + 4 + len) | 0;
+
+    // Get the first bytes of the char
+    a = (a + 4) | 0;
+    char = MEMU8[a | 0] | 0;
+    // Remove the uppermost bits
+    for (i = 7; ((i | 0) >= 0) | 0; i = (i - 1) | 0) {
+        if (!(char & ((1 << (i | 0)) | 0)))
+            break;
+        char = char ^ ((1 << (i | 0)) | 0);
+    }
+    a = (a + 1) | 0;
+
+    while (
+        (((a | 0) < (end | 0)) | 0)         // Not at the end of the string
+        & (MEMU8[a | 0] & 0x80)             // The next byte is extending char
+        & !(MEMU8[a | 0] & 0x40)) {         // And is not the start of the next char
+        char = (char << 6) | (MEMU8[a | 0] & 0x3f);
+        a = (a + 1) | 0;
+    }
+
+    return char | 0;
+}

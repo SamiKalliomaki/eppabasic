@@ -79,6 +79,13 @@
         "binop-undefined": "Failed to find operator '__op__' for '__left__' and '__right__'",
         "unnop-undefined": "Failed to find unary operator '__op__' for '__type__'",
         "lexer-unexpected-text": "Unexpected text: '__text__'",
-        "type-undefined": "Undefined type '__type__'"
+        "type-undefined": "Undefined type '__type__'",
+        "constant-set": "Constant '__name__' value can't be set"
+    },
+    "autocomplete": {
+        "type": {
+            "function": "Function",
+            "variable": "Variable"
+        }
     }
 }

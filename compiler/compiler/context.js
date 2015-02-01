@@ -57,11 +57,14 @@ define(['./absolutereference', './absolutestackreference', './constantreference'
             return tmp;
         },
 
-        reserveStack: function reserveStack(type) {
+        reserveStack: function reserveStack(type, relative) {
             /// <param name='type' type='BaseType' />
             /// <returns type='CompilerStackReference' />
             if (!type)
                 throw new Error('Type must be specified');
+
+            if (relative !== true)
+                relative = false;
 
             // Get the size of the type
             var size = 4;
@@ -78,7 +81,7 @@ define(['./absolutereference', './absolutestackreference', './constantreference'
             this.stackOffset += size;
             this.push('SP=(SP+' + reserved + ')|0;');
 
-            if (this.isMain)
+            if (this.isMain && !relative)
                 return new CompilerAbsoluteStackReference(type, offset, reserved, this);
             else
                 return new CompilerStackReference(type, offset, reserved, this);

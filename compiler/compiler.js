@@ -243,9 +243,6 @@ define(['require', './framework/compileerror', './compiler/context', './compiler
             breakEntry.push('CP=(CP-4)|0;');
             breakEntry.push('return 0;');
 
-            var waitEntry = this.createEntry(this.generateFunctionName(), undefined, undefined, this.types.Integer);
-            waitEntry.push('if(__waitcond()|0)CP=(CP-4)|0;');
-            waitEntry.push('return 0;');
             // Create another special function which is used when execution is finished
             var endEntry = this.createEntry(this.generateFunctionName(), undefined, undefined, this.types.Integer);
             endEntry.push('return 0;');
@@ -340,7 +337,6 @@ define(['require', './framework/compileerror', './compiler/context', './compiler
             this.alignEntryLists();
 
             var buf = [];
-            buf.push('function Program(stdlib,env,heap){');
             buf.push('"use asm";');
             buf.push('var MEMU8=new stdlib.Uint8Array(heap);');
             buf.push('var MEMS32=new stdlib.Int32Array(heap);');
@@ -349,7 +345,6 @@ define(['require', './framework/compileerror', './compiler/context', './compiler
             buf.push('var __imul=stdlib.Math.imul;');
             buf.push('var __pow=stdlib.Math.pow;');
             buf.push('var __panic=env.panic;');
-            buf.push('var __waitcond=env.waitCond;');
             buf.push('var __integerstring=env.integerToString;');
             buf.push('var __doublestring=env.doubleToString;');
             buf.push('var SP=0;');
@@ -366,9 +361,10 @@ define(['require', './framework/compileerror', './compiler/context', './compiler
             buf.push('function __popCallStack(){CP=(CP-4)|0;}');
             buf.push('function __init(){__meminit(HEAP_SIZE|0);SB=SP=__memreserve(1024)|0;CP=__memreserve(1024)|0;MEMU32[CP>>2]=' + mainEntry.index + ';}');
             var mainEntryList = this.findEntryList([], this.types.Integer);
-            buf.push('function __next(){while(' + mainEntryList.name + '[MEMU32[CP>>2]&' + mainEntryList.mask + ']()|0);}');
+            buf.push('function __next(){while(' + mainEntryList.name + '[MEMU32[CP>>2]&' + mainEntryList.mask + ']()|0); return ((MEMU32[CP>>2]&' + mainEntryList.mask + ') != ' + endEntry.index + ')|0; }');
             buf.push('function __breakExec(){CP=(CP+4)|0;MEMU32[CP>>2]=' + breakEntry.index + ';}');
-            buf.push('function __waitExec(){CP=(CP+4)|0;MEMU32[CP>>2]=' + waitEntry.index + ';}');
+            buf.push('function __setStackInt(val){val=val|0;MEMS32[SP>>2]=val|0;}');
+            buf.push('function __setStackDbl(val){val=+val;MEMF64[SP>>3]=+val;}');
             buf.push('function __int(a){a=a|0;return a|0;}');
             buf.push('function __sp(){return SP|0;}');
             buf.push('function __cp(){return CP|0;}');
@@ -382,8 +378,7 @@ define(['require', './framework/compileerror', './compiler/context', './compiler
             // Compile f-tables in the end
             buf.push(this.generateFTable());
             // Return functions
-            buf.push('return {popCallStack: __popCallStack,init:__init,next:__next,breakExec:__breakExec,waitExec:__waitExec,sp:__sp,cp:__cp,memreserve:__memreserve};');
-            buf.push('}');
+            buf.push('return {popCallStack: __popCallStack,setStackInt:__setStackInt,setStackDbl:__setStackDbl,init:__init,next:__next,breakExec:__breakExec,sp:__sp,cp:__cp,memreserve:__memreserve};');
 
             return buf.join('\n');
         },
@@ -412,7 +407,7 @@ define(['require', './framework/compileerror', './compiler/context', './compiler
             block.nodes.forEach(function each(node) {
                 switch (node.nodeType) {
                     case 'Comment':
-                        context.push('/*' + node.val + '*/')
+                        context.push('/*' + node.val.replace('*/', '*//*') + '*/')
                         break;
                     case 'For':
                         this.compileFor(node, context);
@@ -670,7 +665,7 @@ define(['require', './framework/compileerror', './compiler/context', './compiler
                     context.push('return 1;');
                     context.setCurrentFunction(retFunc);
                     // ...And finally the returned value is found from the top of the stack
-                    var stackTop = context.reserveStack(retType);
+                    var stackTop = context.reserveStack(retType, true);
                     retVal = context.reserveTemporary(retType);
                     retVal.setValue(stackTop);
                     retVal.freeVal = stackTop.freeVal;
@@ -966,7 +961,7 @@ define(['require', './framework/compileerror', './compiler/context', './compiler
                     res = res.map(function each(ref) {
                         if (ref.refType !== 'stack' && ref.refType !== 'absstack' && ref.refType !== 'const') {           // TODO Check that works with no-free
                             // Push this to the top of the stack
-                            var stackRef = context.reserveStack(ref.type);
+                            var stackRef = context.reserveStack(ref.type, true);
                             stackRef.setValue(ref);
                             stackRef.freeVal = ref.freeVal;
                             ref.freeRef();
@@ -994,6 +989,22 @@ define(['require', './framework/compileerror', './compiler/context', './compiler
                 }
                 res.push(val);
             }.bind(this));
+
+            if (!atomic) {
+                // The function to be called is not atomic so copy all the parameters to the stack
+                res = res.map(function each(ref) {
+                    if (ref.refType !== 'stack' && ref.refType !== 'const') {           // TODO Check that works with no-free
+                        // Push this to the top of the stack
+                        var stackRef = context.reserveStack(ref.type, true);
+                        stackRef.setValue(ref);
+                        stackRef.freeVal = ref.freeVal;
+                        ref.freeRef();
+                        ref = stackRef;
+                    }
+                    return ref;
+                }.bind(this));
+            }
+
             return res;
         },
 

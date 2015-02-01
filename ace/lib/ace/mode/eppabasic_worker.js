@@ -24,17 +24,20 @@
 
             var code = this.doc.getValue();
             var cu = this.toolchain.getCompilationUnit(code);
+            var variablescopelist;
 
             try {
                 // Parse the code
                 this.toolchain.parse(cu);
                 // Typecheck
                 this.toolchain.check(cu);
+                // Variable scope list
+                variablescopelist = this.toolchain.variableScopes(cu);
             } catch (e) {
                 showInternalError(e);
             }
 
-            this.sender.emit('parsed', [cu.errors]);
+            this.sender.emit('parsed', [cu.errors, variablescopelist ? variablescopelist.toArray() : null]);
         }
     }).call(EppaBasicWorker.prototype);
 });

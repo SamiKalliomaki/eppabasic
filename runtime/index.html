@@ -1,26 +1,19 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
-    <title>Eppabasic runtime</title>
+    <title>Eppabasic Runtime</title>
     <link href="styles.css" rel="stylesheet" />
-    <!--Placeholder for compiled code-->
-    <script id="code"></script>
-    <!--Import runtimes-->
-    <script src="utils/string.js"></script>
-    <script src="polyfill.js"></script>
-    <script src="graphics2d.js"></script>
-    <script src="graphicstext.js"></script>
-    <script src="math.js"></script>
-    <script src="string.js"></script>
-    <script src="input.js"></script>
-    <script src="runtime.js"></script>
-    <script src="../libs/random.min.js"></script>
-
-    <script src="printscreen.js"></script>
+    <script data-main="../build/runtime/app" src="../libs/requirejs.js"></script>
 </head>
 <body>
     <div id="canvasHolder">
-        <!--<textarea id="console" style="width:100%;height:100%;background:black;color:white"></textarea>-->
+        <div class="messageBox">
+        	<div class="content">
+        		<div class="text"></div>
+        		<div class="inputHelper"><input type="text"></div>
+	        	<input type="submit" value="OK">
+        	</div>
+        </div>
     </div>
 </body>
 </html>

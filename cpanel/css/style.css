@@ -1,0 +1,59 @@
+body
+{
+	padding-top: 70px;
+}
+
+.row-centered
+{
+    text-align:center;
+}
+
+.col-centered
+{
+    display:inline-block;
+    float:none;
+    /* reset the text-align */
+    text-align:left;
+    /* inline-block space fix */
+    margin-right:-4px;
+}
+
+#password-label
+{
+	box-sizing: border-box;
+	width: calc(30% - 2px);
+}
+
+#password
+{
+	box-sizing: border-box;
+	width: calc(70% - 2px);
+}
+
+#main-content
+{
+	display: none;
+}
+
+.service-status .status
+{
+	display: none;
+}
+
+.service-status.fetching	.status.fetching	{ display: inline; }
+.service-status.online		.status.online		{ display: inline; }
+.service-status.offline		.status.offline		{ display: inline; }
+.service-status.idle		.status.idle		{ display: inline; }
+.service-status.working		.status.working		{ display: inline; }
+
+#action-panel .btn
+{
+	display: block;
+	width: 100%;
+}
+
+#log
+{
+	width: 100%;
+	height: 350px;
+}
