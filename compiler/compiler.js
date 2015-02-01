@@ -361,7 +361,7 @@ define(['require', './framework/compileerror', './compiler/context', './compiler
             buf.push('function __popCallStack(){CP=(CP-4)|0;}');
             buf.push('function __init(){__meminit(HEAP_SIZE|0);SB=SP=__memreserve(1024)|0;CP=__memreserve(1024)|0;MEMU32[CP>>2]=' + mainEntry.index + ';}');
             var mainEntryList = this.findEntryList([], this.types.Integer);
-            buf.push('function __next(){while(' + mainEntryList.name + '[MEMU32[CP>>2]&' + mainEntryList.mask + ']()|0); console.log("here"); return (MEMU32[CP>>2]&' + mainEntryList.mask + ') !== ' + endEntry.index + '; }');
+            buf.push('function __next(){while(' + mainEntryList.name + '[MEMU32[CP>>2]&' + mainEntryList.mask + ']()|0); return (MEMU32[CP>>2]&' + mainEntryList.mask + ') !== ' + endEntry.index + '; }');
             buf.push('function __breakExec(){CP=(CP+4)|0;MEMU32[CP>>2]=' + breakEntry.index + ';}');
             buf.push('function __setStackInt(val){val=val|0;MEMS32[SP>>2]=val|0;}');
             buf.push('function __setStackDbl(val){val=+val;MEMF64[SP>>3]=+val;}');
