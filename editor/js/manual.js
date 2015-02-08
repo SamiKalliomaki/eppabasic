@@ -80,18 +80,11 @@ define(['jquery', 'i18n', 'marked', './framework'], function ($, i18n, marked, F
         openPage: function (page, scrollY) {
             $.get('manual/' + this.lang + '/' + page + '.md', function (data) {
                 var header = '';
-                //if(page == 'index') {
-                //    header = this.generateNewsSection();
-                //}
 
                 this.history.push(page);
                 this.scrollHistory.push(this.container.scrollTop());
                 this.manual.html(header + marked(data, { renderer: this.renderer }));
                 this.container.scrollTop(scrollY);
-
-                //if(page == 'index') {
-                //    this.populateNewsSection();
-                //}
             }.bind(this));
         },
         navigate: function navigate(url) {
