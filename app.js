@@ -10,7 +10,8 @@
         xregexp: 'libs/xregexp',
         i18n: 'libs/i18next.amd.withJQuery-1.7.3.min',
         text: 'libs/requirejs_text',
-        ace: 'ace/lib/ace'
+        ace: 'ace/lib/ace',
+        marked: 'libs/marked'
     },
     shim: {
         'jqueryui': ['jquery']

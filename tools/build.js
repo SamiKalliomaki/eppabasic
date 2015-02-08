@@ -20,7 +20,8 @@ var baseConfig = {
         i18n: 'libs/i18next.amd.withJQuery-1.7.3.min',
         text: 'libs/requirejs_text',
         esrever: 'libs/esrever',
-        ace: 'ace/lib/ace'
+        ace: 'ace/lib/ace',
+        marked: 'libs/marked'
     },
     optimize: argv.optimize
 };
