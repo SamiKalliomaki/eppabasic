@@ -70,7 +70,7 @@ class GraphView(View):
         day_365days = figure.add_subplot(224)
         day_365days.set_title('Last 365 days')
         rounded_now = datetime(now.year, now.month, now.day)
-        plot_data(day_365days, rounded_now, timedelta(days=1), 365, '%Y-%m')
+        plot_data(day_365days, rounded_now, timedelta(days=5), 365 // 5, '%Y-%m')
         
         # Fill http response
         canvas = FigureCanvas(figure)
