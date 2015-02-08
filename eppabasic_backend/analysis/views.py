@@ -58,7 +58,7 @@ class GraphView(View):
         hour_day = figure.add_subplot(222)
         hour_day.set_title('Last day')
         rounded_now = datetime(now.year, now.month, now.day, now.hour)
-        plot_data(hour_day, rounded_now, timedelta(hours=1), 24, '%m-%d %H')
+        plot_data(hour_day, rounded_now, timedelta(hours=1), 24, '%H')
 
         # Every day for last 30 days
         day_30days = figure.add_subplot(223)
