@@ -52,7 +52,7 @@ define(['jquery', 'i18n', 'marked', './framework'], function ($, i18n, marked, F
 
     Manual.prototype = {
         generateNewsSection: function () {
-            return '<h1>' + i18n.t('news.title') + '</h1><div class="news">' + i18n.t('news.loading') + '</div>';
+            return '<div class="news">' + i18n.t('news.loading') + '</div>';
         },
         populateNewsSection: function () {
             var me = this;
