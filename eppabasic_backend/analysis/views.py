@@ -16,20 +16,37 @@ class GraphView(View):
         from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
         from matplotlib.figure import Figure
         from matplotlib.dates import DateFormatter
+        
+        # Gets data and filters it with format
         def getData(format):
-            data = AnalysisEntry.objects.extra({'time2': 'strftime("' + format + '",time)'}).values('time2').order_by().annotate(count=Count('id'))
+            # Get all data
+            data = AnalysisEntry.objects.all()
+            
+            # Filter it
+            timecounts = dict()
+            for entry in data:
+                # This packs multiple timestamps into one
+                timestamp = datetime.strptime(entry.time.strftime(format),'%Y-%m-%d:%H:%M:%S')
+                # Count them
+                if timestamp not in timecounts:
+                    timecounts[timestamp] = 0
+                timecounts[timestamp] += 1
+            
+            # Create two lists for matplotlib
             times = []
             counts = []
-            for entry in data:
-                time = datetime.strptime(entry['time2'],'%Y-%m-%d:%H:%M:%S')
-                count = int(entry['count'])
+            for time, count in timecounts.items():
                 times.append(time)
                 counts.append(count)
             return (times, counts)
         
         now = datetime.utcnow()
+        
+        # Plots data returned by getData
         def plotData(plot, data, hours, width, format):
+            # A bar plot
             plot.bar(data[0], data[1], width = width, align='center')
+            # Axis names
             plot.xaxis_date()
             plot.xaxis.set_major_formatter(DateFormatter(format))
             plot.set_xlim([now - timedelta(hours=hours), now])
@@ -57,6 +74,7 @@ class GraphView(View):
         plotMonthly.set_title('Last year')
         plotData(plotMonthly, getData('%Y-%m-01:00:00:00'), 24 * 365, 30, '%Y-%m')
         
+        # Fill http response
         canvas = FigureCanvas(figure)
         response = HttpResponse(content_type='image/png')
         canvas.print_png(response)
