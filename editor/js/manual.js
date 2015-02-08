@@ -1,4 +1,4 @@
-define(['jquery', 'i18n', './framework'], function ($, i18n, Framework) {
+define(['jquery', 'i18n', 'marked', './framework'], function ($, i18n, marked, Framework) {
     function Manual(manualContainer, lang) {
         manualContainer = $(manualContainer);
         this.container = manualContainer;
@@ -36,21 +36,33 @@ define(['jquery', 'i18n', './framework'], function ($, i18n, Framework) {
                 this.openPage(this.history.pop(), this.scrollHistory.pop());
             }
         }.bind(this));
+
+        // Create a custom renderer for news
+        this.renderer = new marked.Renderer();
+
+        this.renderer.html = function html(html) {
+            // Check for custom tags
+            if (html === '<!---NEWS--->') {
+                this.populateNewsSection();             // This is async so we can do this this way
+                return this.generateNewsSection();
+            }
+            return html;
+        }.bind(this);
     }
 
     Manual.prototype = {
-        generateNewsSection: function() {
+        generateNewsSection: function () {
             return '<h1>' + i18n.t('news.title') + '</h1><div class="news">' + i18n.t('news.loading') + '</div>';
         },
-        populateNewsSection: function() {
+        populateNewsSection: function () {
             var me = this;
 
-            Framework.simpleGet('eb/news/get/' + this.lang + '/', '', function(data) {
+            Framework.simpleGet('eb/news/get/' + this.lang + '/', '', function (data) {
                 var newsDiv = $('.news', me.manual);
                 newsDiv.empty();
 
-                data['posts'].forEach(function(post) {
-                    var postElem = $('<div/>', { });
+                data['posts'].forEach(function (post) {
+                    var postElem = $('<div/>', {});
                     postElem.append($('<h2/>', {
                         text: post['title']
                     }));
@@ -58,7 +70,7 @@ define(['jquery', 'i18n', './framework'], function ($, i18n, Framework) {
                     newsDiv.append(postElem);
                 });
 
-                if(data['posts'].length === 0) {
+                if (data['posts'].length === 0) {
                     newsDiv.append($('<p/>', {
                         text: i18n.t('news.no-news')
                     }));
@@ -68,18 +80,18 @@ define(['jquery', 'i18n', './framework'], function ($, i18n, Framework) {
         openPage: function (page, scrollY) {
             $.get('manual/' + this.lang + '/' + page + '.md', function (data) {
                 var header = '';
-                if(page == 'index') {
-                    header = this.generateNewsSection();
-                }
+                //if(page == 'index') {
+                //    header = this.generateNewsSection();
+                //}
 
                 this.history.push(page);
                 this.scrollHistory.push(this.container.scrollTop());
-                this.manual.html(header + marked(data));
+                this.manual.html(header + marked(data, { renderer: this.renderer }));
                 this.container.scrollTop(scrollY);
 
-                if(page == 'index') {
-                    this.populateNewsSection();
-                }
+                //if(page == 'index') {
+                //    this.populateNewsSection();
+                //}
             }.bind(this));
         },
         navigate: function navigate(url) {
@@ -87,7 +99,7 @@ define(['jquery', 'i18n', './framework'], function ($, i18n, Framework) {
                 var aParts = baseUrl.split('/');
                 var bParts = relUrl.split('/');
 
-                if(bParts.length >= 1 && bParts[0] === '') {
+                if (bParts.length >= 1 && bParts[0] === '') {
                     bParts.shift();
                     return bParts.join('/');
                 }
