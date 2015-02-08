@@ -2,11 +2,11 @@
 ====================
 EppaBasic on ohjelmoinnin opetuskäyttöön
 suunnattu ohjelmointikieli.
-Kieli on helppo ottaa käyttöön,
-sillä aloittamiseksi tarvitsee vain
+Kieli on helppo ottaa käyttöön.
+Sillä aloittamiseksi tarvitsee vain
 kirjoittaa koodia vasemmalla olevaan
 koodimuokkaimeen.
-Jos koodin kirjoittaminen ei veilä
+Jos koodin kirjoittaminen ei vielä
 luonnistu itsestään, kannattaa
 tutustua esimerkkikoodeihin
 ja kokeilla muokata niitä.
@@ -14,7 +14,7 @@ ja kokeilla muokata niitä.
 Taustaa
 -------
 Idea EppaBasicin takana muotoutui
-keväällä 2014 kun Suomen lukiolaisten
+keväällä 2014, kun Suomen lukiolaisten
 tietotekniikkajoukkue oli palaamassa
 Liettuan kisamatkalta takaisin kotiin.
 Matkalla pohdittiin, miten Opetushallituksen
@@ -37,7 +37,7 @@ Kielen toteuttamisesta vastuun
 ottivat Henrik Lievonen ja
 Sami Kalliomäki.
 Kesään mennessä Henrik oli ehtinyt
-jo kirjoittaa esnimmäisen toimivan
+jo kirjoittaa ensimmäisen toimivan
 kääntäjän, jolloin Sami päätti
 luoda sivuston kielen ympärille.
 Tämän jälkeen molemmat ovat yhdessä
