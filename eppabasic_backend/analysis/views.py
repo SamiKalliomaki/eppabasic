@@ -28,13 +28,15 @@ class GraphView(View):
         def plot_data(plot, rounded_now, step, steps, format):
             rounded_now += step
 
+            multiplier = timedelta(hours=1) / step
+
             times = []
             counts = []
 
             current = rounded_now - (steps + 1) * step
             for i in range(steps + 1):
                 times.append(current)
-                counts.append(fetch_count(current, step))
+                counts.append(fetch_count(current, step) * multiplier)
 
                 current += step
 
