@@ -2,7 +2,7 @@ EppaBasic
 ==========
 EppaBasic on ohjelmoinnin opetuskäyttöön
 suunnattu ohjelmointikieli, jolla
-grafiikan ja pelien tekemninen on helppoa.
+grafiikan ja pelien tekeminen on helppoa.
 Jos kiinnostuit, kannattaa tutustua
 [`EppaBasicin tukemiin komentoihin`](manual:/commands/index)
 sekä esimerkkikoodeihin.
