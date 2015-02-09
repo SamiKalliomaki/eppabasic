@@ -13,5 +13,9 @@
 
         // Return the runtime for the editor
         editor.setRuntime(runtime);
+
+        $(window).unload(function() {
+            editor.setRuntime(null);
+        });
     });
 });
