@@ -40,7 +40,12 @@ $(function() {
         setStatus($('#backend-server-status'), response['backend']);
         setStatus($('#cpanel-server-status'), response['status']);
 
-        $('#log').text(response['log']);
+        var log = $('#log');
+        var newLog = response['log'];
+        if (log.text() !== newLog) {
+            log.text(newLog);
+            log.scrollTop(log.prop('scrollHeight'));
+        }
 
         $('#queue').empty();
         var queue = response['queue'];
