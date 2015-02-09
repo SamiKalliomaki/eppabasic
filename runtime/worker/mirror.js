@@ -46,7 +46,7 @@
                 listeners.splice(index, 1);
         },
 
-        send: function send(cmd, args) {
+        send: function send(cmd) {
             self.postMessage({
                 cmd: cmd,
                 args: Array.prototype.slice.call(arguments, 1)
