@@ -25,8 +25,6 @@
         start: function start() {
             if (!this.worker)
                 throw new Error('Worker not initialize yet');
-            // Start the worker
-            this.worker.send('start');
 
             // And set the screen size
             $(document).ready(function onReady() {
@@ -37,6 +35,9 @@
                     this.graphics.setSize(0, 0);
                 this.graphics.setSize(640, 480);
                 this.graphics.setResolution(640, 480);
+
+                // Start the worker
+                this.worker.send('start');
             }.bind(this));
         },
 

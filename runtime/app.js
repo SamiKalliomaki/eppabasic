@@ -12,6 +12,7 @@
 
 // Require polyfill
 require(['libs/fullscreen-api-polyfill']);
+require(['libs/workershim2']);
 
 // Require main
 require(['runtime/main/main']);

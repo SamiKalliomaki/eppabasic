@@ -41,6 +41,8 @@
         onResize: function onResize() {
             this.windowWidth = window.innerWidth;
             this.windowHeight = window.innerHeight;
+
+            this.resizeCanvas();
         },
         setSize: function setSize(width, height, fromWorker) {
             this.windowWidth = width;
@@ -51,6 +53,26 @@
             var outerHeight = height + (window.outerHeight - window.innerHeight);
             window.resizeTo(outerWidth, outerHeight);
         },
+
+        resizeCanvas: function resizeCanvas() {
+            var canvasRatio = this.canvasWidth / this.canvasHeight;
+            var windowRatio = this.windowWidth / this.windowHeight;
+
+            var width, heigth;
+
+            if(windowRatio > canvasRatio) { // Window is wider
+                height = 100;
+                width = height * (canvasRatio / windowRatio);
+            } else {
+                width = 100;
+                height = width * (windowRatio / canvasRatio);
+            }
+
+            // Set the canvas to retain its aspect ratio
+            this.canvasHolder.width(width + '%');
+            this.canvasHolder.height(height + '%');
+        },
+
         setResolution: function setResolution(width, height, fromWorker) {
             // Copy the context styles
             var fillStyle = this.ctx.fillStyle;
@@ -71,11 +93,7 @@
             this.canvas[0].width = width;
             this.canvas[0].height = height;
 
-            // Set the canvas to retain its aspect ratio
-            this.canvasHolder.width('100vw');
-            this.canvasHolder.height((100 / (width / height)) + 'vw');
-            this.canvasHolder.css('maxHeight', '100vh');
-            this.canvasHolder.css('maxWidth', (100 * width / height) + 'vh');
+            this.resizeCanvas();
 
             // Copy and scale the image back from the buffer
             this.ctx.drawImage(this.buffer[0], 0, 0, this.canvas.width(), this.canvas.height());
