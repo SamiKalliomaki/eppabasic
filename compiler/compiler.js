@@ -993,7 +993,7 @@ define(['require', './framework/compileerror', './compiler/context', './compiler
             if (!atomic) {
                 // The function to be called is not atomic so copy all the parameters to the stack
                 res = res.map(function each(ref) {
-                    if (ref.refType !== 'stack' && ref.refType !== 'const') {           // TODO Check that works with no-free
+                    if (ref.refType !== 'stack' && ref.refType !== 'absstack' && ref.refType !== 'const') {           // TODO Check that works with no-free
                         // Push this to the top of the stack
                         var stackRef = context.reserveStack(ref.type, true);
                         stackRef.setValue(ref);
