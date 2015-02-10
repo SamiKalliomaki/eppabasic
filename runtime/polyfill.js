@@ -10,6 +10,16 @@
     }
 }
 
+if (!window.requestAnimationFrame) {
+    window.requestAnimationFrame = (function () {
+        return window.webkitRequestAnimationFrame
+        || window.mozRequestAnimationFrame
+        || window.msRequestAnimationFrame
+        || window.oRequestAnimationFrame
+        || function (func) { return setTimeout(func, 1.0 / 60); };
+    })();
+}
+
 /*! http://mths.be/fromcodepoint v0.1.0 by @mathias */
 if (!String.fromCodePoint) {
     (function () {
