@@ -23,6 +23,7 @@
             this.messageBoxInput.show();
             this.messageBoxInput.val('');
             this.messageBox.show();
+            this.messageBoxInput.focus();
 
             var activated = false;
 
