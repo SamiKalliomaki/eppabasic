@@ -1,6 +1,4 @@
-﻿require('coffee-script');
-
-var fs = require('fs');
+﻿var fs = require('fs');
 var requirejs = require('requirejs');
 var path = require('path');
 
