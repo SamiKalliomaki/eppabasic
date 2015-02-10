@@ -70,6 +70,7 @@
                 this.worker.send('response');
                 this.messageBox.hide();
             }.bind(this));
+            this.messageBoxButton.focus();
         }
     };
 
