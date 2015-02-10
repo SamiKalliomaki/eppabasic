@@ -23,10 +23,26 @@
             this.messageBoxInput.show();
             this.messageBoxInput.val('');
             this.messageBox.show();
-            this.messageBoxButton.one('click', function() {
+
+            var activated = false;
+
+            var action = function() {
+                if(activated) {
+                    return;
+                }
+
+                activated = true;
                 this.messageBox.hide();
                 callback(this.messageBoxInput.val());
-            }.bind(this));
+            }.bind(this);
+
+            this.messageBoxInput.keypress(function(e) {
+                if(e.which == 13) {
+                    action();
+                    return false;
+                }
+            });
+            this.messageBoxButton.one('click', action);
         },
 
         onAskNumber: function onAskNumber(msg) {
