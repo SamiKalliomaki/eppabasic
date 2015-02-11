@@ -35,6 +35,9 @@
 
         this.worker.on('drawscreen', this.onDrawScreen.bind(this));
         window.addEventListener('resize', this.onResize.bind(this));
+
+        this.commandBuffer = [];
+        window.requestAnimationFrame(this.animateFrame.bind(this));
     }
 
     Graphics.prototype = {
@@ -60,7 +63,7 @@
 
             var width, heigth;
 
-            if(windowRatio > canvasRatio) { // Window is wider
+            if (windowRatio > canvasRatio) { // Window is wider
                 height = 100;
                 width = height * (canvasRatio / windowRatio);
             } else {
@@ -110,7 +113,11 @@
         },
 
         onDrawScreen: function onDrawScreen(commands) {
-            commands.forEach(function (args) {
+            this.commandBuffer = commands;
+        },
+
+        animateFrame: function animateFrame() {
+            this.commandBuffer.forEach(function (args) {
                 var name = args[0];
                 args = args[1];
                 if (this.graphics2d.commands[name]) this.graphics2d.commands[name].apply(this, args);
@@ -118,6 +125,8 @@
                 if (!this.graphics2d.commands[name] && !this.graphicstext.commands[name])
                     console.error('Unknown function: ' + name);
             }.bind(this));
+            this.commandBuffer = [];
+            window.requestAnimationFrame(this.animateFrame.bind(this));
         }
     };
 

@@ -18,9 +18,14 @@
     }
 });
 
-// Preload jquery
-require(['jquery', 'jqueryui', 'i18n', 'ace/ace']);
-// Preload locales
-require(['text!locales/en/translation.json', 'text!locales/fi/translation.json']);
-// Go to main
-require(['editor/main']);
+require([
+    // Preload libraries...
+    'jquery', 'jqueryui', 'i18n', 'ace/ace',
+    // ...locales...
+    'text!locales/en/translation.json', 'text!locales/fi/translation.json',
+    // ... and shims...
+    'libs/es5-shim', 'libs/es6-shim'], function () {
+        // Go to main
+        require(['editor/main']);
+    }
+);
