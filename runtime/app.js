@@ -16,3 +16,13 @@ require(['libs/workershim2']);
 
 // Require main
 require(['runtime/main/main']);
+
+require([
+    // Preload polyfills...
+    'libs/fullscreen-api-polyfill', 'libs/workershim2', 'runtime/polyfill',
+    // ... and shims...
+    'libs/es5-shim', 'libs/es6-shim'], function () {
+        // Go to main
+        require(['runtime/main/main']);
+    }
+);
