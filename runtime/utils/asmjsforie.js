@@ -4,7 +4,12 @@
     var UglifyJS = require('libs/uglify');
 
     function needsConversion() {
-        return !ArrayBuffer || !Uint8Array || !Int32Array || !Uint32Array || !Float32Array || !Float64Array;
+        return typeof ArrayBuffer === 'undefined' ||
+            typeof Uint8Array === 'undefined' ||
+            typeof Int32Array === 'undefined' ||
+            typeof Uint32Array === 'undefined' ||
+            typeof Float32Array === 'undefined' ||
+            typeof Float64Array === 'undefined';
     }
 
     function convert(code) {
@@ -105,8 +110,9 @@
             var TA = function () {
                 TypedArray.apply(this, arguments);
             }
+            TA.prototype = Object.create(TypedArray.prototype, { constructor: { value: TA } });
 
-            Object.defineProperty(TA.prototype, 'constructor', { value: TypedArray });
+            Object.defineProperty(TA.prototype, 'constructor', { value: TA });
             Object.defineProperty(TA.prototype, 'BYTES_PER_ELEMENT', { value: elementSize });
             Object.defineProperty(TA.prototype, '_pack', { value: pack });
             Object.defineProperty(TA.prototype, '_unpack', { value: unpack });
@@ -268,7 +274,7 @@
         Uint8ClampedArray: TA.Uint8ClampedArray,
         Int16Array: TA.Int16Array,
         Uint16Array: TA.Uint16Array,
-        Int32Array: TA.Uint32Array,
+        Int32Array: TA.Int32Array,
         Uint32Array: TA.Uint32Array,
         Float32Array: TA.Float32Array,
         Float64Array: TA.Float64Array
