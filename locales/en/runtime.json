@@ -1,0 +1,12 @@
+{
+    "errors": {
+        "0": {
+            "short": "Unspecified error",
+            "long": "Something unexpected happened. Please send your code along with a description of it to errors@eppabasic.fi"
+        },
+        "1": {
+            "short": "Out of memory",
+            "long": "Your program tried to allocate too much memory"
+        }
+    }
+}

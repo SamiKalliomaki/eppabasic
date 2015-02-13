@@ -145,8 +145,8 @@ define(['require', './graphics', './math', './input', './time', './string', './m
             };
         },
 
-        panic: function panic() {
-            this.mirror.send('panic');
+        panic: function panic(errCode) {
+            this.mirror.send('panic', errCode);
         }
     };
 

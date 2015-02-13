@@ -1,0 +1,12 @@
+{
+    "errors": {
+        "0": {
+            "short": "Määrittämätön virhe",
+            "long": "Jotain odottamatonta tapahtui. Lähetä koodisi ja kuvaus sen toiminnasta osoitteeseen virheet@eppabasic.fi"
+        },
+        "1": {
+            "short": "Muisti loppui",
+            "long": "Ohjelmasi yrittää varata liikaa muistia"
+        }
+    }
+}
