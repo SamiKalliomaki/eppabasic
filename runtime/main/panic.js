@@ -8,10 +8,10 @@
     }
 
     Panic.prototype = {
-        onPanic: function onPanic(errCode) {
+        onPanic: function onPanic(errCode, line) {
             var short = i18n.t('runtime:errors.' + errCode + '.short');
             var long = i18n.t('runtime:errors.' + errCode + '.long');
-            alert(short + '\n\n' + long);
+            alert(short + ' @ ' + line + '\n\n' + long);
         }
     };
 

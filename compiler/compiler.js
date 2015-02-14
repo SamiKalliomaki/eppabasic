@@ -354,6 +354,7 @@ define(['require', './framework/compileerror', './compiler/context', './compiler
             buf.push('var HEAP_END=0;');
             buf.push('var STRING_HEADER_LENGTH=4;')
             buf.push('var HEAP_SIZE=env.heapSize|0;')
+            buf.push('var LINE=0;')
 
             // Add compiler defined environmental variables
             buf.push(this.env.join('\n'));
@@ -368,6 +369,7 @@ define(['require', './framework/compileerror', './compiler/context', './compiler
             buf.push('function __int(a){a=a|0;return a|0;}');
             buf.push('function __sp(){return SP|0;}');
             buf.push('function __cp(){return CP|0;}');
+            buf.push('function __getLine(){return LINE|0;}');
 
             // String functions
             buf.push(require('text!./static/string.js'));
@@ -378,7 +380,7 @@ define(['require', './framework/compileerror', './compiler/context', './compiler
             // Compile f-tables in the end
             buf.push(this.generateFTable());
             // Return functions
-            buf.push('return {popCallStack: __popCallStack,setStackInt:__setStackInt,setStackDbl:__setStackDbl,init:__init,next:__next,breakExec:__breakExec,sp:__sp,cp:__cp,memreserve:__memreserve};');
+            buf.push('return {popCallStack: __popCallStack,setStackInt:__setStackInt,setStackDbl:__setStackDbl,init:__init,next:__next,breakExec:__breakExec,sp:__sp,cp:__cp,memreserve:__memreserve,getLine:__getLine};');
 
             return buf.join('\n');
         },
@@ -451,6 +453,10 @@ define(['require', './framework/compileerror', './compiler/context', './compiler
         compileIf: function compileIf(statement, context) {
             /// <param name='statement' type='Nodes.If' />
             /// <param name='context' type='CompilerContext' />
+
+            // Update line number
+            context.push('LINE=' + statement.line + ';');
+
             if (statement.trueStatement.atomic && (!statement.falseStatement || statement.falseStatement.atomic)) {
                 var testValue = this.compileExpr(statement.expr, context);
 
@@ -527,6 +533,10 @@ define(['require', './framework/compileerror', './compiler/context', './compiler
         compileFor: function compileFor(loop, context) {
             /// <param name='loop' type='Nodes.For' />
             /// <param name='context' type='CompilerContext' />
+
+            // Update line number
+            context.push('LINE=' + loop.line + ';');
+
             if (loop.atomic) {
                 // Reserve a variable for the loop
                 loop.variable.location = context.reserveTemporary(loop.variable.type);
@@ -621,6 +631,9 @@ define(['require', './framework/compileerror', './compiler/context', './compiler
             /// <param name='call' type='Nodes.FunctionCall' />
             /// <param name='context' type='CompilerContext' />
 
+            // Update line number
+            context.push('LINE=' + call.line + ';');
+
             // Compile parameters
             var params = this.compileExprList(call.params, context, call.atomic, call.handle.entry.paramTypes);
 
@@ -703,6 +716,10 @@ define(['require', './framework/compileerror', './compiler/context', './compiler
         compileDoLoop: function compileDoLoop(loop, context) {
             /// <param name='loop' type='Nodes.DoLoop' />
             /// <param name='context' type='CompilerContext' />
+
+            // Update line number
+            context.push('LINE=' + loop.line + ';');
+
             if (loop.atomic) {
                 context.push('while(1){');
                 if (loop.beginCondition) {
@@ -771,6 +788,9 @@ define(['require', './framework/compileerror', './compiler/context', './compiler
             /// <param name='statement' type='Nodes.Return' />
             /// <param name='context' type='CompilerContext' />
 
+            // Update line number
+            context.push('LINE=' + statement.line + ';');
+
             var retType = context.retType;
 
             if (retType) {
@@ -814,6 +834,9 @@ define(['require', './framework/compileerror', './compiler/context', './compiler
         compileVariableAssignment: function compileVariableAssignment(variable, context) {
             /// <param name='variable' type='Nodes.VariableAssignment' />
             /// <param name='context' type='CompilerContext' />
+
+            // Update line number
+            context.push('LINE=' + variable.line + ';');
 
             var type = variable.ref.type;
             if (type.isArray()) {
@@ -896,6 +919,10 @@ define(['require', './framework/compileerror', './compiler/context', './compiler
         compileVariableDefinition: function compileVariableDefinition(variable, context) {
             /// <param name='variable' type='Nodes.VariableDefinition' />
             /// <param name='context' type='CompilerContext' />
+
+            // Update line number
+            context.push('LINE=' + variable.line + ';');
+
             var type = variable.type;
             if (type.isArray()) {
                 if (variable.initial)
@@ -1021,6 +1048,7 @@ define(['require', './framework/compileerror', './compiler/context', './compiler
 
         compileExpr: function compileExpr(expr, context) {
             /// <param name='context' type='CompilerContext' />
+
             switch (expr.nodeType) {
                 case 'Number':
                     return this.compileNumberExpr(expr, context);
