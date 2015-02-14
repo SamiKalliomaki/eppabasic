@@ -11,6 +11,10 @@
         "2": {
             "short": "Undefined variable",
             "long": "Your program tried to use a variable which wasn't defined. This means that the line defining the variable wasn't reached in the excecution"
+        },
+        "3": {
+            "short": "Array index out of range",
+            "long": "Your program tried to read or write outside of the array index range"
         }
     }
 }

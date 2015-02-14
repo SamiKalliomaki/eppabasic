@@ -11,6 +11,10 @@
         "2": {
             "short": "Muuttujaa ei määritelty",
             "long": "Ohjelmasi yritti käyttää muuttujaa, jota ei ollut määritelty eli muuttujan määrittelevää riviä ei ollut vielä suoritettu"
+        },
+        "3": {
+            "short": "Taulukon indeksi alueen ulkopuolella",
+            "long": "Ohjelmasi yritti lukea tai kirjoittaa taulukon alueen ulkopuolelle"
         }
     }
 }

@@ -380,7 +380,6 @@ define(['require', './framework/compileerror', './compiler/context', './compiler
             // Return functions
             buf.push('return {popCallStack: __popCallStack,setStackInt:__setStackInt,setStackDbl:__setStackDbl,init:__init,next:__next,breakExec:__breakExec,sp:__sp,cp:__cp,memreserve:__memreserve};');
 
-            console.log(buf.join('\n'))
             return buf.join('\n');
         },
 
@@ -830,6 +829,21 @@ define(['require', './framework/compileerror', './compiler/context', './compiler
                 if (dimensions.length !== type.dimensionCount)
                     throw new Error('Trying to access ' + type.dimensionCount + '-dimensional array with ' + dimensions.length + ' dimensions');
 
+                // Test that the indices are in the range
+                for (var i = 0; i < dimensions.length; i++) {
+                    // A reference to the size of the current dimension
+                    var offset = context.reserveConstant(this.types.Integer);
+                    offset.setValue(variable.ref.location.getValue() + '+' + (4 * i));
+                    var ref = new CompilerAbsoluteReference(this.types.Integer, offset, context);
+
+                    // Test that the index is neither negative nor too big
+                    context.push('if(');
+                    context.push('(' + dimensions[i].type.castTo(dimensions[i].getValue(), this.types.Integer) + '<0)|');
+                    context.push('(' + dimensions[i].type.castTo(dimensions[i].getValue(), this.types.Integer) + '>=' + ref.getValue() + ')|0){');
+                    context.push('__panic(3);');
+                    context.push('}');
+                }
+
                 // Then compute the location of the variable
                 var indexStr = dimensions[0].type.castTo(dimensions[0].getValue(), this.types.Integer);
                 for (var i = 1; i < dimensions.length; i++) {
@@ -1195,6 +1209,21 @@ define(['require', './framework/compileerror', './compiler/context', './compiler
 
             if (dimensions.length !== variable.expr.type.dimensionCount)
                 throw new Error('Trying to access ' + variable.expr.type.dimensionCount + '-dimensional array with ' + dimensions.length + ' dimensions');
+
+            // Test that the indices are in the range
+            for (var i = 0; i < dimensions.length; i++) {
+                // A reference to the size of the current dimension
+                var offset = context.reserveConstant(this.types.Integer);
+                offset.setValue(base.getValue() + '+' + (4 * i));
+                var ref = new CompilerAbsoluteReference(this.types.Integer, offset, context);
+
+                // Test that the index is neither negative nor too big
+                context.push('if(');
+                context.push('(' + dimensions[i].type.castTo(dimensions[i].getValue(), this.types.Integer) + '<0)|');
+                context.push('(' + dimensions[i].type.castTo(dimensions[i].getValue(), this.types.Integer) + '>=' + ref.getValue() + ')|0){');
+                context.push('__panic(3);');
+                context.push('}');
+            }
 
             // Then compute the location of the variable
             var indexStr = dimensions[0].type.castTo(dimensions[0].getValue(), this.types.Integer);
