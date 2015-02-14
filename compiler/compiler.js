@@ -380,6 +380,7 @@ define(['require', './framework/compileerror', './compiler/context', './compiler
             // Return functions
             buf.push('return {popCallStack: __popCallStack,setStackInt:__setStackInt,setStackDbl:__setStackDbl,init:__init,next:__next,breakExec:__breakExec,sp:__sp,cp:__cp,memreserve:__memreserve};');
 
+            console.log(buf.join('\n'))
             return buf.join('\n');
         },
 
@@ -817,6 +818,11 @@ define(['require', './framework/compileerror', './compiler/context', './compiler
 
             var type = variable.ref.type;
             if (type.isArray()) {
+                // Add a test that the array is defined
+                context.push('if((' + variable.ref.location.getValue() + '==0)|0){');
+                context.push('__panic(2);');
+                context.push('}');
+
                 // Compute the index
                 var dimensions = this.compileExprList(variable.index, context, variable.expr.atomic,
                     Array.apply(null, Array(variable.index.length)).map(function () { return this.types.Integer; }.bind(this)));
@@ -859,7 +865,6 @@ define(['require', './framework/compileerror', './compiler/context', './compiler
                     dimensions[i].freeRef();
                 }
 
-                //throw new Error('Arrays not supported, yet');
                 return;
             }
 
@@ -881,8 +886,6 @@ define(['require', './framework/compileerror', './compiler/context', './compiler
             if (type.isArray()) {
                 if (variable.initial)
                     throw new Error('Variables with initial values not supported');
-                //if (type.itemType === this.types.Double)
-                //    throw new Error('Double typed arrays not supported. Yet');
 
                 // Compile the expressions for size
                 var dimensions = this.compileExprList(variable.dimensions, context, true,
@@ -893,11 +896,6 @@ define(['require', './framework/compileerror', './compiler/context', './compiler
                 for (var i = 1; i < dimensions.length; i++) {
                     sizeStr = '__imul(' + sizeStr + ',(' + dimensions[i].type.castTo(dimensions[i].getValue(), this.types.Integer) + '+1)|0)|0';
                 }
-                /*var sizeStr = [];
-                dimensions.forEach(function each(dim) {
-                    sizeStr.push(dim.getValue());
-                }.bind(this));
-                sizeStr = sizeStr.join('*');*/
 
                 // Reserve memory
                 var cnt = context.reserveConstant(type);
@@ -926,7 +924,6 @@ define(['require', './framework/compileerror', './compiler/context', './compiler
                     dimensions[i].freeRef();
                 }
 
-                //throw new Error('Arrays not supported, yet');
                 return;
             }
 
@@ -1184,15 +1181,20 @@ define(['require', './framework/compileerror', './compiler/context', './compiler
             /// <param name='variable' type='Nodes.IndexOp' />
             /// <param name='context' type='CompilerContext' />
 
+            // Get the array location
+            var base = this.compileExpr(variable.expr, context);
+
+            // Add a test that the array is defined
+            context.push('if((' + base.getValue() + '==0)|0){');
+            context.push('__panic(2);');
+            context.push('}');
+
             // First find out the index
             var dimensions = this.compileExprList(variable.index, context, variable.expr.atomic,
                 Array.apply(null, Array(variable.index.length)).map(function () { return this.types.Integer; }.bind(this)));
 
             if (dimensions.length !== variable.expr.type.dimensionCount)
                 throw new Error('Trying to access ' + variable.expr.type.dimensionCount + '-dimensional array with ' + dimensions.length + ' dimensions');
-
-            // Get the array location
-            var base = this.compileExpr(variable.expr, context);
 
             // Then compute the location of the variable
             var indexStr = dimensions[0].type.castTo(dimensions[0].getValue(), this.types.Integer);

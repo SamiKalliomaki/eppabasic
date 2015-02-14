@@ -6,7 +6,11 @@
         },
         "1": {
             "short": "Muisti loppui",
-            "long": "Ohjelmasi yrittää varata liikaa muistia"
+            "long": "Ohjelmasi yritti varata liikaa muistia"
+        },
+        "2": {
+            "short": "Muuttujaa ei määritelty",
+            "long": "Ohjelmasi yritti käyttää muuttujaa, jota ei ollut määritelty eli muuttujan määrittelevää riviä ei ollut vielä suoritettu"
         }
     }
 }

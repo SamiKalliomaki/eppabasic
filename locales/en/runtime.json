@@ -7,6 +7,10 @@
         "1": {
             "short": "Out of memory",
             "long": "Your program tried to allocate too much memory"
+        },
+        "2": {
+            "short": "Undefined variable",
+            "long": "Your program tried to use a variable which wasn't defined. This means that the line defining the variable wasn't reached in the excecution"
         }
     }
 }
