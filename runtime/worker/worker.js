@@ -22,6 +22,8 @@ define(['require', './graphics', './math', './input', './time', './string', './m
 
         this.nextCall = 0;
         this.waitingResponse = false;
+        this.running = false;
+        this.paniced = false;
     }
 
     Worker.prototype = {
@@ -31,6 +33,7 @@ define(['require', './graphics', './math', './input', './time', './string', './m
             if (!code)
                 throw new Error('No code specified for the worker');
             this.code = code;
+            this.paniced = false;
             var Program = new Function('stdlib', 'env', 'heap', code);
             var external = this.createExternal();
             if (AsmjsForIE.needsConversion()) {
@@ -57,10 +60,15 @@ define(['require', './graphics', './math', './input', './time', './string', './m
                     // Program ended
                     this.external.env.drawScreen();
                 } else {
-                    setTimeout(f, Math.max(this.nextCall - now - 1, 0));
+                    if (this.running)
+                        setTimeout(f, Math.max(this.nextCall - now - 1, 0));
                 }
             }
+            this.running = true;
             setTimeout(f, 0);
+        },
+        stop: function stop() {
+            this.running = false;
         },
 
         setDelay: function setDelay(time) {
@@ -146,7 +154,10 @@ define(['require', './graphics', './math', './input', './time', './string', './m
         },
 
         panic: function panic(errCode) {
-            this.mirror.send('panic', errCode);
+            this.stop();
+            if (!this.paniced)
+                this.mirror.send('panic', errCode);
+            this.paniced = true;
         }
     };
 
