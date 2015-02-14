@@ -11,7 +11,8 @@
         onPanic: function onPanic(errCode, line) {
             var short = i18n.t('runtime:errors.' + errCode + '.short');
             var long = i18n.t('runtime:errors.' + errCode + '.long');
-            alert(short + ' @ ' + line + '\n\n' + long);
+            var atLine = i18n.t('runtime:errors.at.line', { line: line });
+            alert(short + ' ' + atLine + '\n\n' + long);
         }
     };
 

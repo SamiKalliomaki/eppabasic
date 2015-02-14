@@ -15,6 +15,9 @@
         "3": {
             "short": "Taulukon indeksi alueen ulkopuolella",
             "long": "Ohjelmasi yritti lukea tai kirjoittaa taulukon alueen ulkopuolelle"
+        },
+        "at": { 
+            "line": "rivillä __line__"
         }
     }
 }

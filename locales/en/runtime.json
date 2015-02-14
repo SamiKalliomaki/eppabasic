@@ -15,6 +15,9 @@
         "3": {
             "short": "Array index out of range",
             "long": "Your program tried to read or write outside of the array index range"
+        },
+        "at": { 
+            "line": "at line __line__"
         }
     }
 }
