@@ -70,7 +70,8 @@ function buildEditor() {
     var extra = {
         name: 'app',
         out: 'build/app.js',
-        include: ['tools/ace.build.js']         // Make ace to think that it is compiled
+        include: ['tools/ace.build.js',         // Make ace to think that it is compiled
+            'editor/main']
     }
     var config = combine(baseConfig, extra);
 
