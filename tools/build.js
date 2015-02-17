@@ -170,7 +170,10 @@ buildAceThemes();
 
 function buildRuntime() {
     var extra = {
-        name: 'runtime/app',
+        include: [
+            'runtime/app',
+            'runtime/main/main'
+        ],
         out: 'build/runtime/app.js',
     }
     var config = combine(baseConfig, extra);

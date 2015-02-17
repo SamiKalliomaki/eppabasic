@@ -79,7 +79,7 @@ function __memfind(size) {
         }
 
         if ((around | 0) & ((NEXT_BLOCK | 0) >= (start | 0))) {
-            __panic();
+            __panic(1);                 // Out of memory
             return 0;
         }
     }

@@ -1,9 +1,23 @@
-﻿define(function () {
+define(['require', './asmjsforie'], function (require) {
+    "use strict";
+
+    var AsmjsForIE = require('./asmjsforie');
 
     function StringUtils(heap) {
         this.heap = heap;
-        this.MEMS32 = new Int32Array(heap);
-        this.MEMU8 = new Uint8Array(heap);
+        if (AsmjsForIE.needsConversion()) {
+            this.MEMS32 = new AsmjsForIE.Int32Array(heap);
+            this.MEMU8 = new AsmjsForIE.Uint8Array(heap);
+        } else {
+            this.MEMS32 = new Int32Array(heap);
+            this.MEMU8 = new Uint8Array(heap);
+            this.MEMS32.get = this.MEMU8.get = function (i) {
+                return this[i];
+            }
+            this.MEMS32.set = this.MEMU8.set = function (i, v) {
+                this[i] = v;
+            }
+        }
     }
 
     StringUtils.prototype = {
@@ -14,28 +28,28 @@
         toEppaBasic: function toEppaBasic(str) {
             var utf8 = toUTF8Array(str);
             var ptr = this.program.memreserve(utf8.length + 4);
-            this.MEMS32[ptr >> 2] = utf8.length;
+            this.MEMS32.set(ptr >> 2, utf8.length);
             for (var i = 0; i < utf8.length; i++)
-                this.MEMU8[ptr + 4 + i] = utf8[i];
+                this.MEMU8.set(ptr + 4 + i, utf8[i]);
             return ptr;
         },
         fromEppaBasic: function fromEppaBasic(ptr) {
             if (!ptr)
                 return '';          // a null pointer is an empty string
 
-            var len = this.MEMS32[ptr >> 2];
+            var len = this.MEMS32.get(ptr >> 2);
             var i = 0;
             var buf = [];
             while (i < len) {
-                var charcode = this.MEMU8[ptr + 4 + i];
+                var charcode = this.MEMU8.get(ptr + 4 + i);
                 for (var j = 7; j >= 0; j--) {
                     if (!(charcode & (1 << j)))
                         break;
                     charcode ^= 1 << j;
                 }
                 i++;
-                while ((this.MEMU8[ptr + 4 + i] & 0x80) && !(this.MEMU8[ptr + 4 + i] & 0x40) && i < len) {
-                    charcode = (charcode << 6) | (0x3f & this.MEMU8[ptr + 4 + i]);
+                while ((this.MEMU8.get(ptr + 4 + i) & 0x80) && !(this.MEMU8.get(ptr + 4 + i) & 0x40) && i < len) {
+                    charcode = (charcode << 6) | (0x3f & this.MEMU8.get(ptr + 4 + i));
                     i++;
                 }
                 buf.push(String.fromCodePoint(charcode));

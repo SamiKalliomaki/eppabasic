@@ -1,0 +1,23 @@
+{
+    "errors": {
+        "0": {
+            "short": "Unspecified error",
+            "long": "Something unexpected happened. Please send your code along with a description of it to errors@eppabasic.fi"
+        },
+        "1": {
+            "short": "Out of memory",
+            "long": "Your program tried to allocate too much memory"
+        },
+        "2": {
+            "short": "Undefined variable",
+            "long": "Your program tried to use a variable which wasn't defined. This means that the line defining the variable wasn't reached in the excecution"
+        },
+        "3": {
+            "short": "Array index out of range",
+            "long": "Your program tried to read or write outside of the array index range"
+        },
+        "at": { 
+            "line": "at line __line__"
+        }
+    }
+}

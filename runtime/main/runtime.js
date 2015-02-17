@@ -1,4 +1,4 @@
-﻿define(['require', 'jquery', './workerclient', './graphics', './input', './messages'], function (require) {
+﻿define(['require', 'jquery', './workerclient', './graphics', './input', './messages', './panic'], function (require) {
     "use strict";
 
     var $ = require('jquery');
@@ -6,6 +6,7 @@
     var Graphics = require('./graphics');
     var Input = require('./input');
     var Messages = require('./messages');
+    var Panic = require('./panic');
 
     function Runtime(editor, canvasHolder) {
         this.editor = editor;
@@ -52,6 +53,7 @@
                 this.graphics = new Graphics(this.worker, this.canvasHolder);
                 this.input = new Input(this.worker, this.canvasHolder, this.graphics.canvas);
                 this.messages = new Messages(this.worker, this.canvasHolder);
+                this.panic = new Panic(this.worker, this.editor);
 
                 // Finally when the worker is ready the whole
                 // runtime is ready. Tell that also to the editor

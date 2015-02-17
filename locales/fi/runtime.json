@@ -1,0 +1,23 @@
+{
+    "errors": {
+        "0": {
+            "short": "Määrittämätön virhe",
+            "long": "Jotain odottamatonta tapahtui. Lähetä koodisi ja kuvaus sen toiminnasta osoitteeseen virheet@eppabasic.fi"
+        },
+        "1": {
+            "short": "Muisti loppui",
+            "long": "Ohjelmasi yritti varata liikaa muistia"
+        },
+        "2": {
+            "short": "Muuttujaa ei määritelty",
+            "long": "Ohjelmasi yritti käyttää muuttujaa, jota ei ollut määritelty eli muuttujan määrittelevää riviä ei ollut vielä suoritettu"
+        },
+        "3": {
+            "short": "Taulukon indeksi alueen ulkopuolella",
+            "long": "Ohjelmasi yritti lukea tai kirjoittaa taulukon alueen ulkopuolelle"
+        },
+        "at": { 
+            "line": "rivillä __line__"
+        }
+    }
+}
