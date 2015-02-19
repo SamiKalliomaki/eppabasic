@@ -81,6 +81,10 @@ define([], function () {
         DummyAppCache.prototype = {
             isOnline: function isOnline() {
                 return true;
+            },
+
+            isCached: function isCached() {
+                return true;
             }
         };
 
