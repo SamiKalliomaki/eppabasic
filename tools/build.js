@@ -28,6 +28,9 @@ var baseConfig = {
     optimize: argv.optimize
 };
 
+// Counter for pending manifest
+var manifestCount = 0;
+
 // Functions for file watching
 var watchedFiles = {};
 function addWatch(handle, file, callback) {
@@ -77,9 +80,11 @@ function buildEditor() {
     }
     var config = combine(baseConfig, extra);
 
+    pendManifest();
     requirejs.optimize(config, function (res) {
         addWatch('editor', res.split('\n').slice(3), buildEditor);
         console.log('Succesfully compiled the main program');
+        buildManifest();
     }, function (err) {
         console.error(err);
     });
@@ -95,11 +100,13 @@ function buildAceWorker(name) {
     }
     var config = combine(baseConfig, extra);
 
+    pendManifest();
     requirejs.optimize(config, function (res) {
         addWatch('worker-' + name, res.split('\n').slice(3), function () {
             buildAceWorker(name);
         });
         console.log('Succesfully compiled the worker ' + name);
+        buildManifest();
     }, function (err) {
         console.error(err);
     });
@@ -114,11 +121,13 @@ function buildAceMode(name) {
     }
     var config = combine(baseConfig, extra);
 
+    pendManifest();
     requirejs.optimize(config, function (res) {
         addWatch('mode-' + name, res.split('\n').slice(3), function () {
             buildAceMode(name);
         });
         console.log('Succesfully compiled the mode ' + name);
+        buildManifest();
     }, function (err) {
         console.error(err);
     });
@@ -133,11 +142,13 @@ function buildAceExtension(name) {
     }
     var config = combine(baseConfig, extra);
 
+    pendManifest();
     requirejs.optimize(config, function (res) {
         addWatch('extension-' + name, res.split('\n').slice(3), function () {
             buildAceExtension(name);
         });
         console.log('Succesfully compiled the extension ' + name);
+        buildManifest();
     }, function (err) {
         console.error(err);
     });
@@ -152,11 +163,13 @@ function buildAceTheme(name) {
     }
     var config = combine(baseConfig, extra);
 
+    pendManifest();
     requirejs.optimize(config, function (res) {
         addWatch('theme-' + name, res.split('\n').slice(3), function () {
             buildAceTheme(name);
         });
         console.log('Succesfully compiled the theme ' + name);
+        buildManifest();
     }, function (err) {
         console.error(err);
     });
@@ -165,20 +178,22 @@ function buildAceThemes() {
     listJSFiles('ace/lib/ace/theme').forEach(buildAceTheme);
 }
 function buildLess() {
+    pendManifest();
     less.render('@import "main.less";', {
         paths: ['./editor/css']
     }, function (err, output) {
         if (err)
             return console.error(err);
-        
+
         addWatch('less', output.imports.map(function (p) {
             return path.resolve(p);
         }), buildLess);
 
-        fs.writeFile('build/styles.css', output.css,function(err) {
-            if(err)
+        fs.writeFile('build/styles.css', output.css, function (err) {
+            if (err)
                 return console.error(err);
-            console.log('Succesfully compiled the style sheets')
+            console.log('Succesfully compiled the style sheets');
+            buildManifest();
         });
     });
 }
@@ -201,9 +216,11 @@ function buildRuntime() {
     }
     var config = combine(baseConfig, extra);
 
+    pendManifest();
     requirejs.optimize(config, function (res) {
         addWatch('runtime', res.split('\n').slice(3), buildRuntime);
         console.log('Succesfully compiled the runtime main program');
+        buildManifest();
     }, function (err) {
         console.error(err);
     });
@@ -218,9 +235,11 @@ function buildRuntimeWorker() {
     }
     var config = combine(baseConfig, extra);
 
+    pendManifest();
     requirejs.optimize(config, function (res) {
         addWatch('runtime-worker', res.split('\n').slice(3), buildRuntimeWorker);
         console.log('Succesfully compiled the runtime worker');
+        buildManifest();
     }, function (err) {
         console.error(err);
     });
@@ -228,6 +247,48 @@ function buildRuntimeWorker() {
 
 buildRuntime();
 buildRuntimeWorker();
+
+function pendManifest() {
+    manifestCount++;
+}
+function buildManifest() {
+    if (--manifestCount)
+        return;
+
+    var buf = [];
+
+    // Manifest header
+    buf.push('CACHE MANIFEST');
+    // And timestamp
+    buf.push('# ' + (new Date()).toISOString());
+
+    // CACHE section
+    buf.push('CACHE:');
+    // First .html files
+    buf.push('./');
+    buf.push('./runtime/');
+    // Then some external and weird located files
+    buf.push('./runtime/styles.css');
+    buf.push('./libs/requirejs.js');
+    buf.push('./editor/img/logo.png');
+    buf.push('http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js');
+    buf.push('http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js');
+
+    // Finally everything in build folder
+    buf = buf.concat(listFiles('build').map(function (file) { return './' + file; }));
+
+    // Everything else must be downloaded
+    buf.push('NETWORK:');
+    buf.push('*');
+
+    // Then just save the file
+    fs.writeFile('cache.manifest', buf.join('\n'), function (err) {
+        if (err)
+            return console.error(err);
+
+        console.log('Succesfully compiled the cache manifest');
+    });
+}
 
 function listJSFiles(path, filter) {
     if (!filter)
@@ -257,7 +318,18 @@ function combine(a, b) {
     return c;
 }
 
-
+function listFiles(path) {
+    var filelist = [];
+    fs.readdirSync(path).forEach(function (file, index) {
+        var curPath = path + '/' + file;
+        if (fs.lstatSync(curPath).isDirectory()) {
+            filelist = filelist.concat(listFiles(curPath));
+        } else {
+            filelist.push(curPath);
+        }
+    });
+    return filelist;
+}
 function deleteFolder(path) {
     if (fs.existsSync(path)) {
         fs.readdirSync(path).forEach(function (file, index) {

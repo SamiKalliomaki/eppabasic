@@ -15,3 +15,4 @@ static
 *.min.js.map
 
 /.htaccess
+/cache.manifest

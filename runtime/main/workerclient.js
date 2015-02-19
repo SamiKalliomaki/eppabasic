@@ -2,7 +2,7 @@
     "use strict";
 
     function WorkerClient(url) {
-        this.worker = new Worker(url + '?' + (new Date()).getTime());
+        this.worker = new Worker(url);
         // TODO Add listeners
 
         function emit(name, args) {

@@ -1,6 +1,7 @@
-define(['jquery', 'i18n', './notifications', './manual', './editor', './usercontrols', './filedialog', './filecontrols', './codecontrols', './pastecontrols', 'jqueryui'], function ($, i18n, NotificationSystem, Manual, Editor, UserControlsController, FileDialogController, FileControlsController, CodeControlsController, PasteControlsController) {
+define(['jquery', 'i18n', './notifications', './manual', './editor', './usercontrols', './filedialog', './filecontrols', './codecontrols', './pastecontrols', './appcache', 'jqueryui'], function ($, i18n, NotificationSystem, Manual, Editor, UserControlsController, FileDialogController, FileControlsController, CodeControlsController, PasteControlsController, AppCache) {
     $(function () {
         var notificationSystem = new NotificationSystem('#notification-box');
+        var appCache = new AppCache(notificationSystem);
         var manual = new Manual('#manual-container', 'fi');
         var editor = new Editor('editor', manual);
         var userControlsController = new UserControlsController('#user-controls');
