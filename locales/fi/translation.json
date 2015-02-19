@@ -60,7 +60,8 @@
     "news": {
         "title": "Uutiset",
         "loading": "Ladataan uutisia...",
-        "no-news": "Ei uutisia juuri nyt"
+        "no-news": "Ei uutisia juuri nyt",
+        "offline": "EppaBasic on yhteydettömässä tilassa. Uutisia ei voi ladata juuri nyt."
     },
     "errors": {
         "sub-return-expr": "Aliohjelmalla ei voi olla paluuarvoa",

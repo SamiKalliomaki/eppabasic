@@ -1,11 +1,12 @@
 define(['jquery', 'i18n', 'marked', './framework'], function ($, i18n, marked, Framework) {
-    function Manual(manualContainer, lang) {
+    function Manual(manualContainer, lang, appCache) {
         manualContainer = $(manualContainer);
         this.container = manualContainer;
         this.manual = $(manualContainer.find('#manual'));
         this.index = $(manualContainer.find('.index'));
         this.back = $(manualContainer.find('.back'));
         this.lang = lang;
+        this.appCache = appCache;
 
         this.history = [];
         this.scrollHistory = [];
@@ -56,26 +57,37 @@ define(['jquery', 'i18n', 'marked', './framework'], function ($, i18n, marked, F
         },
         populateNewsSection: function () {
             var me = this;
+            
+            if (this.appCache.isOnline()) {
+                Framework.simpleGet('eb/news/get/' + this.lang + '/', '', function (data) {
+                    var newsDiv = $('.news', me.manual);
+                    newsDiv.empty();
 
-            Framework.simpleGet('eb/news/get/' + this.lang + '/', '', function (data) {
-                var newsDiv = $('.news', me.manual);
-                newsDiv.empty();
+                    data['posts'].forEach(function (post) {
+                        var postElem = $('<div/>', {});
+                        postElem.append($('<h2/>', {
+                            text: post['title']
+                        }));
+                        postElem.append(marked(post['content']));
+                        newsDiv.append(postElem);
+                    });
 
-                data['posts'].forEach(function (post) {
-                    var postElem = $('<div/>', {});
-                    postElem.append($('<h2/>', {
-                        text: post['title']
-                    }));
-                    postElem.append(marked(post['content']));
-                    newsDiv.append(postElem);
+                    if (data['posts'].length === 0) {
+                        newsDiv.append($('<p/>', {
+                            text: i18n.t('news.no-news')
+                        }));
+                    }
                 });
+            } else {
+                setTimeout(function () {
+                    var newsDiv = $('.news', me.manual);
+                    newsDiv.empty();
 
-                if (data['posts'].length === 0) {
                     newsDiv.append($('<p/>', {
-                        text: i18n.t('news.no-news')
+                        text: i18n.t('news.offline')
                     }));
-                }
-            });
+                });
+            }
         },
         openPage: function (page, scrollY) {
             $.get('manual/' + this.lang + '/' + page + '.md', function (data) {

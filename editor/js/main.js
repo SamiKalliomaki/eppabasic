@@ -2,7 +2,7 @@ define(['jquery', 'i18n', './notifications', './manual', './editor', './usercont
     $(function () {
         var notificationSystem = new NotificationSystem('#notification-box');
         var appCache = new AppCache(notificationSystem);
-        var manual = new Manual('#manual-container', 'fi');
+        var manual = new Manual('#manual-container', 'fi', appCache);
         var editor = new Editor('editor', manual);
         var userControlsController = new UserControlsController('#user-controls');
         var fileDialogController = new FileDialogController('#file-dialog-wrapper', notificationSystem);

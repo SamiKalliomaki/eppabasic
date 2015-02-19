@@ -60,7 +60,8 @@
     "news": {
         "title": "News",
         "loading": "Loading news...",
-        "no-news": "There aren't any news right now"
+        "no-news": "There aren't any news right now",
+        "offline": "EppaBasic is in a connectionless state. News can not be loaded just now."
     },
     "errors": {
         "sub-return-expr": "Sub program return can't have a value",
