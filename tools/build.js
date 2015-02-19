@@ -274,8 +274,10 @@ function buildManifest() {
     buf.push('http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js');
     buf.push('http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js');
 
-    // Finally everything in build folder
+    // Everything in build folder
     buf = buf.concat(listFiles('build').map(function (file) { return './' + file; }));
+    // And manual also
+    buf = buf.concat(listFiles('manual').map(function (file) { return './' + file; }));
 
     // Everything else must be downloaded
     buf.push('NETWORK:');
