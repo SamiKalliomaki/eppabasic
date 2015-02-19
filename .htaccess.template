@@ -7,12 +7,17 @@ RewriteRule ^(cpanel/backend/)(.*)$ http://INSERT_CPANEL_SERVER_DOMAIN_HERE/$2 [
 # Comment out next line in production
 # RewriteRule ^(static/)(.*)$ http://INSERT_BACKEND_DOMAIN_HERE/INSERT_PROJECT_DIR_HEREstatic/$2 [P]
 
-<filesMatch "\.(html|htm|js|css|md)$">
+AddType text/cache-manifest .manifest
+
+<filesMatch "\.(html|htm|js|css|md|manifest)$">
   FileETag None
   <ifModule mod_headers.c>
      Header unset ETag
-     Header set Cache-Control "max-age=0, no-cache, no-store, must-revalidate"
-     Header set Pragma "no-cache"
-     Header set Expires "Wed, 11 Jan 1984 05:00:00 GMT"
+     Header set Cache-Control "max-age=0, no-cache, must-revalidate"
+    Header set Expires "Wed, 11 Jan 1984 05:00:00 GMT"
+  </ifModule>
+  <ifModule mod_expires.c>
+  ExpiresActive On
+  ExpiresDefault "access plus 0 seconds"
   </ifModule>
 </filesMatch>
