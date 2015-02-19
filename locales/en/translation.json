@@ -88,5 +88,9 @@
             "function": "Function",
             "variable": "Variable"
         }
+    },
+    "appcache": {
+        "downloading": "EppaBasic is updating. This might take a while.",
+        "confirmUpdate": "EppaBasic is now updated to the latest version. For changes to take effect the page should be reloaded. Reload now?"
     }
 }

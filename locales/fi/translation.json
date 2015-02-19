@@ -88,5 +88,9 @@
             "function": "Funktio",
             "variable": "Muuttuja"
         }
+    },
+    "appcache": {
+        "downloading": "EppaBasic päivittyy. Tähän saattaa kulua hetki.",
+        "confirmUpdate": "EppaBasic on nyt päivitetty uusimpaan versioon. Sivu on ladattava uudelleen jotta uusin versio voidaan ottaa käyttöön. Ladataanko sivu uudelleen nyt?"
     }
 }

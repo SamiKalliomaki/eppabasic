@@ -1,56 +1,67 @@
 ﻿
-define([], function () {
+define(['i18n'], function (i18n) {
     if (window.applicationCache) {
         // Event handlers
         function onCached(e) {
             // Caching is done
-            console.log('Application is now cached');
             if (!this.online) {
                 this.online = true;
                 this.emit('online');
             }
         }
         function onChecking(e) {
-            this.notificationSystem.notify('Checking if there is an update for EppaBasic');
+            // Checking for updates.
+            // This happens quite often so don't show it to the user.
         }
         function onDownloading(e) {
-            this.notificationSystem.notify('Downloading EppaBasic for offline use');
+            // EppaBasic is downloading.
+            this.notificationSystem.notify(i18n.t('appcache.downloading'));
             if (!this.online) {
                 this.online = true;
                 this.emit('online');
             }
         }
         function onError(e) {
-            this.notificationSystem.notify('An error occured while downloading');
-            // An error occured when fetching the changes so propably offline
+            // An error occured when fetching the changes.
+            // Don't tell the user as this can happen quite often.
+            // Just set the status to offline.
             if (this.online) {
                 this.online = false;
                 this.emit('offline');
             }
         }
         function onNoUpdate(e) {
-            this.notificationSystem.notify('EppaBasic for offline is up to date');
+            // EppaBasic is up to date.
+            // Don't tell the user as this can happen quite often.
             if (!this.online) {
                 this.online = true;
                 this.emit('online');
             }
         }
         function onObsolete(e) {
-            // Manifest couldn't be found
-            console.log('Application cache is obsolete');
+            // Manifest couldn't be found or it has been removed.
+            // No need to tell the user
+            try {
+                // Try clearing the cache
+                window.applicationCache.swapCache();
+            } catch (e) { }
         }
         function onProgress(e) {
-            // TODO: Show to user
-            console.log('Progress: ' + e.loaded + '/' + e.total);
+            // Downloading is progressing.
+            // TODO: Show a download bar
             if (!this.online) {
                 this.online = true;
                 this.emit('online');
             }
         }
         function onUpdateReady(e) {
-            this.notificationSystem.notify('EppaBasic for offline is now updated');
-            window.applicationCache.swapCache();
-            if (confirm('EppaBasic is now updated and wants to be reloaded. Can EppaBasic be reloaded now?'))
+            // EppaBasic is updated.
+            try {
+                // Update the cache to the newest one.
+                window.applicationCache.swapCache();
+            } catch (e) { }
+            // Ask user if the interface can be reloaded now.
+            if (confirm(i18n.t('appcache.confirmUpdate')))
                 location.reload();
             if (!this.online) {
                 this.online = true;
