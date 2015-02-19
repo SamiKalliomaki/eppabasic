@@ -28,7 +28,6 @@ define([], function () {
         }
         function onUpdateReady(e) {
             this.notificationSystem.notify('EppaBasic for offline is now updated');
-            console.log('Current cache status: ' + cacheStatusValues[window.applicationCache.status]);
             window.applicationCache.swapCache();
             if (confirm('EppaBasic is now updated and wants to be reloaded. Can EppaBasic be reloaded now?'))
                 location.reload();
