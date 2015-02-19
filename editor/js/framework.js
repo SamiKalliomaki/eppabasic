@@ -22,9 +22,11 @@ define(['jquery'], function ($) {
         });
     }
 
-    function simpleGet(url, data, callback) {
+    function simpleGet(url, data, callback, errorCallback) {
         return $.get(url, data, callback)
         .fail(function (xhr, status, error) {
+            if (errorCallback)
+                return errorCallback(xhr, status, error);
             var errorPopup = window.open('');
             errorPopup.document.write('<pre>' + xhr.responseText + '</pre>');
         });

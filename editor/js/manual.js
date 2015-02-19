@@ -57,36 +57,40 @@ define(['jquery', 'i18n', 'marked', './framework'], function ($, i18n, marked, F
         },
         populateNewsSection: function () {
             var me = this;
-            
-            if (this.appCache.isOnline()) {
-                Framework.simpleGet('eb/news/get/' + this.lang + '/', '', function (data) {
-                    var newsDiv = $('.news', me.manual);
-                    newsDiv.empty();
 
-                    data['posts'].forEach(function (post) {
-                        var postElem = $('<div/>', {});
-                        postElem.append($('<h2/>', {
-                            text: post['title']
-                        }));
-                        postElem.append(marked(post['content']));
-                        newsDiv.append(postElem);
-                    });
+            function showOffline() {
+                var newsDiv = $('.news', me.manual);
+                newsDiv.empty();
 
-                    if (data['posts'].length === 0) {
-                        newsDiv.append($('<p/>', {
-                            text: i18n.t('news.no-news')
-                        }));
-                    }
-                });
-            } else {
-                setTimeout(function () {
-                    var newsDiv = $('.news', me.manual);
-                    newsDiv.empty();
+                newsDiv.append($('<p/>', {
+                    text: i18n.t('news.offline')
+                }));
+            }
+            function showPosts(data) {
+                var newsDiv = $('.news', me.manual);
+                newsDiv.empty();
 
-                    newsDiv.append($('<p/>', {
-                        text: i18n.t('news.offline')
+                data['posts'].forEach(function (post) {
+                    var postElem = $('<div/>', {});
+                    postElem.append($('<h2/>', {
+                        text: post['title']
                     }));
+                    postElem.append(marked(post['content']));
+                    newsDiv.append(postElem);
                 });
+
+                if (data['posts'].length === 0) {
+                    newsDiv.append($('<p/>', {
+                        text: i18n.t('news.no-news')
+                    }));
+                }
+            }
+
+            if (this.appCache.isOnline()) {
+                Framework.simpleGet('eb/news/get/' + this.lang + '/', '',
+                   showPosts, showOffline);
+            } else {
+                setTimeout(showOffline);
             }
         },
         openPage: function (page, scrollY) {
