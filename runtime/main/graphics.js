@@ -113,7 +113,7 @@
         },
 
         onDrawScreen: function onDrawScreen(commands) {
-            this.commandBuffer = commands;
+            this.commandBuffer = this.commandBuffer.concat(commands);
         },
 
         animateFrame: function animateFrame() {
