@@ -94,7 +94,8 @@ var Editor = function(renderer, session) {
     
     this._$emitInputEvent = lang.delayedCall(function() {
         this._signal("input", {});
-        this.session.bgTokenizer && this.session.bgTokenizer.scheduleStart();
+        if (this.session && this.session.bgTokenizer)
+            this.session.bgTokenizer.scheduleStart();
     }.bind(this));
     
     this.on("change", function(_, _self) {
@@ -114,30 +115,8 @@ var Editor = function(renderer, session) {
         function last(a) {return a[a.length - 1]}
 
         this.selections = [];
-        this.commands.on("exec", function(e) {
-            this.startOperation(e);
-
-            var command = e.command;
-            if (command.aceCommandGroup == "fileJump") {
-                var prev = this.prevOp;
-                if (!prev || prev.command.aceCommandGroup != "fileJump") {
-                    this.lastFileJumpPos = last(this.selections);
-                }
-            } else {
-                this.lastFileJumpPos = null;
-            }
-        }.bind(this), true);
-
-        this.commands.on("afterExec", function(e) {
-            var command = e.command;
-
-            if (command.aceCommandGroup == "fileJump") {
-                if (this.lastFileJumpPos && !this.curOp.selectionChanged) {
-                    this.selection.fromJSON(this.lastFileJumpPos);
-                }
-            }
-            this.endOperation(e);
-        }.bind(this), true);
+        this.commands.on("exec", this.startOperation.bind(this), true);
+        this.commands.on("afterExec", this.endOperation.bind(this), true);
 
         this.$opResetTimer = lang.delayedCall(this.endOperation.bind(this));
 
@@ -172,18 +151,16 @@ var Editor = function(renderer, session) {
             scrollTop: this.renderer.scrollTop
         };
         
-        var command = this.curOp.command;
-        if (command && command.scrollIntoView)
-            this.$blockScrolling++;
-
-        this.selections.push(this.selection.toJSON());
+        // this.selections.push(this.selection.toJSON());
     };
 
-    this.endOperation = function() {
+    this.endOperation = function(e) {
         if (this.curOp) {
+            if (e && e.returnValue === false)
+                return this.curOp = null;
+                
             var command = this.curOp.command;
             if (command && command.scrollIntoView) {
-                this.$blockScrolling--;
                 switch (command.scrollIntoView) {
                     case "center":
                         this.renderer.scrollCursorIntoView(null, 0.5);
@@ -254,19 +231,19 @@ var Editor = function(renderer, session) {
      * @param {String} keyboardHandler The new key handler
      *
      **/
-    this.setKeyboardHandler = function(keyboardHandler) {
-        if (!keyboardHandler) {
-            this.keyBinding.setKeyboardHandler(null);
-        } else if (typeof keyboardHandler === "string") {
+    this.setKeyboardHandler = function(keyboardHandler, cb) {
+        if (keyboardHandler && typeof keyboardHandler === "string") {
             this.$keybindingId = keyboardHandler;
             var _self = this;
             config.loadModule(["keybinding", keyboardHandler], function(module) {
                 if (_self.$keybindingId == keyboardHandler)
                     _self.keyBinding.setKeyboardHandler(module && module.handler);
+                cb && cb();
             });
         } else {
             this.$keybindingId = null;
             this.keyBinding.setKeyboardHandler(keyboardHandler);
+            cb && cb();
         }
     };
 
@@ -384,6 +361,9 @@ var Editor = function(renderer, session) {
             this.onChangeAnnotation();
             this.session.getUseWrapMode() && this.renderer.adjustWrapLimit();
             this.renderer.updateFull();
+        } else {
+            this.selection = null;
+            this.renderer.setSession(session);
         }
 
         this._signal("changeSession", {
@@ -512,9 +492,7 @@ var Editor = function(renderer, session) {
 
     this.$highlightBrackets = function() {
         if (this.session.$bracketHighlight) {
-            this.session.$bracketHighlight.forEach(function (highlight) {
-                this.session.removeMarker(highlight);
-            }.bind(this));
+            this.session.removeMarker(this.session.$bracketHighlight);
             this.session.$bracketHighlight = null;
         }
 
@@ -527,39 +505,32 @@ var Editor = function(renderer, session) {
         this.$highlightPending = true;
         setTimeout(function() {
             self.$highlightPending = false;
-
-            var pos1 = self.getCursorPosition();
-            if (pos1) {
-                var range1 = new Range(pos1.row, pos1.column-1, pos1.row, pos1.column);
+            var session = self.session;
+            if (!session || !session.bgTokenizer) return;
+            var pos = session.findMatchingBracket(self.getCursorPosition());
+            if (pos) {
+                var range = new Range(pos.row, pos.column, pos.row, pos.column + 1);
+            } else if (session.$mode.getMatching) {
+                var range = session.$mode.getMatching(self.session);
             }
-            var pos2 = self.session.findMatchingBracket(pos1);
-            if (pos2) {
-                var range2 = new Range(pos2.row, pos2.column, pos2.row, pos2.column+1);
-            } else if (self.session.$mode.getMatching) {
-                var range2 = self.session.$mode.getMatching(self.session);
-            }
-            if (range1 && range2) {
-                self.session.$bracketHighlight = [
-                    self.session.addMarker(range1, "ace_bracket", "text"),
-                    self.session.addMarker(range2, "ace_bracket", "text")
-                ];
-            }
+            if (range)
+                session.$bracketHighlight = session.addMarker(range, "ace_bracket", "text");
         }, 50);
     };
 
     // todo: move to mode.getMatching
     this.$highlightTags = function() {
-        var session = this.session;
-
-        if (this.$highlightTagPending) {
+        if (this.$highlightTagPending)
             return;
-        }
 
         // perform highlight async to not block the browser during navigation
         var self = this;
         this.$highlightTagPending = true;
         setTimeout(function() {
             self.$highlightTagPending = false;
+            
+            var session = self.session;
+            if (!session || !session.bgTokenizer) return;
             
             var pos = self.getCursorPosition();
             var iterator = new TokenIterator(self.session, pos.row, pos.column);
@@ -582,28 +553,28 @@ var Editor = function(renderer, session) {
                     token = iterator.stepForward();
                     
                     if (token && token.value === tag && token.type.indexOf('tag-name') !== -1) {
-                        if (prevToken.value==='<'){
+                        if (prevToken.value === '<'){
                             depth++;
-                        } else if (prevToken.value==='</'){
+                        } else if (prevToken.value === '</'){
                             depth--;
                         }
                     }
                     
-                } while (token && depth>=0);
-            }else{
+                } while (token && depth >= 0);
+            } else {
                 //find opening tag
                 do {
                     token = prevToken;
                     prevToken = iterator.stepBackward();
                     
-                    if(token && token.value === tag && token.type.indexOf('tag-name') !== -1) {
-                        if (prevToken.value==='<') {
+                    if (token && token.value === tag && token.type.indexOf('tag-name') !== -1) {
+                        if (prevToken.value === '<') {
                             depth++;
-                        } else if( prevToken.value==='</') {
+                        } else if (prevToken.value === '</') {
                             depth--;
                         }
                     }
-                } while (prevToken && depth<=0);
+                } while (prevToken && depth <= 0);
                 
                 //select tag again
                 iterator.stepForward();
@@ -667,13 +638,13 @@ var Editor = function(renderer, session) {
      *
      *
      **/
-    this.onFocus = function() {
+    this.onFocus = function(e) {
         if (this.$isFocused)
             return;
         this.$isFocused = true;
         this.renderer.showCursor();
         this.renderer.visualizeFocus();
-        this._emit("focus");
+        this._emit("focus", e);
     };
 
     /**
@@ -682,13 +653,13 @@ var Editor = function(renderer, session) {
      *
      *
      **/
-    this.onBlur = function() {
+    this.onBlur = function(e) {
         if (!this.$isFocused)
             return;
         this.$isFocused = false;
         this.renderer.hideCursor();
         this.renderer.visualizeBlur();
-        this._emit("blur");
+        this._emit("blur", e);
     };
 
     this.$cursorChange = function() {
@@ -712,12 +683,13 @@ var Editor = function(renderer, session) {
             lastRow = range.end.row;
         else
             lastRow = Infinity;
-        this.renderer.updateLines(range.start.row, lastRow);
+        this.renderer.updateLines(range.start.row, lastRow, this.session.$useWrapMode);
 
         this._signal("change", e);
 
         // update cursor because tab characters can influence the cursor position
         this.$cursorChange();
+        this.$updateHighlightActiveLine();
     };
 
     this.onTokenizerUpdate = function(e) {
@@ -916,7 +888,7 @@ var Editor = function(renderer, session) {
     /**
      * Emitted when text is pasted.
      * @event paste
-     * @param {String} text The pasted text
+     * @param {Object} an object which contains one property, `text`, that represents the text to be pasted. Editing this property will alter the text that is pasted.
      *
      *
      **/
@@ -935,9 +907,8 @@ var Editor = function(renderer, session) {
         this.insert(e.text, true);
     };
 
-
     this.execCommand = function(command, args) {
-        this.commands.exec(command, this, args);
+        return this.commands.exec(command, this, args);
     };
 
     /**
@@ -2014,17 +1985,13 @@ var Editor = function(renderer, session) {
      * Moves the cursor's row and column to the next matching bracket or HTML tag.
      *
      **/
-    this.jumpToMatching = function(select) {
+    this.jumpToMatching = function(select, expand) {
         var cursor = this.getCursorPosition();
         var iterator = new TokenIterator(this.session, cursor.row, cursor.column);
         var prevToken = iterator.getCurrentToken();
-        var token = prevToken;
+        var token = prevToken || iterator.stepForward();
 
-        if (!token)
-            token = iterator.stepForward();
-
-        if (!token)
-            return;
+        if (!token) return;
 
         //get next closing tag or bracket
         var matchType;
@@ -2043,12 +2010,12 @@ var Editor = function(renderer, session) {
         
         do {
             if (token.value.match(/[{}()\[\]]/g)) {
-                for (; i<token.value.length && !found; i++) {
+                for (; i < token.value.length && !found; i++) {
                     if (!brackets[token.value[i]]) {
                         continue;
                     }
 
-                    bracketType = brackets[token.value[i]]+'.'+token.type.replace("rparen", "lparen");
+                    bracketType = brackets[token.value[i]] + '.' + token.type.replace("rparen", "lparen");
 
                     if (isNaN(depth[bracketType])) {
                         depth[bracketType] = 0;
@@ -2059,27 +2026,29 @@ var Editor = function(renderer, session) {
                         case '[':
                         case '{':
                             depth[bracketType]++;
-                        break;
+                            break;
                         case ')':
                         case ']':
                         case '}':
                             depth[bracketType]--;
-                            
-                            if (depth[bracketType]===-1) {
+
+                            if (depth[bracketType] === -1) {
                                 matchType = 'bracket';
                                 found = true;
                             }
                         break;
                     }
                 }
-            } else if (token && token.type.indexOf('tag-name') !== -1) {
+            }
+            else if (token && token.type.indexOf('tag-name') !== -1) {
                 if (isNaN(depth[token.value])) {
                     depth[token.value] = 0;
                 }
                 
                 if (prevToken.value === '<') {
                     depth[token.value]++;
-                } else if (prevToken.value === '</') {
+                }
+                else if (prevToken.value === '</') {
                     depth[token.value]--;
                 }
                 
@@ -2097,37 +2066,35 @@ var Editor = function(renderer, session) {
         } while (token && !found);
 
         //no match found
-        if (!matchType) {
+        if (!matchType)
             return;
-        }
 
-        var range;
-        if (matchType==='bracket') {
+        var range, pos;
+        if (matchType === 'bracket') {
             range = this.session.getBracketRange(cursor);
             if (!range) {
                 range = new Range(
-                    iterator.getCurrentTokenRow(), 
-                    iterator.getCurrentTokenColumn()+i-1,
-                    iterator.getCurrentTokenRow(), 
-                    iterator.getCurrentTokenColumn()+i-1
+                    iterator.getCurrentTokenRow(),
+                    iterator.getCurrentTokenColumn() + i - 1,
+                    iterator.getCurrentTokenRow(),
+                    iterator.getCurrentTokenColumn() + i - 1
                 );
-                if (!range)
-                    return;
-                var pos = range.start;
-                if (pos.row === cursor.row && Math.abs(pos.column - cursor.column) < 2)
+                pos = range.start;
+                if (expand || pos.row === cursor.row && Math.abs(pos.column - cursor.column) < 2)
                     range = this.session.getBracketRange(pos);
             }
-        } else if(matchType==='tag') {
-            if (token && token.type.indexOf('tag-name') !== -1)
+        }
+        else if (matchType === 'tag') {
+            if (token && token.type.indexOf('tag-name') !== -1) 
                 var tag = token.value;
             else
                 return;
 
-            var range = new Range(
-                iterator.getCurrentTokenRow(), 
-                iterator.getCurrentTokenColumn()-2, 
-                iterator.getCurrentTokenRow(), 
-                iterator.getCurrentTokenColumn()-2
+            range = new Range(
+                iterator.getCurrentTokenRow(),
+                iterator.getCurrentTokenColumn() - 2,
+                iterator.getCurrentTokenRow(),
+                iterator.getCurrentTokenColumn() - 2
             );
 
             //find matching tag
@@ -2139,17 +2106,18 @@ var Editor = function(renderer, session) {
                     
                     if (prevToken) {
                         if (prevToken.type.indexOf('tag-close') !== -1) {
-                            range.setEnd(iterator.getCurrentTokenRow(), iterator.getCurrentTokenColumn()+1);
+                            range.setEnd(iterator.getCurrentTokenRow(), iterator.getCurrentTokenColumn() + 1);
                         }
 
                         if (token.value === tag && token.type.indexOf('tag-name') !== -1) {
                             if (prevToken.value === '<') {
                                 depth[tag]++;
-                            } else if ( prevToken.value === '</') {
+                            }
+                            else if (prevToken.value === '</') {
                                 depth[tag]--;
                             }
                             
-                            if (depth[tag]===0)
+                            if (depth[tag] === 0)
                                 found = true;
                         }
                     }
@@ -2158,7 +2126,7 @@ var Editor = function(renderer, session) {
 
             //we found it
             if (token && token.type.indexOf('tag-name')) {
-                var pos = range.start;
+                pos = range.start;
                 if (pos.row == cursor.row && Math.abs(pos.column - cursor.column) < 2)
                     pos = range.end;
             }
@@ -2167,10 +2135,13 @@ var Editor = function(renderer, session) {
         pos = range && range.cursor || pos;
         if (pos) {
             if (select) {
-                if (range && range.isEqual(this.getSelectionRange()))
+                if (range && expand) {
+                    this.selection.setRange(range);
+                } else if (range && range.isEqual(this.getSelectionRange())) {
                     this.clearSelection();
-                else
+                } else {
                     this.selection.selectTo(pos.row, pos.column);
+                }
             } else {
                 this.selection.moveTo(pos.row, pos.column);
             }
@@ -2528,6 +2499,9 @@ var Editor = function(renderer, session) {
     this.destroy = function() {
         this.renderer.destroy();
         this._signal("destroy", this);
+        if (this.session) {
+            this.session.destroy();
+        }
     };
 
     /**
@@ -2554,7 +2528,9 @@ var Editor = function(renderer, session) {
                 rect = self.renderer.container.getBoundingClientRect();
         });
         var onAfterRender = this.renderer.on("afterRender", function() {
-            if (shouldScroll && rect && self.isFocused()) {
+            if (shouldScroll && rect && (self.isFocused()
+                || self.searchBox && self.searchBox.isFocused())
+            ) {
                 var renderer = self.renderer;
                 var pos = renderer.$cursorLayer.$pixelPos;
                 var config = renderer.layerConfig;
