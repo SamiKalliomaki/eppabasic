@@ -2,6 +2,41 @@
     var glob = require('glob');
     var path = require('path');
 
+    // Map from files to dependent tasks
+    var fileTasks = {};
+
+    // Done function generator
+    function addToWatch(task, files) {
+        if (!(files instanceof Array))
+            files = [files];
+
+        files.forEach(function (file) {
+            // Resolve file path to its full length
+            file = path.resolve(file);
+
+            // Create file entry in the list if not existing
+            if (!fileTasks[file])
+                fileTasks[file] = [];
+            // Don't create doublicates
+            if (fileTasks[file].indexOf(task) !== -1)
+                return;
+            // Add the task to the list
+            fileTasks[file].push(task);
+        });
+    }
+    function makeDoneFunction(task) {
+        return function (done, output) {
+            output = require('rjs-build-analysis').parse(output);
+            output.bundles.forEach(function (bundle) {
+                addToWatch(task, bundle.children);
+            });
+            // Update the watch list
+            grunt.config('watch.all.files', Object.keys(fileTasks));
+            // Signal that we are done here
+            done();
+        };
+    }
+
     // Build different RequireJS tasks
     var requirejsOptions = {
         options: {
@@ -28,7 +63,8 @@
                 include: [
                     'tools/ace.build.js',           // Make ace to think that it is compiled
                     'editor/main'
-                ]
+                ],
+                done: makeDoneFunction('requirejs:main')
             }
         },
         // Runtime
@@ -38,7 +74,8 @@
                     'runtime/app',
                     'runtime/main/main'
                 ],
-                out: 'build/runtime/app.js'
+                out: 'build/runtime/app.js',
+                done: makeDoneFunction('requirejs:runtime')
             }
         },
         // Runtime worker
@@ -48,9 +85,9 @@
                     'libs/requirejs',
                     'runtime/worker/main'
                 ],
-                out: 'build/runtime/worker.js'
+                out: 'build/runtime/worker.js',
+                done: makeDoneFunction('requirejs:runtime-worker')
             }
-
         }
     };
 
@@ -65,7 +102,8 @@
         requirejsOptions['mode-' + mode] = {
             options: {
                 name: 'ace/mode/' + mode,
-                out: 'build/mode-' + mode + '.js'
+                out: 'build/mode-' + mode + '.js',
+                done: makeDoneFunction('requirejs:mode-' + mode)
             }
         };
     });
@@ -82,7 +120,8 @@
                     'ace/mode/' + worker + '_worker',
                     'ace/lib/es5-shim'
                 ],
-                out: 'build/worker-' + worker + '.js'
+                out: 'build/worker-' + worker + '.js',
+                done: makeDoneFunction('requirejs:worker-' + worker)
             }
         };
     });
@@ -96,10 +135,11 @@
         if (/_test/.test(extension))
             return;
 
-        requirejsOptions['extensions-' + extension] = {
+        requirejsOptions['extension-' + extension] = {
             options: {
                 name: 'ace/ext/' + extension,
-                out: 'build/ext-' + extension + '.js'
+                out: 'build/ext-' + extension + '.js',
+                done: makeDoneFunction('requirejs:extension-' + extension)
             }
         };
     });
@@ -116,7 +156,8 @@
         requirejsOptions['theme-' + theme] = {
             options: {
                 name: 'ace/theme/' + theme,
-                out: 'build/theme-' + theme + '.js'
+                out: 'build/theme-' + theme + '.js',
+                done: makeDoneFunction('requirejs:theme-' + theme)
             }
         };
     });
@@ -132,12 +173,35 @@
 
     grunt.initConfig({
         requirejs: requirejsOptions,
-        less: lessOptions
+        less: lessOptions,
+        watch: {
+            all: {
+                files: [],
+                options: {
+                    spawn: false
+                }
+            }
+        }
     });
 
     grunt.loadNpmTasks('grunt-contrib-requirejs');
     grunt.loadNpmTasks('grunt-contrib-less');
+    grunt.loadNpmTasks('grunt-contrib-watch');
+
+    grunt.event.on('less.compiled', function (output) {
+        addToWatch('less.main', output.imports);
+    });
+    grunt.event.on('watch', function (action, filepath, target) {
+        // Resolve file path
+        filepath = path.resolve(filepath);
+        if (!fileTasks[filepath])
+            return console.error('No handler: ' + filepath);
+        // Excecute marked tasks
+        fileTasks[filepath].forEach(function (task) {
+            grunt.task.run(task);
+        });
+    });
 
     grunt.registerTask('default', ['requirejs', 'less']);
-
+    grunt.registerTask('develop', ['default', 'watch']);
 };
