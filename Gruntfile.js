@@ -53,7 +53,7 @@
                 ace: 'ace/lib/ace',
                 marked: 'libs/marked'
             },
-            optimize: 'none'
+            optimize: grunt.option('minify') ? 'uglify2' : 'none'
         },
         // Main program
         main: {
@@ -164,6 +164,9 @@
 
     // Style sheets
     var lessOptions = {
+        options: {
+            compress: grunt.option('minify')
+        },
         main: {
             files: {
                 'build/styles.css': 'editor/css/main.less'
