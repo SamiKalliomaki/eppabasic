@@ -181,12 +181,14 @@
                     spawn: false
                 }
             }
-        }
+        },
+        clean: ['build/**/*']
     });
 
     grunt.loadNpmTasks('grunt-contrib-requirejs');
     grunt.loadNpmTasks('grunt-contrib-less');
     grunt.loadNpmTasks('grunt-contrib-watch');
+    grunt.loadNpmTasks('grunt-contrib-clean');
 
     grunt.event.on('less.compiled', function (output) {
         addToWatch('less.main', output.imports);
@@ -202,6 +204,6 @@
         });
     });
 
-    grunt.registerTask('default', ['requirejs', 'less']);
+    grunt.registerTask('default', ['clean', 'requirejs', 'less']);
     grunt.registerTask('develop', ['default', 'watch']);
 };
