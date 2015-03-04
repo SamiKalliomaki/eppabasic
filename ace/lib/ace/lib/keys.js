@@ -34,6 +34,8 @@ For more information about SproutCore, visit http://www.sproutcore.com
 define(function(require, exports, module) {
 "use strict";
 
+require("./fixoldbrowsers");
+
 var oop = require("./oop");
 
 /*
@@ -136,12 +138,15 @@ var Keys = (function() {
     
     (function() {
         var mods = ["cmd", "ctrl", "alt", "shift"];
-        for (var i = Math.pow(2, mods.length); i--;) {
+        for (var i = Math.pow(2, mods.length); i--;) {            
             ret.KEY_MODS[i] = mods.filter(function(x) {
                 return i & ret.KEY_MODS[x];
             }).join("-") + "-";
         }
     })();
+
+    ret.KEY_MODS[0] = "";
+    ret.KEY_MODS[-1] = "input";
 
     return ret;
 })();

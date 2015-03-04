@@ -3,19 +3,25 @@
 /// <reference path="../compiler/types.js" />
 /// <reference path="../compiler/compiler.js" />
 
-define(['compiler/toolchain', 'ace/ace', 'i18n'], function (Toolchain, ace, i18n) {
+define(['compiler/toolchain', 'ace/ace', 'i18n', './autocompleter'], function (Toolchain, ace, i18n, Autocompleter) {
     function Editor(editorName, manual) {
         this.toolchain = new Toolchain();
         this.manual = manual;
         this.editorName = editorName;
+
+        // Create ace editor
         this.ace = ace.edit(editorName);
+        // Set theme and mode
         this.ace.setTheme('ace/theme/chaos');
         this.ace.getSession().setMode('ace/mode/eppabasic');
+        // Some other settings
         this.ace.setShowPrintMargin(false);
         this.modified = false;
         this.ace.on('change', function () {
             this.modified = true;
         }.bind(this));
+        // Autocompletion
+        this.autocompleter = new Autocompleter(ace, this.ace);
     }
     Editor.prototype = {
         getCode: function getCode() {

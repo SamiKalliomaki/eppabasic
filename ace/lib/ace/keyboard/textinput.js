@@ -51,6 +51,7 @@ var TextInput = function(parentNode, host) {
     text.spellcheck = false;
 
     text.style.opacity = "0";
+    if (useragent.isOldIE) text.style.top = "-100px";
     parentNode.insertBefore(text, parentNode.firstChild);
 
     var PLACEHOLDER = "\x01\x01";
@@ -65,13 +66,13 @@ var TextInput = function(parentNode, host) {
     // ie9 throws error if document.activeElement is accessed too soon
     try { var isFocused = document.activeElement === text; } catch(e) {}
     
-    event.addListener(text, "blur", function() {
-        host.onBlur();
+    event.addListener(text, "blur", function(e) {
+        host.onBlur(e);
         isFocused = false;
     });
-    event.addListener(text, "focus", function() {
+    event.addListener(text, "focus", function(e) {
         isFocused = true;
-        host.onFocus();
+        host.onFocus(e);
         resetSelection();
     });
     this.focus = function() { text.focus(); };
@@ -255,7 +256,7 @@ var TextInput = function(parentNode, host) {
         } else {
             return clipboardData.getData(mime);
         }
-    }
+    };
 
     var doCopy = function(e, isCut) {
         var data = host.getCopyText();
@@ -280,11 +281,11 @@ var TextInput = function(parentNode, host) {
     
     var onCut = function(e) {
         doCopy(e, true);
-    }
+    };
     
     var onCopy = function(e) {
         doCopy(e, false);
-    }
+    };
     
     var onPaste = function(e) {
         var data = handleClipboardData(e);
@@ -335,7 +336,8 @@ var TextInput = function(parentNode, host) {
 
     // COMPOSITION
     var onCompositionStart = function(e) {
-        if (inComposition || !host.onCompositionStart) return;
+        if (inComposition || !host.onCompositionStart || host.$readOnly) 
+            return;
         // console.log("onCompositionStart", inComposition)
         inComposition = {};
         host.onCompositionStart();
@@ -351,7 +353,8 @@ var TextInput = function(parentNode, host) {
 
     var onCompositionUpdate = function() {
         // console.log("onCompositionUpdate", inComposition && JSON.stringify(text.value))
-        if (!inComposition || !host.onCompositionUpdate) return;
+        if (!inComposition || !host.onCompositionUpdate || host.$readOnly)
+            return;
         var val = text.value.replace(/\x01/g, "");
         if (inComposition.lastValue === val) return;
         
@@ -370,7 +373,7 @@ var TextInput = function(parentNode, host) {
     };
 
     var onCompositionEnd = function(e) {
-        if (!host.onCompositionEnd) return;
+        if (!host.onCompositionEnd || host.$readOnly) return;
         // console.log("onCompositionEnd", inComposition &&inComposition.lastValue)
         var c = inComposition;
         inComposition = false;
@@ -379,7 +382,7 @@ var TextInput = function(parentNode, host) {
             var str = text.value.replace(/\x01/g, "");
             // console.log(str, c.lastValue)
             if (inComposition)
-                return
+                return;
             else if (str == c.lastValue)
                 resetValue();
             else if (!c.lastValue && str) {
@@ -434,16 +437,19 @@ var TextInput = function(parentNode, host) {
     };
     
     this.moveToMouse = function(e, bringToFront) {
+        if (!bringToFront && useragent.isOldIE)
+            return;
         if (!tempStyle)
             tempStyle = text.style.cssText;
         text.style.cssText = (bringToFront ? "z-index:100000;" : "")
+            + "height:" + text.style.height + ";"
             + (useragent.isIE ? "opacity:0.1;" : "");
 
         var rect = host.container.getBoundingClientRect();
         var style = dom.computedStyle(host.container);
         var top = rect.top + (parseInt(style.borderTopWidth) || 0);
         var left = rect.left + (parseInt(rect.borderLeftWidth) || 0);
-        var maxTop = rect.bottom - top - text.clientHeight;
+        var maxTop = rect.bottom - top - text.clientHeight -2;
         var move = function(e) {
             text.style.left = e.clientX - left - 2 + "px";
             text.style.top = Math.min(e.clientY - top - 2, maxTop) + "px";
@@ -457,13 +463,15 @@ var TextInput = function(parentNode, host) {
             host.renderer.$keepTextAreaAtCursor = null;
 
         // on windows context menu is opened after mouseup
-        if (useragent.isWin)
+        if (useragent.isWin && !useragent.isOldIE)
             event.capture(host.container, move, onContextMenuClose);
     };
 
     this.onContextMenuClose = onContextMenuClose;
+    var closeTimeout;
     function onContextMenuClose() {
-        setTimeout(function () {
+        clearTimeout(closeTimeout)
+        closeTimeout = setTimeout(function () {
             if (tempStyle) {
                 text.style.cssText = tempStyle;
                 tempStyle = '';
@@ -472,18 +480,15 @@ var TextInput = function(parentNode, host) {
                 host.renderer.$keepTextAreaAtCursor = true;
                 host.renderer.$moveTextAreaToCursor();
             }
-        }, 0);
+        }, useragent.isOldIE ? 200 : 0);
     }
 
-    // firefox fires contextmenu event after opening it
-    if (!useragent.isGecko || useragent.isMac) {
-        var onContextMenu = function(e) {
-            host.textInput.onContextMenu(e);
-            onContextMenuClose();
-        };
-        event.addListener(host.renderer.scroller, "contextmenu", onContextMenu);
-        event.addListener(text, "contextmenu", onContextMenu);
-    }
+    var onContextMenu = function(e) {
+        host.textInput.onContextMenu(e);
+        onContextMenuClose();
+    };
+    event.addListener(host.renderer.scroller, "contextmenu", onContextMenu);
+    event.addListener(text, "contextmenu", onContextMenu);
 };
 
 exports.TextInput = TextInput;

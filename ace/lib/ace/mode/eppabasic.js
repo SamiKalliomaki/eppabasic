@@ -1,7 +1,7 @@
 define(function (require, exports, module) {
     "use strict";
 
-    /*var oop = require("../lib/oop");
+    var oop = require("../lib/oop");
     var TextMode = require("./text").Mode;
     var WorkerClient = require("../worker/worker_client").WorkerClient;
 
@@ -11,6 +11,7 @@ define(function (require, exports, module) {
     var Lexer = require('compiler/lexer');
     var Toolchain = require('compiler/toolchain');
     var Compiler = require('compiler/compiler');
+    var VariableScopeList = require('compiler/variablescopelist');
     var i18n = require('i18n');
 
     function CustomTokenizer() {
@@ -216,6 +217,21 @@ define(function (require, exports, module) {
                 doc.replace(new Range(row, 0, row, indent.length), newIndent);
             }
         };
+
+        /*this.createWorker = function(session) {
+            var worker = new WorkerClient(["ace"], "ace/mode/eppabasic_worker", "EppaBasicWorker");
+            worker.attachToDocument(session.getDocument());
+    
+            worker.on("errors", function(results) {
+                session.setAnnotations(results.data);
+            });
+    
+            worker.on("terminate", function() {
+                session.clearAnnotations();
+            });
+    
+            return worker;
+        };*/
     };
     oop.inherits(Mode, TextMode);
 
@@ -227,6 +243,10 @@ define(function (require, exports, module) {
 
             worker.on('parsed', function (res) {
                 var errors = res.data[0];
+                var variableScopes = res.data[1] && new VariableScopeList(res.data[1]);
+
+                if (variableScopes)
+                    this.variableScopes = variableScopes;
 
                 session.clearAnnotations();
                 if (errors.length !== 0) {
@@ -255,5 +275,5 @@ define(function (require, exports, module) {
         };
     }).call(Mode.prototype);
 
-    exports.Mode = Mode;*/
+    exports.Mode = Mode;
 });

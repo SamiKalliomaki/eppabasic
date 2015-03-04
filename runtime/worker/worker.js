@@ -1,4 +1,4 @@
-﻿define(['require', './graphics', './math', '../polyfill', './input', './time', './string', './messages', '../utils/string'], function (require) {
+define(['require', './graphics', './math', './input', './time', './string', './messages', '../utils/string', './flowcontrol', '../utils/asmjsforie', 'runtime/polyfill', 'libs/es5-shim', 'libs/es6-shim'], function (require) {
     "use strict";
 
     // Settings
@@ -11,6 +11,8 @@
     var Time = require('./time');
     var StringUtils = require('../utils/string');
     var Messages = require('./messages');
+    var FlowControl = require('./flowcontrol');
+    var AsmjsForIE = require('../utils/asmjsforie');
 
     function Worker(mirror) {
         this.mirror = mirror;
@@ -20,16 +22,28 @@
 
         this.nextCall = 0;
         this.waitingResponse = false;
+        this.running = false;
+        this.paniced = false;
     }
 
     Worker.prototype = {
         init: function init(code) {
+            if (!code)
+                code = this.code;
+            if (!code)
+                throw new Error('No code specified for the worker');
+            this.code = code;
+            this.paniced = false;
             var Program = new Function('stdlib', 'env', 'heap', code);
             var external = this.createExternal();
-            //console.log(code);
+            if (AsmjsForIE.needsConversion()) {
+                code = AsmjsForIE.convert(code);
+            }
             this.program = Program(external.stdlib, external.env, external.heap);
             external.after();
             this.program.init();
+
+            this.external = external;
         },
 
         start: function start() {
@@ -42,13 +56,19 @@
                 }
 
                 var now = new Date().getTime();
-                if (now >= this.nextCall) {
-                    this.program.next();
+                if (now >= this.nextCall && !this.program.next()) {
+                    // Program ended
+                    this.external.env.drawScreen();
+                } else {
+                    if (this.running)
+                        setTimeout(f, Math.max(this.nextCall - now - 1, 0));
                 }
-
-                setTimeout(f, Math.max(this.nextCall - now - 1, 0));
             }
+            this.running = true;
             setTimeout(f, 0);
+        },
+        stop: function stop() {
+            this.running = false;
         },
 
         setDelay: function setDelay(time) {
@@ -66,20 +86,35 @@
         },
 
         createExternal: function createExternal() {
-            var stdlib = {
-                Math: Math,
-                Uint8Array: Uint8Array,
-                Int32Array: Int32Array,
-                Uint32Array: Uint32Array,
-                Float32Array: Float32Array,
-                Float64Array: Float64Array
-            };
+            if (AsmjsForIE.needsConversion()) {
+                var stdlib = {
+                    Math: Math,
+                    Uint8Array: AsmjsForIE.Uint8Array,
+                    Int32Array: AsmjsForIE.Int32Array,
+                    Uint32Array: AsmjsForIE.Uint32Array,
+                    Float32Array: AsmjsForIE.Float32Array,
+                    Float64Array: AsmjsForIE.Float64Array
+                };
+            } else {
+                var stdlib = {
+                    Math: Math,
+                    Uint8Array: Uint8Array,
+                    Int32Array: Int32Array,
+                    Uint32Array: Uint32Array,
+                    Float32Array: Float32Array,
+                    Float64Array: Float64Array
+                };
+            }
 
             var env = {};
             env.heapSize = settings.heapSize;
             env.panic = this.panic.bind(this);
 
-            var heap = new ArrayBuffer(env.heapSize);
+            if (AsmjsForIE.needsConversion()) {
+                var heap = new AsmjsForIE.ArrayBuffer(env.heapSize);
+            } else {
+                var heap = new ArrayBuffer(env.heapSize);
+            }
             var strutil = new StringUtils(heap);
 
             var graphics = new Graphics(this.mirror, strutil, this.setDelay.bind(this));
@@ -100,6 +135,9 @@
             var messages = new Messages(this.mirror, strutil, this.waitResponse.bind(this));
             messages.extendEnv(env);
 
+            var flowcontrol = new FlowControl(this.mirror, this.init.bind(this));
+            flowcontrol.extendEnv(env);
+
             function after() {
                 strutil.setProgram(this.program);
                 graphics.setProgram(this.program);
@@ -115,8 +153,11 @@
             };
         },
 
-        panic: function panic() {
-            this.mirror.send('panic');
+        panic: function panic(errCode) {
+            this.stop();
+            if (!this.paniced)
+                this.mirror.send('panic', errCode, this.program.getLine());
+            this.paniced = true;
         }
     };
 

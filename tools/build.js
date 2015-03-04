@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 
 var requirejs = require('requirejs');
+var less = require('less');
 var fs = require('fs');
+var path = require('path');
 
 // Read the console parameters
 var argv = require('minimist')(process.argv.slice(2), {
@@ -20,7 +22,8 @@ var baseConfig = {
         i18n: 'libs/i18next.amd.withJQuery-1.7.3.min',
         text: 'libs/requirejs_text',
         esrever: 'libs/esrever',
-        ace: 'ace/lib/ace'
+        ace: 'ace/lib/ace',
+        marked: 'libs/marked'
     },
     optimize: argv.optimize
 };
@@ -32,7 +35,7 @@ function addWatch(handle, file, callback) {
         return;             // Autocompile not turned on
 
     if (Array.isArray(file)) {
-        file.forEach(function(file) {
+        file.forEach(function (file) {
             addWatch(handle, file, callback)
         });
         return;
@@ -50,17 +53,17 @@ function addWatch(handle, file, callback) {
             if (e !== 'change')
                 return;
             var callbacks = watchedFiles[file];
-            callbacks.forEach(function(callback) {
+            callbacks.forEach(function (callback) {
                 callback.callback();
             });
         });
     }
 
-    if (watchedFiles[file].some(function(callback) {return callback.handle === handle;}))
+    if (watchedFiles[file].some(function (callback) { return callback.handle === handle; }))
         return;
 
     watchedFiles[file].push({
-        handle: handle, 
+        handle: handle,
         callback: callback
     });
 }
@@ -69,7 +72,8 @@ function buildEditor() {
     var extra = {
         name: 'app',
         out: 'build/app.js',
-        include: ['tools/ace.build.js']         // Make ace to think that it is compiled
+        include: ['tools/ace.build.js',         // Make ace to think that it is compiled
+            'editor/main']
     }
     var config = combine(baseConfig, extra);
 
@@ -92,7 +96,7 @@ function buildAceWorker(name) {
     var config = combine(baseConfig, extra);
 
     requirejs.optimize(config, function (res) {
-        addWatch('worker-' + name, res.split('\n').slice(3), function() {
+        addWatch('worker-' + name, res.split('\n').slice(3), function () {
             buildAceWorker(name);
         });
         console.log('Succesfully compiled the worker ' + name);
@@ -103,14 +107,15 @@ function buildAceWorker(name) {
 function buildAceWorkers() {
     workers('ace/lib/ace/mode').forEach(buildAceWorker);
 }
-function buildAceMode(name) {var extra = {
-    name: 'ace/mode/' + name,
-    out: 'build/mode-' + name + '.js',
-}
+function buildAceMode(name) {
+    var extra = {
+        name: 'ace/mode/' + name,
+        out: 'build/mode-' + name + '.js',
+    }
     var config = combine(baseConfig, extra);
 
     requirejs.optimize(config, function (res) {
-        addWatch('mode-' + name,res.split('\n').slice(3), function() {
+        addWatch('mode-' + name, res.split('\n').slice(3), function () {
             buildAceMode(name);
         });
         console.log('Succesfully compiled the mode ' + name);
@@ -129,7 +134,7 @@ function buildAceExtension(name) {
     var config = combine(baseConfig, extra);
 
     requirejs.optimize(config, function (res) {
-        addWatch('extension-' + name,res.split('\n').slice(3), function() {
+        addWatch('extension-' + name, res.split('\n').slice(3), function () {
             buildAceExtension(name);
         });
         console.log('Succesfully compiled the extension ' + name);
@@ -148,7 +153,7 @@ function buildAceTheme(name) {
     var config = combine(baseConfig, extra);
 
     requirejs.optimize(config, function (res) {
-        addWatch('theme-' + name,res.split('\n').slice(3), function() {
+        addWatch('theme-' + name, res.split('\n').slice(3), function () {
             buildAceTheme(name);
         });
         console.log('Succesfully compiled the theme ' + name);
@@ -159,6 +164,24 @@ function buildAceTheme(name) {
 function buildAceThemes() {
     listJSFiles('ace/lib/ace/theme').forEach(buildAceTheme);
 }
+function buildLess() {
+    less.render('@import "main.less";', {
+        paths: ['./editor/css']
+    }, function (err, output) {
+        if (err)
+            return console.error(err);
+        
+        addWatch('less', output.imports.map(function (p) {
+            return path.resolve(p);
+        }), buildLess);
+
+        fs.writeFile('build/styles.css', output.css,function(err) {
+            if(err)
+                return console.error(err);
+            console.log('Succesfully compiled the style sheets')
+        });
+    });
+}
 
 deleteFolder('build');
 buildEditor();
@@ -166,11 +189,14 @@ buildAceWorkers();
 buildAceModes();
 buildAceExtensions();
 buildAceThemes();
+buildLess();
 
 function buildRuntime() {
-    // The main page
     var extra = {
-        name: 'runtime/app',
+        include: [
+            'runtime/app',
+            'runtime/main/main'
+        ],
         out: 'build/runtime/app.js',
     }
     var config = combine(baseConfig, extra);
@@ -181,8 +207,8 @@ function buildRuntime() {
     }, function (err) {
         console.error(err);
     });
-
-    // The worker
+}
+function buildRuntimeWorker() {
     var extra = {
         include: [
             'libs/requirejs',
@@ -193,14 +219,15 @@ function buildRuntime() {
     var config = combine(baseConfig, extra);
 
     requirejs.optimize(config, function (res) {
-        addWatch('runtime', res.split('\n').slice(3), buildRuntime);
+        addWatch('runtime-worker', res.split('\n').slice(3), buildRuntimeWorker);
         console.log('Succesfully compiled the runtime worker');
     }, function (err) {
         console.error(err);
     });
 }
 
-//buildRuntime();
+buildRuntime();
+buildRuntimeWorker();
 
 function listJSFiles(path, filter) {
     if (!filter)

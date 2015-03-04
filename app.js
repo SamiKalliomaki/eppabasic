@@ -10,19 +10,22 @@
         xregexp: 'libs/xregexp',
         i18n: 'libs/i18next.amd.withJQuery-1.7.3.min',
         text: 'libs/requirejs_text',
-        ace: 'ace/lib/ace'
+        ace: 'ace/lib/ace',
+        marked: 'libs/marked'
     },
     shim: {
         'jqueryui': ['jquery']
     }
 });
 
-// Preload some libraries and localse
 require([
-    'jquery', 'jqueryui', 'i18n', 'ace/ace', 'polyfill',
-    'text!locales/en/translation.json', 'text!locales/fi/translation.json'],
-    function () {
-        // After libraries are loaded, go to main
+    // Preload libraries...
+    'jquery', 'jqueryui', 'i18n', 'ace/ace',
+    // ...locales...
+    'text!locales/en/translation.json', 'text!locales/fi/translation.json',
+    // ... and shims...
+    'libs/es5-shim', 'libs/es6-shim'], function () {
+        // Go to main
         require(['editor/main']);
     }
 );

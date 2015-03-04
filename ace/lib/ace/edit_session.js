@@ -268,15 +268,13 @@ var EditSession = function(text, mode) {
             this.$informUndoManager.schedule();
         }
 
-        this.bgTokenizer.$updateOnChange(delta);
+        this.bgTokenizer && this.bgTokenizer.$updateOnChange(delta);
         this._signal("change", e);
     };
 
     /**
     * Sets the session text.
     * @param {String} text The new text to place
-    *
-    *
     *
     **/
     this.setValue = function(text) {
@@ -950,6 +948,9 @@ var EditSession = function(text, mode) {
 
         
         if (!$isPlaceholder) {
+            // experimental method, used by c9 findiniles
+            if (mode.attachToSession)
+                mode.attachToSession(this);
             this.$options.wrapMethod.set.call(this, this.$wrapMethod);
             this.$setFolding(mode.foldingRules);
             this.bgTokenizer.start(0);
@@ -957,26 +958,23 @@ var EditSession = function(text, mode) {
         }
     };
 
-
     this.$stopWorker = function() {
-        if (this.$worker)
+        if (this.$worker) {
             this.$worker.terminate();
-
-        this.$worker = null;
+            this.$worker = null;
+        }
     };
 
     this.$startWorker = function() {
-        if (typeof Worker !== "undefined" && !require.noWorker) {
-            try {
-                this.$worker = this.$mode.createWorker(this);
-            } catch (e) {
+        try {
+            this.$worker = this.$mode.createWorker(this);
+        } catch (e) {
+            if (typeof console == "object") {
                 console.log("Could not load worker");
                 console.log(e);
-                this.$worker = null;
-            }
-        }
-        else
+            }    
             this.$worker = null;
+        }
     };
 
     /**
@@ -1603,7 +1601,7 @@ var EditSession = function(text, mode) {
     * @private
     **/
     this.adjustWrapLimit = function(desiredLimit, $printMargin) {
-        var limits = this.$wrapLimitRange
+        var limits = this.$wrapLimitRange;
         if (limits.max < 0)
             limits = {min: $printMargin, max: $printMargin};
         var wrapLimit = this.$constrainWrapLimit(desiredLimit, limits.min, limits.max);
@@ -1727,13 +1725,14 @@ var EditSession = function(text, mode) {
                 var foldLine = this.getFoldLine(firstRow);
                 var idx = 0;
                 if (foldLine) {
-                    var cmp = foldLine.range.compareInside(start.row, start.column)
+                    var cmp = foldLine.range.compareInside(start.row, start.column);
                     // Inside of the foldLine range. Need to split stuff up.
                     if (cmp == 0) {
                         foldLine = foldLine.split(start.row, start.column);
-                        foldLine.shiftRow(len);
-                        foldLine.addRemoveChars(
-                            lastRow, 0, end.column - start.column);
+                        if (foldLine) {
+                            foldLine.shiftRow(len);
+                            foldLine.addRemoveChars(lastRow, 0, end.column - start.column);
+                        }
                     } else
                     // Infront of the foldLine but same row. Need to shift column.
                     if (cmp == -1) {
@@ -1961,6 +1960,8 @@ var EditSession = function(text, mode) {
             split = lastSplit + wrapLimit;
             // The split is inside of a CHAR or CHAR_EXT token and no space
             // around -> force a split.
+            if (tokens[split] == CHAR_EXT)
+                split--;
             addSplit(split);
         }
         return splits;
@@ -2200,7 +2201,7 @@ var EditSession = function(text, mode) {
             return {
                 row: maxRow,
                 column: this.getLine(maxRow).length
-            }
+            };
         } else {
             line = this.getLine(docRow);
             foldLine = null;
@@ -2400,7 +2401,15 @@ var EditSession = function(text, mode) {
      */
     this.$setFontMetrics = function(fm) {
         // todo
-    }
+    };
+    
+    this.destroy = function() {
+        if (this.bgTokenizer) {
+            this.bgTokenizer.setDocument(null);
+            this.bgTokenizer = null;
+        }
+        this.$stopWorker();
+    };
 
     // For every keystroke this gets called once per char in the whole doc!!
     // Wouldn't hurt to make it a bit faster for c >= 0x1100
