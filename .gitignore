@@ -15,3 +15,12 @@ static
 *.min.js.map
 
 /.htaccess
+
+# Visual studio files
+*.csproj
+*.csproj.user
+obj/
+bin/
+web.Debug.config
+web.Release.config
+web.config
