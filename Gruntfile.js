@@ -1,12 +1,18 @@
 ﻿module.exports = function (grunt) {
-    var glob = require('glob');
     var path = require('path');
 
+    // Settings
+    var wwwDir = path.resolve(grunt.option('www') || 'www');
+    var tmpDir = path.resolve(grunt.option('tmp') || wwwDir + '/tmp');
+
+    var glob = require('glob');
+
     // Map from files to dependent tasks
-    var fileTasks = {};
+    var requirejsFileTasks = {};
+    var lessFileTasks = {};
 
     // Done function generator
-    function addToWatch(task, files) {
+    function addToWatch(task, files, fileTasks) {
         if (!(files instanceof Array))
             files = [files];
 
@@ -28,10 +34,10 @@
         return function (done, output) {
             output = require('rjs-build-analysis').parse(output);
             output.bundles.forEach(function (bundle) {
-                addToWatch(task, bundle.children);
+                addToWatch(task, bundle.children, requirejsFileTasks);
             });
             // Update the watch list
-            grunt.config('watch.all.files', Object.keys(fileTasks));
+            grunt.config('watch.requirejs.files', Object.keys(requirejsFileTasks));
             // Signal that we are done here
             done();
         };
@@ -40,18 +46,18 @@
     // Build different RequireJS tasks
     var requirejsOptions = {
         options: {
-            baseUrl: '.',
+            baseUrl: tmpDir,
             paths: {
-                compiler: 'compiler',
-                editor: 'editor/js',
+                //compiler: 'compiler',
+                //editor: 'editor/js',
                 jquery: '//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min',
                 jqueryui: '//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min',
-                xregexp: 'libs/xregexp',
-                i18n: 'libs/i18next.amd.withJQuery-1.7.3.min',
-                text: 'libs/requirejs_text',
-                esrever: 'libs/esrever',
+                //xregexp: 'xregexp',
+                i18n: 'i18next.amd.withJQuery-1.7.3.min',
+                text: 'requirejs_text',
+                //esrever: 'esrever',
                 ace: 'ace/lib/ace',
-                marked: 'libs/marked'
+                //marked: 'marked'
             },
             optimize: grunt.option('minify') ? 'uglify2' : 'none'
         },
@@ -59,9 +65,9 @@
         main: {
             options: {
                 name: 'app',
-                out: 'build/app.js',
+                out: wwwDir + '/js/app.js',
                 include: [
-                    'tools/ace.build.js',           // Make ace to think that it is compiled
+                    'ace.build.js',             // Make ace to think that it is compiled
                     'editor/main'
                 ],
                 done: makeDoneFunction('requirejs:main')
@@ -74,7 +80,7 @@
                     'runtime/app',
                     'runtime/main/main'
                 ],
-                out: 'build/runtime/app.js',
+                out: wwwDir + '/js/runtime/app.js',
                 done: makeDoneFunction('requirejs:runtime')
             }
         },
@@ -82,17 +88,17 @@
         'runtime-worker': {
             options: {
                 include: [
-                    'libs/requirejs',
+                    'requirejs.js',
                     'runtime/worker/main'
                 ],
-                out: 'build/runtime/worker.js',
+                out: wwwDir + '/js/runtime/worker.js',
                 done: makeDoneFunction('requirejs:runtime-worker')
             }
         }
     };
 
     // Ace modes
-    var modes = glob.sync('ace/lib/ace/mode/*.js');
+    var modes = glob.sync(tmpDir + '/ace/lib/ace/mode/*.js');
     modes.forEach(function (mode) {
         mode = path.basename(mode).slice(0, -3);
         // Filter unneeded results
@@ -102,14 +108,14 @@
         requirejsOptions['mode-' + mode] = {
             options: {
                 name: 'ace/mode/' + mode,
-                out: 'build/mode-' + mode + '.js',
+                out: wwwDir + '/js/mode-' + mode + '.js',
                 done: makeDoneFunction('requirejs:mode-' + mode)
             }
         };
     });
 
     // Ace workers
-    var workers = glob.sync('ace/lib/ace/mode/*_worker.js');
+    var workers = glob.sync(tmpDir + '/ace/lib/ace/mode/*_worker.js');
     workers.forEach(function (worker) {
         worker = path.basename(worker).slice(0, -10);
 
@@ -120,14 +126,14 @@
                     'ace/mode/' + worker + '_worker',
                     'ace/lib/es5-shim'
                 ],
-                out: 'build/worker-' + worker + '.js',
+                out: wwwDir + '/js/worker-' + worker + '.js',
                 done: makeDoneFunction('requirejs:worker-' + worker)
             }
         };
     });
 
     // Ace extensions
-    var extensions = glob.sync('ace/lib/ace/ext/*.js');
+    var extensions = glob.sync(tmpDir + '/ace/lib/ace/ext/*.js');
     extensions.forEach(function (extension) {
         extension = path.basename(extension).slice(0, -3);
 
@@ -138,14 +144,14 @@
         requirejsOptions['extension-' + extension] = {
             options: {
                 name: 'ace/ext/' + extension,
-                out: 'build/ext-' + extension + '.js',
+                out: wwwDir + '/js/ext-' + extension + '.js',
                 done: makeDoneFunction('requirejs:extension-' + extension)
             }
         };
     });
 
     // Ace themes
-    var themes = glob.sync('ace/lib/ace/theme/*.js');
+    var themes = glob.sync(tmpDir + '/ace/lib/ace/theme/*.js');
     themes.forEach(function (theme) {
         theme = path.basename(theme).slice(0, -3);
 
@@ -156,7 +162,7 @@
         requirejsOptions['theme-' + theme] = {
             options: {
                 name: 'ace/theme/' + theme,
-                out: 'build/theme-' + theme + '.js',
+                out: wwwDir + '/js/theme-' + theme + '.js',
                 done: makeDoneFunction('requirejs:theme-' + theme)
             }
         };
@@ -168,35 +174,87 @@
             compress: grunt.option('minify')
         },
         main: {
-            files: {
-                'build/styles.css': 'editor/css/main.less'
-            }
+            files: {}
         }
     };
+    lessOptions.main.files[wwwDir + '/css/editor.css'] = 'static/css/main.less';
 
     grunt.initConfig({
         requirejs: requirejsOptions,
         less: lessOptions,
         watch: {
-            all: {
+            requirejs: {
                 files: [],
                 options: {
                     spawn: false
                 }
+            },
+            less: {
+                files: [],
+                options: {
+                    spawn: false
+                }
+            },
+            'js-src': {
+                files: 'src/**/*.js',
+                tasks: ['sync:js-src']
+            },
+            'js-lib': {
+                files: 'lib/**/*.js',
+                tasks: ['sync:js-lib']
+            },
+            'static': {
+                files: 'static/**/*',
+                tasks: ['sync:static']
             }
         },
-        clean: ['build/**/*']
+        clean: [wwwDir + '/**/*', wwwDir, tmpDir + '/**/*', tmpDir],
+        sync: {
+            'js-src': {
+                files: [{
+                    cwd: 'src',
+                    src: ['**/*', '!**/*.ts'],
+                    dest: tmpDir
+                }]
+            },
+            'js-lib': {
+                files: [{
+                    cwd: 'lib',
+                    src: ['**/*', '!**/*.ts'],
+                    dest: tmpDir
+                }]
+            },
+            'static': {
+                files: [{
+                    cwd: 'static',
+                    src: ['**/*'],
+                    dest: wwwDir
+                }]
+            }
+        }
     });
 
     grunt.loadNpmTasks('grunt-contrib-requirejs');
     grunt.loadNpmTasks('grunt-contrib-less');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-clean');
+    //grunt.loadNpmTasks('grunt-contrib-copy');
+    //grunt.loadNpmTasks('grunt-newer');
+    grunt.loadNpmTasks('grunt-sync');
 
     grunt.event.on('less.compiled', function (output) {
-        addToWatch('less.main', output.imports);
+        addToWatch('less.main', output.imports, lessFileTasks);
+        // Update the watch list
+        grunt.config('watch.all.files', Object.keys(lessFileTasks));
     });
     grunt.event.on('watch', function (action, filepath, target) {
+        var fileTasks = null;
+        if (target === 'requirejs')
+            fileTasks = requirejsFileTasks;
+        else if (target === 'less')
+            fileTasks = lessFileTasks;
+        else
+            return;
         // Resolve file path
         filepath = path.resolve(filepath);
         if (!fileTasks[filepath])
@@ -207,6 +265,6 @@
         });
     });
 
-    grunt.registerTask('default', ['clean', 'requirejs', 'less']);
+    grunt.registerTask('default', ['clean', 'sync', 'requirejs', 'less']);
     grunt.registerTask('develop', ['default', 'watch']);
 };

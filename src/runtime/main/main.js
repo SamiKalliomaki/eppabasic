@@ -6,17 +6,7 @@
     i18n.init({
         cookieName: 'lang',
         fallbackLng: 'en-US',
-        customLoad: function customLoad(lng, ns, options, loadComplete) {
-            var moduleName = 'text!locales/' + lng + '/' + ns + '.json';
-
-            if (!require.defined(moduleName))
-                moduleName = 'text!locales/' + lng.substr(0, 2) + '/' + ns + '.json';
-
-            if (require.defined(moduleName))
-                loadComplete(null, JSON.parse(require(moduleName)));
-            else
-                loadComplete(moduleName + ' no defined');
-        }
+        resGetPath: '../locales/__lng__/__ns__.json'
     }, function (t) {
         // Translate runtime body
         $('body').i18n();

@@ -1,7 +1,7 @@
-﻿define(['require', 'libs/random'], function (require) {
+﻿define(['require', 'random'], function (require) {
     "use strict";
 
-    var Random = require('libs/random');
+    var Random = require('random');
 
     function Math(mirror) {
         this.mirror = mirror;

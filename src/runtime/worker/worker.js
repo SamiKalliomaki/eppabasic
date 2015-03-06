@@ -1,4 +1,4 @@
-define(['require', './graphics', './math', './input', './time', './string', './messages', '../utils/string', './flowcontrol', '../utils/asmjsforie', 'runtime/polyfill', 'libs/es5-shim', 'libs/es6-shim'], function (require) {
+define(['require', './graphics', './math', './input', './time', './string', './messages', '../utils/string', './flowcontrol', '../utils/asmjsforie'], function (require) {
     "use strict";
 
     // Settings

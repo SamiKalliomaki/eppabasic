@@ -46,7 +46,7 @@
         openWorker: function () {
             if (this.worker)
                 throw new Error('A worker is already opened');      // TODO Destroy the previous one
-            this.worker = new WorkerClient('../build/runtime/worker.js');
+            this.worker = new WorkerClient('../js/runtime/worker.js');
 
             this.worker.on('ready', function ready() {
                 // Setup the output and input when the worker is ready

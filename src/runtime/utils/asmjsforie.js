@@ -1,7 +1,7 @@
-﻿define(['require', 'libs/uglify'], function (require) {
+﻿define(['require', 'uglify'], function (require) {
     "use strict";
 
-    var UglifyJS = require('libs/uglify');
+    var UglifyJS = require('uglify');
 
     function needsConversion() {
         return typeof ArrayBuffer === 'undefined' ||
