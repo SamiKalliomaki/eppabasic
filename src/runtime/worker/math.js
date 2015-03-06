@@ -3,13 +3,13 @@
 
     var Random = require('random');
 
-    function Math(mirror) {
+    function EBMath(mirror) {
         this.mirror = mirror;
 
         this.mt = Random.engines.mt19937().autoSeed();
     }
 
-    Math.prototype = {
+    EBMath.prototype = {
         env: {
             randInt: function randInt(a, b) {
                 return Random.integer(a, b)(this.mt);
@@ -39,5 +39,5 @@
         }
     };
 
-    return Math;
+    return EBMath;
 });
