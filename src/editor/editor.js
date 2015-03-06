@@ -3,11 +3,11 @@
 /// <reference path="../compiler/types.js" />
 /// <reference path="../compiler/compiler.js" />
 
-define(['compiler/toolchain', 'ace/ace', 'i18n', './autocompleter'], function (Toolchain, ace, i18n, Autocompleter) {
-    function Editor(editorName, manual) {
-        this.toolchain = new Toolchain();
+define(['ace/ace', 'i18n', './autocompleter'], function (ace, i18n, Autocompleter) {
+    function Editor(editorName, manual, notificationSystem) {
         this.manual = manual;
         this.editorName = editorName;
+        this.notificationSystem = notificationSystem;
 
         // Create ace editor
         this.ace = ace.edit(editorName);
@@ -46,25 +46,13 @@ define(['compiler/toolchain', 'ace/ace', 'i18n', './autocompleter'], function (T
             trySaveToStorage(localStorage, this);
             trySaveToStorage(sessionStorage, this);
 
-            var cu = this.toolchain.getCompilationUnit(this.getCode());
-
-            try {
-                this.toolchain.parse(cu);
-                this.toolchain.check(cu);
-            } catch (e) {
-                console.error(e);
-            }
-
-            this.ace.getSession().clearAnnotations();
-            if (cu.errors.length !== 0) {
-                this.showErrors(cu.errors, cu.warnings);
-                this.ace.gotoLine(cu.errors[0].line);
-            } else {
-                if (cu.warnings.length !== 0)
-                    this.showErrors([], cu.warnings);
-                var compiled = this.toolchain.compile(cu);
-                this.run(compiled);
-            }
+            var messages = [
+                'Compilation is not supported',
+                'Compiler is not implemented',
+                'Hey! Stop hitting that button',
+                'Don\'t press that button'
+            ]
+            this.notificationSystem.notify(messages[Math.floor(Math.random() * messages.length)])
         },
         run: function run(compiled) {
             this.runtimeReady(function ready() {
