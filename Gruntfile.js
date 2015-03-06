@@ -235,6 +235,7 @@
         sync: {
             'js-src': {
                 files: [{
+                    expand: true,
                     cwd: 'src',
                     src: ['**/*', '!**/*.ts'],
                     dest: tmpDir
@@ -242,6 +243,7 @@
             },
             'js-lib': {
                 files: [{
+                    expand: true,
                     cwd: 'lib',
                     src: ['**/*', '!**/*.ts'],
                     dest: tmpDir
@@ -249,9 +251,11 @@
             },
             'static': {
                 files: [{
+                    expand: true,
                     cwd: 'static',
                     src: ['**/*'],
-                    dest: wwwDir
+                    dest: wwwDir,
+                    dot: true
                 }]
             }
         }
