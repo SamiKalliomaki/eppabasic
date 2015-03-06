@@ -2,7 +2,7 @@ import os
 import configparser
 
 config = configparser.ConfigParser()
-config.read('../tools/settings.ini')
+config.read('../../tools/settings.ini')
 
 # Django settings for eppabasic_backend project.
 

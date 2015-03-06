@@ -1,19 +1,19 @@
 __pycache__/
 *.py[cod]
 
-eppabasic_backend/database.db
+backend/eppabasic_backend/database.db
 *.sublime-*
 
-node_modules/*
-www/*
-doc/*
-virtenv/*
+node_modules
+www
+log
+virtenv
 tools/settings.ini
 
 *.min.js
 *.min.js.map
 
-/.htaccess
+static/.htaccess
 
 # Visual studio files
 *.csproj
