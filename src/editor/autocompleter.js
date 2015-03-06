@@ -17,10 +17,16 @@
                         return { caption: variable.name, value: variable.name, meta: i18n.t('autocomplete.type.variable') };
                     }));
 
+                    // Constants
+                    completions = completions.concat(require('compiler/constants')(mode.getTokenizer().toolchain.types).map(function map(constant) {
+                        return { caption: constant.name, value: constant.name, meta: i18n.t('autocomplete.type.constant') };
+                    }));
+
                     // Then defined functions
                     completions = completions.concat(mode.getTokenizer().toolchain.getCompiler().functions.map(function map(func) {
                         return { caption: func.name, value: func.name, meta: i18n.t('autocomplete.type.function') };
                     }));
+
 
                     callback(null, completions);
                 }
