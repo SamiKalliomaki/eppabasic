@@ -5,7 +5,7 @@ eppabasic_backend/database.db
 *.sublime-*
 
 node_modules/*
-build/*
+www/*
 doc/*
 virtenv/*
 tools/settings.ini
