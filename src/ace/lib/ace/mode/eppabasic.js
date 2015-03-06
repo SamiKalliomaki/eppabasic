@@ -91,6 +91,9 @@ define(function (require, exports, module) {
         compiler.functions.forEach(function (f) {
             this.specialIdentifiers[f.name.toLowerCase()] = 'support.function';
         }.bind(this));
+        require('compiler/constants')(this.toolchain.types).forEach(function(c) {
+            this.specialIdentifiers[c.name.toLowerCase()] = 'support.constant';
+        }.bind(this));
         this.indentEffect = {
             'for': 1,
             'next': -1,
