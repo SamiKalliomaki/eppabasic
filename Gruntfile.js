@@ -231,7 +231,10 @@
                 tasks: ['typescript']
             }
         },
-        clean: [wwwDir + '/**/*', wwwDir, tmpDir + '/**/*', tmpDir],
+        clean: {
+            www: [wwwDir + '/**/*', wwwDir],
+            tmp: [tmpDir + '/**/*', tmpDir]
+        },
         sync: {
             'js-src': {
                 files: [{
@@ -291,8 +294,9 @@
         });
     });
 
-    grunt.registerTask('default', ['clean', 'sync', 'typescript', 'requirejs', 'less']);
+    grunt.registerTask('default', ['sync', 'typescript', 'requirejs', 'less']);
     grunt.registerTask('develop', ['default', 'watch']);
+    grunt.registerTask('release', ['clean', 'default', 'clean:tmp']);
     grunt.registerTask('doc', ['typescriptdoc']);
 
     grunt.registerMultiTask('typescriptdoc', 'Generate TypeScript documentation', function () {
