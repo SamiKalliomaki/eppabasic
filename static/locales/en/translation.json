@@ -85,7 +85,8 @@
     "autocomplete": {
         "type": {
             "function": "Function",
-            "variable": "Variable"
+            "variable": "Variable",
+            "constant": "Constant"
         }
     }
 }

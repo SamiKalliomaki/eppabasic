@@ -85,7 +85,8 @@
     "autocomplete": {
         "type": {
             "function": "Funktio",
-            "variable": "Muuttuja"
+            "variable": "Muuttuja",
+            "constant": "Vakio"
         }
     }
 }
