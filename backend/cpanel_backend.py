@@ -58,7 +58,7 @@ def start_backend(params, log):
 		log.add('Backend is already running')
 		return
 
-	do_run(log, 'cd ../eppabasic_backend/; source ../virtenv/bin/activate; screen -dmS ' + get_screen_name())
+	do_run(log, 'cd eppabasic_backend/; source ../virtenv/bin/activate; screen -dmS ' + get_screen_name())
 	do_run(log, 'screen -S ' + get_screen_name() + ' -X stuff "python manage.py runserver --noreload ' + config['backend']['domain'] + '\n"')
 
 def stop_backend(params, log):
@@ -69,13 +69,13 @@ def git_pull(params, log):
 	do_run(log, 'cd ..; git stash; git pull; git stash apply')
 
 def build_js(params, log):
-	do_run(log, 'cd ..; rm -rf build; node ./tools/build.js --optimize=uglify2')
+	do_run(log, 'cd ..; grunt release --tmp=/tmp/ebbuild')
 
 def run_migrate(params, log):
-	do_run(log, 'cd ../eppabasic_backend/; source ../virtenv/bin/activate; python manage.py migrate')
+	do_run(log, 'cd eppabasic_backend/; source ../virtenv/bin/activate; python manage.py migrate')
 
 def run_collectstatic(params, log):
-	do_run(log, 'cd ../eppabasic_backend/; source ../virtenv/bin/activate; python manage.py collectstatic --noinput')
+	do_run(log, 'cd eppabasic_backend/; source ../virtenv/bin/activate; python manage.py collectstatic --noinput')
 
 def git_checkout(params, log):
 	do_run(log, 'cd ..; git stash; git checkout ' + shellquote(params['branch']) + '; git stash apply')
