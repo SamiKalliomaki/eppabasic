@@ -311,8 +311,7 @@
         }
         for (var i = 0; i < this.filesSrc.length; i++)
             args.push(this.filesSrc[i]);
-        console.log(args);
-        console.log(options)
+
         var child_process = require('child_process');
 
         var ext = /^win/.test(process.platform) ? '.cmd' : '';
