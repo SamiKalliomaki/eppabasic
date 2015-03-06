@@ -193,6 +193,14 @@
                 }
             }
         },
+        typescriptdoc: {
+            src: ['src/**/*.ts'],
+            options: {
+                module: 'amd',
+                target: 'es5',
+                out: wwwDir + '/doc',
+            }
+        },
         watch: {
             requirejs: {
                 files: [],
@@ -281,4 +289,40 @@
 
     grunt.registerTask('default', ['clean', 'sync', 'typescript', 'requirejs', 'less']);
     grunt.registerTask('develop', ['default', 'watch']);
+    grunt.registerTask('doc', ['typescriptdoc']);
+
+    grunt.registerMultiTask('typescriptdoc', 'Generate TypeScript documentation', function () {
+        var options = this.options({});
+
+        var args = [];
+        for (var key in options) {
+            if (options.hasOwnProperty(key)) {
+                args.push('--' + key);
+                args.push(options[key]);
+            }
+        }
+        for (var i = 0; i < this.filesSrc.length; i++)
+            args.push(this.filesSrc[i]);
+        console.log(args);
+        console.log(options)
+        var child_process = require('child_process');
+
+        var ext = /^win/.test(process.platform) ? '.cmd' : '';
+
+        var done = this.async();
+        var executable = path.resolve(__dirname, 'node_modules', '.bin', 'typedoc' + ext);
+
+        var child = child_process.spawn(executable, args, {
+            stdio: 'inherit',
+            env: process.env
+        }).on('exit', function (code) {
+            if (code !== 0) {
+                done(false);
+                return;
+            }
+            if (child)
+                child.kill();
+            done();
+        });
+    });
 };

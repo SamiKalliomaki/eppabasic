@@ -12,6 +12,7 @@
     "minimist": "1.1.0",
     "requirejs": ">= 2.1.14",
     "rjs-build-analysis": "0.0.3",
+    "typedoc": "^0.2.3",
     "typescript": "^1.4.1"
   },
   "private": true
