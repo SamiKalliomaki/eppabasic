@@ -67,12 +67,12 @@ source virtenv/bin/activate
 pip install django
 deactivate
 
-rm -f .htaccess
-cp .htaccess.template .htaccess
+rm -f static/.htaccess
+cp tools/.htaccess.template static/.htaccess
 
-sed -i 's/INSERT_BACKEND_DOMAIN_HERE/'$BACKEND_DOMAIN'/'		.htaccess
-sed -i 's/INSERT_CPANEL_SERVER_DOMAIN_HERE/'$CPANEL_DOMAIN'/'	.htaccess
-sed -i 's|INSERT_PROJECT_DIR_HERE|'$PROJECT_DIR'|'				.htaccess
+sed -i 's/INSERT_BACKEND_DOMAIN_HERE/'$BACKEND_DOMAIN'/'		static/.htaccess
+sed -i 's/INSERT_CPANEL_SERVER_DOMAIN_HERE/'$CPANEL_DOMAIN'/'	static/.htaccess
+sed -i 's|INSERT_PROJECT_DIR_HERE|'$PROJECT_DIR'|'				static/.htaccess
 
 npm install requirejs minimist
 cp tools/.htaccess node_modules/
