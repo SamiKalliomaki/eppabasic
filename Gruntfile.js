@@ -182,6 +182,17 @@
     grunt.initConfig({
         requirejs: requirejsOptions,
         less: lessOptions,
+        typescript: {
+            all: {
+                src: ['src/**/*.ts'],
+                dest: tmpDir,
+                options: {
+                    module: 'amd',
+                    target: 'es5',
+                    basePath: 'src/'
+                }
+            }
+        },
         watch: {
             requirejs: {
                 files: [],
@@ -203,9 +214,13 @@
                 files: 'lib/**/*.js',
                 tasks: ['sync:js-lib']
             },
-            'static': {
+            static: {
                 files: 'static/**/*',
                 tasks: ['sync:static']
+            },
+            typescript: {
+                files: ['src/**/*.ts'],
+                tasks: ['typescript']
             }
         },
         clean: [wwwDir + '/**/*', wwwDir, tmpDir + '/**/*', tmpDir],
@@ -238,8 +253,7 @@
     grunt.loadNpmTasks('grunt-contrib-less');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-clean');
-    //grunt.loadNpmTasks('grunt-contrib-copy');
-    //grunt.loadNpmTasks('grunt-newer');
+    grunt.loadNpmTasks('grunt-typescript');
     grunt.loadNpmTasks('grunt-sync');
 
     grunt.event.on('less.compiled', function (output) {
@@ -265,6 +279,6 @@
         });
     });
 
-    grunt.registerTask('default', ['clean', 'sync', 'requirejs', 'less']);
+    grunt.registerTask('default', ['clean', 'sync', 'typescript', 'requirejs', 'less']);
     grunt.registerTask('develop', ['default', 'watch']);
 };
