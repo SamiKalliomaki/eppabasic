@@ -210,8 +210,8 @@ define(['require', './types', './operators', './compiler', './parser', './typech
             compiler.defineJsFunction('env.doubleToString', true, 'Str', [this.types.Double], this.types.String);
 
             //// Code flow functions
-            compiler.defineJsFunction('env.end', true, 'End', []);
-            compiler.defineJsFunction('env.restart', true, 'Restart', []);
+            compiler.defineJsFunction('env.end', true, 'End', [], undefined, false);
+            compiler.defineJsFunction('env.restart', true, 'Restart', [], undefined, false);
         }
     }
 
