@@ -44,6 +44,14 @@ define(['require', './graphics', './math', './input', './time', './string', './m
             this.program.init();
 
             this.stepTimeout = null;
+            this.framesOrdered = 1;
+            this.mirror.on('frame', function() {
+                this.framesOrdered++;
+
+                if(this.framesOrdered == 1) {
+                    this.start();
+                }
+            }.bind(this));
 
             this.external = external;
         },
@@ -51,12 +59,12 @@ define(['require', './graphics', './math', './input', './time', './string', './m
         start: function start() {
             var f = step.bind(this);
             function step() {
-                if (this.waitingResponse) {
+                if (this.waitingResponse || this.framesOrdered <= 0) {
                     return;
                 }
 
                 var now = new Date().getTime();
-                if (now >= this.nextCall && !this.program.next()) {
+                if (!this.program.next()) {
                     // Program ended
                     this.external.env.drawScreen();
                 } else {
@@ -77,6 +85,7 @@ define(['require', './graphics', './math', './input', './time', './string', './m
         setDelay: function setDelay(time) {
             this.nextCall = (new Date().getTime()) + time;
         },
+
         waitResponse: function waitResponse(callback) {
             var me = this;
             function onResponse() {
@@ -90,6 +99,17 @@ define(['require', './graphics', './math', './input', './time', './string', './m
 
             clearTimeout(this.stepTimeout);
             this.stepTimeout = null;
+        },
+
+        waitForFrame: function() {
+            this.framesOrdered--;
+
+            // console.log(this.framesOrdered);
+
+            if(this.framesOrdered == 0) {
+                clearTimeout(this.stepTimeout);
+                this.stepTimeout = null;
+            }
         },
 
         createExternal: function createExternal() {
@@ -124,7 +144,7 @@ define(['require', './graphics', './math', './input', './time', './string', './m
             }
             var strutil = new StringUtils(heap);
 
-            var graphics = new Graphics(this.mirror, strutil, this.setDelay.bind(this), this.waitResponse.bind(this));
+            var graphics = new Graphics(this.mirror, strutil, this.setDelay.bind(this), this.waitForFrame.bind(this));
             graphics.extendEnv(env);
 
             var math = new (require('./math'))(this.mirror);

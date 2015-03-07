@@ -36,7 +36,8 @@
         this.worker.on('drawscreen', this.onDrawScreen.bind(this));
         window.addEventListener('resize', this.onResize.bind(this));
 
-        this.commandBuffer = null;
+        this.commandBuffer = [];
+        this.orderedFrames = 1;
         window.requestAnimationFrame(this.animateFrame.bind(this));
     }
 
@@ -113,12 +114,19 @@
         },
 
         onDrawScreen: function onDrawScreen(commands) {
-            this.commandBuffer = commands;
-        },
+            this.orderedFrames--;
+            this.commandBuffer.push(commands);
 
+            if(this.commandBuffer.length + this.orderedFrames < 2) {
+                this.worker.send('frame');
+                this.orderedFrames++;
+            }
+        },
         animateFrame: function animateFrame() {
-            if(this.commandBuffer) {
-                this.commandBuffer.forEach(function (args) {
+            window.requestAnimationFrame(this.animateFrame.bind(this));
+            
+            if(this.commandBuffer.length != 0) {
+                this.commandBuffer.shift().forEach(function (args) {
                     var name = args[0];
                     args = args[1];
                     if (this.graphics2d.commands[name]) this.graphics2d.commands[name].apply(this, args);
@@ -126,11 +134,14 @@
                     if (!this.graphics2d.commands[name] && !this.graphicstext.commands[name])
                         console.error('Unknown function: ' + name);
                 }.bind(this));
-                this.commandBuffer = null;
 
-                this.worker.send('response');
+                if(this.commandBuffer.length + this.orderedFrames < 2) {
+                    this.worker.send('frame');
+                    this.orderedFrames++;
+                }
+            } else {
+                // console.log("Missed frame...");
             }
-            window.requestAnimationFrame(this.animateFrame.bind(this));
         }
     };
 

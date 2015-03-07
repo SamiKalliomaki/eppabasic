@@ -1,11 +1,11 @@
 ﻿define(['require'], function (require) {
     "use strict";
 
-    function Graphics(mirror, strutil, setDelay, waitResponse) {
+    function Graphics(mirror, strutil, setDelay, waitForFrame) {
         this.mirror = mirror;
         this.strutil = strutil;
         this.setDelay = setDelay;
-        this.waitResponse = waitResponse;
+        this.waitForFrame = waitForFrame;
         this.commandQueue = [];
 
         this.canvasWidth = 0;
@@ -56,7 +56,7 @@
             drawScreen: function drawScreen() {
                 this.mirror.send('drawscreen', this.commandQueue);
                 this.commandQueue = [];
-                this.waitResponse(function() {});
+                this.waitForFrame();
 
                 // And break the execution
                 this.program.breakExec();
