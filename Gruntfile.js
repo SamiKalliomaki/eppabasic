@@ -184,7 +184,7 @@
         less: lessOptions,
         typescript: {
             all: {
-                src: ['src/**/*.ts'],
+                src: ['src/**/*.ts', 'lib/**/*.ts'],
                 dest: tmpDir,
                 options: {
                     module: 'amd',
@@ -194,7 +194,7 @@
             }
         },
         typescriptdoc: {
-            src: ['src/**/*.ts'],
+            src: ['src/**/*.ts', 'lib/**/*.ts'],
             options: {
                 module: 'amd',
                 target: 'es5',
