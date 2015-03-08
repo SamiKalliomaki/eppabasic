@@ -1,0 +1,5 @@
+﻿class ModuleLoader {
+
+}
+
+export = ModuleLoader;

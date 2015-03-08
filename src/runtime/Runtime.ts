@@ -1,7 +1,8 @@
 ﻿import i18n = require('i18n');
 import $ = require('jquery');
 import Editor = require('editor/editor');
-import RuntimeProgram = require('./RuntimeProgram');
+import ModuleLoader = require('./ModuleLoader');
+import AsmjsTargetProgram = require('compiler/AsmjsTargetProgram');
 
 /**
  * Handles everything related to runtime.
@@ -14,7 +15,7 @@ class Runtime {
     /**
      * The program runtime runs.
      */
-    private _program: RuntimeProgram;
+    private _program: AsmjsTargetProgram.AsmjsProgram;
     /**
      * Holder element for canvases.
      */
@@ -98,8 +99,8 @@ class Runtime {
      * Initializes runtime.
      * @param code Asm.js code to be used.
      */
-    init(code: string) {
-        this._program = new RuntimeProgram(code);
+    init(code: AsmjsTargetProgram) {
+        //this._program = new RuntimeProgram(code);
 
     }
 }

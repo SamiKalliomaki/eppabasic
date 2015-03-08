@@ -78,21 +78,10 @@
             options: {
                 include: [
                     'runtime/app',
-                    'runtime/main/main'
+                    'runtime/Runtime'
                 ],
                 out: wwwDir + '/js/runtime/app.js',
                 done: makeDoneFunction('requirejs:runtime')
-            }
-        },
-        // Runtime worker
-        'runtime-worker': {
-            options: {
-                include: [
-                    'requirejs.js',
-                    'runtime/worker/main'
-                ],
-                out: wwwDir + '/js/runtime/worker.js',
-                done: makeDoneFunction('requirejs:runtime-worker')
             }
         }
     };
