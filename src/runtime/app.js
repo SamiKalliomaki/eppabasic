@@ -13,6 +13,8 @@ require([
     // ... and shims...
     'es5-shim', 'es6-shim'], function () {
         // Go to main
-        require(['runtime/main/main']);
+        require(['runtime/Runtime'], function (Runtime) {
+            var runtime = new Runtime();
+        });
     }
 );
