@@ -6,7 +6,7 @@ import $ = require('jquery');
 /**
  * Core functions for rendering.
  */
-class RenderHandler implements Module {
+class RenderHandlerModule implements Module {
     /**
      * Runtime render handler is assosiated with.
      */
@@ -64,4 +64,4 @@ class RenderHandler implements Module {
     }
 }
 
-export = RenderHandler; 
+export = RenderHandlerModule; 

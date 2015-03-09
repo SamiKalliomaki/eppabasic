@@ -157,6 +157,30 @@
         };
     });
 
+    // Runtime modules
+    var modules = glob.sync(tmpDir + '/runtime/modules/*Module.js');
+    modules.forEach(function (module) {
+        module = path.basename(module).slice(0, -9);
+
+        // Filter out base module
+        if (module === '')
+            return;
+
+        // Add a custom module which is basically the module name written in lower case letters.
+        // The lower case name is used in the module loader so this must be done.
+        var rawText = {};
+        rawText['runtime/modules/' + module.toLowerCase()] = 'define([\'' + 'runtime/modules/' + module + 'Module\'],function(module){return module;});';
+
+        requirejsOptions['runtime-module-' + module] = {
+            options: {
+                name: 'runtime/modules/' + module.toLowerCase(),
+                out: wwwDir + '/js/runtime/modules/' + module.toLowerCase() + '.js',
+                done: makeDoneFunction('requirejs:runtime-module-' + module),
+                rawText: rawText
+            }
+        };
+    });
+
     // Style sheets
     var lessOptions = {
         options: {

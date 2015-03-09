@@ -1,6 +1,6 @@
 ﻿requirejs.config({
     baseUrl: window.location.protocol + "//" + window.location.host
-            + window.location.pathname.split("/").slice(0, -1).join("/"),
+            + window.location.pathname.split("/").slice(0, -2).join("/") + '/js',
     //urlArgs: "bust=" + (new Date()).getTime(),              // For development only TODO Remove
     paths: {
         jquery: '//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min',

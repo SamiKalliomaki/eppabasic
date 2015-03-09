@@ -3,6 +3,7 @@ import $ = require('jquery');
 import Editor = require('editor/editor');
 import ModuleLoader = require('./ModuleLoader');
 import AsmjsTargetProgram = require('compiler/AsmjsTargetProgram');
+import Module = require('./modules/Module');
 
 /**
  * Handles everything related to runtime.
@@ -59,6 +60,9 @@ class Runtime {
             $(window).unload(function () {
                 editor.setRuntime(null);
             });
+
+            // Signal that we are ready
+            this._editor.runtimeReady();
         });
     }
 
@@ -99,8 +103,19 @@ class Runtime {
      * Initializes runtime.
      * @param code Asm.js code to be used.
      */
-    init(code: AsmjsTargetProgram) {
+    init(program: AsmjsTargetProgram) {
+        var moduleLoader = new ModuleLoader(program.modules);
+
+        moduleLoader.loaded((modules: Module[]): void => {
+            console.log(modules);
+        });
         //this._program = new RuntimeProgram(code);
+
+    }
+    /**
+     * Starts runtime as soon as it is loaded
+     */
+    start() {
 
     }
 }
