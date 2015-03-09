@@ -1,6 +1,5 @@
 ﻿import Module = require('./Module');
 import Runtime = require('../Runtime');
-import util = require('./util');
 
 /**
  * Basic graåhics functions.
@@ -13,18 +12,18 @@ class GraphicsModule implements Module {
     /**
      * List of functions in this module.
      */
-    private _functions: util.EBFunction[];
+    private _functions: Map<string, Function>;
 
     constructor(runtime: Runtime) {
         this._runtime = runtime;
-        this._functions = [];
+        this._functions = new Map<string, Function>();
     }
 
     /**
      * Gets list of functions defined in this module;
-     * @returns Functions defined in this module.
+     * @returns Map mapping function signatures to implementations.
      */
-    getFunctions(): util.EBFunction[] {
+    getFunctions(): Map<string, Function> {
         return this._functions;
     }
 }

@@ -7,7 +7,7 @@ class ModuleLoader {
     /**
      * Promise of loaded modules.
      */
-    private _loadPromise: Promise<Module[]>;
+    private _loadPromise: Promise<Module.Constructor[]>;
 
     /**
      * Constructs a new module loader.
@@ -15,11 +15,11 @@ class ModuleLoader {
      */
     constructor(modules: string[]) {
         // Load every module
-        var modulePromises = modules.map((module: string): Promise<Module> => {
+        var modulePromises = modules.map((module: string): Promise<Module.Constructor> => {
             // Map module name to a promise
-            return new Promise<Module>((resolve: (value: Module) => void, reject: (error: any) => void): void => {
+            return new Promise<Module.Constructor>((resolve: (value: Module.Constructor) => void, reject: (error: any) => void): void => {
                 // Require module
-                require(['runtime/modules/' + module.toLowerCase()], function (module) {
+                require(['runtime/modules/' + module.toLowerCase()], function (module: Module.Constructor) {
                     // Promise is fulfilled
                     resolve(module);
                 });
@@ -35,7 +35,7 @@ class ModuleLoader {
      * Adds a function to be called when modules are loaded.
      * @param cb Callback to be called when modules are loaded.
      */
-    loaded(cb: (modules: Module[]) => void): void {
+    loaded(cb: (modules: Module.Constructor[]) => void): void {
         this._loadPromise.then(cb);
     }
 }

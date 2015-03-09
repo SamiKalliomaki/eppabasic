@@ -29,6 +29,10 @@ class Runtime {
      * Current rendering canvas.
      */
     private _renderingContext: CanvasRenderingContext2D;
+    /**
+     * Promise of program initialization
+     */
+    private _initPromise: Promise<void>;
 
     /**
      * Constructs a new runtime.
@@ -106,17 +110,35 @@ class Runtime {
     init(program: AsmjsTargetProgram) {
         var moduleLoader = new ModuleLoader(program.modules);
 
-        moduleLoader.loaded((modules: Module[]): void => {
-            console.log(modules);
-        });
-        //this._program = new RuntimeProgram(code);
+        this._initPromise = new Promise<void>((resolve: (value: void) => void, reject: (error: any) => void): void=> {
+            moduleLoader.loaded((modules: Module.Constructor[]): void => {
+                // Combine all defined functions in to one signature implementation map
+                var functions = new Map<string, Function>();
+                modules.forEach((module: Module.Constructor): void => {
+                    // Construct module
+                    module = new module(this);
+                    // Get functions
+                    module.getFunctions().forEach((func: Function, index: string): void => {
+                        functions.set(index, func);
+                    });
+                });
 
+                // Create program environment based on requested functions
+                var environment = {};
+                program.functions.forEach((signature: string, internalName: string): void => {
+                    environment[internalName] = functions.get(signature);
+                });
+            });
+        });
     }
     /**
      * Starts runtime as soon as it is loaded
      */
     start() {
-
+        this._initPromise.then(() => {
+            // Program is created
+            // TODO: Start runtime
+        });
     }
 }
 

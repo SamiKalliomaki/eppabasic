@@ -141,7 +141,8 @@ define(['require', './framework/compileerror', './compiler/context', './compiler
                     altEntry.push(asmname + '(' + callStr + ');');
                 }
 
-                this.signatureMap.set(signature, jsName.substr(4));
+                if (signature)
+                    this.signatureMap.set(jsName.substr(4), signature);
             } else {
                 // The implementation is in a module so do nothing but create an entry
                 var entry = this.createEntry(jsName, true, parameterTypes, returnType, false);

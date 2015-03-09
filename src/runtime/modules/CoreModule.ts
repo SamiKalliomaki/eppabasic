@@ -1,6 +1,5 @@
 ﻿import Module = require('./Module');
 import Runtime = require('../Runtime');
-import util = require('./util');
 import RenderHandlerModule = require('./RenderHandlerModule');
 import GraphicsModule = require('./GraphicsModule');
 
@@ -15,25 +14,29 @@ class CodeModule implements Module {
     /**
      * List of functions in this module.
      */
-    private _functions: util.EBFunction[];
+    private _functions: Map<string, Function>;
 
     /**
      * Initializes a new core module colletion.
      */
     constructor(runtime: Runtime) {
         this._runtime = runtime;
-        this._functions = [];
+        this._functions = new Map<string, Function>();
 
         // Combine modules
-        this._functions = this._functions.concat(new RenderHandlerModule(runtime).getFunctions());
-        this._functions = this._functions.concat(new GraphicsModule(runtime).getFunctions());
+        (new RenderHandlerModule(runtime)).getFunctions().forEach((func: Function, index: string) => {
+            this._functions.set(index, func);
+        });
+        (new GraphicsModule(runtime)).getFunctions().forEach((func: Function, index: string) => {
+            this._functions.set(index, func);
+        });
     }
 
     /**
      * Gets list of functions defined in this module;
-     * @returns Functions defined in this module.
+     * @returns Map mapping function signatures to implementations.
      */
-    getFunctions(): util.EBFunction[] {
+    getFunctions(): Map<string, Function> {
         return this._functions;
     }
 }
