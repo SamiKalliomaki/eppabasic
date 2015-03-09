@@ -7,7 +7,7 @@ import $ = require('jquery');
  */
 class RenderHandlerModule implements Module {
     /**
-     * Runtime render handler is assosiated with.
+     * Runtime the module is assosiated with.
      */
     private _runtime: Runtime;
     /**
@@ -50,6 +50,49 @@ class RenderHandlerModule implements Module {
             currentCanvasIndex = (currentCanvasIndex + 1) % canvases.length;
             // Set it as drawing canvas
             this._runtime.canvas = canvases[currentCanvasIndex];
+        });
+
+        this._functions.set('Sub ClearColor(Integer,Integer,Integer)',() => {
+
+        });
+        this._functions.set('Sub ClearScreen()',() => {
+
+        });
+        this._functions.set('Sub SetWindowTitle(String)',() => {
+
+        });
+        this._functions.set('Function GetWindowTitle() As String',() => {
+
+        });
+        this._functions.set('Function GetWindowWidth() As Integer',() => {
+
+        });
+        this._functions.set('Sub SetWindowWidth(Integer)',() => {
+
+        });
+        this._functions.set('Function GetWindowHeight() As Integer',() => {
+
+        });
+        this._functions.set('Sub SetWindowHeight(Integer)',() => {
+
+        });
+        this._functions.set('Sub SetWindowSize(Integer,Integer)',() => {
+
+        });
+        this._functions.set('Function GetcanvasWidth() As Integer',() => {
+
+        });
+        this._functions.set('Sub SetCanvasWidth(Integer)',() => {
+
+        });
+        this._functions.set('Function GetCanvasHeight() As Integer',() => {
+
+        });
+        this._functions.set('Sub SetCanvasHeight(Integer)',() => {
+
+        });
+        this._functions.set('Sub SetCanvasSize(Integer,Integer)',() => {
+
         });
     }
 

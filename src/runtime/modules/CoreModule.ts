@@ -1,7 +1,12 @@
 ﻿import Module = require('./Module');
 import Runtime = require('../Runtime');
-import RenderHandlerModule = require('./RenderHandlerModule');
+import ControlflowModule = require('./ControlflowModule');
 import GraphicsModule = require('./GraphicsModule');
+import InputModue = require('./InputModule');
+import MathModule = require('./MathModule');
+import RenderHandlerModule = require('./RenderHandlerModule');
+import StringModule = require('./StringModule');
+import TimeModule = require('./TimeModule');
 
 /**
  * Module combining core modules.
@@ -24,10 +29,25 @@ class CodeModule implements Module {
         this._functions = new Map<string, Function>();
 
         // Combine modules
-        (new RenderHandlerModule(runtime)).getFunctions().forEach((func: Function, index: string) => {
+        new ControlflowModule(runtime).getFunctions().forEach((func: Function, index: string) => {
             this._functions.set(index, func);
         });
-        (new GraphicsModule(runtime)).getFunctions().forEach((func: Function, index: string) => {
+        new GraphicsModule(runtime).getFunctions().forEach((func: Function, index: string) => {
+            this._functions.set(index, func);
+        });
+        new InputModue(runtime).getFunctions().forEach((func: Function, index: string) => {
+            this._functions.set(index, func);
+        });
+        new MathModule(runtime).getFunctions().forEach((func: Function, index: string) => {
+            this._functions.set(index, func);
+        });
+        new RenderHandlerModule(runtime).getFunctions().forEach((func: Function, index: string) => {
+            this._functions.set(index, func);
+        });
+        new StringModule(runtime).getFunctions().forEach((func: Function, index: string) => {
+            this._functions.set(index, func);
+        });
+        new TimeModule(runtime).getFunctions().forEach((func: Function, index: string) => {
             this._functions.set(index, func);
         });
     }
