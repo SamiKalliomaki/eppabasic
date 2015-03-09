@@ -37,6 +37,10 @@ class Runtime {
      * Heap of the program.
      */
     private _heap: ArrayBuffer;
+    /**
+     * Weather the program is running.
+     */
+    private _running: boolean;
 
     /**
      * Constructs a new runtime.
@@ -157,6 +161,14 @@ class Runtime {
                 program.functions.forEach((signature: string, internalName: string): void => {
                     environment[internalName] = functions.get(signature);
                 });
+
+                // Create program
+                this._program = program.programFactory(stdlib, environment, this._heap);
+
+                // And initialize it
+                this._program.init();
+
+                resolve(null);
             });
         });
     }
@@ -166,7 +178,15 @@ class Runtime {
     start() {
         this._initPromise.then(() => {
             // Program is created
-            // TODO: Start runtime
+            var step = () => {
+                if (!this.program.next()) {
+                    // Program has ended
+                    // TODO: Draw final screen
+                } else if (this._running)
+                    window.requestAnimationFrame(step);
+            }
+            this._running = true;
+            window.requestAnimationFrame(step);
         });
     }
 }

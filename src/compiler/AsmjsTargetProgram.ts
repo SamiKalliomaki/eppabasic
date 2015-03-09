@@ -5,7 +5,7 @@ class AsmjsTargetProgram {
     /**
      * Factory function for asm.js programs.
      */
-    private _programFactory: () => AsmjsTargetProgram.AsmjsProgram;
+    private _programFactory: (stdlib: any, env: any, heap: ArrayBuffer) => AsmjsTargetProgram.AsmjsProgram;
     /**
      * List of modules needed by this program.
      */
@@ -20,7 +20,7 @@ class AsmjsTargetProgram {
      */
     constructor(code: string, modules: string[], functions: Map<string, string>) {
         // TODO: Edit code for IE 9 if detected.
-        this._programFactory = <() => AsmjsTargetProgram.AsmjsProgram> new Function('stdlib', 'env', 'heap', code);
+        this._programFactory = <(stdlib: any, env: any, heap: ArrayBuffer) => AsmjsTargetProgram.AsmjsProgram> new Function('stdlib', 'env', 'heap', code);
         this._modules = modules;
         this._functions = functions;
     }
@@ -29,7 +29,7 @@ class AsmjsTargetProgram {
      * Factory for creating programs.
      * @returns Factory function for asm.js programs.
      */
-    get programFactory(): () => AsmjsTargetProgram.AsmjsProgram {
+    get programFactory(): (stdlib: any, env: any, heap: ArrayBuffer) => AsmjsTargetProgram.AsmjsProgram {
         return this._programFactory;
     }
     /**
@@ -73,8 +73,9 @@ module AsmjsTargetProgram {
         init(): void;
         /**
          * Executes the next step of the program.
+         * @return 1 if the program stil continues, 0 if the program has ended.
          */
-        next(): void;
+        next(): number;
         /**
          * Breaks execution of the program at next possible point.
          */
