@@ -33,6 +33,10 @@ class Runtime {
      * Promise of program initialization
      */
     private _initPromise: Promise<void>;
+    /**
+     * Heap of the program.
+     */
+    private _heap: ArrayBuffer;
 
     /**
      * Constructs a new runtime.
@@ -95,6 +99,18 @@ class Runtime {
     get renderingContext(): CanvasRenderingContext2D {
         return this._renderingContext;
     }
+    /**
+     * Heap of the array buffer.
+     */
+    get heap(): ArrayBuffer {
+        return this._heap;
+    }
+    /**
+     * The program runtime runs.
+     */
+    get program(): AsmjsTargetProgram.AsmjsProgram {
+        return this._program;
+    }
 
     /**
      * Closes runtime.
@@ -112,6 +128,20 @@ class Runtime {
 
         this._initPromise = new Promise<void>((resolve: (value: void) => void, reject: (error: any) => void): void=> {
             moduleLoader.loaded((modules: Module.Constructor[]): void => {
+                // Create externals for asm.js program
+                var stdlib = {
+                    Math: Math,
+                    Uint8Array: Uint8Array,
+                    Int32Array: Int32Array,
+                    Uint32Array: Uint32Array,
+                    Float32Array: Float32Array,
+                    Float64Array: Float64Array
+                };
+                var environment = {
+                    heapSize: 16 * 1024 * 1024              // TODO Get heap size from elsewhere
+                };
+                this._heap = new ArrayBuffer(environment.heapSize);
+
                 // Combine all defined functions in to one signature implementation map
                 var functions = new Map<string, Function>();
                 modules.forEach((module: Module.Constructor): void => {
@@ -124,7 +154,6 @@ class Runtime {
                 });
 
                 // Create program environment based on requested functions
-                var environment = {};
                 program.functions.forEach((signature: string, internalName: string): void => {
                     environment[internalName] = functions.get(signature);
                 });
