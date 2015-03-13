@@ -13,6 +13,7 @@ define(['require', './graphics', './math', './input', './time', './string', './m
     var Messages = require('./messages');
     var FlowControl = require('./flowcontrol');
     var AsmjsForIE = require('../utils/asmjsforie');
+    var PanicType = function() {};
 
     function Worker(mirror) {
         this.mirror = mirror;
@@ -56,12 +57,20 @@ define(['require', './graphics', './math', './input', './time', './string', './m
                 }
 
                 var now = new Date().getTime();
-                if (now >= this.nextCall && !this.program.next()) {
-                    // Program ended
-                    this.external.env.drawScreen();
-                } else {
-                    if (this.running)
-                        setTimeout(f, Math.max(this.nextCall - now - 1, 0));
+                try {
+                    if (now >= this.nextCall && !this.program.next()) {
+                        // Program ended
+                        this.external.env.drawScreen();
+                    } else {
+                        if (this.running)
+                            setTimeout(f, Math.max(this.nextCall - now - 1, 0));
+                    }
+                } catch (e) {
+                    // Catch panic to stop execution
+                    if (e instanceof PanicType)
+                        return;
+                    // Other error? Defer it
+                    throw e;
                 }
             }
             this.running = true;
@@ -158,6 +167,7 @@ define(['require', './graphics', './math', './input', './time', './string', './m
             if (!this.paniced)
                 this.mirror.send('panic', errCode, this.program.getLine());
             this.paniced = true;
+            throw new PanicType();
         }
     };
 
