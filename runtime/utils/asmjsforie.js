@@ -34,7 +34,7 @@
                 // Return the transformed tree
                 return node;
             }
-            if (node instanceof UglifyJS.AST_Sub) {
+            if (node instanceof UglifyJS.AST_Sub && node.expression.name.startsWith('MEM')) {
                 node = new UglifyJS.AST_Call({
                     expression: new UglifyJS.AST_Dot({
                         expression: node.expression,

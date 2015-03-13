@@ -32,13 +32,13 @@ define(['require', './graphics', './math', './input', './time', './string', './m
                 code = this.code;
             if (!code)
                 throw new Error('No code specified for the worker');
+            if (AsmjsForIE.needsConversion()) {
+                code = AsmjsForIE.convert(code);
+            }
             this.code = code;
             this.paniced = false;
             var Program = new Function('stdlib', 'env', 'heap', code);
             var external = this.createExternal();
-            if (AsmjsForIE.needsConversion()) {
-                code = AsmjsForIE.convert(code);
-            }
             this.program = Program(external.stdlib, external.env, external.heap);
             external.after();
             this.program.init();
