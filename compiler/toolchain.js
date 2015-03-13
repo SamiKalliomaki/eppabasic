@@ -126,6 +126,7 @@ define(['require', './types', './operators', './compiler', './parser', './typech
             compiler.defineJsFunction('env.getCanvasHeight', true, 'CanvasHeight', [], this.types.Integer);
             compiler.defineJsFunction('env.setCanvasHeight', true, 'CanvasHeight', [this.types.Integer]);
             compiler.defineJsFunction('env.setCanvasSize', true, 'CanvasSize', [this.types.Integer, this.types.Integer]);
+            compiler.defineJsFunction('env.setLineSpacing', true, 'LineSpacing', [this.types.Integer]);
 
             //// Memory functions
             compiler.defineJsFunction('__peek32', false, 'Peek32', [this.types.Integer], this.types.Integer);

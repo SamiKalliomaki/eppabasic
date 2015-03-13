@@ -151,6 +151,9 @@
                 this.canvasWidth = width;
                 this.addCommand('setCanvasWidth', width);
             },
+            setLineSpacing: function setLineSpacing(lineSpacing) {
+                this.addCommand('setLineSpacing', lineSpacing);
+            },
             setWindowHeight: function setWindowHeight(height) {
                 this.windowHeight = height;
                 this.addCommand('setWindowHeight', height);

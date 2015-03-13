@@ -5,9 +5,10 @@
             this.textColor = '#fff';
             this.textFont = 'monospace';
             this.textSize = 12;
-            this.printOriginX = 0;
-            this.printOriginY = 0;
+            this.printOriginX = 5;
+            this.printOriginY = 5;
             this.printOffsetY = 0;
+            this.lineSpacing = 1.2;
             this.graphicstext.commands.clear.apply(this);
         }
         restart.apply(this);
@@ -43,7 +44,7 @@
                     this.printOriginY + this.printOffsetY,
                     str
                 ]);
-                this.printOffsetY += this.textSize;
+                this.printOffsetY += this.lineSpacing * this.textSize;
             },
             printLocation: function printLocation(x, y) {
                 this.printOriginX = x;
@@ -51,6 +52,9 @@
                 this.printOffsetY = 0;
             },
 
+            setLineSpacing: function setLineSpacing(lineSpacing) {
+                this.lineSpacing = lineSpacing;
+            },
             setWindowTitle: function setWindowTitle(title) {
                 document.title = title;
             },
