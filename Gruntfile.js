@@ -88,6 +88,9 @@ module.exports = function (grunt) {
  * A class for handling grunt configurations
  */
 function ConfigHandler(grunt, wwwDir, tmpDir) {
+    this.grunt = grunt;
+    this.wwwDir = wwwDir;
+    this.tmpDir = tmpDir;
     this.config = {
         requirejs: {
             options: {
@@ -313,7 +316,7 @@ ConfigHandler.prototype = {
      * Cache file location. Cache file is used for dependency mapping.
      */
     getCachePath: function () {
-        return 'cache.cache';
+        return path.join(this.tmpDir, 'cache.cache');
     },
     /**
      * Version of config. Must be changed when Gruntfile changes radically.
@@ -336,7 +339,7 @@ ConfigHandler.prototype = {
                 file.watch[i] = this.config.watch[i];
             }
         }
-        fs.writeFileSync(this.getCachePath(), JSON.stringify(file));
+        this.grunt.file.write(this.getCachePath(), JSON.stringify(file));
     },
     /**
      * Loads configuration from the file pointed by this.getCachePath().
