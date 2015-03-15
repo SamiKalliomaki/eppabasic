@@ -63,7 +63,7 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks("grunt-anon-tasks");
 
     // Register own tasks
-    grunt.registerTask('build', 'Builds EppaBasic', function () {
+    grunt.registerTask('build', function () {
         grunt.task
             .run('sync')
             .then(function () {
@@ -72,10 +72,15 @@ module.exports = function (grunt) {
             .run('newer:requirejs')
             .run('newer:less');
     });
-    grunt.registerTask('develop', 'Builds EppaBasic and rebuilds it when something has changed', function () {
+    grunt.registerTask('develop', function () {
         grunt.task
             .run('build')
             .run('watch');
+    });
+    grunt.registerTask('rebuild', function () {
+        grunt.task
+            .run('clean')
+            .run('build');
     });
 };
 
@@ -133,6 +138,10 @@ function ConfigHandler(grunt, wwwDir, tmpDir) {
             options: {
                 compress: !!grunt.option('minify')
             }
+        },
+        clean: {
+            www: [wwwDir + '/**/*', wwwDir],
+            tmp: [tmpDir + '/**/*', tmpDir]
         }
     };
     this.targetUpdaters = [];
