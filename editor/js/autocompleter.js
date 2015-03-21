@@ -35,7 +35,7 @@
             // And finally set ace to use this just created completer
             editor.setOptions({
                 enableBasicAutocompletion: [completer],
-                enableLiveAutocompletion: true
+                enableLiveAutocompletion: false
             });
         });
     }
