@@ -1,4 +1,6 @@
-﻿import i18n = require('i18n');
+﻿/// <reference path="../../lib/vendor" />
+
+import i18n = require('i18n'); 
 import $ = require('jquery');
 import Editor = require('editor/editor');
 import ModuleLoader = require('./ModuleLoader');

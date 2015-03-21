@@ -14,6 +14,8 @@ tools/settings.ini
 *.min.js.map
 
 static/.htaccess
+.tscache/
+*.baseDir.ts
 
 # Visual studio files
 *.csproj

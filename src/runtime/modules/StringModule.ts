@@ -1,4 +1,6 @@
-﻿import Module = require('./Module');
+﻿/// <reference path="../../../lib/vendor" />
+
+import Module = require('./Module');
 import Runtime = require('../Runtime');
 
 /**

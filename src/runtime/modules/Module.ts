@@ -1,4 +1,6 @@
-﻿import Runtime = require('../Runtime');
+﻿/// <reference path="../../../lib/vendor" />
+
+import Runtime = require('../Runtime');
 
 /**
  * A collection of EppaBasic functions.

@@ -1,4 +1,6 @@
-﻿import Module = require('./modules/Module');
+﻿/// <reference path="../../lib/vendor" />
+
+import Module = require('./modules/Module');
 
 /**
  * Handles loading modules
