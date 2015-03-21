@@ -97,7 +97,7 @@ define(['compiler/toolchain', 'ace/ace', 'i18n', './autocompleter'], function (T
         openRuntime: function openRuntime() {
             // Close opened window
             this.closeRuntime();
-            window.open('runtime/index.html', 'runtime', 'dependent,resizable', true);
+            window.open('runtime/index.html', 'runtime', 'dependent,resizable,width=640,height=480', true);
         },
         closeRuntime: function closeRuntime() {
             if (this.runtime) {
