@@ -118,7 +118,8 @@ function ConfigHandler(grunt, wwwDir, tmpDir) {
         },
         watch: {
             options: {
-                spawn: false
+                spawn: false,
+                maxListeners: 50
             }
         },
         newer: {
@@ -313,7 +314,7 @@ ConfigHandler.prototype = {
                 cwd: cwd
             },
             files: src,
-            tasks: ['sync:' + name]
+            tasks: ['sync:' + name, 'newer:requirejs']
         };
 
         this.save();
@@ -347,7 +348,7 @@ ConfigHandler.prototype = {
 
         this.config.watch['typescript-' + name] = {
             files: src,
-            tasks: ['ts:' + name]
+            tasks: ['ts:' + name, 'newer:requirejs']
         }
     },
 
