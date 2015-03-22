@@ -2,6 +2,7 @@
 
 import Module = require('./Module');
 import Runtime = require('../Runtime');
+import util = require('./util');
 
 /**
  * Basic graphics functions.
@@ -20,19 +21,14 @@ class GraphicsModule implements Module {
         this._runtime = runtime;
         this._functions = new Map<string, Function>();
 
-        function rgbToStyle(r: number, g: number, b: number) {
-            var rgb = (r << 16) | (g << 8) | (b << 0);
-            return '#' + ('000000' + rgb.toString(16)).substr(-6);
-        }
-
         this._functions.set('Sub LineColor(Integer,Integer,Integer)', (r: number, g: number, b: number) => {
-            this._runtime.renderingContext.strokeStyle = rgbToStyle(r, g, b);
+            this._runtime.renderingContext.strokeStyle = util.rgbToStyle(r, g, b);
         });
         this._functions.set('Sub LineWidth(Integer)', (width: number) => {
             this._runtime.renderingContext.lineWidth = width;
         });
         this._functions.set('Sub FillColor(Integer,Integer,Integer)', (r: number, g: number, b: number) => {
-            this._runtime.renderingContext.fillStyle = rgbToStyle(r, g, b);
+            this._runtime.renderingContext.fillStyle = util.rgbToStyle(r, g, b);
         });
         this._functions.set('Sub DrawLine(Integer,Integer,Integer,Integer)', (x1:number, y1: number, x2: number, y2: number) => {
             this._runtime.renderingContext.beginPath();
