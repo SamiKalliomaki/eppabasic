@@ -21,7 +21,7 @@ module.exports = function (grunt) {
                                     tmpDir + '/ace/mode/*.js',
                                     'ace/mode/{0}', wwwDir + '/js/mode-{0}.js',
                                     /_highlight_rules|_test|_worker|xml_util|_outdent|behaviour|completions/);
-    config.addRequirejsMultiTarget('ace-mode-{0}',
+    config.addRequirejsMultiTarget('ace-worker-{0}',
                                     tmpDir + '/ace/mode/*_worker.js',
                                     [
                                         'ace/worker/worker',
@@ -48,7 +48,7 @@ module.exports = function (grunt) {
                                     null,
                                     9,
                                     {
-                                        'runtime/modules/{1}': 'define([\'runtime/modules/{0}Module\'],function(module){return module;});'
+                                        'runtime/modules/{1}': 'define([\'runtime/modules/{0}Module\'],function(module){{return module;}});'
                                     }
                                     );
 
@@ -187,24 +187,27 @@ ConfigHandler.prototype = {
     /**
      * Adds a single requirejs target to configuration. May have dependencies.
      */
-    addRequirejsTarget: function (name, files, out) {
+    addRequirejsTarget: function (name, files, out, src, rawText) {
         // Enforce files is array
         if (!Array.isArray(files))
             files = [files];
 
-        // Make sure every file ends with .js
-        var src = files.map(function (file) {
-            var p = path.join(this.config.requirejs.options.baseUrl, file);
-            if (!/\.js$/.test(p))
-                p += '.js';
-            return p;
-        }.bind(this))
+        if (!src) {
+            // Make sure every file ends with .js
+            src = files.map(function (file) {
+                var p = path.join(this.config.requirejs.options.baseUrl, file);
+                if (!/\.js$/.test(p))
+                    p += '.js';
+                return p;
+            }.bind(this));
+        }
 
         // Add to config
         this.config.requirejs[name] = {
             options: {
                 include: files,
                 out: out,
+                rawText: rawText,
                 done: function (done, output) {
                     // Parse r.js output
                     output = require('rjs-build-analysis').parse(output);
@@ -245,7 +248,7 @@ ConfigHandler.prototype = {
     /**
      * Adds multiple requirejs targets to configuration. Files are pointed by glob regex.
      */
-    addRequirejsMultiTarget: function (name, dir, files, out, exclude, ext) {
+    addRequirejsMultiTarget: function (name, dir, files, out, exclude, ext, rawText) {
         // Enforce tyes
         if (!ext)
             ext = 3;
@@ -255,8 +258,17 @@ ConfigHandler.prototype = {
         // Lists all targets
         var updateTargets = function () {
             var globfiles = glob.sync(dir);
-            globfiles.forEach(function (file) {
-                file = path.basename(file).slice(0, -ext);
+            globfiles.forEach(function (origfile) {
+                var file = path.basename(origfile).slice(0, -ext);
+
+                if (rawText) {
+                    var newRawText = {};
+                    for (var key in rawText) {
+                        if (rawText.hasOwnProperty(key)) {
+                            newRawText[format(key, file, file.toLowerCase())] = format(rawText[key], file, file.toLowerCase());
+                        }
+                    }
+                }
 
                 if (exclude && exclude.test(file))
                     return;
@@ -269,7 +281,9 @@ ConfigHandler.prototype = {
                 this.addRequirejsTarget(
                     format(name, file, file.toLowerCase()),
                     include,
-                    format(out, file, file.toLowerCase()));
+                    format(out, file, file.toLowerCase()),
+                    origfile,
+                    newRawText);
             }.bind(this));
         }.bind(this);
 
