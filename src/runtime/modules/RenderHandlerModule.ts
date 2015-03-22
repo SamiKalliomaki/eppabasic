@@ -52,6 +52,8 @@ class RenderHandlerModule implements Module {
             currentCanvasIndex = (currentCanvasIndex + 1) % canvases.length;
             // Set it as drawing canvas
             this._runtime.canvas = canvases[currentCanvasIndex];
+            // Finally break the execution
+            this._runtime.program.breakExec();
         });
 
         this._functions.set('Sub ClearColor(Integer,Integer,Integer)',() => {
@@ -107,4 +109,4 @@ class RenderHandlerModule implements Module {
     }
 }
 
-export = RenderHandlerModule; 
+export = RenderHandlerModule;
