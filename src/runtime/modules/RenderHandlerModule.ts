@@ -24,34 +24,19 @@ class RenderHandlerModule implements Module {
         this._runtime = runtime;
 
         // Create canvases for double buffering
-        var canvases = [document.createElement('canvas'), document.createElement('canvas')];
-        // Append them to the canvas holder
-        canvases.forEach((canvas) => {
-            this._runtime.canvasHolder.appendChild(canvas);
-        });
+        var backgroundCanvas = document.createElement('canvas');
+        var foregroundCanvas = document.createElement('canvas');
+        this._runtime.canvasHolder.appendChild(backgroundCanvas);
+        this._runtime.canvasHolder.appendChild(foregroundCanvas);
 
-        // Initialize canvases
-        canvases.forEach((canvas) => {
-            canvas.style.visibility = 'hidden';
-        });
-        // Keep track of visible canvas
-        var visibleCanvas = canvases[0];
-        visibleCanvas.style.visibility = 'visible';
-        // Setup first background canvas for runtime
-        var currentCanvasIndex = 1 % canvases.length;
-        runtime.canvas = canvases[currentCanvasIndex];
+        // Hide background canvas
+        backgroundCanvas.style.visibility = 'hidden';
+
+        this._runtime.canvas = backgroundCanvas;
 
         this._functions = new Map<string, Function>();
         this._functions.set('Sub DrawScreen()',() => {
-            // Hide old canvas
-            visibleCanvas.style.visibility = 'hidden';
-            // Show current background canvas
-            canvases[currentCanvasIndex].style.visibility = 'visible';
-            visibleCanvas = canvases[currentCanvasIndex];
-            // Update canvas index
-            currentCanvasIndex = (currentCanvasIndex + 1) % canvases.length;
-            // Set it as drawing canvas
-            this._runtime.canvas = canvases[currentCanvasIndex];
+            foregroundCanvas.getContext('2d').drawImage(backgroundCanvas, 0, 0);
             // Finally break the execution
             this._runtime.program.breakExec();
         });
