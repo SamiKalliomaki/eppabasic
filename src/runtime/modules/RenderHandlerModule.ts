@@ -38,10 +38,18 @@ class RenderHandlerModule implements Module {
         // Create canvases for double buffering
         this._backgroundCanvas = document.createElement('canvas');
         this._foregroundCanvas = document.createElement('canvas');
-        this._runtime.canvasHolder.appendChild(this._backgroundCanvas);
         this._runtime.canvasHolder.appendChild(this._foregroundCanvas);
 
         this._runtime.canvas = this._backgroundCanvas;
+
+        // Add handlers
+        window.addEventListener('resize', (): void => {
+            this.resizeCanvasHolder();
+        });
+
+        // Setup defaults
+        this.setWindowSize(640, 480);
+        this.setCanvasSize(640, 480);
 
         // Hide background canvas
         this._backgroundCanvas.style.visibility = 'hidden';
@@ -129,6 +137,29 @@ class RenderHandlerModule implements Module {
      setCanvasSize(width: number, height: number): void {
          this._foregroundCanvas.width = this._backgroundCanvas.width = width;
          this._foregroundCanvas.height = this._backgroundCanvas.height = height;
+
+         this.resizeCanvasHolder();
+     }
+
+     /**
+      * Resizes canvas holder tom match window size
+      */
+     private resizeCanvasHolder() {
+         var canvasRatio = this._foregroundCanvas.width / this._foregroundCanvas.height;
+         var windowRatio = window.innerWidth / window.innerHeight;
+
+         var width, height;
+
+         if (windowRatio > canvasRatio) {
+             width = 100 * canvasRatio / windowRatio;
+             height = 100;
+         } else {
+             width = 100;
+             height = 100 * windowRatio / canvasRatio;
+         }
+
+         this._runtime.canvasHolder.style.width = width + '%';
+         this._runtime.canvasHolder.style.height = height + '%';
      }
 }
 
