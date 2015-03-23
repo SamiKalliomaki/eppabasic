@@ -30,7 +30,16 @@ class AsmjsTargetProgram {
      * @returns Factory function for asm.js programs.
      */
     get programFactory(): (stdlib: any, env: any, heap: ArrayBuffer) => AsmjsTargetProgram.AsmjsProgram {
-        return this._programFactory;
+        return (stdlib: any, env: any, heap: ArrayBuffer): AsmjsTargetProgram.AsmjsProgram => {
+            var program = this._programFactory(stdlib, env, heap);
+            program.MEMS8 = new Int8Array(heap);
+            program.MEMS16 = new Int16Array(heap);
+            program.MEMS32 = new Int32Array(heap);
+            program.MEMU8 = new Uint8Array(heap);
+            program.MEMU16 = new Uint16Array(heap);
+            program.MEMU32 = new Uint32Array(heap);
+            return program;
+        };
     }
     /**
      * List of modules needed by this program.
@@ -101,6 +110,33 @@ module AsmjsTargetProgram {
          * @returns Last executed line of the code.
          */
         getLine(): number;
+
+        // Memory views
+
+        /**
+         * A view to heap using signed 8 bit integers.
+         */
+        MEMS8: Int8Array;
+        /**
+         * A view to heap using signed 16 bit integers.
+         */
+        MEMS16: Int16Array;
+        /**
+         * A view to heap using signed 32 bit integers.
+         */
+        MEMS32: Int32Array;
+        /**
+         * A view to heap using unsigned 8 bit integers.
+         */
+        MEMU8: Uint8Array;
+        /**
+         * A view to heap using unsigned 16 bit integers.
+         */
+        MEMU16: Uint16Array;
+        /**
+         * A view to heap using unsigned 32 bit integers.
+         */
+        MEMU32: Uint32Array;
     }
 }
 
