@@ -48,6 +48,10 @@ class Runtime extends EventEmitter {
      * Time the next frame should not be drawn before
      */
     private _nextFrame: number;
+    /**
+     * Whether runtime is waiting for something.
+     */
+    private _waiting: boolean;
 
     /**
      * Constructs a new runtime.
@@ -65,6 +69,7 @@ class Runtime extends EventEmitter {
         this._heap = null;
         this._running = false;
         this._nextFrame = 0;
+        this._waiting = false;
 
         // Initialize i18n
         i18n.init(
@@ -135,6 +140,18 @@ class Runtime extends EventEmitter {
     get program(): AsmjsTargetProgram.AsmjsProgram {
         return this._program;
     }
+    /**
+     * Whether runtime is waiting for something.
+     */
+    get waiting(): boolean {
+        return this._waiting;
+    }
+    /**
+     * Whether runtime is waiting for something.
+     */
+    set waiting(waiting: boolean) {
+        this._waiting = waiting;
+    }
 
     /**
      * Closes runtime.
@@ -203,7 +220,7 @@ class Runtime extends EventEmitter {
             var step = () => {
                 var now = (new Date()).getTime();
 
-                if (now < this._nextFrame) {
+                if (now < this._nextFrame || this._waiting) {
                     window.requestAnimationFrame(step);
                     return;
                 }
