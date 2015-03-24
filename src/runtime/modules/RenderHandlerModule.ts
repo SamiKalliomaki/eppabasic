@@ -72,11 +72,11 @@ class RenderHandlerModule implements Module {
             this._runtime.renderingContext.fillStyle = originalStyle;
         });
         this._functions.set('Sub SetWindowTitle(String)', (titlePtr: number): void => {
-            var title = util.ebstirng.fromEB(titlePtr, this._runtime);
+            var title = util.ebstring.fromEB(titlePtr, this._runtime);
             document.title = title;
         });
         this._functions.set('Function GetWindowTitle() As String',(): number => {
-            return util.ebstirng.toEB(document.title, this._runtime);
+            return util.ebstring.toEB(document.title, this._runtime);
         });
         this._functions.set('Function GetWindowWidth() As Integer',(): number => {
             return window.innerWidth;
