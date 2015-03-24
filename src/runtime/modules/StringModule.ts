@@ -2,6 +2,7 @@
 
 import Module = require('./Module');
 import Runtime = require('../Runtime');
+import util = require('./util');
 
 /**
  * Basic string functions.
@@ -73,10 +74,12 @@ class StringModule implements Module {
             return 0;
         });
         this._functions.set('Function Str(Integer) As String', (val: number): number => {
-            return 0;
+            return util.ebstring.toEB('' + (val | 0), this._runtime);
         });
-        this._functions.set('Function Str(Number) As String', (strPtr: number): number => {
-            return 0;
+        this._functions.set('Function Str(Number) As String', (val: number): number => {
+            var pow = Math.pow(10, 8);
+            val = Math.round(val * pow) / pow;
+            return util.ebstring.toEB('' + (+val), this._runtime);
         });
     }
 
