@@ -7,3 +7,5 @@
 /// <reference path="i18n" />
 /// <reference path="requirejs" />
 /// <reference path="EventEmitter" />
+/// <reference path='xregexp'/>
+/// <reference path='esrever'/>
