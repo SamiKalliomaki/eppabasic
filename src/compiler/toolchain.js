@@ -106,7 +106,7 @@ define(['require', './types', './operators', './compiler', './parser', './typech
             compiler.defineJsFunction('env.textSize', true, 'Sub TextSize(Integer)', 'TextSize', [this.types.Integer]);
             compiler.defineJsFunction('env.textAlign', true, 'Sub TextAlign(Integer)', 'TextAlign', [this.types.Integer]);
 
-            compiler.defineJsFunction('env.message', true, 'Sub Message()', 'Message', [this.types.String], undefined, false);
+            compiler.defineJsFunction('env.message', true, 'Sub Message(String)', 'Message', [this.types.String], undefined, false);
             compiler.defineJsFunction('env.askNumber', true, 'Function AskNumber(String) As Double', 'AskNumber', [this.types.String], this.types.Double, false);
             compiler.defineJsFunction('env.askText', true, 'Function AskText(String) As String', 'AskText', [this.types.String], this.types.String, false);
             compiler.defineJsFunction('env.askNumber', true, 'Function AskNumber(String) As Double', 'InputNumber', [this.types.String], this.types.Double, false);
@@ -150,7 +150,7 @@ define(['require', './types', './operators', './compiler', './parser', './typech
 
             compiler.defineJsFunction('env.randInt', true, 'Function Rnd(Integer,Integer) As Integer', 'Rnd', [this.types.Integer, this.types.Integer], this.types.Integer);
             compiler.defineJsFunction('env.randDbl', true, 'Function Rnd() As Double', 'Rnd', [], this.types.Double);
-            compiler.defineJsFunction('env.randomize', true, 'Sub Randomize()', 'Randomize', [this.types.Double]);
+            compiler.defineJsFunction('env.randomize', true, 'Sub Randomize(Double)', 'Randomize', [this.types.Double]);
 
             compiler.defineJsFunction('env.round', true, 'Function Round(Double) As Double', 'Round', [this.types.Double], this.types.Double);
             compiler.defineJsFunction('env.round2', true, 'Function Round(Double,Integer) As Double', 'Round', [this.types.Double, this.types.Integer], this.types.Double);
@@ -187,8 +187,8 @@ define(['require', './types', './operators', './compiler', './parser', './typech
             compiler.defineJsFunction('env.minute', true, 'Function Minute() As Integer', 'Minute', [], this.types.Integer);
             compiler.defineJsFunction('env.second', true, 'Function Second() As Integer', 'Second', [], this.types.Integer);
             compiler.defineJsFunction('env.millisecond', true, 'Function MilliSecond() As Integer', 'MilliSecond', [], this.types.Integer);
-            compiler.defineJsFunction('env.time', true, 'Function Time() As Integer', 'Time', [], this.types.String);
-            compiler.defineJsFunction('env.date', true, 'Function Date() As Integer', 'Date', [], this.types.String);
+            compiler.defineJsFunction('env.time', true, 'Function Time() As String', 'Time', [], this.types.String);
+            compiler.defineJsFunction('env.date', true, 'Function Date() As String', 'Date', [], this.types.String);
 
             //// Input
             compiler.defineJsFunction('env.keyDown', true, 'Function KeyDown(Integer) As Boolean', 'KeyDown', [this.types.Integer], this.types.Boolean);

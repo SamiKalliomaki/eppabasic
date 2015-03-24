@@ -20,20 +20,20 @@ class MathModule implements Module {
         this._runtime = runtime;
         this._functions = new Map<string, Function>();
 
-        this._functions.set('Function Rnd(Integer,Integer) As Integer',() => {
+        this._functions.set('Function Rnd(Integer,Integer) As Integer', (low: number, high: number): number => {
+            return 0;
+        });
+        this._functions.set('Function Rnd() As Double', (): number => {
+            return 0;
+        });
+        this._functions.set('Sub Randomize(Double)', (key: number): void => {
 
         });
-        this._functions.set('Function Rnd() As Double',() => {
-
+        this._functions.set('Function Round(Double) As Double', (val: number): number => {
+            return 0;
         });
-        this._functions.set('Sub Randomize()',() => {
-
-        });
-        this._functions.set('Function Round(Double) As Double',() => {
-
-        });
-        this._functions.set('Function Round(Double,Integer) As Double',() => {
-
+        this._functions.set('Function Round(Double,Integer) As Double', (val: number, precision: number): number => {
+            return 0;
         });
     }
 
@@ -46,4 +46,4 @@ class MathModule implements Module {
     }
 }
 
-export = MathModule; 
+export = MathModule;

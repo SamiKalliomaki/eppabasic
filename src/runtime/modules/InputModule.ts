@@ -20,44 +20,44 @@ class InputModule implements Module {
         this._runtime = runtime;
         this._functions = new Map<string, Function>();
 
-        this._functions.set('Function KeyDown(Integer) As Boolean',() => {
+        this._functions.set('Function KeyDown(Integer) As Boolean', (keycode: number): boolean => {
+            return false;
+        });
+        this._functions.set('Function KeyUp(Integer) As Boolean', (keycode: number): boolean => {
+            return false;
+        });
+        this._functions.set('Function KeyHit(Integer) As Boolean', (keycode: number): boolean => {
+            return false;
+        });
+        this._functions.set('Function MouseX() As Integer', (): number => {
+            return 0;
+        });
+        this._functions.set('Function MouseY() As Integer', (): number => {
+            return 0;
+        });
+        this._functions.set('Function MouseDown(Integer) As Boolean', (button: number): boolean => {
+            return false;
+        });
+        this._functions.set('Function MouseUp(Integer) As Boolean', (button: number): boolean => {
+            return false;
+        });
+        this._functions.set('Function MouseHit(Integer) As Boolean', (button: number): boolean => {
+            return false;
+        });
+        this._functions.set('Sub Message(String)', (stdPtr: number): void => {
 
         });
-        this._functions.set('Function KeyUp(Integer) As Boolean',() => {
-
+        this._functions.set('Function AskNumber(String) As Double', (strPtr: number): number => {
+            return 0;
         });
-        this._functions.set('Function KeyHit(Integer) As Boolean',() => {
-
+        this._functions.set('Function AskText(String) As String', (strPtr: number): number => {
+            return 0;
         });
-        this._functions.set('Function MouseX() As Integer',() => {
-
+        this._functions.set('Function AskNumber(String) As Double', (strPtr: number): number => {
+            return 0;
         });
-        this._functions.set('Function MouseY() As Integer',() => {
-
-        });
-        this._functions.set('Function MouseDown(Integer) As Boolean',() => {
-
-        });
-        this._functions.set('Function MouseUp(Integer) As Boolean',() => {
-
-        });
-        this._functions.set('Function MouseHit(Integer) As Boolean',() => {
-
-        });
-        this._functions.set('Sub Message()',() => {
-
-        });
-        this._functions.set('Function AskNumber(String) As Double',() => {
-
-        });
-        this._functions.set('Function AskText(String) As String',() => {
-
-        });
-        this._functions.set('Function AskNumber(String) As Double',() => {
-
-        });
-        this._functions.set('Function AskText(String) As String',() => {
-
+        this._functions.set('Function AskText(String) As String', (strPtr: number): number => {
+            return 0;
         });
     }
 

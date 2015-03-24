@@ -20,10 +20,10 @@ class ControlflowModule implements Module {
         this._runtime = runtime;
         this._functions = new Map<string, Function>();
 
-        this._functions.set('Sub End()',() => {
+        this._functions.set('Sub End()', (): void => {
 
         });
-        this._functions.set('Sub Restart()',() => {
+        this._functions.set('Sub Restart()', (): void => {
 
         });
     }
@@ -37,4 +37,4 @@ class ControlflowModule implements Module {
     }
 }
 
-export = ControlflowModule;    
+export = ControlflowModule;

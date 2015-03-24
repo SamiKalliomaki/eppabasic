@@ -20,42 +20,42 @@ class TimeModule implements Module {
         this._runtime = runtime;
         this._functions = new Map<string, Function>();
 
-        this._functions.set('Function Timer() As Double',() => {
+        this._functions.set('Function Timer() As Double', (): number => {
+            return 0;
+        });
+        this._functions.set('Sub Wait(Double)', (seconds: number): void => {
 
         });
-        this._functions.set('Sub Wait(Double)',() => {
 
+        this._functions.set('Function Year() As Integer', (): number => {
+            return 0;
         });
-
-        this._functions.set('Function Year() As Integer',() => {
-
+        this._functions.set('Function Month() As Integer', (): number => {
+            return 0;
         });
-        this._functions.set('Function Month() As Integer',() => {
-
+        this._functions.set('Function Day() As Integer', (): number => {
+            return 0;
         });
-        this._functions.set('Function Day() As Integer',() => {
-
+        this._functions.set('Function Weekday() As Integer', (): number => {
+            return 0;
         });
-        this._functions.set('Function Weekday() As Integer',() => {
-
+        this._functions.set('Function Hour() As Integer', (): number => {
+            return 0;
         });
-        this._functions.set('Function Hour() As Integer',() => {
-
+        this._functions.set('Function Minute() As Integer', (): number => {
+            return 0;
         });
-        this._functions.set('Function Minute() As Integer',() => {
-
+        this._functions.set('Function Second() As Integer', (): number => {
+            return 0;
         });
-        this._functions.set('Function Second() As Integer',() => {
-
+        this._functions.set('Function MilliSecond() As Integer', (): number => {
+            return 0;
         });
-        this._functions.set('Function MilliSecond() As Integer',() => {
-
+        this._functions.set('Function Time() As String', (): number => {
+            return 0;
         });
-        this._functions.set('Function Time() As Integer',() => {
-
-        });
-        this._functions.set('Function Date() As Integer',() => {
-
+        this._functions.set('Function Date() As String', (): number => {
+            return 0;
         });
     }
 
@@ -68,4 +68,4 @@ class TimeModule implements Module {
     }
 }
 
-export = TimeModule;  
+export = TimeModule;
