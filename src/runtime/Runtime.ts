@@ -2,6 +2,7 @@
 
 import i18n = require('i18n');
 import $ = require('jquery');
+import EventEmitter = require('EventEmitter');
 import Editor = require('editor/editor');
 import ModuleLoader = require('./ModuleLoader');
 import AsmjsTargetProgram = require('compiler/AsmjsTargetProgram');
@@ -10,7 +11,7 @@ import Module = require('./modules/Module');
 /**
  * Handles everything related to runtime.
  */
-class Runtime {
+class Runtime extends EventEmitter {
     /**
      * Editor object related which opened the runtime.
      */
@@ -52,6 +53,8 @@ class Runtime {
      * Constructs a new runtime.
      */
     constructor() {
+        super();
+
         // Setup locals
         this._editor = null;
         this._program = null;
@@ -185,6 +188,8 @@ class Runtime {
                 // And initialize it
                 this._program.init();
 
+                this.emitEvent('init');
+
                 resolve(null);
             });
         });
@@ -199,10 +204,10 @@ class Runtime {
                 var now = (new Date()).getTime();
 
                 if (now < this._nextFrame) {
-                    window.requestAnimationFrame(step);                    return;
+                    window.requestAnimationFrame(step);
                     return;
                 }
-                
+
                 if (!this.program.next()) {
                     // Program has ended
                     // TODO: Draw final screen

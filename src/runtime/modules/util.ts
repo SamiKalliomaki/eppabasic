@@ -44,7 +44,7 @@ export module ebstring {
         var MEMS32 = runtime.program.MEMS32;
         var MEMU8 = runtime.program.MEMU8;
 
-        var len = MEMS32[ptr];
+        var len = MEMS32[ptr >> 2];
         var end = ptr + 4 + len;
         var i = ptr + 4;
         var buf = [];

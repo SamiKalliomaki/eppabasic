@@ -70,6 +70,8 @@ class RenderHandlerModule implements Module {
             this._runtime.renderingContext.fillStyle = clearColor;
             this._runtime.renderingContext.fillRect(0, 0, this._backgroundCanvas.width, this._backgroundCanvas.height);
             this._runtime.renderingContext.fillStyle = originalStyle;
+
+            this._runtime.emitEvent('clearsreen');
         });
         this._functions.set('Sub SetWindowTitle(String)', (titlePtr: number): void => {
             var title = util.ebstring.fromEB(titlePtr, this._runtime);

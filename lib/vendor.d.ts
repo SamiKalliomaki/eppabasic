@@ -6,3 +6,4 @@
 /// <reference path="es6-promise" />
 /// <reference path="i18n" />
 /// <reference path="requirejs" />
+/// <reference path="EventEmitter" />
