@@ -15,7 +15,7 @@ import Runtime = require('../Runtime');
 /**
  * Functions for handling EppaBasic strings.
  */
-export module ebstirng {
+export module ebstring {
     /**
      * Converts a string to format understood by EppaBasic.
      * @parma str String to convert

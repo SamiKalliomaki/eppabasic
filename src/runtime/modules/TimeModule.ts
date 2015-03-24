@@ -2,6 +2,7 @@
 
 import Module = require('./Module');
 import Runtime = require('../Runtime');
+import util = require('./util');
 
 /**
  * Basic time functions.
@@ -21,41 +22,53 @@ class TimeModule implements Module {
         this._functions = new Map<string, Function>();
 
         this._functions.set('Function Timer() As Double', (): number => {
-            return 0;
+            return (new Date()).getTime() / 1000;
         });
         this._functions.set('Sub Wait(Double)', (seconds: number): void => {
-
+            this._runtime.delay(seconds * 1000);
+            this._runtime.program.breakExec();
         });
-
         this._functions.set('Function Year() As Integer', (): number => {
-            return 0;
+            return (new Date()).getFullYear();
         });
         this._functions.set('Function Month() As Integer', (): number => {
-            return 0;
+            return (new Date()).getMonth();
         });
         this._functions.set('Function Day() As Integer', (): number => {
-            return 0;
+            return (new Date()).getDate();
         });
         this._functions.set('Function Weekday() As Integer', (): number => {
-            return 0;
+            return (new Date()).getDay();
         });
         this._functions.set('Function Hour() As Integer', (): number => {
-            return 0;
+            return (new Date()).getHours();
         });
         this._functions.set('Function Minute() As Integer', (): number => {
-            return 0;
+            return (new Date()).getMinutes();
         });
         this._functions.set('Function Second() As Integer', (): number => {
-            return 0;
+            return (new Date()).getSeconds();
         });
         this._functions.set('Function MilliSecond() As Integer', (): number => {
-            return 0;
+            return (new Date()).getMilliseconds();
         });
         this._functions.set('Function Time() As String', (): number => {
-            return 0;
+            var date = new Date();
+            var hours = '0' + date.getHours();
+            var minutes = '0' + date.getMinutes();
+            var seconds = '0' + date.getSeconds();
+            var str = hours.substr(0, -2) + ':'
+                    + minutes.substr(0, -2) + ':'
+                    + seconds.substr(0, -2);
+            return util.ebstring.toEB(str, this._runtime);
         });
         this._functions.set('Function Date() As String', (): number => {
-            return 0;
+            var date = new Date();
+            var year = date.getFullYear();
+            var month = date.getMonth() + 1;
+            var day = date.getDate();
+            var str = day + '.' + month + '.' + year;
+            return util.ebstring.toEB(str, this._runtime);
         });
     }
 

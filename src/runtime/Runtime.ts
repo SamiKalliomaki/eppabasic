@@ -43,11 +43,26 @@ class Runtime {
      * Weather the program is running.
      */
     private _running: boolean;
+    /**
+     * Time the next frame should not be drawn before
+     */
+    private _nextFrame: number;
 
     /**
      * Constructs a new runtime.
      */
     constructor() {
+        // Setup locals
+        this._editor = null;
+        this._program = null;
+        this._canvasHolder = null;
+        this._canvas = null;
+        this._renderingContext = null;
+        this._initPromise = null;
+        this._heap = null;
+        this._running = false;
+        this._nextFrame = 0;
+
         // Initialize i18n
         i18n.init(
             {
@@ -181,6 +196,13 @@ class Runtime {
         this._initPromise.then(() => {
             // Program is created
             var step = () => {
+                var now = (new Date()).getTime();
+
+                if (now < this._nextFrame) {
+                    window.requestAnimationFrame(step);                    return;
+                    return;
+                }
+                
                 if (!this.program.next()) {
                     // Program has ended
                     // TODO: Draw final screen
@@ -190,6 +212,14 @@ class Runtime {
             this._running = true;
             window.requestAnimationFrame(step);
         });
+    }
+
+    /**
+     * Delays execution of the code by some time.
+     * @param time Time in milliseconds
+     */
+    delay(time: number): void {
+        this._nextFrame = (new Date()).getTime() + time;
     }
 }
 

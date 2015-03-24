@@ -57,7 +57,7 @@ class StringModule implements Module {
         this._functions.set('Function Reverse(String) As String', (strPtr: number): number => {
             return 0;
         });
-        this._functions.set('Function Right(String,Integer) As String', (strPtr: number, len: numbe): number => {
+        this._functions.set('Function Right(String,Integer) As String', (strPtr: number, len: number): number => {
             return 0;
         });
         this._functions.set('Function Rot13(String) As String', (strPtr: number): number => {
