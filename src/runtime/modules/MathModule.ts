@@ -2,6 +2,7 @@
 
 import Module = require('./Module');
 import Runtime = require('../Runtime');
+import Random = require('random');
 
 /**
  * Basic math functions.
@@ -20,20 +21,23 @@ class MathModule implements Module {
         this._runtime = runtime;
         this._functions = new Map<string, Function>();
 
-        this._functions.set('Function Rnd(Integer,Integer) As Integer', (low: number, high: number): number => {
-            return 0;
+        var mt19937 = Random.engines.mt19937();
+
+        this._functions.set('Function Rnd(Integer,Integer) As Integer', (min: number, max: number): number => {
+            return Random.integer(min, max)(mt19937);
         });
         this._functions.set('Function Rnd() As Double', (): number => {
-            return 0;
+            return Random.real(0, 1, false)(mt19937);
         });
-        this._functions.set('Sub Randomize(Double)', (key: number): void => {
-
+        this._functions.set('Sub Randomize(Double)', (seed: number): void => {
+            mt19937.seed(seed);
         });
         this._functions.set('Function Round(Double) As Double', (val: number): number => {
-            return 0;
+            return Math.round(val);
         });
         this._functions.set('Function Round(Double,Integer) As Double', (val: number, precision: number): number => {
-            return 0;
+            var pow = Math.pow(10, precision);
+            return Math.round(val * pow) / pow;
         });
     }
 
