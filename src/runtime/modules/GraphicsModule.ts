@@ -168,6 +168,9 @@ class GraphicsModule implements Module {
             this._printOriginY = y;
             this._printOffsetY = 0;
         });
+        this._functions.set('Sub LineSpacing(Double)', (spacing: number): void => {
+            this._textSpacing = spacing;
+        });
     }
 
     /**
