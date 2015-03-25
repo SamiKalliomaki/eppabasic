@@ -7,8 +7,8 @@
         this.setDelay = setDelay;
         this.commandQueue = [];
 
-        this.screenWidth = 0;
-        this.screenHeight = 0;
+        this.canvasWidth = 0;
+        this.canvasHeight = 0;
         this.windowWidth = 0
         this.windowHeight = 0;
         this.windowTitle = 'Eppabasic Runtime';
@@ -30,8 +30,8 @@
             this.windowHeight = height;
         },
         onSetResolution: function onSetResolution(width, height) {
-            this.screenWidth = width;
-            this.screenHeight = height;
+            this.canvasWidth = width;
+            this.canvasHeight = height;
         },
 
         env: {
@@ -96,11 +96,11 @@
                 this.addCommand('fillTriangle', x1, y1, x2, y2, x3, y3);
             },
 
-            getScreenHeight: function getScreenHeight() {
-                return this.screenHeight;
+            getCanvasHeight: function getCanvasHeight() {
+                return this.canvasHeight;
             },
-            getScreenWidth: function getScreenWidth() {
-                return this.screenWidth;
+            getCanvasWidth: function getCanvasWidth() {
+                return this.canvasWidth;
             },
             getWindowHeight: function getWindowHeight() {
                 return this.windowHeight;
@@ -138,18 +138,18 @@
                 this.addCommand('rect', x, y, w, h);
             },
 
-            setScreenHeight: function setScreenHeight(height) {
-                this.screenHeight = height;
-                this.addCommand('setScreenHeight', height);
+            setCanvasHeight: function setCanvasHeight(height) {
+                this.canvasHeight = height;
+                this.addCommand('setCanvasHeight', height);
             },
-            setScreenSize: function setScreenSize(width, height) {
-                this.screenWidth = width;
-                this.screenHeight = height;
-                this.addCommand('setScreenSize', width, height);
+            setCanvasSize: function setCanvasSize(width, height) {
+                this.canvasWidth = width;
+                this.canvasHeight = height;
+                this.addCommand('setCanvasSize', width, height);
             },
-            setScreenWidth: function setScreenWidth(width) {
-                this.screenWidth = width;
-                this.addCommand('setScreenWidth', width);
+            setCanvasWidth: function setCanvasWidth(width) {
+                this.canvasWidth = width;
+                this.addCommand('setCanvasWidth', width);
             },
             setWindowHeight: function setWindowHeight(height) {
                 this.windowHeight = height;

@@ -1,4 +1,4 @@
-﻿define(['require', 'jquery', './workerclient', './graphics', './input', './messages'], function (require) {
+﻿define(['require', 'jquery', './workerclient', './graphics', './input', './messages', './panic'], function (require) {
     "use strict";
 
     var $ = require('jquery');
@@ -6,6 +6,7 @@
     var Graphics = require('./graphics');
     var Input = require('./input');
     var Messages = require('./messages');
+    var Panic = require('./panic');
 
     function Runtime(editor, canvasHolder) {
         this.editor = editor;
@@ -25,8 +26,6 @@
         start: function start() {
             if (!this.worker)
                 throw new Error('Worker not initialize yet');
-            // Start the worker
-            this.worker.send('start');
 
             // And set the screen size
             $(document).ready(function onReady() {
@@ -37,6 +36,9 @@
                     this.graphics.setSize(0, 0);
                 this.graphics.setSize(640, 480);
                 this.graphics.setResolution(640, 480);
+
+                // Start the worker
+                this.worker.send('start');
             }.bind(this));
         },
 
@@ -51,12 +53,15 @@
                 this.graphics = new Graphics(this.worker, this.canvasHolder);
                 this.input = new Input(this.worker, this.canvasHolder, this.graphics.canvas);
                 this.messages = new Messages(this.worker, this.canvasHolder);
+                this.panic = new Panic(this.worker, this.editor);
 
                 // Finally when the worker is ready the whole
                 // runtime is ready. Tell that also to the editor
                 // so that it can send back the code.
                 this.editor.runtimeReady();
             }.bind(this));
+
+            this.worker.on('end', this.close.bind(this));
         }
     };
 

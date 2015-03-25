@@ -2,8 +2,14 @@
     "use strict";
 
     function Graphics2D() {
-        this.clearColor = '#000';               // The background is black
-        this.ctx.strokeStyle = '#fff';          // And the line color is white
+        function restart() {
+            this.clearColor = '#000';               // The background is black
+            this.ctx.strokeStyle = '#fff';          // And the line color is white
+            this.ctx.fillStyle = '#fff';            // As is fill color
+            this.graphics2d.commands.clear.apply(this);
+        }
+        restart.apply(this);
+        this.worker.on('restart', restart.bind(this));
     }
 
     Graphics2D.prototype = {
@@ -68,14 +74,14 @@
                 this.ctx.stroke();
             },
 
-            setScreenHeight: function setScreenHeight(height) {
-                this.setResolution(this.screenWidth, height, true);
+            setCanvasHeight: function setCanvasHeight(height) {
+                this.setResolution(this.canvasWidth, height, true);
             },
-            setScreenSize: function setScreemSise(width, height) {
+            setCanvasSize: function setCanvasSise(width, height) {
                 this.setResolution(width, height, true);
             },
-            setScreenWidth: function setScreenWidth(width) {
-                this.setResolution(width, this.screenHeight, true);
+            setCanvasWidth: function setCanvasWidth(width) {
+                this.setResolution(width, this.canvasHeight, true);
             },
             setWindowHeight: function setWindowHeight(height) {
                 this.setSize(this.windowWidth, height);

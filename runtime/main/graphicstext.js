@@ -1,12 +1,17 @@
 ﻿define(function () {
     function GraphicsText() {
-        this.textAlign = 1;
-        this.textColor = '#fff';
-        this.textFont = 'monospace';
-        this.textSize = 12;
-        this.printOriginX = 0;
-        this.printOriginY = 0;
-        this.printOffsetY = 0;
+        function restart() {
+            this.textAlign = 1;
+            this.textColor = '#fff';
+            this.textFont = 'monospace';
+            this.textSize = 12;
+            this.printOriginX = 0;
+            this.printOriginY = 0;
+            this.printOffsetY = 0;
+            this.graphicstext.commands.clear.apply(this);
+        }
+        restart.apply(this);
+        this.worker.on('restart', restart.bind(this));
     }
 
     function drawText(x, y, str, align) {

@@ -15,3 +15,8 @@ static
 *.min.js.map
 
 /.htaccess
+
+# Visual Studio files
+obj/
+*.config
+*.csproj

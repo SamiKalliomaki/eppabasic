@@ -21,8 +21,8 @@
         this.bufferCtx = this.buffer[0].getContext('2d');
 
         // Set some default values for the context
-        this.screenWidth = 0;
-        this.screenHeight = 0;
+        this.canvasWidth = 0;
+        this.canvasHeight = 0;
         this.windowWidth = 0
         this.windowHeight = 0;
 
@@ -35,12 +35,17 @@
 
         this.worker.on('drawscreen', this.onDrawScreen.bind(this));
         window.addEventListener('resize', this.onResize.bind(this));
+
+        this.commandBuffer = [];
+        window.requestAnimationFrame(this.animateFrame.bind(this));
     }
 
     Graphics.prototype = {
         onResize: function onResize() {
             this.windowWidth = window.innerWidth;
             this.windowHeight = window.innerHeight;
+
+            this.resizeCanvas();
         },
         setSize: function setSize(width, height, fromWorker) {
             this.windowWidth = width;
@@ -51,6 +56,26 @@
             var outerHeight = height + (window.outerHeight - window.innerHeight);
             window.resizeTo(outerWidth, outerHeight);
         },
+
+        resizeCanvas: function resizeCanvas() {
+            var canvasRatio = this.canvasWidth / this.canvasHeight;
+            var windowRatio = this.windowWidth / this.windowHeight;
+
+            var width, heigth;
+
+            if (windowRatio > canvasRatio) { // Window is wider
+                height = 100;
+                width = height * (canvasRatio / windowRatio);
+            } else {
+                width = 100;
+                height = width * (windowRatio / canvasRatio);
+            }
+
+            // Set the canvas to retain its aspect ratio
+            this.canvasHolder.width(width + '%');
+            this.canvasHolder.height(height + '%');
+        },
+
         setResolution: function setResolution(width, height, fromWorker) {
             // Copy the context styles
             var fillStyle = this.ctx.fillStyle;
@@ -59,8 +84,8 @@
             var strokeStyle = this.ctx.strokeStyle;
 
             // Remember the resolutin
-            this.screenWidth = width;
-            this.screenHeight = height;
+            this.canvasWidth = width;
+            this.canvasHeight = height;
 
             // Copy the current image to a buffer
             this.buffer.width(this.canvas.width());
@@ -71,11 +96,7 @@
             this.canvas[0].width = width;
             this.canvas[0].height = height;
 
-            // Set the canvas to retain its aspect ratio
-            this.canvasHolder.width('100vw');
-            this.canvasHolder.height((100 / (width / height)) + 'vw');
-            this.canvasHolder.css('maxHeight', '100vh');
-            this.canvasHolder.css('maxWidth', (100 * width / height) + 'vh');
+            this.resizeCanvas();
 
             // Copy and scale the image back from the buffer
             this.ctx.drawImage(this.buffer[0], 0, 0, this.canvas.width(), this.canvas.height());
@@ -92,7 +113,11 @@
         },
 
         onDrawScreen: function onDrawScreen(commands) {
-            commands.forEach(function (args) {
+            this.commandBuffer = this.commandBuffer.concat(commands);
+        },
+
+        animateFrame: function animateFrame() {
+            this.commandBuffer.forEach(function (args) {
                 var name = args[0];
                 args = args[1];
                 if (this.graphics2d.commands[name]) this.graphics2d.commands[name].apply(this, args);
@@ -100,6 +125,8 @@
                 if (!this.graphics2d.commands[name] && !this.graphicstext.commands[name])
                     console.error('Unknown function: ' + name);
             }.bind(this));
+            this.commandBuffer = [];
+            window.requestAnimationFrame(this.animateFrame.bind(this));
         }
     };
 
