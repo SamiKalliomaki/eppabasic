@@ -80,7 +80,8 @@ class Runtime extends EventEmitter {
         i18n.init(
             {
                 cookieName: 'lang',
-                fallbackLng: 'en-US'
+                fallbackLng: 'en-US',
+                resGetPath: '../locales/__lng__/__ns__.json'
             }, function (t) {
                 $('body').i18n();
             });
