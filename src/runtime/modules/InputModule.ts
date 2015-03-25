@@ -31,11 +31,13 @@ class InputModule implements Module {
         var scale = 1;
 
         // Listeners
-        var resizeListener = (e) => {
+        var resizeListener = (e: Event) => {
             scale = this._runtime.canvas.width / this._runtime.canvasHolder.offsetWidth;
         };
-        var keydownListener = (e) => {
+        var keydownListener = (e: KeyboardEvent) => {
             if (inMessageBox)
+                return;
+            if (e.keyCode === 122)      // F11 for fullscreen
                 return;
             if (!keysDown[e.keyCode])
                 keysHit[e.keyCode] = true;
@@ -44,7 +46,7 @@ class InputModule implements Module {
             e.preventDefault();
             return false;
         }
-        var keyupListener = (e) => {
+        var keyupListener = (e: KeyboardEvent) => {
             if (inMessageBox)
                 return;
             keysDown[e.keyCode] = false;
