@@ -11,6 +11,12 @@ declare class Editor {
     openRuntime(): void;
     closeRuntime(): void;
     runtimeReady(func?: () => void): void;
+    ace: Ace;
+}
+
+// TODO Use real ace
+declare class Ace {
+    gotoLine(line: number): void;
 }
 
 export = Editor;

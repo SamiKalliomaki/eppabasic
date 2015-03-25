@@ -21,6 +21,10 @@ class Runtime extends EventEmitter {
      */
     private _program: AsmjsTargetProgram.AsmjsProgram;
     /**
+     * Original AsmjsTargetProgram.
+     */
+    private _targetProgram: AsmjsTargetProgram;
+    /**
      * Holder element for canvases.
      */
     private _canvasHolder: HTMLDivElement;
@@ -48,6 +52,10 @@ class Runtime extends EventEmitter {
      * Time the next frame should not be drawn before
      */
     private _nextFrame: number;
+    /**
+     * Whether runtime is waiting for something.
+     */
+    private _waiting: boolean;
 
     /**
      * Constructs a new runtime.
@@ -58,6 +66,7 @@ class Runtime extends EventEmitter {
         // Setup locals
         this._editor = null;
         this._program = null;
+        this._targetProgram = null;
         this._canvasHolder = null;
         this._canvas = null;
         this._renderingContext = null;
@@ -65,6 +74,7 @@ class Runtime extends EventEmitter {
         this._heap = null;
         this._running = false;
         this._nextFrame = 0;
+        this._waiting = false;
 
         // Initialize i18n
         i18n.init(
@@ -135,6 +145,18 @@ class Runtime extends EventEmitter {
     get program(): AsmjsTargetProgram.AsmjsProgram {
         return this._program;
     }
+    /**
+     * Whether runtime is waiting for something.
+     */
+    get waiting(): boolean {
+        return this._waiting;
+    }
+    /**
+     * Whether runtime is waiting for something.
+     */
+    set waiting(waiting: boolean) {
+        this._waiting = waiting;
+    }
 
     /**
      * Closes runtime.
@@ -149,6 +171,7 @@ class Runtime extends EventEmitter {
      */
     init(program: AsmjsTargetProgram) {
         var moduleLoader = new ModuleLoader(program.modules);
+        this._targetProgram = program;
 
         this._initPromise = new Promise<void>((resolve: (value: void) => void, reject: (error: any) => void): void=> {
             moduleLoader.loaded((modules: Module.Constructor[]): void => {
@@ -182,6 +205,8 @@ class Runtime extends EventEmitter {
                     environment[internalName] = functions.get(signature);
                 });
 
+                environment['panic'] = this.panic.bind(this);
+
                 // Create program
                 this._program = program.programFactory(stdlib, environment, this._heap);
 
@@ -203,20 +228,46 @@ class Runtime extends EventEmitter {
             var step = () => {
                 var now = (new Date()).getTime();
 
-                if (now < this._nextFrame) {
+                if (now < this._nextFrame || this._waiting) {
                     window.requestAnimationFrame(step);
                     return;
                 }
 
-                if (!this.program.next()) {
-                    // Program has ended
-                    // TODO: Draw final screen
-                } else if (this._running)
-                    window.requestAnimationFrame(step);
+                try {
+                    if (!this.program.next()) {
+                        // Program has ended
+                        // TODO: Draw final screen
+                    } else if (this._running)
+                        window.requestAnimationFrame(step);
+                } catch (e) {
+                    if (e instanceof Runtime.Panic) {
+                        this.stop();
+                        return;
+                    }
+                    if (e instanceof Runtime.End) {
+                        this.stop();
+                        if (window && window.close())
+                            window.close();
+                        return;
+                    }
+                    if (e instanceof Runtime.Restart) {
+                        this.stop();
+                        this.init(this._targetProgram);
+                        this.start();
+                        return;
+                    }
+                    throw e;
+                }
             }
             this._running = true;
             window.requestAnimationFrame(step);
         });
+    }
+    /**
+     * Stops execution.
+     */
+    stop(): void {
+        this._running = false;
     }
 
     /**
@@ -226,6 +277,26 @@ class Runtime extends EventEmitter {
     delay(time: number): void {
         this._nextFrame = (new Date()).getTime() + time;
     }
+
+    /**
+     * Kills program immediately
+     */
+    panic(errCode): void {
+        this.stop();
+        var line = this.program.getLine();
+        var short = i18n.t('runtime:errors.' + errCode + '.short');
+        var long = i18n.t('runtime:errors.' + errCode + '.long');
+        var atLine = i18n.t('runtime:errors.at.line', { line: line });
+        this._editor.ace.gotoLine(line);
+        alert(short + ' ' + atLine + '\n\n' + long);
+        throw new Runtime.Panic();
+    }
+}
+
+module Runtime {
+    export class Panic {}
+    export class End {}
+    export class Restart {}
 }
 
 export = Runtime;

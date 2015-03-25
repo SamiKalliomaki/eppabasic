@@ -21,10 +21,10 @@ class ControlflowModule implements Module {
         this._functions = new Map<string, Function>();
 
         this._functions.set('Sub End()', (): void => {
-
+            throw new Runtime.End();
         });
         this._functions.set('Sub Restart()', (): void => {
-
+            throw new Runtime.Restart();
         });
     }
 
