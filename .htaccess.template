@@ -1,11 +1,11 @@
 RewriteEngine On
 
-RewriteRule ^(eb/)(.*)$ http://INSERT_BACKEND_DOMAIN_HERE/INSERT_PROJECT_DIR_HEREeb/$2 [P]
+RewriteRule ^(eb/)(.*)$ http://INSERT_BACKEND_BINDING_HERE/INSERT_PROJECT_DIR_HEREeb/$2 [P]
 
-RewriteRule ^(cpanel/backend/)(.*)$ http://INSERT_CPANEL_SERVER_DOMAIN_HERE/$2 [P]
+RewriteRule ^(cpanel/backend/)(.*)$ http://INSERT_CPANEL_SERVER_BINDING_HERE/$2 [P]
 
 # Comment out next line in production
-# RewriteRule ^(static/)(.*)$ http://INSERT_BACKEND_DOMAIN_HERE/INSERT_PROJECT_DIR_HEREstatic/$2 [P]
+# RewriteRule ^(static/)(.*)$ http://INSERT_BACKEND_BINDING_HERE/INSERT_PROJECT_DIR_HEREstatic/$2 [P]
 
 <filesMatch "\.(html|htm|js|css|md)$">
   FileETag None

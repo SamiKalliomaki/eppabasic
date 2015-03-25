@@ -12,7 +12,7 @@ def shellquote(s):
     return "'" + s.replace("'", "'\\''") + "'"
 
 config = configparser.ConfigParser()
-config.read('../tools/settings.ini')
+config.read('../settings.ini')
 password = config['cpanel']['password']
 
 class Log:
@@ -59,7 +59,7 @@ def start_backend(params, log):
 		return
 
 	do_run(log, 'cd eppabasic_backend/; source ../../virtenv/bin/activate; screen -dmS ' + get_screen_name())
-	do_run(log, 'screen -S ' + get_screen_name() + ' -X stuff "python manage.py runserver --noreload ' + config['backend']['domain'] + '\n"')
+	do_run(log, 'screen -S ' + get_screen_name() + ' -X stuff "python manage.py runserver --noreload ' + config['backend']['binding'] + '\n"')
 
 def stop_backend(params, log):
 	do_run(log, 'screen -S ' + get_screen_name() + ' -X stuff "^C\nexit\n"')
@@ -69,7 +69,7 @@ def git_pull(params, log):
 	do_run(log, 'cd ..; git stash; git pull; git stash apply')
 
 def build_js(params, log):
-	do_run(log, 'cd ..; grunt release --tmp=/tmp/ebbuild')
+	do_run(log, 'cd ..; grunt build --no-color --www=' + config['build']['www'] + ' --tmp=' + config['build']['tmp'])
 
 def run_migrate(params, log):
 	do_run(log, 'cd eppabasic_backend/; source ../../virtenv/bin/activate; python manage.py migrate')

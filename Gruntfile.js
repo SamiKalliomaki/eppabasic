@@ -1,10 +1,18 @@
-﻿var fs = require('fs');
+var fs = require('fs');
 var path = require('path');
 var glob = require('glob');
 var format = require('string-format');
+var ini = require('ini');
+var path = require('path');
+var process = require('process');
+var crypto = require('crypto');
+
+var isWin = /^win/.test(process.platform);
 
 var tracker;
 module.exports = function (grunt) {
+    require('load-grunt-tasks')(grunt);
+
     // Settings
     var wwwDir = path.resolve(grunt.option('www') || 'www');
     var tmpDir = path.resolve(grunt.option('tmp') || wwwDir + '/tmp');
@@ -72,6 +80,7 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-newer');
     grunt.loadNpmTasks('grunt-sync');
     grunt.loadNpmTasks("grunt-anon-tasks");
+    grunt.loadNpmTasks('grunt-prompt');
 
     // Register own tasks
     grunt.registerTask('build', function () {
@@ -94,6 +103,37 @@ module.exports = function (grunt) {
             .run('clean')
             .run('build');
     });
+    grunt.registerTask('find-static-root', function() {
+        grunt.config('settings-ini.eppabasic.static_root', path.resolve('www/static'));
+    });
+    grunt.registerTask('generate-secret-key', function() {
+        grunt.config('settings-ini.eppabasic.secret_key', crypto.randomBytes(64).toString('hex'));
+    });
+    grunt.registerTask('write-settings', function() {
+         fs.writeFileSync('./settings.ini', ini.stringify(grunt.config('settings-ini')));
+    });
+    grunt.registerTask('create-htaccess', function() {
+        var template = fs.readFileSync('.htaccess.template', 'utf-8');
+        var settings = ini.parse(fs.readFileSync('./settings.ini', 'utf-8'));
+
+        template = template.replace(/INSERT_BACKEND_BINDING_HERE/g, settings['backend']['binding']);
+        template = template.replace(/INSERT_PROJECT_DIR_HERE/g, settings['backend']['project_dir']);
+        template = template.replace(/INSERT_CPANEL_SERVER_BINDING_HERE/g, settings['cpanel']['host'] + ':' + settings['cpanel']['port']);
+
+        fs.writeFileSync('static/.htaccess', template);
+    });
+
+    grunt.registerTask('init', function() {
+        grunt.task
+            .run('prompt:init-settings')
+            .run('find-static-root')
+            .run('generate-secret-key')
+            .run('shell:npm-install')
+            .run('shell:create-virtualenv')
+            .run('shell:pip-install')
+            .run('write-settings')
+            .run('create-htaccess');
+    });
 };
 
 /**
@@ -104,6 +144,43 @@ function ConfigHandler(grunt, wwwDir, tmpDir) {
     this.wwwDir = wwwDir;
     this.tmpDir = tmpDir;
     this.config = {
+        // Default values for settings.ini
+        'settings-ini': {
+            eppabasic: {
+                debug: 'no',
+                domain: '',
+                admin_name: '',
+                admin_email: '',
+                project_dir: '',
+            },
+            db: {
+                engine: 'django.db.backends.sqlite3',
+                name: 'database.db',
+                user: '',
+                password: '',
+                host: '',
+                port: ''
+            },
+            email: {
+                host: '',
+                port: '',
+                user: '',
+                password: '',
+                use_tls: 'yes',
+                default_from: ''
+            },
+            backend: {
+                screen_prefix: '',
+            },
+            cpanel: {
+                password: ''
+            },
+            build: {
+                'www': 'www',
+                'tmp': 'www/tmp'
+            }
+        },
+
         requirejs: {
             options: {
                 baseUrl: tmpDir,
@@ -166,6 +243,67 @@ function ConfigHandler(grunt, wwwDir, tmpDir) {
         clean: {
             www: [wwwDir + '/**/*', wwwDir],
             tmp: [tmpDir + '/**/*', tmpDir, '.tscache']
+        },
+        prompt: {
+            'init-settings': {
+                options: {
+                    questions: [
+                        {
+                            config: 'shell.create-virtualenv.options.python',
+                            type: 'input',
+                            message: 'Python',
+                        },
+                        {
+                            config: 'shell.create-virtualenv.options.virtualenv',
+                            type: 'input',
+                            message: 'Virtualenv',
+                            default: 'virtualenv'
+                        },
+                        {
+                            config: 'settings-ini.backend.binding',
+                            type: 'input',
+                            message: 'Backend binding',
+                            default: 'localhost:8000'
+                        },
+                        {
+                            config: 'settings-ini.backend.project_dir',
+                            type: 'input',
+                            message: 'Project directory',
+                        },
+                        {
+                            config: 'settings-ini.cpanel.host',
+                            type: 'input',
+                            message: 'CPanel host',
+                            default: 'localhost'
+                        },
+                        {
+                            config: 'settings-ini.cpanel.port',
+                            type: 'input',
+                            message: 'CPanel port',
+                            default: '8001'
+                        }
+                    ]
+                }
+            }
+        },
+        shell: {
+            'npm-install': {
+                command: 'npm install',
+            },
+            'create-virtualenv': {
+                command: '<%= shell["create-virtualenv"].options.virtualenv %> -p "<%= shell["create-virtualenv"].options.python %>" virtenv',
+            },
+            'pip-install': {
+                command: [
+                    isWin ? 'virtenv\\Scripts\\activate' : '. virtenv/bin/activate',
+                    'pip install django'
+                ].join(' && '),
+                options: {
+                    execOptions: {
+                        maxBuffer: Infinity
+                    }
+                }
+            }
         }
     };
     this.targetUpdaters = [];

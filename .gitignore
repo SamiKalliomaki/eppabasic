@@ -8,7 +8,8 @@ node_modules
 www
 log
 virtenv
-tools/settings.ini
+
+settings.ini
 
 *.min.js
 *.min.js.map
