@@ -1,16 +1,15 @@
-`Left`
-==========
+<!--text-->
+Left
+====
 
-Funktio `Left(s, k)` palauttaa merkkijonon
-`s` ensimmäiset `k` merkkiä.
+```eppabasic
+Function Left(teksti As String, pituus As Integer) As String
+```
+
+Palauttaa merkkijonon `teksti` ensimmäiset `pituus` merkkiä.
 
 Esimerkki
-----------
-
-    Print Left("aybabtu", 3)
-    
-Koodin tulostus:
-
-    ayb
-    
-Katso myös: [`Mid`](manual:mid), [`Right`](manual:right)
+---------
+```eppabasic
+Print Left("aybabtu", 3)    ' ayb
+```

@@ -1,15 +1,15 @@
-`Date`
-==========
+<!--time-->
+Date
+====
 
-Funktio `Date()` palauttaa tämänhetkisen päivämäärän tekstimuodossa.
+```eppabasic
+Function Date() As String
+```
+
+Palauttaa tietokoneen kellon mukaisen päivämäärän muodossa 'p.k.vvvv'.
 
 Esimerkki
-----------
-
-    Print Date()
-    
-Koodin tulostus (esimerkiksi):
-
-    2.8.2014
-    
-Katso myös: [`Time`](manual:time)
+---------
+```eppabasic
+Print Date()
+```

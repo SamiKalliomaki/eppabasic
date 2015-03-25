@@ -1,24 +1,20 @@
-`DrawRect`
-==========
+<!--graphics-->
+DrawRect
+========
 
-Komento `DrawRect` piirtää suorakulmion näytölle.
+```eppabasic
+Sub DrawRect(x As Integer, y As Integer, leveys As Integer, korkeus As Integer)
+```
 
-Komentoa käytetään näin:
+Piirtää näytölle suorakulmion, jonka leveys on `leveys` ja korkeus `korkeus`, ääriviivat.
+Suorakulmion vasen yläkulma on koordinaateissa (`x`, `y`).
+Käytettävä väri asetetaan komennolla [DrawColor](manual:drawcolor).
 
-    DrawRect x, y, w, h
-    
-Parametrit ovat:
-
-* `x`: vasemman yläkulman x-koordinaatti
-* `y`: vasemman yläkulman y-koordinaatti
-* `w`: suorakulmion leveys
-* `h`: suorakulmion korkeus
+[Katso, miten EppaBasicissa koordinaatisto toimii](manual:/coordinates).
 
 Esimerkki
 ----------
-
-Seuraava komento piirtää suorakulmion,
-jonka vasen yläkulma on pisteessä (100, 120)
-ja koko on 300x50.
-
-    DrawRect 100, 120, 300, 50
+```eppabasic
+' Piirretään ontto suorakulmio, jonka vasen yläkulma on pisteessä (100, 120) ja koko 300x50
+DrawRect 100, 120, 300, 50
+```

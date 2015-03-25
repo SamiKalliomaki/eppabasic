@@ -1,13 +1,17 @@
-`InputText`
-==========
+<!--messages-->
+InputText
+=========
 
-Funktio `InputText(s)` kysyy käyttäjältä merkkijonon
-näyttäen viestin `s`.
+```eppabasic
+Function InputText(viesti as String) As String
+```
+
+Näyttää käyttäjälle viestin `viesti` ja pyytää häntä syöttämään tekstiä.
+Palauttaa käyttäjän kirjoittaman tekstin.
 
 Esimerkki
 ----------
-
-    Dim x = InputText("Anna nimesi:")
-    Message "Väärinpäin: " & Reverse(x)
-    
-Katso myös: [`InputCancel`](manual:inputnumber), [`InputNumber`](manual:inputnumber), [`Message`](manual:message)
+```eppabasic
+Dim teksti = InputText("Anna tekstiä:")
+Message "Teksti takaperin: " & Reverse(teksti)
+```

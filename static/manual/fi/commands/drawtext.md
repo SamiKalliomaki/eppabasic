@@ -1,21 +1,27 @@
-`DrawText`
-==========
+<!--graphics-->
+DrawText
+========
 
-Komento `DrawText` piirtää tekstiä näytölle.
+```eppabasic
+Sub DrawText(x As Integer, y As Integer, teksti As String)
+Sub DrawText(x As Integer, y As Integer, teksti As String, kohdistus As Integer)
+```
 
-Komentoa käytetään näin:
+Piirtää tekstin `teksti` näytölle koordinaatteihin (`x`, `y`).
+Käytettävä väri asetetaan komennolla [TextColor](manual:textcolor).
+Käytettävä kirjaisin asetetaan komennolla [TextFont](manual:textfont).
+Käytettävä koko asetetaan komennolla [TextSize](manual:textsize).
 
-    DrawText x, y, s
-    
-Parametrit ovat:
+Jos parametria `kohdistus` ei anneta, käytetään komennolla
+[TextAlign](manual:textalign) asetettua kohdistusta.
 
-* `x`: tekstin x-koordinaatti (ks. [`TextAlign`](manual:textalign))
-* `y`: tekstin yläreunan y-koordinaatti
-* `s`: piirrettävä teksti
+Katso [TextAlign](manual:textalign) saadaksesi lisätietoa tekstin kohdistamisesta.
+[Katso, miten EppaBasicissa koordinaatisto toimii](manual:/coordinates).
+
 
 Esimerkki
 ----------
-
-Seuraava koodi piirtää näytölle tekstin "aybabtu":
-
-    DrawText 100, 120, "aybabtu"
+```eppabasic
+' Piirretään teksti "Ohjelmointi on kivaa!" kohtaan (10, 20)
+DrawText 10, 20, "Ohjelmointi on kivaa!"
+```

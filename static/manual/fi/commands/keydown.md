@@ -1,19 +1,23 @@
-`KeyDown`
-==========
+<!--input-->
+KeyDown
+=======
 
-Funktio `KeyDown(x)` palauttaa tiedon, onko näppäin `x` alhaalla. 
+```eppabasic
+Function KeyDown(näppäin As Integer) As Boolean
+```
 
-[`Lista näppäinkoodeista`](manual:keycodes)
+Palauttaa tiedon, onko näppäin `näppäin` painettuna alas.
+
+[Lista näppäinkoodeista](manual:keycodes)
 
 Esimerkki
-----------
-
-    Do
-        ClearScreen
-        If KeyDown(32) Then
-            Print "painat välilyöntiä"
-        End If
-        DrawScreen
-    Loop
-    
-Katso myös: [`KeyHit`](manual:keyhit), [`KeyUp`](manual:keyup)
+---------
+```eppabasic
+Do
+    ClearScreen
+    If KeyDown(32) Then
+        Print "Painat välilyöntiä"
+    End If
+    DrawScreen
+Loop
+```

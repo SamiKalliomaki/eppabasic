@@ -1,15 +1,16 @@
-`Hour`
-==========
+<!--time-->
+Hour
+====
 
-Funktio `Hour()` palauttaa tämänhetkisen ajan tunnin väliltä 0–23.
+```eppabasic
+Function Hour() As Integer
+```
+
+Palauttaa tietokoneen kellon mukaisen tunnin.
+Tunti on luku väliltä 0..23.
 
 Esimerkki
-----------
-
-    Print Hour()
-    
-Koodin tulostus (esimerkiksi):
-
-    21
-    
-Katso myös: [`Minute`](manual:minute), [`Second`](manual:second)
+---------
+```eppabasic
+Print Hour()
+```

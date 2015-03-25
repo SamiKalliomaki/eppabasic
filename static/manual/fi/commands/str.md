@@ -1,6 +1,12 @@
-`Str`
-==========
+<!--text-->
+Str
+===
 
-Funktio `Str(x)` muuttaa luvun `x` merkkijonoksi.
+```eppabasic
+Function Str(luku As Integer) As String
+Function Str(luku As Number) As String
+```
 
-Katso myös: [`Val`](manual:val)
+Muuntaa luvun `luku` tekstiksi.
+
+Palauttaa muunnetun tekstin.

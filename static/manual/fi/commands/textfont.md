@@ -1,9 +1,17 @@
-`TextFont`
-==========
+<!--graphics-->
+TextFont
+========
 
-Komento `TextFont` määrittää piirrettävän tekstin fontin.
+```eppabasic
+Sub TextFont(kirjaisin As String)
+```
+
+Määrittää tekstiä piirrettäessä käytettäväksi kirjaisimeksi parametrin `kirjaisin` arvon.
+Huomaa, että kaikkia kirjaisimia ei välttämättä ole kaikissa koneissa asennettuna.
 
 Esimerkki
 ----------
-
-    TextFont "Arial"
+```eppabasic
+' Asetetaan tekstin kirjaisimeksi "Arial"
+TextFont "Arial"
+```

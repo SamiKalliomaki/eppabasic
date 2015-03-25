@@ -1,22 +1,20 @@
-`DrawTriangle`
-==========
+<!--graphics-->
+DrawTriangle
+============
 
-Komento `DrawTriangle` piirtää kolmion näytölle.
+```eppabasic
+Sub DrawTriangle(x1 As Integer, y1 As Integer, x2 As Integer, y2 As Integer, x3 As Integer, y3 As Integer)
+```
 
-Komentoa käytetään näin:
+Piirtää näytölle kolmion ääriviivat.
+Kolmion kärjet ovat koordinaateissa (`x1`, `y1`), (`x2`, `y2`) ja (`x3`, `y3`).
+Käytettävä väri asetetaan komennolla [DrawColor](manual:drawcolor).
 
-    DrawTriangle x1, y1, x2, y2, x3, y3
-    
-Parametrit ovat:
-
-* `x1`: 1. kärkipisteen x-koordinaatti
-* `y1`: 1. kärkipisteen y-koordinaatti
-* `x2`: 2. kärkipisteen x-koordinaatti
-* `y2`: 2. kärkipisteen y-koordinaatti
-* `x3`: 3. kärkipisteen x-koordinaatti
-* `y3`: 3. kärkipisteen y-koordinaatti
+[Katso, miten EppaBasicissa koordinaatisto toimii](manual:/coordinates).
 
 Esimerkki
 ----------
-
-    DrawTriangle 50, 50, 100, 100, 40, 120
+```eppabasic
+' Piirretään ontto kolmio, jonka kärjet ovat koordinaateissa (50, 50), (100, 100) ja (40, 120).
+DrawTriangle 50, 50, 100, 100, 40, 120
+```

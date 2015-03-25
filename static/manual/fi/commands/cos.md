@@ -1,19 +1,18 @@
-`Cos`
-==========
+<!--math-->
+Cos
+===
 
-Funktio `Cos(x)` palauttaa kulman `x` kosinin. Kulma `x` annetaan radiaaneina.
+```eppabasic
+Function Cos(kulma As Number) As Number
+```
+
+Palauttaa kulmaa `kulma` vastaavan kosinin arvon.
+Kulma annetaan radiaaneina.
 
 Esimerkki
-----------
-
-    Print Cos(0)
-    Print Cos(1)
-    Print Cos(0.4)
-    
-Koodin tulostus:
-
-    1
-    0.54030231
-    0.92106099
-
-Katso myös: [`Sin`](manual:sin), [`Tan`](manual:tan)
+---------
+```eppabasic
+Cos(0)      ' 1
+Cos(1)      ' 0.54030231
+Cos(0.4)    ' 0.92106099
+```

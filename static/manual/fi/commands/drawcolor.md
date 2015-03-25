@@ -1,22 +1,19 @@
-`DrawColor`
+<!--graphics-->
+DrawColor
 ==========
 
-Komento `DrawColor` määrittää värin, jolla kuvioiden ääriviivat piirretään.
+```eppabasic
+Sub DrawColor(r As Integer, g As Integer, b As Integer)
+```
 
-Komentoa käytetään näin:
+Määrittää värin, jota käytetään viivakuvioiden piirtämiseen.
 
-    DrawColor r, g, b
-    
-Parametrit ovat:
-
-* `r`: punaisen värin määrä (0–255)
-* `g`: vihreän värin määrä (0–255)
-* `b`: sinisen värin määrä (0–255)
+[Katso, miten värit toimivat EppaBasicissa](manual:../colors).
 
 Esimerkki
 ----------
-
-Seuraava koodi piirtää sinisen ympyrän:
-
-    DrawColor 0, 0, 255
-    DrawCircle 200, 200, 50
+```eppabasic
+' Asetetaan piirtoväriksi sininen ja piirretään ontto ympyrä
+DrawColor 255, 0, 0
+DrawCircle 200, 200, 50
+```

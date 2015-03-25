@@ -1,24 +1,16 @@
-`Replace`
-==========
+<!--text-->
+Replace
+=======
 
-Funktio `Replace(s, a, b)` muodostaa merkkijonon,
-jonka lähtökohtana on `s`,
-mutta jokainen `a` on korvattu `b`:llä.
+```eppabasic
+Function Replace(teksti As String, korvattava As String, korvaava As String) As String
+```
 
-Esimerkki 1
-----------
+Palauttaa merkkijonon `teksti` muutettuna siten, että kaikki kohdat, joissa esiintyy merkkijono `korvattava` on korvattu merkkijonolla `korvaava`.
 
-    Print Replace("aybabtu", "a", "ö")
-    
-Koodin tulostus:
-
-    öyböbtu
-    
-Esimerkki 2
-----------
-
-    Print Replace("aaaaaaaaa", "aaa", "z")
-    
-Koodin tulostus:
-
-    zzz
+Esimerkki
+---------
+```eppabasic
+Print Replace("aybabtu", "a", "ö")      ' öyböbtu
+Print Replace("aaaaaaaaa", "aaa", "z")  ' zzz
+```

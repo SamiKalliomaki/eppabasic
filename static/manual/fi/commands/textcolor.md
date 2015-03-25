@@ -1,22 +1,19 @@
-`TextColor`
+<!--graphics-->
+TextColor
 ==========
 
-Komento `TextColor` määrittää värin, jolla teksti piirretään.
+```eppabasic
+Sub TextColor(r As Integer, g As Integer, b As Integer)
+```
 
-Komentoa käytetään näin:
+Määrittää värin, jota käytetään tekstin piirtämiseen.
 
-    TextColor r, g, b
-    
-Parametrit ovat:
-
-* `r`: punaisen värin määrä (0–255)
-* `g`: vihreän värin määrä (0–255)
-* `b`: sinisen värin määrä (0–255)
+[Katso, miten värit toimivat EppaBasicissa](manual:../colors).
 
 Esimerkki
 ----------
-
-Seuraava koodi kirjoittaa vihreällä tekstin "EppaBasic":
-
-    TextColor 0, 255, 0
-    DrawText 50, 50, "EppaBasic"
+```eppabasic
+' Piirretään teksti "Ohjelmointi on kivaa!" vihreällä
+TextColor 0, 255, 0
+DrawText 10, 20, "Ohjelmointi on kivaa!"
+```

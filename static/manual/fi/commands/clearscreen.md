@@ -1,9 +1,17 @@
-`ClearScreen`
-==========
+<!--graphics-->
+ClearScreen
+===========
 
-Komento `ClearScreen` tyhjentää näytön.
+```eppabasic
+Sub ClearScreen()
+```
+
+Tyhjentää näytön täyttämällä sen tyhjennysvärillä.
+Tyhjennysväri asetetaan komennolla [ClearColor](manual:clearcolor).
 
 Esimerkki
 ----------
-
-    ClearScreen
+```eppabasic
+' Tyhjennetään näyttö
+ClearScreen
+```

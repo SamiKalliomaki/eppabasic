@@ -1,15 +1,17 @@
-`Month`
-==========
+<!--time-->
+Month
+====
 
-Funktio `Month()` palauttaa tämänhetkisen kuukauden numeron väliltä 1–12.
+```eppabasic
+Function Month() As Integer
+```
+
+Palauttaa tietokoneen kellon mukaisen kuukauden.
+Kuukausi on luku väliltä 1..12.
+1 vastaa tammikuuta ja 12 joulukuuta.
 
 Esimerkki
-----------
-
-    Print Month()
-    
-Koodin tulostus (esimerkiksi):
-
-    8
-    
-Katso myös: [`Day`](manual:day), [`Weekday`](manual:weekday), [`Year`](manual:year)
+---------
+```eppabasic
+Print Month()
+```

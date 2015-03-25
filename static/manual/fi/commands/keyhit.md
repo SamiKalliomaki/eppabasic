@@ -1,21 +1,24 @@
-`KeyHit`
-==========
+<!--input-->
+KeyHit
+=====
 
-Funktio `KeyHit(x)` kertoo, onko näppäintä `x` painettu funktion viime kutsun jälkeen.
+```eppabasic
+Function KeyHit(näppäin As Integer) As Boolean
+```
 
-[`Lista näppäinkoodeista`](manual:keycodes)
+Palauttaa tiedon, onko näppäintä `näppäin` näppäin painettu funktion viimeisen kutsun jälkeen.
+
+Funktion kutsuminen kahdesti peräkkäin palauttaa toisella kerralla aina arvon Epätosi.
+
+[Lista näppäinkoodeista](manual:keycodes)
 
 Esimerkki
-----------
-
-Seuraava koodi tulostaa rivin tekstiä aina,
-kun käyttäjä painaa välilyöntiä:
-
-    Do
-        If KeyHit(32) Then
-            Print "painoit välilyöntiä"
-        End If
-        DrawScreen
-    Loop
-    
-Katso myös: [`KeyDown`](manual:keydown), [`KeyUp`](manual:keyup)
+---------
+```eppabasic
+Do
+    If KeyHit(32) Then
+        Print "Painoit välilyöntiä"
+    End If
+    DrawScreen
+Loop
+```

@@ -1,43 +1,22 @@
-`Rnd`
-==========
+<!--math-->
+Ceil
+=====
 
-Funktio `Rnd` arpoo satunnaisen luvun.
-Funktiota voi käyttää kahdella tavalla:
+```eppabasic
+I)      Function Rnd() As Number
+II)     Function Rnd(min As Integer, max As Integer) As Integer
+```
 
-* `Rnd(a, b)` arpoo satunnaisen kokonaisluvun väliltä `a`..`b`.
-* `Rnd()` arpoo satunnaisen desimaaliluvun väliltä 0..1.
+I) Arpoo luvun suljetulta väliltä [0, 1].
+II) Arpoo kokonaisluvun suljetulta välitä [min, max].
 
-Esimerkki 1
-----------
-
-Seuraava koodi simuloi nopan heittämistä 10 kertaa:
-
-    For i = 1 To 10
-        Print Rnd(1, 6)
-    Next i
-    
-Koodin tulostus (esimerkiksi):
-
-    5
-    6
-    4
-    4
-    4
-    2
-    1
-    2
-    4
-    3
-    
-Esimerkki 2
-----------
-
-Seuraava koodi tulostaa 78 % todennäköisyydellä "Moikka!" ja 22 % todennäköisyydellä "Heippa!"
-
-    If Rnd() <= 0.78 Then
-        Print "Moikka!"
-    Else
-        Print "Heippa!"
-    End If
-    
-Katso myös: [`Randomize`](manual:randomize)
+Esimerkki
+---------
+```eppabasic
+' Tulostetaan 78% todennäköisyydellä "Moikka!" ja 22% todennäköisyydellä "Heippa!"
+If Rnd() <= 0.78 Then
+    Print "Moikka!"
+Else
+    Print "Heippa!"
+End If
+```

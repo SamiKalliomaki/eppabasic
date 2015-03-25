@@ -1,6 +1,11 @@
-`Val`
-==========
+<!--text-->
+Val
+===
 
-Funktio `Val(s)` muuttaa merkkijonon `s` luvuksi.
+```eppabasic
+Function Val(teksti As String) As Number
+```
 
-Katso myös: [`Str`](manual:str)
+Muuntaa merkkijonon `teksti` luvuksi.
+
+Palauttaa muunnetun luvun.

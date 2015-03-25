@@ -1,17 +1,17 @@
-`Asc`
-==========
+<!--text-->
+Asc
+===
 
-Funktio `Asc(s)` palauttaa merkkijonon `s` ensimmäisen merkin merkkikoodin.
+```eppabasic
+Function Asc(teksti As String) As Integer
+```
+
+Palauttaa tekstin `teksti` ensimmäistä merkkiä vastaavan merkkikoodin. Jokaisella kirjaimella on oma merkkikoodinsa.
 
 Jos merkkijono on tyhjä, funktio palauttaa arvon 0.
 
 Esimerkki
-----------
-
-    Print Asc("A")
-    
-Koodin tulostus:
-
-    65
-    
-Katso myös: [`Chr`](manual:chr)
+---------
+```eppabasic
+Print Asc("A")      ' 65
+```

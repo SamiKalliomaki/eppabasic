@@ -1,15 +1,15 @@
-`Time`
-==========
+<!--time-->
+Time
+====
 
-Funktio `Time()` palauttaa tämänhetkisen kellonajan tekstimuodossa.
+```eppabasic
+Function Time() As Sring
+```
+
+Palauttaa tietokoneen kellon mukaisen ajan muodossa `hh:mm:ss`.
 
 Esimerkki
-----------
-
-    Print Time()
-    
-Koodin tulostus (esimerkiksi):
-
-    17:33:02
-    
-Katso myös: [`Date`](manual:date)
+---------
+```eppabasic
+Print Time()
+```

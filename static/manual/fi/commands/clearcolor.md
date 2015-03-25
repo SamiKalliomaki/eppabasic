@@ -1,22 +1,20 @@
-`ClearColor`
+<!--graphics-->
+ClearColor
 ==========
 
-Komento `ClearColor` määrittää värin, jolla näyttö tyhjennetään.
+```eppabasic
+Sub ClearColor(r As Integer, g As Integer, b As Integer)
+```
 
-Komentoa käytetään näin:
+Määrittää värin, jota käytetään ruudun tyhjentämiseen.
+Ruutu tyhjennetään komennolla [ClearScreen](manual:clearscreen).
 
-    ClearColor r, g, b
-    
-Parametrit ovat:
-
-* `r`: punaisen värin määrä (0–255)
-* `g`: vihreän värin määrä (0–255)
-* `b`: sinisen värin määrä (0–255)
+[Katso, miten värit toimivat EppaBasicissa](manual:../colors).
 
 Esimerkki
 ----------
-
-Seuraava koodi muuttaa tyhjennysväriksi punaisen ja tyhjentää sitten näytön:
-
-    ClearColor 255, 0, 0
-    ClearScreen
+```eppabasic
+' Asetetaan ruudun taustaväriksi punainen ja tyhjennetään se
+ClearColor 255, 0, 0
+ClearScreen
+```

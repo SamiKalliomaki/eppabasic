@@ -1,13 +1,15 @@
-`Len`
-==========
+<!--text-->
+Len
+===
 
-Funktio `Len(s)` palauttaa merkkijonon `s` merkkien määrän.
+```eppabasic
+Function Len(teksti As String) As Integer
+```
+
+Palauttaa merkkijonon `teksti` merkkien määrän
 
 Esimerkki
-----------
-
-    Print Len("aybabtu")
-    
-Koodin tulostus:
-
-    7
+---------
+```eppabasic
+Print Len("aybabtu")        ' 7
+```

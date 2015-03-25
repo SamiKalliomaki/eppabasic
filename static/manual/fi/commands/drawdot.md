@@ -1,20 +1,19 @@
-`DrawDot`
+<!--graphics-->
+DrawDot
 ==========
 
-Komento `DrawDot` piirtää pisteen näytölle
+```eppabasic
+Sub DrawDot(x As Integer, y As Integer)
+```
 
-Komentoa käytetään näin:
+Piirtää näytölle yhden pikselin kokoisen pisteen koordinaatteihin (`x`, `y`).
+Käytettävä väri asetetaan komennolla [DrawColor](manual:drawcolor).
 
-    DrawCircle x, y
-    
-Parametrit ovat:
-
-* `x`: pisteen x-koordinaatti
-* `y`: pisteen y-koordinaatti
+[Katso, miten EppaBasicissa koordinaatisto toimii](manual:/coordinates).
 
 Esimerkki
 ----------
-
-Seuraava koodi piirtää pisteen kohtaan (300, 150):
-
-    DrawDot 300, 150
+```eppabasic
+' Piirretään piste kohtaan (300, 150)
+DrawDot 300, 150
+```

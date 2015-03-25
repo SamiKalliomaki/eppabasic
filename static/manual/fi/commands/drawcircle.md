@@ -1,21 +1,20 @@
-`DrawCircle`
+<!--graphics-->
+DrawCircle
 ==========
 
-Komento `DrawCircle` piirtää ympyrän näytölle.
+```eppabasic
+Sub DrawCircle(x As Integer, y As Integer, r As Integer)
+```
 
-Komentoa käytetään näin:
+Piirtää näytölle `r`-säteisen ympyrän ääriviivan koordinaatteihin (`x`, `y`).
+Koordinaatit määrittävät ympyrän keskipisteen.
+Käytettävä väri asetetaan komennolla [DrawColor](manual:drawcolor).
 
-    DrawCircle x, y, r
-    
-Parametrit ovat:
-
-* `x`: keskipisteen x-koordinaatti
-* `y`: keskipisteen y-koordinaatti
-* `r`: ympyrän säde
+[Katso, miten EppaBasicissa koordinaatisto toimii](manual:/coordinates).
 
 Esimerkki
 ----------
-
-Seuraava koodi piirtää kohtaan (100, 120) ympyrän, jonka säde on 50:
-
-    DrawCircle 100, 120, 50
+```eppabasic
+' Piirretään pisteen (100, 120) ympärille ympyrä, jonka säde on 50
+DrawCircle 100, 120, 50
+```

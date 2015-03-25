@@ -1,22 +1,19 @@
-`FillColor`
+<!--graphics-->
+FillColor
 ==========
 
-Komento `FillColor` määrittää värin, jolla kuviot täytetään.
+```eppabasic
+Sub FillColor(r As Integer, g As Integer, b As Integer)
+```
 
-Komentoa käytetään näin:
+Määrittää värin, jota käytetään täytetyiden kuvioiden piirtämiseen.
 
-    FillColor r, g, b
-    
-Parametrit ovat:
-
-* `r`: punaisen värin määrä (0–255)
-* `g`: vihreän värin määrä (0–255)
-* `b`: sinisen värin määrä (0–255)
+[Katso, miten värit toimivat EppaBasicissa](manual:../colors).
 
 Esimerkki
 ----------
-
-Seuraava koodi piirtää sinisen ympyrän täytettynä:
-
-    FillColor 0, 0, 255
-    FillCircle 200, 200, 50
+```eppabasic
+' Asetetaan täyttöväriksi sininen ja piirretään täytetty ympyrä
+FillColor 255, 0, 0
+FillCircle 200, 200, 50
+```

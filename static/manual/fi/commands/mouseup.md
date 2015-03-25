@@ -1,25 +1,32 @@
-`MouseUp`
-==========
+<!--input-->
+MouseUp
+=======
 
-Funktio `MouseUp(x)` palauttaa tiedon, onko hiiren nappi `x` ylhäällä.
+```eppabasic
+Function MouseUp(näppäin As Integer) As Boolean
+```
 
-Vasemman napin tunnus on 1, oikean napin 2 ja keskinapin 3.
+Palauttaa tiedon, onko hiiren näppäin `näppäin` ylhäällä.
+
+Näppäin|Tunnus
+-------|------
+Vasen|1
+Keskummäinen|2
+Oikea|3
 
 Esimerkki
-----------
-
-    Do
-        ClearScreen
-        If MouseUp(1) Then
-            Print "vasen nappi ylhäällä"
-        End If
-        If MouseUp(2) Then
-            Print "oikea nappi ylhäällä"
-        End If
-        If MouseUp(3) Then
-            Print "keskinappi ylhäällä"
-        End If
-        DrawScreen
-    Loop
-    
-Katso myös: [`MouseDown`](manual:mousedown), [`MouseHit`](manual:mousehit)
+---------
+Do
+    ClearScreen
+    If MouseUp(1) Then
+        Print "Vasen nappi ylhäällä"
+    End If
+    If MouseUp(2) Then
+        Print "Oikea nappi ylhäällä"
+    End If
+    If MouseUp(3) Then
+        Print "Keskinappi ylhäällä"
+    End If
+    DrawScreen
+Loop
+```

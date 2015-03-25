@@ -1,21 +1,20 @@
-`FillCircle`
+<!--graphics-->
+FillCircle
 ==========
 
-Komento `FillCircle` piirtää täytetyn ympyrän näytölle.
+```eppabasic
+Sub FillCircle(x As Integer, y As Integer, r As Integer)
+```
 
-Komentoa käytetään näin:
+Piirtää näytölle `r`-säteisen täytetyn ympyrän koordinaatteihin (`x`, `y`).
+Koordinaatit määrittävät ympyrän keskipisteen.
+Käytettävä väri asetetaan komennolla [FillColor](manual:fillcolor).
 
-    FillCircle x, y, r
-    
-Parametrit ovat:
-
-* `x`: keskipisteen x-koordinaatti
-* `y`: keskipisteen y-koordinaatti
-* `r`: ympyrän säde
+[Katso, miten EppaBasicissa koordinaatisto toimii](manual:/coordinates).
 
 Esimerkki
 ----------
-
-Seuraava koodi piirtää kohtaan (100, 120) täytetyn ympyrän, jonka säde on 50:
-
-    FillCircle 100, 120, 50
+```eppabasic
+' Piirretään pisteen (100, 120) ympärille täytetty ympyrä, jonka säde on 50
+FillCircle 100, 120, 50
+```

@@ -1,13 +1,15 @@
-`Reverse`
-==========
+<!--text-->
+Reverse
+=======
 
-Funktio `Reverse(s)` kääntää merkkijonon `s` toisinpäin.
+```eppabasic
+Function Reverse(teksti As String) As String
+```
+
+Palauttaa merkkijonon `teksti` käännettynä toisinpäin.
 
 Esimerkki
-----------
-
-    Print Reverse("aybabtu")
-    
-Koodin tulostus:
-
-    utbabya
+---------
+```eppabasic
+Print Reverse("aybabtu", 3)    ' utbabya
+```

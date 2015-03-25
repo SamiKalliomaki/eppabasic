@@ -1,14 +1,18 @@
 <!--window-->
-WindowTitle
+CanvasWidth
 ============
 
 ```eppabasic
-Sub WindowTitile(otsikko As String)
-Function WindowTitile() As String
+Sub CanvasWidth(leveys As Integer)
+Function CanvasWidth() As Integer
 ```
 
-Asettaa ikkunan otsikoksi `otsikko` tai palauttaa ikkunan otsikon.
+Asettaa piirtoalueen leveydeksi `leveys` tai palauttaa piirtoalueen leveyden.
 
+Huomaa, että funktio muuttaa vain piirtämiseen käytettävän alueen leveyttä
+ja että piirtoalue skaalataan täyttämään ikkuna.
+
+Ikkunan leveyttä voi hallita funktiolla [WindowWidth](manual:windowwidth).
 
 Esimerkki
 ----------

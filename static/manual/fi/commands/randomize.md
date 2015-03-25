@@ -1,28 +1,20 @@
-`Randomize`
-==========
+<!--math-->
+Randomize
+=========
 
-Komento `Randomize` alustaa satunnaislukugeneraattorin.
+```eppabasic
+Sub Randomize(siemen As Integer)
+```
 
-Komentoa käytetään näin:
-
-    Randomize x
-    
-Parametri `x` on siemenluku, jonka perusteella satunnaislukugeneraattori alkaa arpoa lukuja. Samalla siemenluvulla tulee aina sama sarja satunnaislukuja.
-
-Jos komentoa `Randomize` ei käytetä, siemenluku määräytyy koodin käynnistyshetkestä.
+Alustaa satunnaislukugeneraattorin annetulla siemenellä.
+Samalla siemenellä alustettu satunnaislukugeneraattori tuottaa aina samoja lukuja.
+Oletuksena siemenlukuna käytetään kellonaikaan pohjautuvaa arvoa.
 
 Esimerkki
-----------
-
-    Randomize 12345
-    Print Rnd()
-    Print Rnd()
-    Print Rnd()
-    
-Koodin tulostus (aina):
-
-    0.85374588
-    0.93714768
-    0.66572763
-    
-Katso myös: [`Rnd`](manual:rnd)
+---------
+```eppabasic
+Randomize 12345
+Print Rnd()     ' 0.85374588
+Print Rnd()     ' 0.93714768
+Print Rnd()     ' 0.66572763
+```

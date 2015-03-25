@@ -1,17 +1,21 @@
-`MouseX`
-==========
+<!--input-->
+MouseX
+======
 
-Funktio `MouseX()` palauttaa hiiren x-koordinaatin.
+```eppabasic
+Function MouseX() As Integer
+```
+
+Palauttaa kursorin x-koordinaatin.
+
+[Katso, miten EppaBasicissa koordinaatisto toimii](manual:/coordinates).
 
 Esimerkki
-----------
-
-Seuraava koodi näyttää hiiren x-koordinaatin hiiren liikkuessa:
-
-    Do
-        ClearScreen
-        Print MouseX()
-        DrawScreen
-    Loop
-    
-Katso myös: [`MouseY`](manual:mousey)
+---------
+```eppabasic
+Do
+    ClearScreen
+    Print MouseX()
+    DrawScreen
+Loop
+```

@@ -1,16 +1,15 @@
-`Right`
-==========
+<!--text-->
+Right
+====
 
-Funktio `Right(s, k)` palauttaa merkkijonon
-`s` viimeiset `k` merkkiä.
+```eppabasic
+Function Right(teksti As String, pituus As Integer) As String
+```
+
+Palauttaa merkkijonon `teksti` viimeiset `pituus` merkkiä.
 
 Esimerkki
-----------
-
-    Print Right("aybabtu", 3)
-    
-Koodin tulostus:
-
-    btu
-    
-Katso myös: [`Left`](manual:left), [`Mid`](manual:mid)
+---------
+```eppabasic
+Print Right("aybabtu", 3)    ' btu
+```

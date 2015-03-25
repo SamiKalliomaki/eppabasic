@@ -1,17 +1,17 @@
-`Weekday`
-==========
+<!--time-->
+WeekDay
+=======
 
-Funktio `Weekday()` palauttaa tämänhetkisen viikonpäivän numeron väliltä 1–7:
+```eppabasic
+Function WeekDay() As Integer
+```
 
-Päivä 1 on maanantai, päivä 2 on tiistai jne.
+Palauttaa tietokoneen kellon mukaisen viikonpäivän.
+Viikonpäivä on luku väliltä 1..7.
+1 vastaa maanantaita, 7 sunnuntaita.
 
 Esimerkki
-----------
-
-    Print Weekday()
-    
-Koodin tulostus (esimerkiksi):
-
-    3
-    
-Katso myös: [`Day`](manual:day), [`Month`](manual:month), [`Year`](manual:year)
+---------
+```eppabasic
+Print WeekDay()
+```

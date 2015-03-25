@@ -1,20 +1,22 @@
-`Match`
-==========
+<!--text-->
+Match
+=====
 
-Funktio `Match(s, r)` tutkii, vastaako merkkijono `s`
-säännöllistä lauseketta `r`.
+```eppabasic
+Function Match(teksti As String, sl As Integer) As Boolean
+```
+
+Palauttaa tiedon, vastaako merkkijono `teksti` säännölistä lauseketta `sl`.
+
+Lisää tietoa säännöllisistä lausekkeista voi lukea [Ohjelmointiputkan oppaasta](http://www.ohjelmointiputka.net/oppaat/opas.php?tunnus=php_16) (Huomaa! Esimerkit käyttävät PHP-ohjelmointikieltä, mutta samat säännöllisen lausekkeen muodostamis -ohjeet pätevät myös EppaBasicissa).
 
 Esimerkki
-----------
-
-Seuraava koodi hyväksyy tunnussanat,
-jotka muodostuvat merkeistä a..z ja
-joiden pituus on 6..8 merkkiä.
-
-    Dim x = InputText("Anna tunnussana:")
-    If Match(x, "[a-z]{6,8}") Then
-        Message "Tervetuloa!"
-    Else
-        Message "Häivy pois!"
-    End If
-    
+---------
+```eppabasic
+Dim x = InputText("Anna merkkijono, jonka pituus on 6..8 merkkiä:")
+If Match(x, "[a-z]{6,8}") Then
+    Message "Tervetuloa!"
+Else
+    Message "Häivy pois!"
+End If
+```

@@ -1,15 +1,15 @@
-`Chr`
-==========
+<!--text-->
+Chr
+===
 
-Funktio `Chr(x)` palauttaa merkkikoodia `x` vastaavan merkin.
+```eppabasic
+Function Chr(merkkikoodi As Integer) As String
+```
+
+Palauttaa merkkikoodia `merkkikoodi` vastaavan merkin. Jokaisella kirjaimella on oma merkkikoodinsa.
 
 Esimerkki
-----------
-
-    Print Chr(65)
-    
-Koodin tulostus:
-
-    A
-    
-Katso myös: [`Asc`](manual:asc)
+---------
+```eppabasic
+Print Chr(64)      ' A
+```

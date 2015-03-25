@@ -1,17 +1,21 @@
-`MouseY`
-==========
+<!--input-->
+MouseY
+======
 
-Funktio `MouseY()` palauttaa hiiren y-koordinaatin.
+```eppabasic
+Function MouseY() As Integer
+```
+
+Palauttaa kursorin y-koordinaatin.
+
+[Katso, miten EppaBasicissa koordinaatisto toimii](manual:/coordinates).
 
 Esimerkki
-----------
-
-Seuraava koodi näyttää hiiren y-koordinaatin hiiren liikkuessa:
-
-    Do
-        ClearScreen
-        Print MouseY()
-        DrawScreen
-    Loop
-    
-Katso myös: [`MouseX`](manual:mousex)
+---------
+```eppabasic
+Do
+    ClearScreen
+    Print MouseY()
+    DrawScreen
+Loop
+```

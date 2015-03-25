@@ -1,19 +1,17 @@
-`Floor`
-==========
+<!--math-->
+Floor
+=====
 
-Funktio `Floor(x)` palauttaa luvun `x` pyöristettynä alaspäin.
+```eppabasic
+Function Floor(luku As Number) As Integer
+```
+
+Pyöristää luvun `luku` alaspäin lähimpään kokonaislukuun.
 
 Esimerkki
-----------
-
-    Print Floor(5.8)
-    Print Floor(1.01)
-    Print Floor(3)
-    
-Koodin tulostus:
-
-    5
-    1
-    3
-    
-Katso myös: [`Ceil`](manual:ceil), [`Round`](manual:round)
+---------
+```eppabasic
+Floor(5.8)      ' 5
+Floor(1.01)     ' 1
+Floor(3)        ' 3
+```

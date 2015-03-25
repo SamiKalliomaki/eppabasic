@@ -1,19 +1,18 @@
-`Min`
-==========
+<!--math-->
+Min
+===
 
-Funktio `Min(a, b)` palauttaa pienemmän luvuista `a` ja `b`.
+```eppabasic
+Function Min(a As Number, b As Number) As Number
+Function Min(a As Integer, b As Integer) As Integer
+```
+
+Palauttaa luvuista `a` ja `b` pienemmän.
 
 Esimerkki
-----------
-
-    Print Min(5, 7)
-    Print Min(-2, -3)
-    Print Min(4, 4)
-    
-Koodin tulostus:
-
-    5
-    -3
-    4
-    
-Katso myös: [`Max`](manual:max)
+---------
+```eppabasic
+Min(5, 7)       ' 5
+Min(-2, -3)     ' -3
+Min(4, 4)       ' 4
+```

@@ -1,19 +1,23 @@
-`KeyUp`
-==========
+<!--input-->
+KeyUp
+=====
 
-Funktio `KeyUp(x)` palauttaa tiedon, onko näppäin `x` ylhäällä. 
+```eppabasic
+Function KeyUp(näppäin As Integer) As Boolean
+```
 
-[`Lista näppäinkoodeista`](manual:keycodes)
+Palauttaa tiedon, onko näppäin `näppäin` ylhäällä.
+
+[Lista näppäinkoodeista](manual:keycodes)
 
 Esimerkki
-----------
-
-    Do
-        ClearScreen
-        If KeyUp(32) Then
-            Print "et paina välilyöntiä"
-        End If
-        DrawScreen
-    Loop
-    
-Katso myös: [`KeyDown`](manual:keydown), [`KeyHit`](manual:keyhit)
+---------
+```eppabasic
+Do
+    ClearScreen
+    If KeyUp(32) Then
+        Print "Et paina välilyöntiä"
+    End If
+    DrawScreen
+Loop
+```

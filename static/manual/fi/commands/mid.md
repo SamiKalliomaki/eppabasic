@@ -1,21 +1,20 @@
-`Mid`
-==========
+<!--text-->
+Mid
+===
 
-Funktio `Mid` erottaa osan merkkijonon keskeltä.
-Funktiota voi käyttää kahdella tavalla:
+```eppabasic
+Function Mid(teksti As String, alku As Integer) As String
+Function Mid(teksti As String, alku As Integer, pituus As Integer) As String
+```
 
-* `Mid(s, a)` erottaa `s`:stä kaikki merkit loppuun asti merkistä `a` alkaen.
-* `Mid(s, a, b)` erottaa `s`:stä `b` merkkiä merkistä `a` alkaen.
+Erottaa osan merkkijonon keskeltä
+
+Palauttaa merkkijonon `teksti` merkkejä kohdasta `alku` eteenpäin.
+Jos `pituus` on määritelty, palauttaa korkeintaan `pituus` merkkiä, muuten kaikki merkit merkkijonon  `teksti` loppuun asti.
 
 Esimerkki
-----------
-
-    Print Mid("aybabtu", 4)
-    Print Mid("aybabtu", 2, 3)
-    
-Koodin tulostus:
-
-    abtu
-    yba
-    
-Katso myös: [`Left`](manual:left), [`Right`](manual:right)
+---------
+```eppabasic
+Print Mid("aybabtu", 4)     ' abtu
+Print Mid("aybabtu", 2, 3)  ' yba
+```

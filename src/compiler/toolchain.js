@@ -146,12 +146,12 @@ define(['require', './types', './operators', './compiler', './parser', './typech
             compiler.defineJsFunction('stdlib.Math.max', true, '', 'Max', [this.types.Double, this.types.Double], this.types.Double);
             compiler.defineJsFunction('stdlib.Math.max', true, '', 'Max', [this.types.Integer, this.types.Integer], this.types.Integer);
 
-            compiler.defineJsFunction('stdlib.Math.floor', true, '', 'Floor', [this.types.Double], this.types.Double);
-            compiler.defineJsFunction('stdlib.Math.ceil', true, '', 'Ceil', [this.types.Double], this.types.Double);
+            compiler.defineJsFunction('stdlib.Math.floor', true, '', 'Floor', [this.types.Double], this.types.Integer);
+            compiler.defineJsFunction('stdlib.Math.ceil', true, '', 'Ceil', [this.types.Double], this.types.Integer);
 
             compiler.defineJsFunction('env.randInt', true, 'Function Rnd(Integer,Integer) As Integer', 'Rnd', [this.types.Integer, this.types.Integer], this.types.Integer);
             compiler.defineJsFunction('env.randDbl', true, 'Function Rnd() As Double', 'Rnd', [], this.types.Double);
-            compiler.defineJsFunction('env.randomize', true, 'Sub Randomize(Double)', 'Randomize', [this.types.Double]);
+            compiler.defineJsFunction('env.randomize', true, 'Sub Randomize(Integer)', 'Randomize', [this.types.Integer]);
 
             compiler.defineJsFunction('env.round', true, 'Function Round(Double) As Double', 'Round', [this.types.Double], this.types.Double);
             compiler.defineJsFunction('env.round2', true, 'Function Round(Double,Integer) As Double', 'Round', [this.types.Double, this.types.Integer], this.types.Double);

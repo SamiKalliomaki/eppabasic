@@ -1,16 +1,15 @@
-`UCase`
-==========
+<!--text-->
+UCase
+=====
 
-Funktio `UCase(s)` palauttaa merkkijonon `s` niin,
-että kaikki kirjaimet on muutettu suuriksi.
+```eppabasic
+Function UCase(teksti As String) As String
+```
+
+Palauttaa merkkijonon `teksti` muutettuna siten, että kaikki pienet kirjaimet on muutettu isoiksi.
 
 Esimerkki
-----------
-
-    Print UCase("AyBaBtU")
-    
-Koodin tulostus:
-
-    AYBABTU
-    
-Katso myös: [`LCase`](manual:lcase)
+---------
+```eppabasic
+Print UCase("AyBaBtU")      ' AYBABTU
+```

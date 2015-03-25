@@ -1,15 +1,16 @@
-`Minute`
-==========
+<!--time-->
+Minute
+======
 
-Funktio `Minute()` palauttaa tämänhetkisen ajan minuutin väliltä 0–59.
+```eppabasic
+Function Minute() As Integer
+```
+
+Palauttaa tietokoneen kellon mukaisen minuutin.
+Minuutti on luku väliltä 0..59.
 
 Esimerkki
-----------
-
-    Print Minute()
-    
-Koodin tulostus (esimerkiksi):
-
-    47
-    
-Katso myös: [`Hour`](manual:hour), [`Second`](manual:second)
+---------
+```eppabasic
+Print Minute()
+```

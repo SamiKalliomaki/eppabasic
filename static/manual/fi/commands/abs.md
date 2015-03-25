@@ -1,17 +1,19 @@
-`Abs`
-==========
+<!--math-->
+Abs
+===
 
-Funktio `Abs(x)` palauttaa luvun `x` itseisarvon. Itseisarvo on luvun suuruus ilman etumerkkiä.
+```eppabasic
+Function Abs(luku As Number) As Number
+Function Abs(luku As Integer) As Integer
+```
+
+Palauttaa parametrin `luku` itseisarvon eli luvun etäisyydden nollasta.
+Toisin sanoen palauttaa luvun ilman etumerkkiä.
 
 Esimerkki
-----------
-
-    Print Abs(5)
-    Print Abs(-7)
-    Print Abs(0)
-    
-Koodin tulostus:
-
-    5
-    7
-    0
+---------
+```eppabasic
+Abs(10)     ' 10
+Abs(-10)    ' 10
+Abs(-3.14)  ' 3.14
+```

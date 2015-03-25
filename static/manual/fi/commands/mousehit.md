@@ -1,21 +1,27 @@
-`MouseHit`
-==========
+<!--input-->
+MouseHit
+========
 
-Funktio `MouseHit(x)` kertoo, onko hiiren nappia `x` painettu funktion viime kutsun jälkeen.
+```eppabasic
+Function MouseHit(näppäin As Integer) As Boolean
+```
 
-Vasemman napin tunnus on 1, oikean napin 2 ja keskinapin 3.
+Palauttaa tiedon, onko hiiren näppäintä `näppäin` painettu funktion viimeisen kutsun jälkeen.
+
+Funktion kutsuminen kahdesti peräkkäin palauttaa toisella kerralla aina arvon Epätosi.
+
+Näppäin|Tunnus
+-------|------
+Vasen|1
+Keskummäinen|2
+Oikea|3
 
 Esimerkki
-----------
-
-Seuraava koodi tulostaa rivin tekstiä aina,
-kun käyttäjä painaa hiiren vasenta nappia:
-
-    Do
-        If MouseHit(1) Then
-            Print "painoit nappia"
-        End If
-        DrawScreen
-    Loop
-    
-Katso myös: [`MouseDown`](manual:mousedown), [`MouseUp`](manual:mouseup)
+---------
+Do
+    If MouseHit(1) Then
+        Print "Painoit nappia"
+    End If
+    DrawScreen
+Loop
+```

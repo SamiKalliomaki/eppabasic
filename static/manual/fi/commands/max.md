@@ -1,19 +1,18 @@
-`Max`
-==========
+<!--math-->
+Max
+===
 
-Funktio `Max(a, b)` palauttaa suuremman luvuista `a` ja `b`.
+```eppabasic
+Function Max(a As Number, b As Number) As Number
+Function Max(a As Integer, b As Integer) As Integer
+```
+
+Palauttaa luvuista `a` ja `b` suuremman.
 
 Esimerkki
-----------
-
-    Print Max(5, 7)
-    Print Max(-2, -3)
-    Print Max(4, 4)
-    
-Koodin tulostus:
-
-    7
-    -2
-    4
-    
-Katso myös: [`Min`](manual:min)
+---------
+```eppabasic
+Max(5, 7)       ' 7
+Max(-2, -3)     ' -2
+Max(4, 4)       ' 4
+```

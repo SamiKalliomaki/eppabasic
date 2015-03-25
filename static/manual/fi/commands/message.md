@@ -1,17 +1,18 @@
-`Message`
-==========
+<!--messages-->
+Message
+=======
 
-Komento `Message` näyttää viestin ikkunassa.
+```eppabasic
+Sub Message(viesti as String)
+```
 
-Komentoa käytetään näin:
-
-    Message s
-    
-Parametri `s` on näytettävä viesti.
+Näyttää käyttäjälle viestin `viesti`.
+Ohjelma odottaa, että käyttäjä painaa OK-näppäintä.
 
 Esimerkki
 ----------
-
-    Message "Tervetuloa!"
-    
-Katso myös: [`InputCancel`](manual:inputnumber), [`InputNumber`](manual:inputnumber), [`InputText`](manual:inputtext)
+```eppabasic
+' Näytetään käyttäjälle viestejä
+Message "Tervetuloa käyttämään EppaBasicia"
+Message "Ohjelmointi on kivaa"
+```

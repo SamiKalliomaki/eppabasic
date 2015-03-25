@@ -1,7 +1,12 @@
-`DrawScreen`
+<!--graphics-->
+DrawScreen
 ==========
 
-Komento `DrawScreen` päivittää näytön sisällön.
+```eppabasic
+Sub DrawScreen()
+```
+
+Päivittää äskettäin piirretyt asiat näytölle.
 
 Kun komentoa kutsutaan silmukassa,
 se huolehtii siitä,
@@ -9,11 +14,11 @@ että silmukan koodi suoritetaan 60 kertaa sekunnissa.
 
 Esimerkki
 ----------
-
-Seuraava koodi luo animaation, jossa ympyrä kulkee ruudun halki:
-
-    For i = 1 To 640
-        ClearScreen
-        FillCircle i, 200, 50
-        DrawScreen
-    Next i
+```eppabasic
+' Lyhyt animaatio, jossa ympyrä kulkee ruudun halki
+For i = 1 To 640
+    ClearScreen
+    FillCircle i, 200, 50
+    DrawScreen
+Next i
+```

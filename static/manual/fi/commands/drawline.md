@@ -1,22 +1,19 @@
-`DrawLine`
+<!--graphics-->
+DrawLine
 ==========
 
-Komento `DrawLine` piirtää viivan näytölle.
+```eppabasic
+Sub DrawLine(x1 As Integer, y1 As Integer, x2 As Integer, y2 As Integer)
+```
 
-Komentoa käytetään näin:
+Piirtää näytölle viivan koordinaateista (x1, y1) koordinaatteihin (x2, y2).
+Käytettävä väri asetetaan komennolla [DrawColor](manual:drawcolor).
 
-    DrawLine x1, y1, x2, y2
-    
-Parametrit ovat:
-
-* `x1`: alkupisteen x-koordinaatti
-* `y1`: alkupisteen y-koordinaatti
-* `x2`: loppupisteen x-koordinaatti
-* `y2`: loppupisteen y-koordinaatti
+[Katso, miten EppaBasicissa koordinaatisto toimii](manual:/coordinates).
 
 Esimerkki
 ----------
-
-Seuraava koodi piirtää viivan pisteestä (100, 120) pisteeseen (300, 50):
-
-    DrawLine 100, 120, 300, 50
+```eppabasic
+' Piirretään viiva pisteestä (100, 120) pisteeseen (300, 50)
+DrawLine 100, 120, 300, 50
+```

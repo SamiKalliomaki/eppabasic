@@ -1,15 +1,16 @@
-`Second`
-==========
+<!--time-->
+Second
+======
 
-Funktio `Second()` palauttaa tämänhetkisen ajan sekunnin väliltä 0–59.
+```eppabasic
+Function Second() As Integer
+```
+
+Palauttaa tietokoneen kellon mukaisen sekuntin.
+Sekunti on luku väliltä 0..59.
 
 Esimerkki
-----------
-
-    Print Second()
-    
-Koodin tulostus (esimerkiksi):
-
-    18
-    
-Katso myös: [`Hour`](manual:hour), [`Second`](manual:second)
+---------
+```eppabasic
+Print Second()
+```

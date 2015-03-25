@@ -1,33 +1,23 @@
-`InStr`
-==========
+<!--text-->
+InStr
+===
 
-Funktio `InStr(x, y)` palauttaa ensimmäisen kohdan,
-jossa merkkijono `y` esiintyy merkkijonossa `x`.
-Jos tällaista kohtaa ei ole, funktio palauttaa 0.
+```eppabasic
+Function InStr(heinäsuova As String, neula As String) As Integer
+Function InStr(alku As Integer, heinäsuova As String, neula As String) As Integer
+```
 
-Funktio `InStr(k, x, y)` palauttaa vastaavasti
-ensimmäisen kohdan kohdasta `k` alkaen.
+Palauttaa ensimmäisen kohdan, jossa merkkijono `neula` esiintyy merkkijonossa `heinäsuova`.
+Jos `alku` on määritelty, etsitään ensimmäistä esiintyvää kohdasta `alku` alkaen, muuten merkkijonon alusta.
 
-Esimerkki 1
-----------
+Jos merkkijono `neula` ei esiinny merkkijonossa `heinäsuova`, funktio palauttaa 0.
 
-    Print InStr("aybabtu", "bab")
-    Print InStr("aybabtu", "lol")
-    
-Koodin tulostus:
-
-    3
-    0
-    
-Esimerkki 2
-----------
-
-    Print InStr("aybabtu", "b")
-    Print InStr(4, "aybabtu", "b")
-    Print InStr(7, "aybabtu", "b")
-    
-Koodin tulostus:
-
-    3
-    5
-    0
+Esimerkki
+---------
+```eppabasic
+Print InStr("aybabtu", "bab")       ' 3
+Print InStr("aybabtu", "lol")       ' 0
+Print InStr("aybabtu", "b")         ' 3
+Print InStr(4, "aybabtu", "b")      ' 5
+Print InStr(7, "aybabtu", "b")      ' 0
+```

@@ -1,11 +1,18 @@
-`Wait`
-==========
+<!--time-->
+Wait
+====
 
-Komento `Wait` pysäyttää koodin suorituksen annetuksi ajaksi sekunteina.
+```eppabasic
+Sub Wait(aika As Number)
+```
+
+Pysäyttää ohjelman suorituksen annetuksi `aika` sekuntiksi.
+Aika voi olla desimaaliluku.
 
 Esimerkki
-----------
-
-    Print "Jatketaan 5 sekunnin kuluttua..."
-    Wait 5
-    Print "No niin!"
+---------
+```eppabasic
+Print "Jatketaan 5 sekunnin kuluttua..."
+Wait 5
+Print "No niin!"
+```

@@ -1,60 +1,34 @@
-`Round`
-==========
+<!--math-->
+Round
+====
 
-Funktio `Round(x)` pyöristää luvun `x` kokonaisluvuksi. Jos desimaaliosa on alle 0.5, funktio pyöristää alaspäin, ja muuten funktio pyöristää ylöspäin.
+```eppabasic
+I)      Function Round(luku As Number) As Number
+II)     Function Round(luku As Number, tarkkuus As Integer) As Number
+```
 
-Funktio `Round(x, k)` pyöristää luvun `x` tarkkuudelle `k`. Jos `k` on positiivinen, se tarkoittaa desimaalien määrää nollan jälkeen. Jos `k` on negatiivinen, se tarkoittaa nollien määrää luvun lopussa.
+I) Pyöristää luvun `luku` kokonaisluvuksi. Jos desimaaliosa on alle 0.5, funktio pyöristää alaspäin, muuten funktio pyöristää ylöspäin.
 
-Esimerkki 1
-----------
+II) Funktio pyöristää luvun `luku` tarkkuudelle `tarkkuus`. Jos `tarkkuus` on positiivinen, se tarkoittaa desimaalien määrää pisteen jälkeen. Jos `tarkkuus` on negatiivinen, se tarkoittaa nollien määrää luvun lopussa ennen pistettä.
 
-    Print Round(4.48)
-    Print Round(4.49)
-    Print Round(4.50)
-    Print Round(4.51)
-    Print Round(4.52)
-    
-Koodin tulostus:
+Esimerkki
+---------
+```eppabasic
+Print Round(4.48)           ' 4
+Print Round(4.49)           ' 4
+Print Round(4.50)           ' 5
+Print Round(4.51)           ' 5
+Print Round(4.52)           ' 5
 
-    4
-    4
-    5
-    5
-    5
+Print Round(ebPi, 1)        ' 3.1
+Print Round(ebPi, 2)        ' 3.14
+Print Round(ebPi, 3)        ' 3.142
+Print Round(ebPi, 4)        ' 3.1416
+Print Round(ebPi, 5)        ' 3.14159
 
-Esimerkki 2
-----------
-
-    Dim pii = 3.141592654
-    Print Round(pii, 1)
-    Print Round(pii, 2)
-    Print Round(pii, 3)
-    Print Round(pii, 4)
-    Print Round(pii, 5)
-    
-Koodin tulostus:
-
-    3.1
-    3.14
-    3.142
-    3.1416
-    3.14159    
-    
-Esimerkki 3
-----------
-
-    Print Round(12345, -1)
-    Print Round(12345, -2)
-    Print Round(12345, -3)
-    Print Round(12345, -4)
-    Print Round(12345, -5)
-    
-Koodin tulostus:
-
-    12350
-    12300
-    12000
-    10000
-    0
-    
-Katso myös: [`Ceil`](manual:ceil), [`Floor`](manual:floor)
+Print Round(12345, -1)      ' 12340
+Print Round(12345, -2)      ' 12300
+Print Round(12345, -3)      ' 12000
+Print Round(12345, -4)      ' 10000
+Print Round(12345, -5)      ' 0
+```

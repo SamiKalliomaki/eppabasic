@@ -1,25 +1,32 @@
-`MouseDown`
-==========
+<!--input-->
+MouseDown
+=========
 
-Funktio `MouseDown(x)` palauttaa tiedon, onko hiiren nappi `x` alhaalla.
+```eppabasic
+Function MouseDown(näppäin As Integer) As Boolean
+```
 
-Vasemman napin tunnus on 1, oikean napin 2 ja keskinapin 3.
+Palauttaa tiedon, onko hiiren näppäin `näppäin` painettuna.
+
+Näppäin|Tunnus
+-------|------
+Vasen|1
+Keskummäinen|2
+Oikea|3
 
 Esimerkki
-----------
-
-    Do
-        ClearScreen
-        If MouseDown(1) Then
-            Print "vasen nappi alhaalla"
-        End If
-        If MouseDown(2) Then
-            Print "oikea nappi alhaalla"
-        End If
-        If MouseDown(3) Then
-            Print "keskinappi alhaalla"
-        End If
-        DrawScreen
-    Loop
-    
-Katso myös: [`MouseHit`](manual:mousehit), [`MouseUp`](manual:mouseup)
+---------
+Do
+    ClearScreen
+    If MouseDown(1) Then
+        Print "Vasen nappi alhaalla"
+    End If
+    If MouseDown(2) Then
+        Print "Oikea nappi alhaalla"
+    End If
+    If MouseDown(3) Then
+        Print "Keskinappi alhaalla"
+    End If
+    DrawScreen
+Loop
+```

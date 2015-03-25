@@ -1,15 +1,15 @@
-`Year`
-==========
+<!--time-->
+Year
+====
 
-Funktio `Year()` palauttaa tämänhetkisen vuoden nelinumeroisena.
+```eppabasic
+Function Year() As Integer
+```
+
+Palauttaa tietokoneen kellon mukaisen vuoden.
 
 Esimerkki
-----------
-
-    Print Year()
-    
-Koodin tulostus (esimerkiksi):
-
-    2014
-    
-Katso myös: [`Day`](manual:day), [`Month`](manual:month), [`Weekday`](manual:weekday)
+---------
+```eppabasic
+Print Year()
+```

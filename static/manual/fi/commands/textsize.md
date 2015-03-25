@@ -1,9 +1,17 @@
-`TextSize`
-==========
+<!--graphics-->
+TextSize
+========
 
-Komento `TextSize` määrittää piirrettävän tekstin koon.
+```eppabasic
+Sub TextSize(koko As Integer)
+```
+
+Määrittää tekstiä piirrettäessä käytettäväksi tekstin kooksi parametrin `koko` arvon.
+Tekstin koko määritellään pikseleinä.
 
 Esimerkki
 ----------
-
-    TextSize 24
+```eppabasic
+' Asetetaan tekstin kooksi 24 pikseliä
+TextSize 24
+```

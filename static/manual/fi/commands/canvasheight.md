@@ -1,14 +1,18 @@
 <!--window-->
-WindowTitle
+CanvasHeight
 ============
 
 ```eppabasic
-Sub WindowTitile(otsikko As String)
-Function WindowTitile() As String
+Sub CanvasHeight(korkeus As Integer)
+Function CanvasHeight() As Integer
 ```
 
-Asettaa ikkunan otsikoksi `otsikko` tai palauttaa ikkunan otsikon.
+Asettaa piirtoalueen korkeudeksi `korkeus` tai palauttaa piirtoalueen korkeuden.
 
+Huomaa, että funktio muuttaa vain piirtämiseen käytettävän alueen korkeutta
+ja että piirtoalue skaalataan täyttämään ikkuna.
+
+Ikkunan korkeutta voi hallita funktiolla [WindowHeight](manual:windowheight).
 
 Esimerkki
 ----------

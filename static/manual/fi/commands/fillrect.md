@@ -1,24 +1,20 @@
-`FillRect`
-==========
+<!--graphics-->
+FillRect
+========
 
-Komento `FillRect` piirtää täytetyn suorakulmion näytölle.
+```eppabasic
+Sub FillRect(x As Integer, y As Integer, leveys As Integer, korkeus As Integer)
+```
 
-Komentoa käytetään näin:
+Piirtää näytölle täytetyn suorakulmion, jonka leveys on `leveys` ja korkeus `korkeus`.
+Suorakulmion vasen yläkulma on koordinaateissa (`x`, `y`).
+Käytettävä väri asetetaan komennolla [FillColor](manual:fillcolor).
 
-    FillRect x, y, w, h
-    
-Parametrit ovat:
-
-* `x`: vasemman yläkulman x-koordinaatti
-* `y`: vasemman yläkulman y-koordinaatti
-* `w`: suorakulmion leveys
-* `h`: suorakulmion korkeus
+[Katso, miten EppaBasicissa koordinaatisto toimii](manual:/coordinates).
 
 Esimerkki
 ----------
-
-Seuraava komento piirtää täytetyn suorakulmion,
-jonka vasen yläkulma on pisteessä (100, 120)
-ja koko on 300x50.
-
-    FillRect 100, 120, 300, 50
+```eppabasic
+' Piirretään täytetty suorakulmio, jonka vasen yläkulma on pisteessä (100, 120) ja koko 300x50
+FillRect 100, 120, 300, 50
+```
