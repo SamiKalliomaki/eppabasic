@@ -194,9 +194,9 @@ class Runtime extends EventEmitter {
                 var functions = new Map<string, Function>();
                 modules.forEach((module: Module.Constructor): void => {
                     // Construct module
-                    module = new module(this);
+                    var moduleInstance = new module(this);
                     // Get functions
-                    module.getFunctions().forEach((func: Function, index: string): void => {
+                    moduleInstance.getFunctions().forEach((func: Function, index: string): void => {
                         functions.set(index, func);
                     });
                 });

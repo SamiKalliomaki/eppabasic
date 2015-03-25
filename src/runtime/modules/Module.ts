@@ -16,7 +16,7 @@ module Module {
     /**
      * Constructor version of module.
      */
-    export interface Constructor extends Module {
+    export interface Constructor {
         /**
          * Constructs a new instance of this module.
          */
