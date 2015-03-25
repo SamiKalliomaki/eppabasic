@@ -121,7 +121,7 @@ define(['require', './types', './operators', './compiler', './parser', './typech
             compiler.defineJsFunction('env.getWindowHeight', true, 'Function GetWindowHeight() As Integer', 'WindowHeight', [], this.types.Integer);
             compiler.defineJsFunction('env.setWindowHeight', true, 'Sub SetWindowHeight(Integer)', 'WindowHeight', [this.types.Integer]);
             compiler.defineJsFunction('env.setWindowSize', true, 'Sub SetWindowSize(Integer,Integer)', 'WindowSize', [this.types.Integer, this.types.Integer]);
-            compiler.defineJsFunction('env.getCanvasWidth', true, 'Function GetcanvasWidth() As Integer', 'CanvasWidth', [], this.types.Integer);
+            compiler.defineJsFunction('env.getCanvasWidth', true, 'Function GetCanvasWidth() As Integer', 'CanvasWidth', [], this.types.Integer);
             compiler.defineJsFunction('env.setCanvasWidth', true, 'Sub SetCanvasWidth(Integer)', 'CanvasWidth', [this.types.Integer]);
             compiler.defineJsFunction('env.getCanvasHeight', true, 'Function GetCanvasHeight() As Integer', 'CanvasHeight', [], this.types.Integer);
             compiler.defineJsFunction('env.setCanvasHeight', true, 'Sub SetCanvasHeight(Integer)', 'CanvasHeight', [this.types.Integer]);
