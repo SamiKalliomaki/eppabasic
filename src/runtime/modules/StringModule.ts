@@ -59,12 +59,12 @@ class StringModule implements Module {
         });
         this._functions.set('Function Mid(String,Integer) As String', (strPtr: number, start: number): number => {
             var str = util.ebstring.fromEB(strPtr, this._runtime);
-            str = str.substr(start);
+            str = str.substr(start - 1);
             return util.ebstring.toEB(str, this._runtime);
         });
         this._functions.set('Function Mid(String,Integer,Integer) As String', (strPtr: number, start: number, len: number): number => {
             var str = util.ebstring.fromEB(strPtr, this._runtime);
-            str = str.substr(start, len);
+            str = str.substr(start - 1, len);
             return util.ebstring.toEB(str, this._runtime);
         });
         this._functions.set('Function Repeat(String,Integer) As String', (strPtr: number, count: number): number => {
