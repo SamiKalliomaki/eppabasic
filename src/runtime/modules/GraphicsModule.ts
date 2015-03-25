@@ -86,6 +86,7 @@ class GraphicsModule implements Module {
             if (align === 1) ctx.textAlign = 'left';
             if (align === 2) ctx.textAlign = 'right';
             if (align === 3) ctx.textAlign = 'center';
+            ctx.textBaseline = 'top';
             ctx.fillText(str, x, y);
             ctx.fillStyle = originalStyle;
         }
