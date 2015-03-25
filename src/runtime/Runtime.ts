@@ -21,6 +21,10 @@ class Runtime extends EventEmitter {
      */
     private _program: AsmjsTargetProgram.AsmjsProgram;
     /**
+     * Original AsmjsTargetProgram.
+     */
+    private _targetProgram: AsmjsTargetProgram;
+    /**
      * Holder element for canvases.
      */
     private _canvasHolder: HTMLDivElement;
@@ -62,6 +66,7 @@ class Runtime extends EventEmitter {
         // Setup locals
         this._editor = null;
         this._program = null;
+        this._targetProgram = null;
         this._canvasHolder = null;
         this._canvas = null;
         this._renderingContext = null;
@@ -166,6 +171,7 @@ class Runtime extends EventEmitter {
      */
     init(program: AsmjsTargetProgram) {
         var moduleLoader = new ModuleLoader(program.modules);
+        this._targetProgram = program;
 
         this._initPromise = new Promise<void>((resolve: (value: void) => void, reject: (error: any) => void): void=> {
             moduleLoader.loaded((modules: Module.Constructor[]): void => {
@@ -238,6 +244,18 @@ class Runtime extends EventEmitter {
                         this.stop();
                         return;
                     }
+                    if (e instanceof Runtime.End) {
+                        this.stop();
+                        if (window && window.close())
+                            window.close();
+                        return;
+                    }
+                    if (e instanceof Runtime.Restart) {
+                        this.stop();
+                        this.init(this._targetProgram);
+                        this.start();
+                        return;
+                    }
                     throw e;
                 }
             }
@@ -277,6 +295,8 @@ class Runtime extends EventEmitter {
 
 module Runtime {
     export class Panic {}
+    export class End {}
+    export class Restart {}
 }
 
 export = Runtime;
