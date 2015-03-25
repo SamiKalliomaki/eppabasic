@@ -116,16 +116,21 @@ class GraphicsModule implements Module {
             this._runtime.renderingContext.fill();
         });
         this._functions.set('Sub DrawRect(Integer,Integer,Integer,Integer)', (x: number, y: number, width: number, height: number): void => {
+            this._runtime.renderingContext.beginPath();
             this._runtime.renderingContext.rect(x, y, width, height);
+            this._runtime.renderingContext.stroke();
         });
         this._functions.set('Sub FillRect(Integer,Integer,Integer,Integer)', (x: number, y: number, width: number, height: number): void => {
-            this._runtime.renderingContext.fillRect(x, y, width, height);
+            this._runtime.renderingContext.beginPath();
+            this._runtime.renderingContext.rect(x, y, width, height);
+            this._runtime.renderingContext.fill();
         });
         this._functions.set('Sub DrawTriangle(Integer,Integer,Integer,Integer,Integer,Integer)', (x1: number, y1: number, x2: number, y2: number, x3: number, y3: number): void => {
             this._runtime.renderingContext.beginPath();
             this._runtime.renderingContext.moveTo(x1, y1);
             this._runtime.renderingContext.lineTo(x2, y2);
             this._runtime.renderingContext.lineTo(x3,  y3);
+            this._runtime.renderingContext.lineTo(x1, y1);
             this._runtime.renderingContext.stroke();
         });
         this._functions.set('Sub FillTriangle(Integer,Integer,Integer,Integer,Integer,Integer)', (x1: number, y1: number, x2: number, y2: number, x3: number, y3: number): void => {
@@ -133,10 +138,13 @@ class GraphicsModule implements Module {
             this._runtime.renderingContext.moveTo(x1, y1);
             this._runtime.renderingContext.lineTo(x2, y2);
             this._runtime.renderingContext.lineTo(x3,  y3);
-            this._runtime.renderingContext.stroke();
+            this._runtime.renderingContext.lineTo(x1, y1);
+            this._runtime.renderingContext.fill();
         });
         this._functions.set('Sub DrawDot(Integer,Integer)', (x: number, y: number): void => {
+            this._runtime.renderingContext.beginPath();
             this._runtime.renderingContext.rect(x, y, 1, 1);
+            this._runtime.renderingContext.stroke();
         });
         this._functions.set('Sub DrawText(Integer,Integer,String)', (x: number, y: number, strPtr: number): void => {
             var str = util.ebstring.fromEB(strPtr, this._runtime);
