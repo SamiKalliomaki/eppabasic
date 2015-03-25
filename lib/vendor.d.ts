@@ -9,3 +9,4 @@
 /// <reference path="EventEmitter" />
 /// <reference path='xregexp'/>
 /// <reference path='esrever'/>
+/// <reference path='random'/>
