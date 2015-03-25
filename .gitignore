@@ -8,12 +8,15 @@ node_modules
 www
 log
 virtenv
-tools/settings.ini
+
+settings.ini
 
 *.min.js
 *.min.js.map
 
 static/.htaccess
+.tscache/
+*.baseDir.ts
 
 # Visual studio files
 *.csproj

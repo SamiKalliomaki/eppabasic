@@ -3,7 +3,7 @@
 /// <reference path="nodes.js" />
 /// <reference path="types.js" />
 
-define(['require', './framework/compileerror', './compiler/context', './compiler/absolutereference', './compiler/absolutestackreference', './compiler/constantreference', './compiler/stackreference', './compiler/temporaryreference', 'text!./static/memory.js', 'text!./static/string.js'], function (require) {
+define(['require', './framework/compileerror', './compiler/context', './compiler/absolutereference', './compiler/absolutestackreference', './compiler/constantreference', './compiler/stackreference', './compiler/temporaryreference', 'text!./static/memory.js', 'text!./static/string.js', './AsmjsTargetProgram'], function (require) {
     var CompileError = require('./framework/compileerror');
     var CompilerContext = require('./compiler/context');
     var CompilerAbsoluteReference = require('./compiler/absolutereference');
@@ -11,6 +11,7 @@ define(['require', './framework/compileerror', './compiler/context', './compiler
     var CompilerConstantReference = require('./compiler/constantreference');
     var CompilerStackReference = require('./compiler/stackreference');
     var CompilerTemporaryReference = require('./compiler/temporaryreference');
+    var AsmjsTargetProgram = require('./AsmjsTargetProgram');
 
 
     function CompilerNoFreeReference(ref) {
@@ -89,6 +90,8 @@ define(['require', './framework/compileerror', './compiler/context', './compiler
         this.lastFunctionName = 0;
 
         this.findUserDefinedFunctions();
+
+        this.signatureMap = new Map();
     }
 
     Compiler.prototype = {
@@ -105,7 +108,7 @@ define(['require', './framework/compileerror', './compiler/context', './compiler
             this.functions.push(handle);
             return handle;
         },
-        defineJsFunction: function defineJsFunction(jsName, env, name, parameterTypes, returnType, atomic) {
+        defineJsFunction: function defineJsFunction(jsName, env, signature, name, parameterTypes, returnType, atomic) {
             if (atomic !== false)
                 atomic = true;
 
@@ -137,6 +140,9 @@ define(['require', './framework/compileerror', './compiler/context', './compiler
                 } else {
                     altEntry.push(asmname + '(' + callStr + ');');
                 }
+
+                if (signature)
+                    this.signatureMap.set(jsName.substr(4), signature);
             } else {
                 // The implementation is in a module so do nothing but create an entry
                 var entry = this.createEntry(jsName, true, parameterTypes, returnType, false);
@@ -382,7 +388,7 @@ define(['require', './framework/compileerror', './compiler/context', './compiler
             // Return functions
             buf.push('return {popCallStack: __popCallStack,setStackInt:__setStackInt,setStackDbl:__setStackDbl,init:__init,next:__next,breakExec:__breakExec,sp:__sp,cp:__cp,memreserve:__memreserve,getLine:__getLine};');
 
-            return buf.join('\n');
+            return new AsmjsTargetProgram(buf.join('\n'), ['core'], this.signatureMap);
         },
 
         // Compiles a block
