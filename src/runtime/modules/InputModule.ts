@@ -31,10 +31,10 @@ class InputModule implements Module {
         var scale = 1;
 
         // Listeners
-        window.addEventListener('resize', (e) => {
+        var resizeListener = (e) => {
             scale = this._runtime.canvas.width / this._runtime.canvasHolder.offsetWidth;
-        });
-        document.body.addEventListener('keydown', (e) => {
+        };
+        var keydownListener = (e) => {
             if (inMessageBox)
                 return;
             if (!keysDown[e.keyCode])
@@ -43,15 +43,15 @@ class InputModule implements Module {
 
             e.preventDefault();
             return false;
-        });
-        document.body.addEventListener('keyup', (e) => {
+        }
+        var keyupListener = (e) => {
             if (inMessageBox)
                 return;
             keysDown[e.keyCode] = false;
 
             e.preventDefault();
             return false;
-        });
+        };
         var mouseListener = (e: MouseEvent) => {
             if (inMessageBox)
                 return;
@@ -92,9 +92,23 @@ class InputModule implements Module {
             e.preventDefault();
             return false;
         };
-        document.body.addEventListener('mousemove', mouseListener);
-        document.body.addEventListener('mouseup', mouseListener);
-        document.body.addEventListener('mousedown', mouseListener);
+
+        this._runtime.once('init', (): void => {
+            window.addEventListener('resize', resizeListener);
+            document.body.addEventListener('keydown', keydownListener);
+            document.body.addEventListener('keyup', keyupListener);
+            document.body.addEventListener('mousemove', mouseListener);
+            document.body.addEventListener('mouseup', mouseListener);
+            document.body.addEventListener('mousedown', mouseListener);
+        });
+        this._runtime.once('destroy', (): void => {
+            window.removeEventListener('resize', resizeListener);
+            document.body.removeEventListener('keydown', keydownListener);
+            document.body.removeEventListener('keyup', keyupListener);
+            document.body.removeEventListener('mousemove', mouseListener);
+            document.body.removeEventListener('mouseup', mouseListener);
+            document.body.removeEventListener('mousedown', mouseListener);
+        });
 
         this._functions.set('Function KeyDown(Integer) As Boolean', (keycode: number): boolean => {
             return keysDown[keycode];

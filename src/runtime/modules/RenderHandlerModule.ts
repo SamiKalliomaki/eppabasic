@@ -38,18 +38,26 @@ class RenderHandlerModule implements Module {
         // Create canvases for double buffering
         this._backgroundCanvas = document.createElement('canvas');
         this._foregroundCanvas = document.createElement('canvas');
-        this._runtime.canvasHolder.appendChild(this._foregroundCanvas);
 
         this._runtime.canvas = this._backgroundCanvas;
 
         // Add handlers
-        window.addEventListener('resize', (): void => {
+        var resizeEvent = (): void => {
             this.resizeCanvasHolder();
-        });
+        };
 
-        // Setup defaults
-        this.setWindowSize(640, 480);
-        this.setCanvasSize(640, 480);
+        this._runtime.once('init', (): void => {
+            window.addEventListener('resize', resizeEvent);
+            this._runtime.canvasHolder.appendChild(this._foregroundCanvas);
+
+            // Setup defaults
+            this.setWindowSize(640, 480);
+            this.setCanvasSize(640, 480);
+        });
+        this._runtime.once('destroy', (): void => {
+            window.removeEventListener('resize', resizeEvent);
+            this._runtime.canvasHolder.removeChild(this._foregroundCanvas);
+        });
 
         // Hide background canvas
         this._backgroundCanvas.style.visibility = 'hidden';

@@ -252,6 +252,7 @@ class Runtime extends EventEmitter {
                     }
                     if (e instanceof Runtime.Restart) {
                         this.stop();
+                        this.emitEvent('destroy');
                         this.init(this._targetProgram);
                         this.start();
                         return;
