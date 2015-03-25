@@ -1,0 +1,43 @@
+{
+    "version": "1.4.1",
+    "compilerOptions": {
+        "target": "es5",
+        "module": "commonjs",
+        "declaration": false,
+        "noImplicitAny": false,
+        "removeComments": true,
+        "noLib": false
+    },
+    "filesGlob": [
+        "./**/*.ts",
+        "!./www/**/*.ts",
+        "!./node_modules/**/*.ts"
+    ],
+    "compileOnSave": false,
+    "files": [
+        "./lib/EventEmitter.d.ts",
+        "./lib/es6-promise.d.ts",
+        "./lib/esrever.d.ts",
+        "./lib/i18n.d.ts",
+        "./lib/jquery.d.ts",
+        "./lib/random.d.ts",
+        "./lib/requirejs.d.ts",
+        "./lib/vendor.d.ts",
+        "./lib/xregexp.d.ts",
+        "./src/compiler/AsmjsTargetProgram.ts",
+        "./src/editor/Error.d.ts",
+        "./src/editor/editor.d.ts",
+        "./src/runtime/ModuleLoader.ts",
+        "./src/runtime/Runtime.ts",
+        "./src/runtime/modules/ControlflowModule.ts",
+        "./src/runtime/modules/CoreModule.ts",
+        "./src/runtime/modules/GraphicsModule.ts",
+        "./src/runtime/modules/InputModule.ts",
+        "./src/runtime/modules/MathModule.ts",
+        "./src/runtime/modules/Module.ts",
+        "./src/runtime/modules/RenderHandlerModule.ts",
+        "./src/runtime/modules/StringModule.ts",
+        "./src/runtime/modules/TimeModule.ts",
+        "./src/runtime/modules/util.ts"
+    ]
+}
