@@ -65,11 +65,13 @@ class RenderHandlerModule implements Module {
         // EppaBasic funtions
         this._functions = new Map<string, Function>();
 
-        this._functions.set('Sub DrawScreen()', (): void => {
+        var drawScreen = (): void => {
             this._foregroundCanvas.getContext('2d').drawImage(this._backgroundCanvas, 0, 0);
             // Finally break the execution
             this._runtime.program.breakExec();
-        });
+        };
+        this._functions.set('Sub DrawScreen()', drawScreen);
+        this._runtime.once('ended', drawScreen);
         this._functions.set('Sub ClearColor(Integer,Integer,Integer)', (r: number, g: number, b: number): void => {
             clearColor = util.rgbToStyle(r, g, b);
         });

@@ -237,7 +237,7 @@ class Runtime extends EventEmitter {
                 try {
                     if (!this.program.next()) {
                         // Program has ended
-                        // TODO: Draw final screen
+                        this.emitEvent('ended');
                     } else if (this._running)
                         window.requestAnimationFrame(step);
                 } catch (e) {
