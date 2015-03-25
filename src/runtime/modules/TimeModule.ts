@@ -32,7 +32,7 @@ class TimeModule implements Module {
             return (new Date()).getFullYear();
         });
         this._functions.set('Function Month() As Integer', (): number => {
-            return (new Date()).getMonth();
+            return (new Date()).getMonth() + 1;
         });
         this._functions.set('Function Day() As Integer', (): number => {
             return (new Date()).getDate();
@@ -57,9 +57,9 @@ class TimeModule implements Module {
             var hours = '0' + date.getHours();
             var minutes = '0' + date.getMinutes();
             var seconds = '0' + date.getSeconds();
-            var str = hours.substr(0, -2) + ':'
-                    + minutes.substr(0, -2) + ':'
-                    + seconds.substr(0, -2);
+            var str = hours.substr(-2) + ':'
+                    + minutes.substr(-2) + ':'
+                    + seconds.substr(-2);
             return util.ebstring.toEB(str, this._runtime);
         });
         this._functions.set('Function Date() As String', (): number => {
