@@ -22,6 +22,7 @@ class MathModule implements Module {
         this._functions = new Map<string, Function>();
 
         var mt19937 = Random.engines.mt19937();
+        mt19937.autoSeed();
 
         this._functions.set('Function Rnd(Integer,Integer) As Integer', (min: number, max: number): number => {
             return Random.integer(min, max)(mt19937);
