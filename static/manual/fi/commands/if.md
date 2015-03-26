@@ -1,44 +1,50 @@
-`If`
-==========
+<!--structure-->
+If
+==
 
-Komento `If` määrittelee ehtorakenteen.
+```eppabasic
+If {ehto} Then
+    ' Koodia
+End If
 
-Yksinkertaisin ehtorakenne on:
+If {ehto} Then
+    ' Koodia
+Else
+    ' Koodia
+End If
 
-    If [ehto] Then
-        [koodi]
-    End If
-    
-Tässä koodi suoritetaan, jos ehto pitää paikkansa.
+If {ehto1} Then
+    ' Koodia
+Else If {ehto2} Then
+    ' Koodia
+End If
 
-Rakenteeseen voi liittää `Else`-haaran:
+If {ehto1} Then
+    ' Koodia
+Else If {ehto2} Then
+    ' Koodia
+Else
+    ' Koodia
+End If
+```
 
-    If [ehto] Then
-        [koodi]
-    Else
-        [koodi]
-    End If
-    
-Nyt suoritetaan jompikumpi koodi sen mukaan, pitääkö ehto paikkansa.
+Ehtorakenne, joka suorittaa koodin, mikäli `{ehto}` on tosi.
+Ehtoon voidaan liittää myös `Else`-haara, joka suoritetaan, mikäli ehto on epätosi.
 
-Rakenteeseen voi liittää myös useita ehtoja:
+`Else If`-rakenteen avulla voidaan lisätä ehtorakenteeseen useampia ehtoja.
+Tällöin suoritetaan ensimmäistä toteutuvaa ehtoa vastaava koodi.
 
-    If [ehto1] Then
-        [koodi]
-    ElseIf [ehto2] Then
-        [koodi]
-    ElseIf [ehto3] Then
-        [koodi]
-    End If
-    
-Nyt suoritetaan ensimmäistä toteutuvaa ehtoa vastaava koodi.
-    
 Esimerkki
-----------
+---------
+```eppabasic
+' Kysytään käyttäjältä käyttäjänimeä ja vastataan eri tavalla eri henkilöille
+Dim nimi = InputText("Anna nimesi:")
+If nimi = "Henrik" Then
+    Message "Hei Henrik!"
+Else If nimi = "Sami" Then
+    Message "Hauska tavata Sami!"
+Else
+    Message "Oi, uusi tuttavuus"
+End If
 
-    Dim salasana = InputText("Anna salasana:")
-    If salasana = "abc" Then
-        Message "Tervetuloa!"
-    Else
-        Message "Häivy pois!"
-    End If
+```

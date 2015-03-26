@@ -1,34 +1,40 @@
-`Sub`
-==========
+<!--structure-->
+Sub
+====
 
-Komento `Sub` määrittelee oman aliohjelman.
+```eppabasic
+Sub {nimi}({parametrit})
+    ' Koodia
+End Sub
+```
 
-Aliohjelman määrittelyn runko on seuraava:
+Määrittelee oman aliohjelman nimeltä `{nimi}`.
 
-    Sub [nimi]([parametrit])
-        [koodi]
-    End Sub
-    
-Aliohjelman nimi muodostuu kirjaimista a..z ja numeroista 0..9.
+Aliohjelman nimi voi muodostua kirjaimista, numeroista sekä alaviivoista.
 Nimen ensimmäinen merkki ei saa olla numero.
 
-Parametrit ovat aliohjelmalle annettavat parametrit.
-Jokaisesta parametrista täytyy ilmoittaa nimi ja tyyppi.
+`{parametrit}` määrittävät aliohjelmalle annettavat parametrit.
+`{parametrit}` on pilkuilla erotettu lista parametrejä.
+Jokainen parametri on muotoa
+```eppabasic
+{nimi} As {tyyppi}
+```
+Vertaa [muuttujien määrittämiseen](manual:dim).
 
-Aliohjelman sisällä oleva komento `Return`
-lopettaa aliohjelman.
+Aliohjelman suorituksen voi keskeyttää kutsumalla aliohjelman sisällä [Return](manual:return)-rakennetta.
 
 Esimerkki
-----------
+---------
+```eppabasic
+' Aliohjelma piirtää n ympyrää riviin
+Sub PiirräYmpyrät(n As Number)
+    For i = 1 To n
+        FillCircle 50*i, 50, 15
+    Next i
+End Sub
 
-Seuraava aliohjelma piirtää annetun määrän ympyröitä riviin:
-
-    Sub PiirraYmpyrat(n As Number)
-        For i = 1 To n
-            FillCircle 50*i, 50, 15
-        Next i
-    End Sub
-    
-Funktiota voi käyttää näin:
-
-    PiirraYmpyrat 5
+' Aliohjelmaa voi käyttää näin
+PiirräYmpyrät 5
+' Tai näin
+PiirräYmpyrät(5))
+```

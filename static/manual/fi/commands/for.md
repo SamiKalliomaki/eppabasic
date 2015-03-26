@@ -1,33 +1,36 @@
-`For`
-==========
+<!--structure-->
+For
+===
 
-Komento `For` määrittelee silmukan,
-joka käy läpi joukon lukuja.
+```eppabasic
+For {muuttuja} = {alku} To {loppu}
+Next {muuttuja}
 
-Silmukan määrittely on:
+For {muuttuja} = {alku} To {loppu} Step {askel}
+Next {muuttuja}
+```
 
-    For [muuttuja] = [alku] To [loppu]
-    Next [muuttuja]
+Toistorakenne, jonka avulla voi käydä läpi luvut tietyllä välillä.
 
-Tämä käy läpi välillä `[alku]`..`[loppu]` olevat luvut.
+`For`-silmukka käy läpi luvut väliltä `{alku}`..`{loppu}`.
+Silmukan peräkkäisillä kierroksilla `muuttuja` kasvaa aina `{askel}` verran.
+Jos `{askel}` ei ole määritelty, käytetään askeleen kokona lukua 1.
 
-Lisäksi silmukkaan voi liittää askeleen:
 
-    For [muuttuja] = [alku] To [loppu] Step [askel]
-    Next [muuttuja]
+Palauttaa parametrin `luku` itseisarvon eli luvun etäisyydden nollasta.
+Toisin sanoen palauttaa luvun ilman etumerkkiä.
 
-Nyt joka kierroksella muuttujan arvo kasvaa `[askel]` verran.    
-    
-Esimerkki 1
-----------
-
-    For i = 1 To 10
-        Print i
-    Next i
-    
-Esimerkki 2
-----------
-
-    For i = 10 To 50 Step 10
-        Print i
-    Next i
+Esimerkki
+---------
+```eppabasic
+' Tulostaa luvut 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
+For i = 1 To 10
+    Print i
+Next i
+```
+```eppabasic
+' Tulostaa luvut 10, 20, 30, 40 ja 50
+For i = 10 To 50 Step 10
+    Print i
+Next i
+```
