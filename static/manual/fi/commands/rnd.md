@@ -1,6 +1,6 @@
 <!--math-->
-Ceil
-=====
+Rnd
+===
 
 ```eppabasic
 I)      Function Rnd() As Number
