@@ -166,21 +166,37 @@ class InputModule implements Module {
             inMessageBox = true;
             messageBoxText.textContent = msg;
             messageBoxInput.value = '';
-            if (inputVisible)
+            if (inputVisible) {
                 messageBoxInput.style.display = 'block';
-            else
+            } else {
                 messageBoxInput.style.display = 'none';
-
+            }
             messageBox.style.display = 'block';
+
+            if (inputVisible) {
+                messageBoxInput.focus();
+            } else {
+                messageBoxButton.focus();
+            }
 
             var listener = (e: Event) => {
                 inMessageBox = false;
                 messageBox.style.display = 'none';
                 messageBoxButton.removeEventListener('click', listener);
+                messageBoxInput.removeEventListener('keypress', filter);
 
                 callback(messageBoxInput.value);
             };
+
+            var filter = (e: KeyboardEvent) => {
+                if(e.which == 13) {
+                    listener(e);
+                    return false;
+                }
+            }
+
             messageBoxButton.addEventListener('click', listener);
+            messageBoxInput.addEventListener('keypress', filter);
         };
 
         this._functions.set('Sub Message(String)', (strPtr: number): void => {
