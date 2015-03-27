@@ -1,42 +1,41 @@
-`Function`
-==========
+<!--structure-->
+Function
+========
 
-Komento `Function` määrittelee oman funktion.
+```eppabasic
+Function {nimi}({parametrit}) As {tyyppi}
+    ' Koodia
+End Function
+```
 
-Funktion määrittelyn runko on seuraava:
+Määrittelee oman funktion nimeltä `{nimi}`.
 
-    Function [nimi]([parametrit]) As [tyyppi]
-        [koodi]
-    End Function
-    
-Funktion nimi muodostuu kirjaimista a..z ja numeroista 0..9.
+Funktion nimi voi muodostua kirjaimista, numeroista sekä alaviivoista.
 Nimen ensimmäinen merkki ei saa olla numero.
 
-Parametrit ovat funktiolle annettavat parametrit.
-Jokaisesta parametrista täytyy ilmoittaa nimi ja tyyppi.
+`{parametrit}` määrittävät funktiolle annettavat parametrit.
+`{parametrit}` on pilkuilla erotettu lista parametrejä.
+Jokainen parametri on muotoa
+```eppabasic
+{nimi} As {tyyppi}
+```
+Vertaa [muuttujien määrittämiseen](manual:dim).
 
-Funktion tyyppi on sen palautusarvon tyyppi.
-
-Funktion sisällä oleva komento `Return` palauttaa
-arvon ja lopettaa funktion.
+`{tyyppu}` määrittää funktion paluuarvon tyypin.
+Funktion täytyy palauttaa arvo [Return](manual:return)-rakenteen avulla.
 
 Esimerkki
-----------
+---------
+```eppabasic
+' Funktio laskee summan 1+2+3+...+n
+Function Summa(n As Number) As Number
+    Dim s = 0
+    For i = 1 To n
+        s = s + i
+    Next i
+    Return s
+End Function
 
-Seuraava funktio laskee lukujen 1,2,3,..,`n` summan:
-
-    Function Summa(n As Number) As Number
-        Dim s = 0
-        For i = 1 To n
-            s = s + i
-        Next i
-        Return s
-    End Function
-    
-Funktiota voi käyttää näin:
-
-    Print Summa(9)
-    
-Koodin tulostus on seuraava:
-
-    45
+' Funktiota voidaan käyttää näin
+Print Summa(10)         ' 55
+```

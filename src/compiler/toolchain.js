@@ -209,6 +209,7 @@ define(['require', './types', './operators', './compiler', './parser', './typech
             compiler.defineJsFunction('__int', false, '', 'Int', [this.types.Integer], this.types.Integer);
             compiler.defineJsFunction('env.integerToString', true, 'Function Str(Integer) As String', 'Str', [this.types.Integer], this.types.String);
             compiler.defineJsFunction('env.doubleToString', true, 'Function Str(Number) As String', 'Str', [this.types.Double], this.types.String);
+            compiler.defineJsFunction('env.booleanToString', true, 'Function Str(Boolean) As String', 'Str', [this.types.Boolean], this.types.String);
 
             //// Code flow functions
             compiler.defineJsFunction('env.end', true, 'Sub End()', 'End', [], undefined, false);

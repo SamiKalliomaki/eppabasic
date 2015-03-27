@@ -1,52 +1,48 @@
-`Dim`
-==========
+<!--structure-->
+Dim
+===
 
-Komento `Dim` määrittelee muuttujan tai taulukon.
+```eppabasic
+I)      Dim {muuttuja} As {tyyppi}
+        Dim {muuttuja} As {tyyppi} = {arvo}
+        Dim {muuttuja} = {arvo}
+II)     Dim {muuttuja}[{koko}] As {tyyppi}
+```
 
-Muuttujan määrittelyyn on kaksi tapaa:
+I) Määrittelee muuttujan nimeltä `{muuttuja}` tyyppiä `{tyyppi}`.
+Muuttujalle voidaan määrittää myös alkuarvo.
+Tällöin tyyppiä ei ole pakko antaa vaan se päätellään `{arvo}`n typistä.
+Jos alkuarvoa ei anneta, se on 0 tai "" tyypistä riippuen.
 
-    Dim [nimi] As [tyyppi]
-    Dim [nimi] = [arvo]
-    
-Muuttujan nimessä voi olla kirjaimia a..z sekä numeroita 0..9.
-Muuttujan nimen ensimmäinen merkki ei saa olla numero.
+II) Määrittelee taulukon nimeltä `{muuttuja}` tyyppiä `{tyyppi}`.
+`{koko}` määrittelee taulukon koon, jollain taulukossa on indeksit 1..`{koko}`.
+Taulukolla voi olla myös useampia ulottuvuuksia, jolloin ulottuvuuksien kokojen välissä on pilkku.
 
-Muuttujan tyyppejä ovat `Number` (luku) sekä `String` (merkkijono).
+Muuttujan nimi voi muodostua kirjaimista, numeroista sekä alaviivoista.
+Nimen ensimmäinen merkki ei saa olla numero.
 
-Muuttujan voi määritellä myös antamalla aloitusarvon,
-josta päätellään muuttujan tyyppi.
-Jos aloitusarvoa ei anneta, oletusarvo on 0 tai "".
+Esimerkki
+---------
+```eppabasic
+Dim nimi As String
+nimi = InputText("Anna nimi:")
+Dim salasana = "abc"
 
-Taulukon määrittelytapa on:
+```
+```eppabasic
+Dim sade = InputNumber("Anna säde:")
+Print "Pinta-ala: " & (ebPi*sade^2)
 
-    Dim [nimi][[koko]] As [tyyppi]
-    
-Jos taulukko on moniulotteinen, ulottuvuuksien välissä on pilkku.
+```
+```eppabasic
+Dim lista[10] As Number
+For i = 1 To 10
+    lista[i] = i
+Next i
 
-Esimerkki 1
-----------
+```
+```eppabasic
+Dim ruudukko[10,10] As Number
+ruudukko[3,8] = 15
 
-    Dim nimi As String
-    nimi = InputText("Anna nimi:")
-    Dim salasana = "abc"
-    
-Esimerkki 2
-----------
-
-    Dim pii = 3.141592654
-    Dim sade = InputNumber("Anna säde:")
-    Print "Pinta-ala: " & (pii*sade^2)
-    
-Esimerkki 3
-----------
-
-    Dim lista[10] As Number
-    For i = 1 To 10
-        lista[i] = i
-    Next i
-    
-Esimerkki 4
-----------
-
-    Dim ruudukko[10,10] As Number
-    ruudukko[3,8] = 15
+```
