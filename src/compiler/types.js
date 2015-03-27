@@ -114,7 +114,7 @@ define(['./compiler/absolutereference', './compiler/constantreference', './compi
 
     function BooleanType() { }
     extend(BooleanType.prototype, BaseType.prototype);
-    BooleanType.prototype.castTargets = [];
+    BooleanType.prototype.castTargets = [TypeContainer.prototype.String];
     BooleanType.prototype.name = 'Boolean';
     BooleanType.prototype.castTo = function castTo(expr, type) {
         /// <param name='expr' type='String' />
@@ -122,6 +122,8 @@ define(['./compiler/absolutereference', './compiler/constantreference', './compi
         switch (type) {
             case this:
                 return expr;
+            case TypeContainer.prototype.String:
+                return '(__booleanstring((' + expr + ')|0)|0)';
         }
         throw new Error('Failed to cast "' + this + '" to "' + type + '"');
     }

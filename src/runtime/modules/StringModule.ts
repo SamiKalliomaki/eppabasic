@@ -133,6 +133,14 @@ class StringModule implements Module {
             val = Math.round(val * pow) / pow;
             return util.ebstring.toEB('' + (+val), this._runtime);
         });
+        this._functions.set('Function Str(Boolean) As String', (val: boolean): number => {
+            var str: string;
+            if (val)
+                str = 'True';
+            else
+                str = 'False';
+            return util.ebstring.toEB(str, this._runtime);
+        });
     }
 
     /**

@@ -353,6 +353,7 @@ define(['require', './framework/compileerror', './compiler/context', './compiler
             buf.push('var __panic=env.panic;');
             buf.push('var __integerstring=env.integerToString;');
             buf.push('var __doublestring=env.doubleToString;');
+            buf.push('var __booleanstring=env.booleanToString;');
             buf.push('var SP=0;');
             buf.push('var SB=0;');
             buf.push('var CP=0;');
