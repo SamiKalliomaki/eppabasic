@@ -58,11 +58,11 @@ class GraphicsModule implements Module {
     /**
      * X coordinate of the first print command.
      */
-    private _printOriginX: number;
+    private _printOriginX: number = 0;
     /**
      * Y coordinate of the first print command.
      */
-    private _printOriginY: number;
+    private _printOriginY: number = 0;
     /**
      * Offset of y coordinate of the next print command from the origin.
      */
