@@ -41,7 +41,8 @@ class GraphicsModule implements Module {
     private _fillColor: number = 0xFFFFFF;
     private _drawState: DrawState;
 
-    private _text: PIXI.Text;
+    private _textCache: { [hash: string]: PIXI.Text };
+    private _oldTextCache: { [hash: string]: PIXI.Text };
     private _textFont: string = 'monospace';
     private _textColor: string = '#FFFFFF';
     private _textSize: number = 20;
@@ -115,15 +116,14 @@ class GraphicsModule implements Module {
             this._buffer = new PIXI.RenderTexture(640, 480);
             this._bufferSprite = new PIXI.Sprite(this._buffer);
             this._graphics = new PIXI.Graphics();
-            this._text = new PIXI.Text('');
             this._textContainer = new PIXI.DisplayObjectContainer();
-
-            this._textContainer.addChild(this._text);
 
             this._stage.addChild(this._bufferSprite);
             // this._stage.addChild(this._graphics);
 
             this._drawState = DrawState.NONE;
+            this._oldTextCache = {};
+            this._textCache = {};
 
             window.addEventListener('resize', resizeEvent);
         });
@@ -212,22 +212,38 @@ class GraphicsModule implements Module {
         var drawString = (x: number, y: number, strPtr: number, align?: number) => {
             align = align || this._textAlign;
 
-            this._text.setStyle({
-                font: this._textSize + 'px ' + this._textFont,
-                fill: this._textColor
-            });
-            this._text.setText(util.ebstring.fromEB(strPtr, this._runtime));
+            var str = util.ebstring.fromEB(strPtr, this._runtime);
+            var font = this._textSize + 'px ' + this._textFont;
+            var hash = font + this._textColor + str;
 
-            this._text.position = new PIXI.Point(x, y);
+            var text: PIXI.Text = null;
+
+            if(hash in this._oldTextCache) {
+                text = this._oldTextCache[hash];
+                this._textCache[hash] = text;
+            } else if(hash in this._textCache) {
+                text = this._textCache[hash];
+            } else {
+                text = new PIXI.Text(str);
+                text.setStyle({
+                    font: font,
+                    fill: this._textColor
+                });
+                this._textCache[hash] = text;
+            }
+
+            text.position = new PIXI.Point(x, y);
             if(align == 1)
-                this._text.anchor.x = 0;
+                text.anchor.x = 0;
             else if(align == 2)
-                this._text.anchor.x = 1;
+                text.anchor.x = 1;
             else if(align == 3)
-                this._text.anchor.x = 0.5;
+                text.anchor.x = 0.5;
 
             renderGraphics();
+            this._textContainer.addChild(text);
             this._buffer.render(this._textContainer);
+            this._textContainer.removeChild(text);
         }
         this._functions.set('Sub DrawText(Integer,Integer,String)', (x: number, y: number, strPtr: number): void => {
             drawString(x, y, strPtr);
@@ -281,6 +297,15 @@ class GraphicsModule implements Module {
         var drawScreen = (): void => {
             renderGraphics();
             this._renderer.render(this._stage);
+
+            for(var hash in this._oldTextCache) {
+                if(!(hash in this._textCache)) {
+                    this._oldTextCache[hash].destroy(true);
+                }
+            }
+            this._oldTextCache = this._textCache;
+            this._textCache = {};
+
 
             // Finally break the execution
             this._runtime.program.breakExec();
