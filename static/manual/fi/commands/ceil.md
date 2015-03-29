@@ -3,7 +3,7 @@ Ceil
 ====
 
 ```eppabasic
-Function Ceil(luku As Number) As Integer
+Function Ceil(luku As Number) As Number
 ```
 
 Pyöristää luvun `luku` ylöspäin lähimpään kokonaislukuun.

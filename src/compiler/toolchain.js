@@ -146,8 +146,8 @@ define(['require', './types', './operators', './compiler', './parser', './typech
             compiler.defineJsFunction('stdlib.Math.max', true, '', 'Max', [this.types.Double, this.types.Double], this.types.Double);
             compiler.defineJsFunction('stdlib.Math.max', true, '', 'Max', [this.types.Integer, this.types.Integer], this.types.Integer);
 
-            compiler.defineJsFunction('stdlib.Math.floor', true, '', 'Floor', [this.types.Double], this.types.Integer);
-            compiler.defineJsFunction('stdlib.Math.ceil', true, '', 'Ceil', [this.types.Double], this.types.Integer);
+            compiler.defineJsFunction('stdlib.Math.floor', true, '', 'Floor', [this.types.Double], this.types.Double);
+            compiler.defineJsFunction('stdlib.Math.ceil', true, '', 'Ceil', [this.types.Double], this.types.Double);
 
             compiler.defineJsFunction('env.randInt', true, 'Function Rnd(Integer,Integer) As Integer', 'Rnd', [this.types.Integer, this.types.Integer], this.types.Integer);
             compiler.defineJsFunction('env.randDbl', true, 'Function Rnd() As Double', 'Rnd', [], this.types.Double);

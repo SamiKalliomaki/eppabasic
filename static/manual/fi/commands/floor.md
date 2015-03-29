@@ -3,7 +3,7 @@ Floor
 =====
 
 ```eppabasic
-Function Floor(luku As Number) As Integer
+Function Floor(luku As Number) As Number
 ```
 
 Pyöristää luvun `luku` alaspäin lähimpään kokonaislukuun.
