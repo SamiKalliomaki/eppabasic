@@ -1,7 +1,9 @@
-﻿/**
+import Program = require('./Program');
+
+/**
  * Target program for asm.js.
  */
-class AsmjsTargetProgram {
+class AsmjsTargetProgram implements Program {
     /**
      * Code of the compiled program.
      */

@@ -26,6 +26,8 @@
         "./lib/vendor.d.ts",
         "./lib/xregexp.d.ts",
         "./src/compiler/AsmjsTargetProgram.ts",
+        "./src/compiler/Program.ts",
+        "./src/compiler/transformers/Transformer.ts",
         "./src/editor/Error.d.ts",
         "./src/editor/editor.d.ts",
         "./src/runtime/ModuleLoader.ts",
