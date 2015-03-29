@@ -1,4 +1,4 @@
-﻿/// <reference path="../../../lib/vendor" />
+/// <reference path="../../../lib/vendor" />
 
 import Module = require('./Module');
 import Runtime = require('../Runtime');
@@ -41,8 +41,11 @@ class GraphicsModule implements Module {
     private _fillColor: number = 0xFFFFFF;
     private _drawState: DrawState;
 
+    private _tempText: PIXI.Text;
     private _textCache: { [hash: string]: PIXI.Text };
     private _oldTextCache: { [hash: string]: PIXI.Text };
+    private _textUsedLastFrame: Set<string>;
+    private _textUsedThisFrame: Set<string>;
     private _textFont: string = 'monospace';
     private _textColor: string = '#FFFFFF';
     private _textSize: number = 20;
@@ -113,6 +116,7 @@ class GraphicsModule implements Module {
             document.getElementById('canvasHolder').appendChild(this._renderer.view);
             this._stage = new PIXI.Stage(0x000000);
 
+            this._tempText = new PIXI.Text('');
             this._buffer = new PIXI.RenderTexture(640, 480);
             this._bufferSprite = new PIXI.Sprite(this._buffer);
             this._graphics = new PIXI.Graphics();
@@ -124,6 +128,8 @@ class GraphicsModule implements Module {
             this._drawState = DrawState.NONE;
             this._oldTextCache = {};
             this._textCache = {};
+            this._textUsedThisFrame = new Set();
+            this._textUsedLastFrame = new Set();
 
             window.addEventListener('resize', resizeEvent);
         });
@@ -224,13 +230,21 @@ class GraphicsModule implements Module {
             } else if(hash in this._textCache) {
                 text = this._textCache[hash];
             } else {
-                text = new PIXI.Text(str);
+                if(this._textUsedThisFrame.has(hash) || this._textUsedLastFrame.has(hash)) {
+                    text = new PIXI.Text(str);
+                    this._textCache[hash] = text;
+                } else {
+                    text = this._tempText;
+                    text.setText(str);
+                }
+
                 text.setStyle({
                     font: font,
                     fill: this._textColor
                 });
-                this._textCache[hash] = text;
             }
+
+            this._textUsedThisFrame.add(hash);
 
             text.position = new PIXI.Point(x, y);
             if(align == 1)
@@ -305,7 +319,8 @@ class GraphicsModule implements Module {
             }
             this._oldTextCache = this._textCache;
             this._textCache = {};
-
+            this._textUsedLastFrame = this._textUsedThisFrame;
+            this._textUsedThisFrame = new Set();
 
             // Finally break the execution
             this._runtime.program.breakExec();
