@@ -26,18 +26,6 @@ class Runtime extends EventEmitter {
      */
     private _targetProgram: AsmjsTargetProgram;
     /**
-     * Holder element for canvases.
-     */
-    private _canvasHolder: HTMLDivElement;
-    /**
-     * Current rendering canvas.
-     */
-    private _canvas: HTMLCanvasElement;
-    /**
-     * Current rendering canvas.
-     */
-    private _renderingContext: CanvasRenderingContext2D;
-    /**
      * Promise of program initialization
      */
     private _initPromise: Promise<void>;
@@ -68,9 +56,6 @@ class Runtime extends EventEmitter {
         this._editor = null;
         this._program = null;
         this._targetProgram = null;
-        this._canvasHolder = null;
-        this._canvas = null;
-        this._renderingContext = null;
         this._initPromise = null;
         this._heap = null;
         this._running = false;
@@ -93,9 +78,6 @@ class Runtime extends EventEmitter {
             // Get editor from the opener
             var editor = window.opener['ebeditor'];
 
-            // And canvas holder
-            this._canvasHolder = <HTMLDivElement> document.getElementById('canvasHolder');
-
             // Tell editor of us
             this._editor = editor;
             this._editor.setRuntime(this);
@@ -110,31 +92,6 @@ class Runtime extends EventEmitter {
         });
     }
 
-    /**
-     * Holder element for canvases.
-     */
-    get canvasHolder(): HTMLDivElement {
-        return this._canvasHolder;
-    }
-    /**
-     * Current rendering canvas.
-     */
-    get canvas(): HTMLCanvasElement {
-        return this._canvas;
-    }
-    /**
-     * Current rendering canvas.
-     */
-    set canvas(canvas: HTMLCanvasElement) {
-        this._canvas = canvas;
-        this._renderingContext = canvas.getContext('2d');
-    }
-    /**
-     * Rendering context to be used when rendering.
-     */
-    get renderingContext(): CanvasRenderingContext2D {
-        return this._renderingContext;
-    }
     /**
      * Heap of the array buffer.
      */

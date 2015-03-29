@@ -32,7 +32,7 @@ class InputModule implements Module {
 
         // Listeners
         var resizeListener = (e: Event) => {
-            scale = this._runtime.canvas.width / this._runtime.canvasHolder.offsetWidth;
+            scale = document.getElementsByTagName('canvas')[0].width / document.getElementById('canvasHolder').offsetWidth;
         };
         var keydownListener = (e: KeyboardEvent) => {
             if (inMessageBox)
@@ -57,7 +57,7 @@ class InputModule implements Module {
         var mouseListener = (e: MouseEvent) => {
             if (inMessageBox)
                 return;
-            var boundingRect = this._runtime.canvasHolder.getBoundingClientRect();
+            var boundingRect = document.getElementById('canvasHolder').getBoundingClientRect();
             mouseX = (e.pageX - boundingRect.left) * scale;
             mouseY = (e.pageY - boundingRect.top) * scale;
 
@@ -144,7 +144,7 @@ class InputModule implements Module {
         });
 
         // Message helpers
-        var messageBox = <HTMLDivElement> this._runtime.canvasHolder.getElementsByClassName('messageBox')[0];
+        var messageBox = <HTMLDivElement> document.getElementsByClassName('messageBox')[0];
         var messageBoxText = <HTMLDivElement> messageBox.getElementsByClassName('text')[0];
         var inputs = messageBox.getElementsByTagName('input');
         var messageBoxInput: HTMLInputElement;

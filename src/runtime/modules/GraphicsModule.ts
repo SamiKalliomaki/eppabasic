@@ -3,6 +3,9 @@
 import Module = require('./Module');
 import Runtime = require('../Runtime');
 import util = require('./util');
+import PIXI = require('PIXI');
+
+enum DrawState { NONE, LINE, FILL };
 
 /**
  * Basic graphics functions.
@@ -17,25 +20,37 @@ class GraphicsModule implements Module {
      */
     private _functions: Map<string, Function>;
     /**
-     * Size of text being drawn.
+     * PIXI.js Renderer
      */
-    private _textSize: number;
+    private _renderer: PIXI.PixiRenderer;
     /**
-     * Horizontal alignment of text being drawn.
+     * PIXI.js Stage
      */
-    private _textAlign: number;
+    private _stage: PIXI.Stage;
     /**
-     * Font of text being drawn.
+     * Background buffer
      */
-    private _textFont: string;
+    private _buffer: PIXI.RenderTexture;
     /**
-     * Color of text being drawn.
+     * Background buffer sprite
      */
-    private _textColor: string;
+    private _bufferSprite: PIXI.Sprite;
+    private _graphics: PIXI.Graphics;
+    private _lineColor: number = 0xFFFFFF;
+    private _lineWidth: number = 1;
+    private _fillColor: number = 0xFFFFFF;
+    private _drawState: DrawState;
+
+    private _text: PIXI.Text;
+    private _textFont: string = 'monospace';
+    private _textColor: string = '#FFFFFF';
+    private _textSize: number = 20;
+    private _textAlign: number = 1;
+    private _textContainer: PIXI.DisplayObjectContainer;
     /**
      * Space between lines in print measured in font size.
      */
-    private _textSpacing: number;
+    private _textSpacing: number = 1;
     /**
      * X coordinate of the first print command.
      */
@@ -53,107 +68,172 @@ class GraphicsModule implements Module {
         this._runtime = runtime;
         this._functions = new Map<string, Function>();
 
-        // Setup defaults
-        this._runtime.on('init', (): void => {
-            this._runtime.renderingContext.textBaseline = 'top';
-            this._textAlign = 1;
-            this._textColor = '#fff';
-            this._textFont = 'monospace';
-            this._textSize = 12;
-            this._textSpacing = 1.2;
+        var initLineStyle = (): void => {
+            if(this._drawState == DrawState.FILL) {
+                this._graphics.endFill();
+            }
 
-            this._printOriginX = 5;
-            this._printOriginY = 5;
-            this._printOffsetY = 0;
-
-            this._runtime.renderingContext.strokeStyle = '#fff';
-            this._runtime.renderingContext.fillStyle = '#fff';
-        });
-        this._runtime.on('clearscreen', (): void => {
-            this._printOffsetY = 0;
-        });
-
-        // Helper functions
-        var drawString = (x: number, y: number, str: string, align?: number):void => {
-            if (typeof align === 'undefined')
-                align = this._textAlign;
-
-            var ctx = this._runtime.renderingContext;
-
-            var originalStyle = ctx.fillStyle;
-            ctx.font = this._textSize + 'px ' + this._textFont;
-            ctx.fillStyle = this._textColor;
-            if (align === 1) ctx.textAlign = 'left';
-            if (align === 2) ctx.textAlign = 'right';
-            if (align === 3) ctx.textAlign = 'center';
-            ctx.textBaseline = 'top';
-            ctx.fillText(str, x, y);
-            ctx.fillStyle = originalStyle;
+            if(this._drawState != DrawState.LINE) {
+                this._graphics.lineStyle(this._lineWidth, this._lineColor);
+            }
         }
 
+        var initFillStyle = (): void => {
+            if(this._drawState != DrawState.FILL) {
+                this._graphics.lineStyle(0);
+                this._graphics.beginFill(this._fillColor);
+            }
+        }
+
+        var counter = 0;
+        var renderGraphics = (): void => {
+            this._buffer.render(this._graphics);
+            this._graphics.clear();
+            this._drawState = DrawState.NONE;
+
+            counter = 0;
+        }
+
+        var checkGraphicsRender = (add = 1): void => {
+            counter += add;
+
+            if(counter >= 1000) {
+                renderGraphics();
+            }
+        }
+
+        var resizeEvent = (): void => {
+            this.resizeCanvasHolder();
+        };
+
+        // Setup defaults
+        this._runtime.on('init', (): void => {
+            this._renderer = PIXI.autoDetectRenderer(640, 480);
+            document.getElementById('canvasHolder').appendChild(this._renderer.view);
+            this._stage = new PIXI.Stage(0x000000);
+
+            this._buffer = new PIXI.RenderTexture(640, 480);
+            this._bufferSprite = new PIXI.Sprite(this._buffer);
+            this._graphics = new PIXI.Graphics();
+            this._text = new PIXI.Text('');
+            this._textContainer = new PIXI.DisplayObjectContainer();
+
+            this._textContainer.addChild(this._text);
+
+            this._stage.addChild(this._bufferSprite);
+            // this._stage.addChild(this._graphics);
+
+            this._drawState = DrawState.NONE;
+
+            window.addEventListener('resize', resizeEvent);
+        });
+        this._runtime.once('destroy', (): void => {
+            window.removeEventListener('resize', resizeEvent);
+            document.getElementById('canvasHolder').removeChild(this._renderer.view);
+        });
+
+
         this._functions.set('Sub LineColor(Integer,Integer,Integer)', (r: number, g: number, b: number): void => {
-            this._runtime.renderingContext.strokeStyle = util.rgbToStyle(r, g, b);
+            this._lineColor = (r<<16) | (g<<8) | b;
+
+            if(this._drawState == DrawState.LINE)
+                this._drawState = DrawState.NONE;
         });
         this._functions.set('Sub LineWidth(Integer)', (width: number): void => {
-            this._runtime.renderingContext.lineWidth = width;
+            this._lineWidth = width;
+
+            if(this._drawState == DrawState.LINE)
+                this._drawState = DrawState.NONE;
         });
         this._functions.set('Sub FillColor(Integer,Integer,Integer)', (r: number, g: number, b: number): void => {
-            this._runtime.renderingContext.fillStyle = util.rgbToStyle(r, g, b);
+            this._fillColor = (r<<16) | (g<<8) | b;
+
+            if(this._drawState == DrawState.FILL)
+                this._drawState = DrawState.NONE;
         });
         this._functions.set('Sub DrawLine(Integer,Integer,Integer,Integer)', (x1:number, y1: number, x2: number, y2: number): void => {
-            this._runtime.renderingContext.beginPath();
-            this._runtime.renderingContext.moveTo(x1, y1);
-            this._runtime.renderingContext.lineTo(x2, y2);
-            this._runtime.renderingContext.stroke();
+            initLineStyle();
+            this._graphics.moveTo(x1, y1);
+            this._graphics.lineTo(x2, y2);
+
+            checkGraphicsRender();
         });
         this._functions.set('Sub DrawCircle(Integer,Integer,Integer)', (x: number, y: number, r: number): void => {
-            this._runtime.renderingContext.beginPath();
-            this._runtime.renderingContext.arc(x, y, r, 0, 2 * Math.PI, false);
-            this._runtime.renderingContext.stroke();
+            initLineStyle();
+            this._graphics.drawCircle(x, y, r);
+
+            checkGraphicsRender(40);
         });
         this._functions.set('Sub FillCircle(Integer,Integer,Integer)', (x: number, y: number, r: number): void => {
-            this._runtime.renderingContext.beginPath();
-            this._runtime.renderingContext.arc(x, y, r, 0, 2 * Math.PI, false);
-            this._runtime.renderingContext.fill();
+            initFillStyle();
+            this._graphics.drawCircle(x, y, r);
+
+            checkGraphicsRender(40);
         });
         this._functions.set('Sub DrawRect(Integer,Integer,Integer,Integer)', (x: number, y: number, width: number, height: number): void => {
-            this._runtime.renderingContext.beginPath();
-            this._runtime.renderingContext.rect(x, y, width, height);
-            this._runtime.renderingContext.stroke();
+            initLineStyle();
+            this._graphics.drawRect(x, y, width, height);
+
+            checkGraphicsRender();
         });
         this._functions.set('Sub FillRect(Integer,Integer,Integer,Integer)', (x: number, y: number, width: number, height: number): void => {
-            this._runtime.renderingContext.beginPath();
-            this._runtime.renderingContext.rect(x, y, width, height);
-            this._runtime.renderingContext.fill();
+            initFillStyle();
+            this._graphics.drawRect(x, y, width, height);
+
+            checkGraphicsRender();
         });
         this._functions.set('Sub DrawTriangle(Integer,Integer,Integer,Integer,Integer,Integer)', (x1: number, y1: number, x2: number, y2: number, x3: number, y3: number): void => {
-            this._runtime.renderingContext.beginPath();
-            this._runtime.renderingContext.moveTo(x1, y1);
-            this._runtime.renderingContext.lineTo(x2, y2);
-            this._runtime.renderingContext.lineTo(x3,  y3);
-            this._runtime.renderingContext.lineTo(x1, y1);
-            this._runtime.renderingContext.stroke();
+            initLineStyle();
+
+            this._graphics.drawPolygon([
+                new PIXI.Point(x1, y1),
+                new PIXI.Point(x2, y2),
+                new PIXI.Point(x3, y3)
+            ]);
+
+            checkGraphicsRender();
         });
         this._functions.set('Sub FillTriangle(Integer,Integer,Integer,Integer,Integer,Integer)', (x1: number, y1: number, x2: number, y2: number, x3: number, y3: number): void => {
-            this._runtime.renderingContext.beginPath();
-            this._runtime.renderingContext.moveTo(x1, y1);
-            this._runtime.renderingContext.lineTo(x2, y2);
-            this._runtime.renderingContext.lineTo(x3,  y3);
-            this._runtime.renderingContext.lineTo(x1, y1);
-            this._runtime.renderingContext.fill();
+            initFillStyle();
+
+            this._graphics.drawPolygon([
+                new PIXI.Point(x1, y1),
+                new PIXI.Point(x2, y2),
+                new PIXI.Point(x3, y3)
+            ]);
+
+            checkGraphicsRender();
         });
         this._functions.set('Sub DrawDot(Integer,Integer)', (x: number, y: number): void => {
-            this._runtime.renderingContext.beginPath();
-            this._runtime.renderingContext.rect(x, y, 1, 1);
-            this._runtime.renderingContext.stroke();
+            initFillStyle();
+            this._graphics.drawRect(x, y, 1, 1);
+            checkGraphicsRender();
         });
+        var drawString = (x: number, y: number, strPtr: number, align?: number) => {
+            align = align || this._textAlign;
+
+            this._text.setStyle({
+                font: this._textSize + 'px ' + this._textFont,
+                fill: this._textColor
+            });
+            this._text.setText(util.ebstring.fromEB(strPtr, this._runtime));
+
+            this._text.position = new PIXI.Point(x, y);
+            if(align == 1)
+                this._text.anchor.x = 0;
+            else if(align == 2)
+                this._text.anchor.x = 1;
+            else if(align == 3)
+                this._text.anchor.x = 0.5;
+
+            renderGraphics();
+            this._buffer.render(this._textContainer);
+        }
         this._functions.set('Sub DrawText(Integer,Integer,String)', (x: number, y: number, strPtr: number): void => {
-            var str = util.ebstring.fromEB(strPtr, this._runtime);
-            drawString(x, y, str);
+            drawString(x, y, strPtr);
         });
         this._functions.set('Sub DrawText(Integer,Integer,String,Integer)', (x: number, y: number, strPtr: number, align: number): void => {
-            var str = util.ebstring.fromEB(strPtr, this._runtime);
-            drawString(x, y, str, align);
+            drawString(x, y, strPtr, align);
         });
         this._functions.set('Sub TextColor(Integer,Integer,Integer)', (r: number, g: number, b: number): void => {
             this._textColor = util.rgbToStyle(r, g, b);
@@ -168,8 +248,7 @@ class GraphicsModule implements Module {
             this._textAlign = align;
         });
         this._functions.set('Sub Print(String)', (strPtr: number): void => {
-            var str = util.ebstring.fromEB(strPtr, this._runtime);
-            drawString(this._printOriginX, this._printOriginY + this._printOffsetY, str);
+            drawString(this._printOriginX, this._printOriginY + this._printOffsetY, strPtr, 1);
             this._printOffsetY += this._textSpacing * this._textSize;
         });
         this._functions.set('Sub PrintLocation(Integer,Integer)', (x: number, y: number): void => {
@@ -180,7 +259,65 @@ class GraphicsModule implements Module {
         this._functions.set('Sub LineSpacing(Double)', (spacing: number): void => {
             this._textSpacing = spacing;
         });
+        var resizeCanvas = (width: number, height: number) => {
+            this._renderer.resize(width, height);
+            this._buffer.resize(width, height, true);
+        }
+        this._functions.set('Function GetCanvasWidth() As Integer',(): number => {
+            return this._renderer.width;
+        });
+        this._functions.set('Sub SetCanvasWidth(Integer)', (width: number): void => {
+            resizeCanvas(width, this._renderer.height);
+        });
+        this._functions.set('Function GetCanvasHeight() As Integer',(): number => {
+            return this._renderer.height;
+        });
+        this._functions.set('Sub SetCanvasHeight(Integer)', (height: number): void => {
+            resizeCanvas(this._renderer.width, height);
+        });
+        this._functions.set('Sub SetCanvasSize(Integer,Integer)', (width: number, height: number): void => {
+            resizeCanvas(width, height);
+        });
+        var drawScreen = (): void => {
+            renderGraphics();
+            this._renderer.render(this._stage);
+
+            // Finally break the execution
+            this._runtime.program.breakExec();
+        };
+        this._functions.set('Sub DrawScreen()', drawScreen);
+        this._runtime.once('ended', drawScreen);
+        this._functions.set('Sub ClearColor(Integer,Integer,Integer)', (r: number, g: number, b: number): void => {
+        });
+        this._functions.set('Sub ClearScreen()', (): void => {
+            this._buffer.clear();
+            this._graphics.clear();
+            this._printOffsetY = 0;
+            this._drawState = DrawState.NONE;
+        });
     }
+
+    /**
+      * Resizes canvas holder tom match window size
+      */
+     private resizeCanvasHolder() {
+         var canvasRatio = this._renderer.width / this._renderer.height;
+         var windowRatio = window.innerWidth / window.innerHeight;
+
+         var width, height;
+
+         if (windowRatio > canvasRatio) {
+             width = 100 * canvasRatio / windowRatio;
+             height = 100;
+         } else {
+             width = 100;
+             height = 100 * windowRatio / canvasRatio;
+         }
+
+         var canvasHolder = document.getElementById('canvasHolder');
+         canvasHolder.style.width = width + '%';
+         canvasHolder.style.height = height + '%';
+     }
 
     /**
      * Gets list of functions defined in this module;
