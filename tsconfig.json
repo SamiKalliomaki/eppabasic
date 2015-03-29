@@ -28,6 +28,7 @@
         "./src/editor/Error.d.ts",
         "./src/editor/editor.d.ts",
         "./src/runtime/ModuleLoader.ts",
+        "./src/runtime/Program.ts",
         "./src/runtime/Runtime.ts",
         "./src/runtime/modules/ControlflowModule.ts",
         "./src/runtime/modules/CoreModule.ts",

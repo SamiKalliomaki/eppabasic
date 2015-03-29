@@ -6,6 +6,7 @@ import EventEmitter = require('EventEmitter');
 import Editor = require('editor/editor');
 import ModuleLoader = require('./ModuleLoader');
 import AsmjsTargetProgram = require('compiler/AsmjsTargetProgram');
+import Program = require('./Program');
 import Module = require('./modules/Module');
 
 /**
@@ -19,7 +20,7 @@ class Runtime extends EventEmitter {
     /**
      * The program runtime runs.
      */
-    private _program: AsmjsTargetProgram.AsmjsProgram;
+    private _program: Program;
     /**
      * Original AsmjsTargetProgram.
      */
@@ -143,7 +144,7 @@ class Runtime extends EventEmitter {
     /**
      * The program runtime runs.
      */
-    get program(): AsmjsTargetProgram.AsmjsProgram {
+    get program(): Program {
         return this._program;
     }
     /**
@@ -209,7 +210,7 @@ class Runtime extends EventEmitter {
                 environment['panic'] = this.panic.bind(this);
 
                 // Create program
-                this._program = program.programFactory(stdlib, environment, this._heap);
+                this._program = Program.fromAsmjsTargetProgram(program, stdlib, environment, this._heap);
 
                 // And initialize it
                 this._program.init();
