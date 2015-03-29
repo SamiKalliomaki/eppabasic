@@ -204,6 +204,8 @@ class Runtime extends EventEmitter {
 
                 // Create program environment based on requested functions
                 program.functions.forEach((signature: string, internalName: string): void => {
+                    if (!functions.has(signature))
+                        throw new Error('Function with signature "' + signature + '" is not defined in any module');
                     environment[internalName] = functions.get(signature);
                 });
 

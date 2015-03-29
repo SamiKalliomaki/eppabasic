@@ -33,7 +33,7 @@ class MathModule implements Module {
         this._functions.set('Sub Randomize(Integer)', (seed: number): void => {
             mt19937.seed(seed);
         });
-        this._functions.set('Function Round(Double) As Integer', (val: number): number => {
+        this._functions.set('Function Round(Double) As Double', (val: number): number => {
             return Math.round(val);
         });
         this._functions.set('Function Round(Double,Integer) As Double', (val: number, precision: number): number => {
