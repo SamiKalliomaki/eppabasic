@@ -100,7 +100,7 @@ define(['require', './types', './operators', './compiler', './parser', './typech
             compiler.defineJsFunction('env.drawScreen', true, 'Sub DrawScreen()', 'DrawScreen', [], undefined, false);
 
             compiler.defineJsFunction('env.drawText', true, 'Sub DrawText(Integer,Integer,String)', 'DrawText', [this.types.Integer, this.types.Integer, this.types.String]);
-            compiler.defineJsFunction('env.drawText', true, 'Sub DrawText(Integer,Integer,String,Integer)', 'DrawText', [this.types.Integer, this.types.Integer, this.types.String, this.types.Integer]);
+            compiler.defineJsFunction('env.drawText2', true, 'Sub DrawText(Integer,Integer,String,Integer)', 'DrawText', [this.types.Integer, this.types.Integer, this.types.String, this.types.Integer]);
             compiler.defineJsFunction('env.textColor', true, 'Sub TextColor(Integer,Integer,Integer)', 'TextColor', [this.types.Integer, this.types.Integer, this.types.Integer]);
             compiler.defineJsFunction('env.textFont', true, 'Sub TextFont(String)', 'TextFont', [this.types.String]);
             compiler.defineJsFunction('env.textSize', true, 'Sub TextSize(Integer)', 'TextSize', [this.types.Integer]);
