@@ -10,3 +10,4 @@
 /// <reference path='xregexp'/>
 /// <reference path='esrever'/>
 /// <reference path='random'/>
+/// <reference path='jasmine'/>
