@@ -25,19 +25,25 @@ class MultiTransformer implements Transformer {
      * @param source Program to be transformed
      * @param preserve Whether the transofmer must preserve the source. Useful for optimizers. Defaults to false.
      *
-     * @returns Transformed program.
+     * @returns Promise of transformed program.
      */
-    transform(source: Program, preserve?: boolean): Program {
-        if (this._transformers.length <= 0)
-            return source;          // No transformers so just return
+    transform(source: Program, preserve?: boolean): Promise<Program> {
+        return new Promise<Program>((resolve: (program: Program) => void, reject: (error: any) => void) => {
+            var i = 0;
+            var nextTransformation = (program: Program) => {
+                if (i >= this._transformers.length) {
+                    // Ready
+                    resolve(program);
+                    return;
+                }
 
-        var current = source;
-
-        this._transformers.forEach((transformer: Transformer) => {
-            current = transformer.transform(current);
+                this._transformers[i].transform(program)
+                    .then(nextTransformation)
+                    .catch(reject);
+                i++;
+            };
+            nextTransformation(source);
         });
-
-        return current;
     }
 }
 
