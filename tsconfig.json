@@ -27,6 +27,7 @@
         "./lib/xregexp.d.ts",
         "./src/compiler/AsmjsTargetProgram.ts",
         "./src/compiler/Program.ts",
+        "./src/compiler/transformers/MultiTransformer.ts",
         "./src/compiler/transformers/Transformer.ts",
         "./src/editor/Error.d.ts",
         "./src/editor/editor.d.ts",

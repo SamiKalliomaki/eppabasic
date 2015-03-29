@@ -19,4 +19,13 @@ interface Transformer {
     transform(source: Program, preserve?: boolean): Program;
 }
 
+module Transformer {
+    /**
+     * Enforces program is right type.
+     */
+    export function enforceType(object: Program, type: any): boolean {
+        return object instanceof type;
+    }
+}
+
 export = Transformer;
