@@ -44,6 +44,19 @@ export class MultiTransformerSuite {
             done();
         });
     }
+
+    PreserveTest(done: () => void): void {
+        var multiTransformer = new MultiTransformer([
+            new NonPreservingStringTransformer()
+        ]);
+        var source1 = new StringProgram('abc Hard String to ReVeRsE');
+
+        multiTransformer.transform(source1, true).then((target: StringProgram) => {
+            expect(source1).toEqual(new StringProgram('abc Hard String to ReVeRsE'));
+
+            done();
+        });
+    }
 }
 
 class StringReverseTransformer implements Transformer {
@@ -53,6 +66,18 @@ class StringReverseTransformer implements Transformer {
         return new Promise<StringProgram>((resolve: (program: StringProgram) => void, reject: (error: any) => void) => {
             var reversed = esrever.reverse(source.code);
             resolve(new StringProgram(reversed));
+        });
+    }
+}
+
+class NonPreservingStringTransformer implements Transformer {
+    transform(source: StringProgram, preserve?: boolean): Promise<StringProgram> {
+        Transformer.enforceType(source, StringProgram);
+
+        return new Promise<StringProgram>((resolve: (program: StringProgram) => void, reject: (error: any) => void) => {
+            if (!preserve)
+                source.code = 'CHANGED';        // Edit the original source
+            resolve(source);
         });
     }
 }

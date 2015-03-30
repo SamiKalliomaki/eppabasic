@@ -10,6 +10,9 @@ class StringProgram implements Program {
     get code(): string {
         return this._code;
     }
+    set code(value: string) {
+        this._code = value;
+    }
 }
 
 export = StringProgram;
