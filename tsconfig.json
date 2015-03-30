@@ -55,6 +55,7 @@
         "./test/compiler/programs/SourceProgramSuite.ts",
         "./test/compiler/programs/TokenProgramSuite.ts",
         "./test/compiler/transformers/MultiTransformerSuite.ts",
+        "./test/compiler/transformers/SourceToTokenTransformerSuite.ts",
         "./test/compiler/transformers/StringProgram.ts",
         "./test/compiler/transformers/TransformerSuite.ts"
     ]

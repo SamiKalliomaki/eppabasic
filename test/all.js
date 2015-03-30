@@ -3,6 +3,7 @@ define([
     'test/DummySuite',
     'test/compiler/transformers/TransformerSuite',
     'test/compiler/transformers/MultiTransformerSuite',
+    'test/compiler/transformers/SourceToTokenTransformerSuite',
     'test/compiler/programs/TokenProgramSuite',
     'test/compiler/programs/SourceProgramSuite'
 ], function() {
