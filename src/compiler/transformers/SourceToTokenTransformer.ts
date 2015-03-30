@@ -152,7 +152,7 @@ class Tokenizer {
     constructor(sourceFile: SourceFile, tokenTypes: typeof tokens.Token[]) {
             this._sourceFile = sourceFile;
             this._input = sourceFile.code;
-            this._position = new SourceFile.Position(0, 0);
+            this._position = new SourceFile.Position(0, 0, 0);
             this._tokenTypes = tokenTypes;
     }
 
@@ -189,9 +189,9 @@ class Tokenizer {
 
         // Consume input
         if (tokenConstructor === tokens.NewLineToken)
-            this._position = new SourceFile.Position(this._position.line+1, 0);
+            this._position = this._position.advance(consumed.length, true);
         else
-            this._position = new SourceFile.Position(this._position.line, this._position.column + consumed.length);
+            this._position = this._position.advance(consumed.length, false);
         this._input = this._input.substr(consumed.length);
 
         var endPosition = this._position;

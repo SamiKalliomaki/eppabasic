@@ -35,6 +35,13 @@ export class Token {
     static get pattern(): RegExp {
         return null;
     }
+
+    /**
+     * Piece of source this token consists of
+     */
+    get matchingSource(): string {
+        return this._source.code.substring(this._start.offset, this._end.offset)
+    }
 }
 
 /**
@@ -471,6 +478,18 @@ export class StringToken extends Token {
      */
     static get pattern(): RegExp {
         return XRegExp('^\\h*?"([^"\n]|"")*"\\nc');
+    }
+
+    /**
+     * Value of the string constant.
+     */
+    get value(): string {
+        // Extract quoted string
+        var original = this.matchingSource.trim();
+        // Remove double quotes from the begining and the end
+        original = original.substring(1, original.length - 1);
+        // Convert two double quotes to a single double quote ("" -> ")
+        return original.split('""').join('"');
     }
 }
 

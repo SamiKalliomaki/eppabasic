@@ -17,13 +17,13 @@ export class SourceToTokenTransformerSuite {
         var sourceProgram = new SourceProgram(sourceFiles, sourceFile);
 
         var expectedTokens = [
-            new tokens.DimToken(sourceFile, new SourceFile.Position(0, 0), new SourceFile.Position(0, 3)),
-            new tokens.IdentifierToken(sourceFile, new SourceFile.Position(0, 3), new SourceFile.Position(0, 5)),
-            new tokens.AsToken(sourceFile, new SourceFile.Position(0, 5), new SourceFile.Position(0, 8)),
-            new tokens.IdentifierToken(sourceFile, new SourceFile.Position(0, 8), new SourceFile.Position(0, 15)),
-            new tokens.EqualToken(sourceFile, new SourceFile.Position(0, 15), new SourceFile.Position(0, 17)),
-            new tokens.StringToken(sourceFile, new SourceFile.Position(0, 17), new SourceFile.Position(0, 28)),
-            new tokens.EOSToken(sourceFile, new SourceFile.Position(0, 28))
+            new tokens.DimToken(sourceFile, new SourceFile.Position(0, 0, 0), new SourceFile.Position(0, 3, 3)),
+            new tokens.IdentifierToken(sourceFile, new SourceFile.Position(0, 3, 3), new SourceFile.Position(0, 5, 5)),
+            new tokens.AsToken(sourceFile, new SourceFile.Position(0, 5, 5), new SourceFile.Position(0, 8, 8)),
+            new tokens.IdentifierToken(sourceFile, new SourceFile.Position(0, 8, 8), new SourceFile.Position(0, 15, 15)),
+            new tokens.EqualToken(sourceFile, new SourceFile.Position(0, 15, 15), new SourceFile.Position(0, 17, 17)),
+            new tokens.StringToken(sourceFile, new SourceFile.Position(0, 17, 17), new SourceFile.Position(0, 28, 28)),
+            new tokens.EOSToken(sourceFile, new SourceFile.Position(0, 28, 28))
         ];
         var tokenFile = new TokenFile(expectedTokens);
         var tokenFiles = new Set<TokenFile>();
@@ -47,8 +47,8 @@ export class SourceToTokenTransformerSuite {
         var sourceProgram = new SourceProgram(sourceFiles, sourceFile);
 
         var expectedTokens = [
-            new tokens.StringToken(sourceFile, new SourceFile.Position(0, 0), new SourceFile.Position(0, 2)),
-            new tokens.EOSToken(sourceFile, new SourceFile.Position(0, 2))
+            new tokens.StringToken(sourceFile, new SourceFile.Position(0, 0, 0), new SourceFile.Position(0, 2, 2)),
+            new tokens.EOSToken(sourceFile, new SourceFile.Position(0, 2, 2))
         ];
         var tokenFile = new TokenFile(expectedTokens);
         var tokenFiles = new Set<TokenFile>();
@@ -59,6 +59,7 @@ export class SourceToTokenTransformerSuite {
 
         transformer.transform(sourceProgram).then((targetProgram: TokenProgram): void => {
             expect(targetProgram).toEqual(expectedProgram);
+            expect((<tokens.StringToken>targetProgram.mainFile.tokens[0]).value).toBe('');
 
             done();
         });
@@ -72,8 +73,8 @@ export class SourceToTokenTransformerSuite {
         var sourceProgram = new SourceProgram(sourceFiles, sourceFile);
 
         var expectedTokens = [
-            new tokens.StringToken(sourceFile, new SourceFile.Position(0, 0), new SourceFile.Position(0, 72)),
-            new tokens.EOSToken(sourceFile, new SourceFile.Position(0, 72))
+            new tokens.StringToken(sourceFile, new SourceFile.Position(0, 0, 0), new SourceFile.Position(0, 72, 72)),
+            new tokens.EOSToken(sourceFile, new SourceFile.Position(0, 72, 72))
         ];
         var tokenFile = new TokenFile(expectedTokens);
         var tokenFiles = new Set<TokenFile>();
@@ -84,6 +85,7 @@ export class SourceToTokenTransformerSuite {
 
         transformer.transform(sourceProgram).then((targetProgram: TokenProgram): void => {
             expect(targetProgram).toEqual(expectedProgram);
+            expect((<tokens.StringToken>targetProgram.mainFile.tokens[0]).value).toBe('Somewhat "difficult" string to parse with double quotes at the end"');
 
             done();
         });

@@ -5,7 +5,7 @@ import tokens = require('./tokens');
  */
 class TokenFile {
     /**
-     * Token stream.
+     * Token stream
      */
     private _tokens: tokens.Token[];
 
@@ -16,6 +16,13 @@ class TokenFile {
      */
     constructor(tokens: tokens.Token[]) {
         this._tokens = tokens;
+    }
+
+    /**
+     * Token stream
+     */
+    get tokens(): tokens.Token[] {
+        return this._tokens;
     }
 }
 
