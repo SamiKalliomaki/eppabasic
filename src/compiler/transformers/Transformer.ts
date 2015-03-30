@@ -1,6 +1,6 @@
 /// <reference path="../../../lib/vendor" />
 
-import Program = require('../Program');
+import Program = require('../programs/Program');
 
 /**
  * Interface for transforming programs.

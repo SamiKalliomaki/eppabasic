@@ -5,7 +5,7 @@ import $ = require('jquery');
 import EventEmitter = require('EventEmitter');
 import Editor = require('editor/editor');
 import ModuleLoader = require('./ModuleLoader');
-import AsmjsTargetProgram = require('compiler/AsmjsTargetProgram');
+import AsmjsTargetProgram = require('compiler/programs/AsmjsTargetProgram');
 import Program = require('./Program');
 import Module = require('./modules/Module');
 

@@ -1,8 +1,10 @@
 define([
     // Require all tests here.
-    'test/dummy',
-    'test/compiler/transformers/Transformer',
-    'test/compiler/transformers/MultiTransformer'
+    'test/DummySuite',
+    'test/compiler/transformers/TransformerSuite',
+    'test/compiler/transformers/MultiTransformerSuite',
+    'test/compiler/programs/TokenProgramSuite',
+    'test/compiler/programs/SourceProgramSuite'
 ], function() {
     // Describe suites
     var suiteModules = Array.prototype.slice.call(arguments);

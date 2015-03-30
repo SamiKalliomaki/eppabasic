@@ -1,4 +1,4 @@
-import Program = require('src/compiler/Program');
+import Program = require('src/compiler/programs/Program');
 
 class StringProgram implements Program {
     private _code: string;

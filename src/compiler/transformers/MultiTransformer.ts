@@ -1,5 +1,5 @@
 import Transformer = require('./Transformer');
-import Program = require('../Program');
+import Program = require('../programs/Program');
 
 /**
  * Transformer combining multiple transformers.

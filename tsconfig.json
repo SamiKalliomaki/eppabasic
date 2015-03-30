@@ -25,8 +25,13 @@
         "./lib/requirejs.d.ts",
         "./lib/vendor.d.ts",
         "./lib/xregexp.d.ts",
-        "./src/compiler/AsmjsTargetProgram.ts",
-        "./src/compiler/Program.ts",
+        "./src/compiler/programs/AsmjsTargetProgram.ts",
+        "./src/compiler/programs/Program.ts",
+        "./src/compiler/programs/SourceProgram.ts",
+        "./src/compiler/programs/TokenProgram.ts",
+        "./src/compiler/programs/sourceProgram/SourceFile.ts",
+        "./src/compiler/programs/tokenProgram/TokenFile.ts",
+        "./src/compiler/programs/tokenProgram/tokens.ts",
         "./src/compiler/transformers/MultiTransformer.ts",
         "./src/compiler/transformers/Transformer.ts",
         "./src/editor/Error.d.ts",
@@ -44,9 +49,12 @@
         "./src/runtime/modules/StringModule.ts",
         "./src/runtime/modules/TimeModule.ts",
         "./src/runtime/modules/util.ts",
-        "./test/compiler/transformers/MultiTransformer.ts",
+        "./src/util/ArgumentError.ts",
+        "./test/DummySuite.ts",
+        "./test/compiler/programs/SourceProgramSuite.ts",
+        "./test/compiler/programs/TokenProgramSuite.ts",
+        "./test/compiler/transformers/MultiTransformerSuite.ts",
         "./test/compiler/transformers/StringProgram.ts",
-        "./test/compiler/transformers/Transformer.ts",
-        "./test/dummy.ts"
+        "./test/compiler/transformers/TransformerSuite.ts"
     ]
 }

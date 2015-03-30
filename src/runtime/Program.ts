@@ -1,4 +1,4 @@
-import AsmjsTargetProgram = require('../compiler/AsmjsTargetProgram');
+import AsmjsTargetProgram = require('compiler/programs/AsmjsTargetProgram');
 
 /**
  * This interface is implemented by compiler compiled asm.js code.
