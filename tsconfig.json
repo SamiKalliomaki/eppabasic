@@ -33,6 +33,7 @@
         "./src/compiler/programs/tokenProgram/TokenFile.ts",
         "./src/compiler/programs/tokenProgram/tokens.ts",
         "./src/compiler/transformers/MultiTransformer.ts",
+        "./src/compiler/transformers/SourceToTokenTransformer.ts",
         "./src/compiler/transformers/Transformer.ts",
         "./src/editor/Error.d.ts",
         "./src/editor/editor.d.ts",

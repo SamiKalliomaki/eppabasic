@@ -11,3 +11,8 @@
 /// <reference path='esrever'/>
 /// <reference path='random'/>
 /// <reference path='jasmine'/>
+
+// Shims
+interface Array<T> {
+    find(predicate: (value: T, index: number, obj: Array<T>) => boolean, thisArg?: any): T;
+}

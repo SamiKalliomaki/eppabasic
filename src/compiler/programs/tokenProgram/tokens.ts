@@ -44,8 +44,8 @@ export class EOSToken extends Token {
     /**
      * Constructs a new EOSToken.
      */
-    constructor(source: SourceFile, start: SourceFile.Position, end: SourceFile.Position) {
-        super(source, start, end);
+    constructor(source: SourceFile, position: SourceFile.Position) {
+        super(source, position, position);
     }
 
     /**
@@ -984,6 +984,26 @@ export class NewLineToken extends Token {
      */
     static get pattern(): RegExp {
         return XRegExp('^\\h*?\r?\n');
+    }
+}
+
+
+/**
+ * Error token.
+ */
+export class ErrorToken extends Token {
+    /**
+     * Constructs a new ErrorToken.
+     */
+    constructor(source: SourceFile, start: SourceFile.Position, end: SourceFile.Position) {
+        super(source, start, end);
+    }
+
+    /**
+     * Pattern this tokens type should match.
+     */
+    static get pattern(): RegExp {
+        return XRegExp('^.');
     }
 }
 

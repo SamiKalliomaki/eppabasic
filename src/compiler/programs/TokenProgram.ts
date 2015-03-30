@@ -25,6 +25,19 @@ class TokenProgram {
         this._files = files;
         this._mainFile = mainFile;
     }
+
+    /**
+     * Files in this program.
+     */
+    get files(): Set<TokenFile> {
+        return this._files;
+    }
+    /**
+     * Main file of the program. Must be one in the files.
+     */
+    get mainFile(): TokenFile {
+        return this._mainFile;
+    }
 }
 
 export = TokenProgram;
