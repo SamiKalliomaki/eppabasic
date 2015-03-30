@@ -60,7 +60,7 @@ module.exports = function (grunt) {
                                     }
                                     );
 
-    config.addTypeScriptTarget('all', ['src/**/*.ts', 'lib/**/*.d.ts'], tmpDir);
+    config.addTypeScriptTarget('src', 'src', ['src/**/*.ts', 'lib/**/*.d.ts'], tmpDir);
 
     config.addSyncMultiTarget('src', 'src', ['**/*', '!**/*.ts'], tmpDir);
     config.addSyncMultiTarget('lib', 'lib', ['**/*', '!**/*.ts'], tmpDir);
@@ -71,7 +71,7 @@ module.exports = function (grunt) {
     // Tests
     config.addSyncMultiTarget('static-test', 'static/test', ['**/*'], tmpDir + '/test');
     config.addSyncMultiTarget('test', 'test', ['**/*', '!**/*.ts'], tmpDir + '/test');
-    config.addTypeScriptTarget('test', ['test/**/*.ts', 'lib/**/*.d.ts'], tmpDir);
+    config.addTypeScriptTarget('test', 'test', ['test/**/*.ts', 'lib/**/*.d.ts'], tmpDir);
 
     // Setup config
     grunt.initConfig(config.config);
@@ -483,8 +483,9 @@ ConfigHandler.prototype = {
     /**
      * Adds multiple files to configuration.
      */
-    addTypeScriptTarget: function (name, src, dest) {
+    addTypeScriptTarget: function (name, baseDir, src, dest) {
         this.config.ts[name] = {
+            baseDir: baseDir,
             src: src,
             outDir: dest
         };

@@ -44,6 +44,8 @@
         "./src/runtime/modules/StringModule.ts",
         "./src/runtime/modules/TimeModule.ts",
         "./src/runtime/modules/util.ts",
+        "./test/compiler/transformers/MultiTransformer.ts",
+        "./test/compiler/transformers/StringProgram.ts",
         "./test/compiler/transformers/Transformer.ts",
         "./test/dummy.ts"
     ]
