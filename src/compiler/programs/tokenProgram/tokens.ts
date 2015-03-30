@@ -280,7 +280,7 @@ export class DivisionToken extends OperatorToken {
      * Pattern this tokens type should match.
      */
     static get pattern(): RegExp {
-        return XRegExp('^\\h*?/', '/');
+        return XRegExp('^\\h*?/');
     }
 }
 
@@ -451,7 +451,7 @@ export class NumberToken extends Token {
      * Pattern this tokens type should match.
      */
     static get pattern(): RegExp {
-        return XRegExp('^\\h*?-?\\d*\\.\\d+\\b');
+        return XRegExp('^\\h*?-?\\d*\\.\\d+\\nc');
     }
 }
 
@@ -470,7 +470,7 @@ export class StringToken extends Token {
      * Pattern this tokens type should match.
      */
     static get pattern(): RegExp {
-        return XRegExp('^\\h*?"([^"\n]|"")"\\b');
+        return XRegExp('^\\h*?"([^"\n]|"")*"\\nc');
     }
 }
 
@@ -1016,4 +1016,12 @@ XRegExp.addToken(
             range : '[' + range + ']';
     },
     XRegExp.INSIDE_CLASS | XRegExp.OUTSIDE_CLASS
+);
+// No character
+XRegExp.addToken(
+    /\\nc/,
+    function (match, scope): string {
+        return '(?=[\\t\\u0020\\u00A0\\u1680\\u180E\\u2000-\\u200A\\u202F\\u205F\\u3000]|\r?\n|$)';
+    },
+    XRegExp.OUTSIDE_CLASS
 );

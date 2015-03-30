@@ -35,14 +35,22 @@ class SourceToTokenTransformer implements Transformer {
      * @returns Promise of transformed program.
      */
     transform(source: SourceProgram): Promise<TokenProgram> {
-        throw new Error('Not implemented');
         return new Promise<TokenProgram>((resolve: (program: TokenProgram) => void, reject: (error: any) => void) => {
             var targetFiles = new Set<TokenFile>();
             var targetMainFile: TokenFile;
 
             source.files.forEach((sourceFile: SourceFile) => {
                 var tokenizer = new Tokenizer(sourceFile, this._tokenTypes);
+                var tokens = tokenizer.tokenize();
+                var targetFile = new TokenFile(tokens);
+                targetFiles.add(targetFile);
+                if (sourceFile === source.mainFile)
+                    targetMainFile = targetFile;
             });
+
+            var targetProgram = new TokenProgram(targetFiles, targetMainFile);
+
+            resolve(targetProgram);
         });
     }
 

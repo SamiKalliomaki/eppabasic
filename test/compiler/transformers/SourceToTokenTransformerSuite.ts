@@ -23,6 +23,57 @@ export class SourceToTokenTransformerSuite {
             new tokens.IdentifierToken(sourceFile, new SourceFile.Position(0, 8), new SourceFile.Position(0, 15)),
             new tokens.EqualToken(sourceFile, new SourceFile.Position(0, 15), new SourceFile.Position(0, 17)),
             new tokens.StringToken(sourceFile, new SourceFile.Position(0, 17), new SourceFile.Position(0, 28)),
+            new tokens.EOSToken(sourceFile, new SourceFile.Position(0, 28))
+        ];
+        var tokenFile = new TokenFile(expectedTokens);
+        var tokenFiles = new Set<TokenFile>();
+        tokenFiles.add(tokenFile);
+        var expectedProgram = new TokenProgram(tokenFiles, tokenFile);
+
+        var transformer = new SourceToTokenTransformer(SourceToTokenTransformer.defaultTokenTypes());
+
+        transformer.transform(sourceProgram).then((targetProgram: TokenProgram): void => {
+            expect(targetProgram).toEqual(expectedProgram);
+
+            done();
+        });
+    }
+
+    EmptyStringTokenTest(done: () => void): void {
+        var code = '""';
+        var sourceFile = new SourceFile(code);
+        var sourceFiles = new Set<SourceFile>();
+        sourceFiles.add(sourceFile);
+        var sourceProgram = new SourceProgram(sourceFiles, sourceFile);
+
+        var expectedTokens = [
+            new tokens.StringToken(sourceFile, new SourceFile.Position(0, 0), new SourceFile.Position(0, 2)),
+            new tokens.EOSToken(sourceFile, new SourceFile.Position(0, 2))
+        ];
+        var tokenFile = new TokenFile(expectedTokens);
+        var tokenFiles = new Set<TokenFile>();
+        tokenFiles.add(tokenFile);
+        var expectedProgram = new TokenProgram(tokenFiles, tokenFile);
+
+        var transformer = new SourceToTokenTransformer(SourceToTokenTransformer.defaultTokenTypes());
+
+        transformer.transform(sourceProgram).then((targetProgram: TokenProgram): void => {
+            expect(targetProgram).toEqual(expectedProgram);
+
+            done();
+        });
+    }
+
+    HardStringTokenTest(done: () => void): void {
+        var code = '"Somewhat ""difficult"" string to parse with double quotes at the end"""';
+        var sourceFile = new SourceFile(code);
+        var sourceFiles = new Set<SourceFile>();
+        sourceFiles.add(sourceFile);
+        var sourceProgram = new SourceProgram(sourceFiles, sourceFile);
+
+        var expectedTokens = [
+            new tokens.StringToken(sourceFile, new SourceFile.Position(0, 0), new SourceFile.Position(0, 72)),
+            new tokens.EOSToken(sourceFile, new SourceFile.Position(0, 72))
         ];
         var tokenFile = new TokenFile(expectedTokens);
         var tokenFiles = new Set<TokenFile>();

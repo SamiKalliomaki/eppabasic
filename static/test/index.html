@@ -27,10 +27,16 @@
 			        'jqueryui': ['jquery']
 			    }
 			});
-
-			require(['test/all'], function() {
-				jasmine.getEnv().execute();
-			});
+			require([
+			    // Preload libraries...
+			    'jquery', 'jqueryui', 'i18n', 'ace/ace',
+			    // ... and shims...
+			    'es5-shim', 'es6-shim'], function() {
+					require(['test/all'], function() {
+						jasmine.getEnv().execute();
+					});
+				}
+			);
 		</script>
 	</head>
 	<body>

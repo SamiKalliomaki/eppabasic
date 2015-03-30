@@ -59,7 +59,7 @@ module SourceFile {
          * Column
          */
         get column(): number {
-            return this.column;
+            return this._column;
         }
     }
 }
