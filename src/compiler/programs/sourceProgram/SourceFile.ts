@@ -18,4 +18,11 @@ class SourceFile {
     }
 }
 
+module SourceFile {
+    /**
+     * Position in a sourse file.
+     */
+    export class Position {}
+}
+
 export = SourceFile;

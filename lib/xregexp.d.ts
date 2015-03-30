@@ -26,7 +26,7 @@ declare module 'xregexp' {
 	function XRegExp(pattern: RegExp): RegExp;
 
 	module XRegExp {
-		function addToken(regex: RegExp, handler: (matchArr: RegExpExecArray, scope: string) => string, options?: TokenOpts): void;
+		function addToken(regex: RegExp, handler: (matchArr: RegExpExecArray, scope: number) => string, options?: TokenOpts): void;
 
 		function build(pattern: string, subs: string[], flags?: string): RegExp;
 		function cache(pattern: string, flags?: string): RegExp;
@@ -60,6 +60,9 @@ declare module 'xregexp' {
 
 		function union(patterns: string[], flags?: string): RegExp;
 		var version: string;
+
+		var INSIDE_CLASS: number;
+		var OUTSIDE_CLASS: number;
 	}
 
 	export = XRegExp;
