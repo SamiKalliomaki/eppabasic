@@ -245,6 +245,14 @@ function ConfigHandler(grunt, wwwDir, tmpDir) {
                 declaration: true
             }
         },
+        typedoc: {
+            options: {
+                module: 'amd',
+                target: 'es5',
+                name: 'EppaBasic',
+                out: wwwDir + '/docs'
+            }
+        },
         clean: {
             www: [wwwDir + '/**/*', wwwDir],
             tmp: [tmpDir + '/**/*', tmpDir, '.tscache']
@@ -488,6 +496,10 @@ ConfigHandler.prototype = {
             baseDir: baseDir,
             src: src,
             outDir: dest
+        };
+
+        this.config.typedoc[name] = {
+            src: src
         };
 
         this.config.watch['typescript-' + name] = {
