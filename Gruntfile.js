@@ -64,14 +64,14 @@ module.exports = function (grunt) {
 
     config.addSyncMultiTarget('src', 'src', ['**/*', '!**/*.ts'], tmpDir);
     config.addSyncMultiTarget('lib', 'lib', ['**/*', '!**/*.ts'], tmpDir);
-    config.addSyncMultiTarget('static', 'static', ['**/*'], wwwDir);
+    config.addSyncMultiTarget('static', 'static', ['**/*', '!test/**/*'], wwwDir);
 
     config.addLessTarget('main', 'static/css/main.less', wwwDir + '/css/editor.css');
 
     // Tests
     config.addSyncMultiTarget('static-test', 'static/test', ['**/*'], tmpDir + '/test');
     config.addSyncMultiTarget('test', 'test', ['**/*', '!**/*.ts'], tmpDir + '/test');
-    config.addTypeScriptTarget('test', ['test/**/*.ts', 'lib/**/*.d.ts'], tmpDir + '/test');
+    config.addTypeScriptTarget('test', ['test/**/*.ts', 'lib/**/*.d.ts'], tmpDir);
 
     // Setup config
     grunt.initConfig(config.config);

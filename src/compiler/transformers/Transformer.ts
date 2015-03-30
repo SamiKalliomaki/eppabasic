@@ -1,3 +1,5 @@
+/// <reference path="../../../lib/vendor" />
+
 import Program = require('../Program');
 
 /**
