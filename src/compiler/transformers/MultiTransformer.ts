@@ -37,7 +37,7 @@ class MultiTransformer implements Transformer {
                     return;
                 }
 
-                this._transformers[i].transform(program)
+                this._transformers[i].transform(program, preserve)
                     .then(nextTransformation)
                     .catch(reject);
                 i++;
