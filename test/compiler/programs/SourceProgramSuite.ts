@@ -4,7 +4,7 @@ import SourceProgram = require('src/compiler/programs/SourceProgram');
 import SourceFile = require('src/compiler/programs/sourceProgram/SourceFile');
 
 export class SourceProgramSuite {
-    MainfileMustBeInFilesTest(): void {
+    MainfileMustNotBeInFilesTest(): void {
         var mainfileInFiles = (): void => {
             var mainFile = new SourceFile('Main file code');
             var files = new Set<SourceFile>();
@@ -27,7 +27,7 @@ export class SourceProgramSuite {
             var program = new SourceProgram(files, mainFile);
         };
 
-        expect(mainfileInFiles).not.toThrow();
-        expect(mainfileNotInFiles).toThrow();
+        expect(mainfileInFiles).toThrow();
+        expect(mainfileNotInFiles).not.toThrow();
     }
 }

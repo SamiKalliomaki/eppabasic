@@ -143,7 +143,5 @@ export class TokenRemoverTransformerSuite {
 
 function tokensToProgram(tokens: tokens.Token[]): TokenProgram {
     var file = new TokenFile(tokens);
-    var files = new Set<TokenFile>();
-    files.add(file);
-    return new TokenProgram(files, file);
+    return new TokenProgram(new Set<TokenFile>(), file);
 }

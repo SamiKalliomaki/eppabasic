@@ -12,9 +12,7 @@ export class SourceToTokenTransformerSuite {
     VariableDeclarationTest(done: () => void): void {
         var code = 'Dim a As String = "A String"';
         var sourceFile = new SourceFile(code);
-        var sourceFiles = new Set<SourceFile>();
-        sourceFiles.add(sourceFile);
-        var sourceProgram = new SourceProgram(sourceFiles, sourceFile);
+        var sourceProgram = new SourceProgram(new Set<SourceFile>(), sourceFile);
 
         var expectedTokens = [
             new tokens.DimToken(sourceFile, new SourceFile.Position(0, 0, 0), new SourceFile.Position(0, 3, 3)),
@@ -26,9 +24,7 @@ export class SourceToTokenTransformerSuite {
             new tokens.EOSToken(sourceFile, new SourceFile.Position(0, 28, 28))
         ];
         var tokenFile = new TokenFile(expectedTokens);
-        var tokenFiles = new Set<TokenFile>();
-        tokenFiles.add(tokenFile);
-        var expectedProgram = new TokenProgram(tokenFiles, tokenFile);
+        var expectedProgram = new TokenProgram(new Set<TokenFile>(), tokenFile);
 
         var transformer = new SourceToTokenTransformer(SourceToTokenTransformer.defaultTokenTypes());
 
@@ -42,18 +38,14 @@ export class SourceToTokenTransformerSuite {
     EmptyStringTokenTest(done: () => void): void {
         var code = '""';
         var sourceFile = new SourceFile(code);
-        var sourceFiles = new Set<SourceFile>();
-        sourceFiles.add(sourceFile);
-        var sourceProgram = new SourceProgram(sourceFiles, sourceFile);
+        var sourceProgram = new SourceProgram(new Set<SourceFile>(), sourceFile);
 
         var expectedTokens = [
             new tokens.StringToken(sourceFile, new SourceFile.Position(0, 0, 0), new SourceFile.Position(0, 2, 2)),
             new tokens.EOSToken(sourceFile, new SourceFile.Position(0, 2, 2))
         ];
         var tokenFile = new TokenFile(expectedTokens);
-        var tokenFiles = new Set<TokenFile>();
-        tokenFiles.add(tokenFile);
-        var expectedProgram = new TokenProgram(tokenFiles, tokenFile);
+        var expectedProgram = new TokenProgram(new Set<TokenFile>(), tokenFile);
 
         var transformer = new SourceToTokenTransformer(SourceToTokenTransformer.defaultTokenTypes());
 
@@ -68,18 +60,14 @@ export class SourceToTokenTransformerSuite {
     HardStringTokenTest(done: () => void): void {
         var code = '"Somewhat ""difficult"" string to parse with double quotes at the end"""';
         var sourceFile = new SourceFile(code);
-        var sourceFiles = new Set<SourceFile>();
-        sourceFiles.add(sourceFile);
-        var sourceProgram = new SourceProgram(sourceFiles, sourceFile);
+        var sourceProgram = new SourceProgram(new Set<SourceFile>(), sourceFile);
 
         var expectedTokens = [
             new tokens.StringToken(sourceFile, new SourceFile.Position(0, 0, 0), new SourceFile.Position(0, 72, 72)),
             new tokens.EOSToken(sourceFile, new SourceFile.Position(0, 72, 72))
         ];
         var tokenFile = new TokenFile(expectedTokens);
-        var tokenFiles = new Set<TokenFile>();
-        tokenFiles.add(tokenFile);
-        var expectedProgram = new TokenProgram(tokenFiles, tokenFile);
+        var expectedProgram = new TokenProgram(new Set<TokenFile>(), tokenFile);
 
         var transformer = new SourceToTokenTransformer(SourceToTokenTransformer.defaultTokenTypes());
 

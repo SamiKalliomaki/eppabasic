@@ -35,23 +35,30 @@ class TokenRemoverTransformer implements Transformer {
     transform(source: TokenProgram): Promise<TokenProgram> {
         return new Promise<TokenProgram>((resolve: (program: TokenProgram) => void, reject: (error: any) => void) => {
             var targetFiles = new Set<TokenFile>();
-            var targetMainFile: TokenFile;
-
+            var targetMainFile = this.transformFile(source.mainFile);
+            
             source.files.forEach((sourceFile: TokenFile) => {
-                var targetTokens = sourceFile.tokens.filter((token: tokens.Token): boolean => {
-                    return !this._tokenTypes.has(<typeof tokens.Token>token.constructor);
-                });
-
-                var targetFile = new TokenFile(targetTokens);
-                targetFiles.add(targetFile);
-                if (sourceFile === source.mainFile)
-                    targetMainFile = targetFile;
+                targetFiles.add(this.transformFile(sourceFile));
             });
 
             var targetProgram = new TokenProgram(targetFiles, targetMainFile);
 
             resolve(targetProgram);
         });
+    }
+
+    /**
+     * Does the transformation on a single file.
+     *
+     * @param sourceFile File to transform.
+     * @return Transformed file.
+     */
+    private transformFile(sourceFile: TokenFile): TokenFile {
+        var targetTokens = sourceFile.tokens.filter((token: tokens.Token): boolean => {
+            return !this._tokenTypes.has(<typeof tokens.Token>token.constructor);
+        });
+        var targetFile = new TokenFile(targetTokens);
+        return targetFile;
     }
 }
 
