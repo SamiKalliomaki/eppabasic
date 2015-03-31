@@ -24,3 +24,5 @@ class SyntaxTree
         return this._root;
     }
 };
+
+export = SyntaxTree;
