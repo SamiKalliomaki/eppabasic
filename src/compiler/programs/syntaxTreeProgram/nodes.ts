@@ -1,5 +1,5 @@
 import tokens = require('../tokenProgram/tokens');
-import Parser = require("../../transformers/Parser");
+import ParseError = require("util/ParseError");
 
 /*
  * Syntax tree node
@@ -56,7 +56,7 @@ export class TokenNode extends Node {
             return [];
         }
 
-        throw new Parser.ParseError('Invalid token encountered');
+        throw new ParseError('Invalid token encountered');
     }
 }
 
@@ -125,7 +125,7 @@ export class SequenceNode extends Node {
             return [];
         }
 
-        throw new Parser.ParseError('Invalid token encountered');
+        throw new ParseError('Invalid token encountered');
     }
 }
 
