@@ -34,6 +34,7 @@
         "./src/compiler/programs/tokenProgram/tokens.ts",
         "./src/compiler/transformers/MultiTransformer.ts",
         "./src/compiler/transformers/SourceToTokenTransformer.ts",
+        "./src/compiler/transformers/TokenRemoverTransformer.ts",
         "./src/compiler/transformers/Transformer.ts",
         "./src/editor/Error.d.ts",
         "./src/editor/editor.d.ts",
@@ -57,6 +58,7 @@
         "./test/compiler/transformers/MultiTransformerSuite.ts",
         "./test/compiler/transformers/SourceToTokenTransformerSuite.ts",
         "./test/compiler/transformers/StringProgram.ts",
+        "./test/compiler/transformers/TokenRemoverTransformerSuite.ts",
         "./test/compiler/transformers/TransformerSuite.ts"
     ]
 }

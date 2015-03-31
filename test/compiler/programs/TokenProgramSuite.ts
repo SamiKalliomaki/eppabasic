@@ -9,7 +9,7 @@ export class TokenProgramSuite {
     MainfileMustBeInFilesTest(): void {
         var mainfileInFiles = (): void => {
             var sourceFile = new SourceFile('');
-            var position = new SourceFile.Position(0, 0);
+            var position = new SourceFile.Position(0, 0, 0);
             var mainFile = new TokenFile([new tokens.Token(sourceFile, position, position)]);
             var files = new Set<TokenFile>();
             files.add(mainFile);
@@ -22,7 +22,7 @@ export class TokenProgramSuite {
         };
         var mainfileNotInFiles = (): void => {
             var sourceFile = new SourceFile('');
-            var position = new SourceFile.Position(0, 0);
+            var position = new SourceFile.Position(0, 0, 0);
             var mainFile = new TokenFile([new tokens.Token(sourceFile, position, position)]);
             var files = new Set<TokenFile>();
             files.add(new TokenFile([new tokens.Token(sourceFile, position, position)]));

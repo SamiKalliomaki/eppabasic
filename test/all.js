@@ -4,6 +4,7 @@ define([
     'test/compiler/transformers/TransformerSuite',
     'test/compiler/transformers/MultiTransformerSuite',
     'test/compiler/transformers/SourceToTokenTransformerSuite',
+    'test/compiler/transformers/TokenRemoverTransformerSuite',
     'test/compiler/programs/TokenProgramSuite',
     'test/compiler/programs/SourceProgramSuite'
 ], function() {
