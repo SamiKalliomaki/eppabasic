@@ -52,7 +52,7 @@ class TokenToSyntaxTreeTransformer implements Transformer {
      * @return Transformed file.
      */
     private transformFile(sourceFile: TokenFile): SyntaxTree {
-        return null;
+        return this._parser.parseFile(sourceFile);
     }
 }
 
@@ -64,7 +64,7 @@ class Parser {
      * @param tokenFile File to parse.
      * @returns Parsed syntax tree.
      */
-    private parseFile(tokenFile: TokenFile): SyntaxTree {
+    parseFile(tokenFile: TokenFile): SyntaxTree {
         var tokenQueue = tokenFile.tokens.slice(0);
         var root = new nodes.BaseLevelBlockNode();
         var tree = new SyntaxTree(root);
