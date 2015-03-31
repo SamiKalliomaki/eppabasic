@@ -460,6 +460,16 @@ export class NumberToken extends Token {
     static get pattern(): RegExp {
         return XRegExp('^\\h*?-?\\d*\\.\\d+\\nc');
     }
+
+    /**
+     * Value of the number constant.
+     */
+    get value(): number {
+        // Extract number
+        var original = this.matchingSource.trim();
+        // Convert to double
+        return parseFloat(original);
+    }
 }
 
 /**
@@ -984,6 +994,14 @@ export class IdentifierToken extends Token {
      */
     static get pattern(): RegExp {
         return XRegExp('^\\h*?[_\\p{L}][_\\p{L}\\p{N}]*\\b');
+    }
+
+    /**
+     * Name of the identifier.
+     */
+    get name(): string {
+        // Extract name using regex
+        return XRegExp('^\\h*?([_\\p{L}][_\\p{L}\\p{N}]*)\\b').exec(this.matchingSource)[1];
     }
 }
 
