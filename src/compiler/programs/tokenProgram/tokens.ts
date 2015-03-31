@@ -23,7 +23,7 @@ export class Token {
     /**
      * Constructs a new Token.
      */
-    constructor(source: SourceFile, start: SourceFile.Position, end: SourceFile.Position) {
+    constructor(source: SourceFile = null, start: SourceFile.Position = null, end: SourceFile.Position = null) {
         this._source = source;
         this._start = start;
         this._end = end;
@@ -49,13 +49,6 @@ export class Token {
  */
 export class EOSToken extends Token {
     /**
-     * Constructs a new EOSToken.
-     */
-    constructor(source: SourceFile, position: SourceFile.Position) {
-        super(source, position, position);
-    }
-
-    /**
      * Pattern this tokens type should match.
      */
     static get pattern(): RegExp {
@@ -67,13 +60,6 @@ export class EOSToken extends Token {
  * Comment token.
  */
 export class CommentToken extends Token {
-    /**
-     * Constructs a new CommentToken.
-     */
-    constructor(source: SourceFile, start: SourceFile.Position, end: SourceFile.Position) {
-        super(source, start, end);
-    }
-
     /**
      * Pattern this tokens type should match.
      */
@@ -87,13 +73,6 @@ export class CommentToken extends Token {
  */
 export class OperatorToken extends Token {
     /**
-     * Constructs a new OperatorToken.
-     */
-    constructor(source: SourceFile, start: SourceFile.Position, end: SourceFile.Position) {
-        super(source, start, end);
-    }
-
-    /**
      * Pattern this tokens type should match.
      */
     static get pattern(): RegExp {
@@ -105,13 +84,6 @@ export class OperatorToken extends Token {
  * <> token.
  */
 export class NotEqualToken extends OperatorToken {
-    /**
-     * Constructs a new NotEqualToken.
-     */
-    constructor(source: SourceFile, start: SourceFile.Position, end: SourceFile.Position) {
-        super(source, start, end);
-    }
-
     /**
      * Pattern this tokens type should match.
      */
@@ -125,13 +97,6 @@ export class NotEqualToken extends OperatorToken {
  */
 export class EqualToken extends OperatorToken {
     /**
-     * Constructs a new EqualToken.
-     */
-    constructor(source: SourceFile, start: SourceFile.Position, end: SourceFile.Position) {
-        super(source, start, end);
-    }
-
-    /**
      * Pattern this tokens type should match.
      */
     static get pattern(): RegExp {
@@ -143,13 +108,6 @@ export class EqualToken extends OperatorToken {
  * < token.
  */
 export class LessThanToken extends OperatorToken {
-    /**
-     * Constructs a new LessThanToken.
-     */
-    constructor(source: SourceFile, start: SourceFile.Position, end: SourceFile.Position) {
-        super(source, start, end);
-    }
-
     /**
      * Pattern this tokens type should match.
      */
@@ -163,13 +121,6 @@ export class LessThanToken extends OperatorToken {
  */
 export class GreaterThanToken extends OperatorToken {
     /**
-     * Constructs a new GreaterThanToken.
-     */
-    constructor(source: SourceFile, start: SourceFile.Position, end: SourceFile.Position) {
-        super(source, start, end);
-    }
-
-    /**
      * Pattern this tokens type should match.
      */
     static get pattern(): RegExp {
@@ -181,13 +132,6 @@ export class GreaterThanToken extends OperatorToken {
  * <= token.
  */
 export class LessOrEqualToken extends OperatorToken {
-    /**
-     * Constructs a new LessOrEqualToken.
-     */
-    constructor(source: SourceFile, start: SourceFile.Position, end: SourceFile.Position) {
-        super(source, start, end);
-    }
-
     /**
      * Pattern this tokens type should match.
      */
@@ -201,13 +145,6 @@ export class LessOrEqualToken extends OperatorToken {
  */
 export class GreaterOrEqualToken extends OperatorToken {
     /**
-     * Constructs a new GreaterOrEqualToken.
-     */
-    constructor(source: SourceFile, start: SourceFile.Position, end: SourceFile.Position) {
-        super(source, start, end);
-    }
-
-    /**
      * Pattern this tokens type should match.
      */
     static get pattern(): RegExp {
@@ -219,13 +156,6 @@ export class GreaterOrEqualToken extends OperatorToken {
  * + token.
  */
 export class AdditionToken extends OperatorToken {
-    /**
-     * Constructs a new AdditionToken.
-     */
-    constructor(source: SourceFile, start: SourceFile.Position, end: SourceFile.Position) {
-        super(source, start, end);
-    }
-
     /**
      * Pattern this tokens type should match.
      */
@@ -239,13 +169,6 @@ export class AdditionToken extends OperatorToken {
  */
 export class SubstractionToken extends OperatorToken {
     /**
-     * Constructs a new SubstractionToken.
-     */
-    constructor(source: SourceFile, start: SourceFile.Position, end: SourceFile.Position) {
-        super(source, start, end);
-    }
-
-    /**
      * Pattern this tokens type should match.
      */
     static get pattern(): RegExp {
@@ -257,13 +180,6 @@ export class SubstractionToken extends OperatorToken {
  * * token.
  */
 export class MultiplicationToken extends OperatorToken {
-    /**
-     * Constructs a new MultiplicationToken.
-     */
-    constructor(source: SourceFile, start: SourceFile.Position, end: SourceFile.Position) {
-        super(source, start, end);
-    }
-
     /**
      * Pattern this tokens type should match.
      */
@@ -277,13 +193,6 @@ export class MultiplicationToken extends OperatorToken {
  */
 export class DivisionToken extends OperatorToken {
     /**
-     * Constructs a new DivisionToken.
-     */
-    constructor(source: SourceFile, start: SourceFile.Position, end: SourceFile.Position) {
-        super(source, start, end);
-    }
-
-    /**
      * Pattern this tokens type should match.
      */
     static get pattern(): RegExp {
@@ -295,13 +204,6 @@ export class DivisionToken extends OperatorToken {
  * \ token.
  */
 export class IntegerDivisionToken extends OperatorToken {
-    /**
-     * Constructs a new IntegerDivisionToken.
-     */
-    constructor(source: SourceFile, start: SourceFile.Position, end: SourceFile.Position) {
-        super(source, start, end);
-    }
-
     /**
      * Pattern this tokens type should match.
      */
@@ -315,13 +217,6 @@ export class IntegerDivisionToken extends OperatorToken {
  */
 export class PowerToken extends OperatorToken {
     /**
-     * Constructs a new PowerToken.
-     */
-    constructor(source: SourceFile, start: SourceFile.Position, end: SourceFile.Position) {
-        super(source, start, end);
-    }
-
-    /**
      * Pattern this tokens type should match.
      */
     static get pattern(): RegExp {
@@ -333,13 +228,6 @@ export class PowerToken extends OperatorToken {
  * Mod token.
  */
 export class ModToken extends OperatorToken {
-    /**
-     * Constructs a new ModToken.
-     */
-    constructor(source: SourceFile, start: SourceFile.Position, end: SourceFile.Position) {
-        super(source, start, end);
-    }
-
     /**
      * Pattern this tokens type should match.
      */
@@ -353,13 +241,6 @@ export class ModToken extends OperatorToken {
  */
 export class ConcatenationToken extends OperatorToken {
     /**
-     * Constructs a new ConcatenationToken.
-     */
-    constructor(source: SourceFile, start: SourceFile.Position, end: SourceFile.Position) {
-        super(source, start, end);
-    }
-
-    /**
      * Pattern this tokens type should match.
      */
     static get pattern(): RegExp {
@@ -371,13 +252,6 @@ export class ConcatenationToken extends OperatorToken {
  * And token.
  */
 export class AndToken extends OperatorToken {
-    /**
-     * Constructs a new AndToken.
-     */
-    constructor(source: SourceFile, start: SourceFile.Position, end: SourceFile.Position) {
-        super(source, start, end);
-    }
-
     /**
      * Pattern this tokens type should match.
      */
@@ -391,13 +265,6 @@ export class AndToken extends OperatorToken {
  */
 export class OrToken extends OperatorToken {
     /**
-     * Constructs a new OrToken.
-     */
-    constructor(source: SourceFile, start: SourceFile.Position, end: SourceFile.Position) {
-        super(source, start, end);
-    }
-
-    /**
      * Pattern this tokens type should match.
      */
     static get pattern(): RegExp {
@@ -409,13 +276,6 @@ export class OrToken extends OperatorToken {
  * Xor token.
  */
 export class XorToken extends OperatorToken {
-    /**
-     * Constructs a new XorToken.
-     */
-    constructor(source: SourceFile, start: SourceFile.Position, end: SourceFile.Position) {
-        super(source, start, end);
-    }
-
     /**
      * Pattern this tokens type should match.
      */
@@ -429,13 +289,6 @@ export class XorToken extends OperatorToken {
  */
 export class NotToken extends OperatorToken {
     /**
-     * Constructs a new NotToken.
-     */
-    constructor(source: SourceFile, start: SourceFile.Position, end: SourceFile.Position) {
-        super(source, start, end);
-    }
-
-    /**
      * Pattern this tokens type should match.
      */
     static get pattern(): RegExp {
@@ -447,13 +300,6 @@ export class NotToken extends OperatorToken {
  * Number constant token.
  */
 export class NumberToken extends Token {
-    /**
-     * Constructs a new NumberToken.
-     */
-    constructor(source: SourceFile, start: SourceFile.Position, end: SourceFile.Position) {
-        super(source, start, end);
-    }
-
     /**
      * Pattern this tokens type should match.
      */
@@ -476,13 +322,6 @@ export class NumberToken extends Token {
  * String constant token.
  */
 export class StringToken extends Token {
-    /**
-     * Constructs a new StringToken.
-     */
-    constructor(source: SourceFile, start: SourceFile.Position, end: SourceFile.Position) {
-        super(source, start, end);
-    }
-
     /**
      * Pattern this tokens type should match.
      */
@@ -508,13 +347,6 @@ export class StringToken extends Token {
  */
 export class CommaToken extends Token {
     /**
-     * Constructs a new CommaToken.
-     */
-    constructor(source: SourceFile, start: SourceFile.Position, end: SourceFile.Position) {
-        super(source, start, end);
-    }
-
-    /**
      * Pattern this tokens type should match.
      */
     static get pattern(): RegExp {
@@ -526,13 +358,6 @@ export class CommaToken extends Token {
  * Left parenthesis token.
  */
 export class LeftParenthesisToken extends Token {
-    /**
-     * Constructs a new LeftParenthesisToken.
-     */
-    constructor(source: SourceFile, start: SourceFile.Position, end: SourceFile.Position) {
-        super(source, start, end);
-    }
-
     /**
      * Pattern this tokens type should match.
      */
@@ -546,13 +371,6 @@ export class LeftParenthesisToken extends Token {
  */
 export class RightParenthesisToken extends Token {
     /**
-     * Constructs a new RightParenthesisToken.
-     */
-    constructor(source: SourceFile, start: SourceFile.Position, end: SourceFile.Position) {
-        super(source, start, end);
-    }
-
-    /**
      * Pattern this tokens type should match.
      */
     static get pattern(): RegExp {
@@ -564,13 +382,6 @@ export class RightParenthesisToken extends Token {
  * Left bracket token.
  */
 export class LeftBracketToken extends Token {
-    /**
-     * Constructs a new LeftBracketToken.
-     */
-    constructor(source: SourceFile, start: SourceFile.Position, end: SourceFile.Position) {
-        super(source, start, end);
-    }
-
     /**
      * Pattern this tokens type should match.
      */
@@ -584,13 +395,6 @@ export class LeftBracketToken extends Token {
  */
 export class RightBracketToken extends Token {
     /**
-     * Constructs a new RightBracketToken.
-     */
-    constructor(source: SourceFile, start: SourceFile.Position, end: SourceFile.Position) {
-        super(source, start, end);
-    }
-
-    /**
      * Pattern this tokens type should match.
      */
     static get pattern(): RegExp {
@@ -602,13 +406,6 @@ export class RightBracketToken extends Token {
  * For token.
  */
 export class ForToken extends Token {
-    /**
-     * Constructs a new ForToken.
-     */
-    constructor(source: SourceFile, start: SourceFile.Position, end: SourceFile.Position) {
-        super(source, start, end);
-    }
-
     /**
      * Pattern this tokens type should match.
      */
@@ -622,13 +419,6 @@ export class ForToken extends Token {
  */
 export class ToToken extends Token {
     /**
-     * Constructs a new ToToken.
-     */
-    constructor(source: SourceFile, start: SourceFile.Position, end: SourceFile.Position) {
-        super(source, start, end);
-    }
-
-    /**
      * Pattern this tokens type should match.
      */
     static get pattern(): RegExp {
@@ -640,13 +430,6 @@ export class ToToken extends Token {
  * Step token.
  */
 export class StepToken extends Token {
-    /**
-     * Constructs a new StepToken.
-     */
-    constructor(source: SourceFile, start: SourceFile.Position, end: SourceFile.Position) {
-        super(source, start, end);
-    }
-
     /**
      * Pattern this tokens type should match.
      */
@@ -660,13 +443,6 @@ export class StepToken extends Token {
  */
 export class NextToken extends Token {
     /**
-     * Constructs a new NextToken.
-     */
-    constructor(source: SourceFile, start: SourceFile.Position, end: SourceFile.Position) {
-        super(source, start, end);
-    }
-
-    /**
      * Pattern this tokens type should match.
      */
     static get pattern(): RegExp {
@@ -678,13 +454,6 @@ export class NextToken extends Token {
  * Do token.
  */
 export class DoToken extends Token {
-    /**
-     * Constructs a new DoToken.
-     */
-    constructor(source: SourceFile, start: SourceFile.Position, end: SourceFile.Position) {
-        super(source, start, end);
-    }
-
     /**
      * Pattern this tokens type should match.
      */
@@ -698,13 +467,6 @@ export class DoToken extends Token {
  */
 export class LoopToken extends Token {
     /**
-     * Constructs a new LoopToken.
-     */
-    constructor(source: SourceFile, start: SourceFile.Position, end: SourceFile.Position) {
-        super(source, start, end);
-    }
-
-    /**
      * Pattern this tokens type should match.
      */
     static get pattern(): RegExp {
@@ -716,13 +478,6 @@ export class LoopToken extends Token {
  * While token.
  */
 export class WhileToken extends Token {
-    /**
-     * Constructs a new WhileToken.
-     */
-    constructor(source: SourceFile, start: SourceFile.Position, end: SourceFile.Position) {
-        super(source, start, end);
-    }
-
     /**
      * Pattern this tokens type should match.
      */
@@ -736,13 +491,6 @@ export class WhileToken extends Token {
  */
 export class UntilToken extends Token {
     /**
-     * Constructs a new UntilToken.
-     */
-    constructor(source: SourceFile, start: SourceFile.Position, end: SourceFile.Position) {
-        super(source, start, end);
-    }
-
-    /**
      * Pattern this tokens type should match.
      */
     static get pattern(): RegExp {
@@ -754,13 +502,6 @@ export class UntilToken extends Token {
  * If token.
  */
 export class IfToken extends Token {
-    /**
-     * Constructs a new IfToken.
-     */
-    constructor(source: SourceFile, start: SourceFile.Position, end: SourceFile.Position) {
-        super(source, start, end);
-    }
-
     /**
      * Pattern this tokens type should match.
      */
@@ -774,13 +515,6 @@ export class IfToken extends Token {
  */
 export class ThenToken extends Token {
     /**
-     * Constructs a new ThenToken.
-     */
-    constructor(source: SourceFile, start: SourceFile.Position, end: SourceFile.Position) {
-        super(source, start, end);
-    }
-
-    /**
      * Pattern this tokens type should match.
      */
     static get pattern(): RegExp {
@@ -792,13 +526,6 @@ export class ThenToken extends Token {
  * Else if token.
  */
 export class ElseIfToken extends Token {
-    /**
-     * Constructs a new ElseIfToken.
-     */
-    constructor(source: SourceFile, start: SourceFile.Position, end: SourceFile.Position) {
-        super(source, start, end);
-    }
-
     /**
      * Pattern this tokens type should match.
      */
@@ -812,13 +539,6 @@ export class ElseIfToken extends Token {
  */
 export class ElseToken extends Token {
     /**
-     * Constructs a new ElseToken.
-     */
-    constructor(source: SourceFile, start: SourceFile.Position, end: SourceFile.Position) {
-        super(source, start, end);
-    }
-
-    /**
      * Pattern this tokens type should match.
      */
     static get pattern(): RegExp {
@@ -830,13 +550,6 @@ export class ElseToken extends Token {
  * End if token.
  */
 export class EndIfToken extends Token {
-    /**
-     * Constructs a new EndIfToken.
-     */
-    constructor(source: SourceFile, start: SourceFile.Position, end: SourceFile.Position) {
-        super(source, start, end);
-    }
-
     /**
      * Pattern this tokens type should match.
      */
@@ -850,13 +563,6 @@ export class EndIfToken extends Token {
  */
 export class DimToken extends Token {
     /**
-     * Constructs a new DimToken.
-     */
-    constructor(source: SourceFile, start: SourceFile.Position, end: SourceFile.Position) {
-        super(source, start, end);
-    }
-
-    /**
      * Pattern this tokens type should match.
      */
     static get pattern(): RegExp {
@@ -868,13 +574,6 @@ export class DimToken extends Token {
  * As token.
  */
 export class AsToken extends Token {
-    /**
-     * Constructs a new AsToken.
-     */
-    constructor(source: SourceFile, start: SourceFile.Position, end: SourceFile.Position) {
-        super(source, start, end);
-    }
-
     /**
      * Pattern this tokens type should match.
      */
@@ -888,13 +587,6 @@ export class AsToken extends Token {
  */
 export class FunctionToken extends Token {
     /**
-     * Constructs a new FunctionToken.
-     */
-    constructor(source: SourceFile, start: SourceFile.Position, end: SourceFile.Position) {
-        super(source, start, end);
-    }
-
-    /**
      * Pattern this tokens type should match.
      */
     static get pattern(): RegExp {
@@ -906,13 +598,6 @@ export class FunctionToken extends Token {
  * Return token.
  */
 export class ReturnToken extends Token {
-    /**
-     * Constructs a new ReturnToken.
-     */
-    constructor(source: SourceFile, start: SourceFile.Position, end: SourceFile.Position) {
-        super(source, start, end);
-    }
-
     /**
      * Pattern this tokens type should match.
      */
@@ -926,13 +611,6 @@ export class ReturnToken extends Token {
  */
 export class EndFunctionToken extends Token {
     /**
-     * Constructs a new EndFunctionToken.
-     */
-    constructor(source: SourceFile, start: SourceFile.Position, end: SourceFile.Position) {
-        super(source, start, end);
-    }
-
-    /**
      * Pattern this tokens type should match.
      */
     static get pattern(): RegExp {
@@ -944,13 +622,6 @@ export class EndFunctionToken extends Token {
  * Sub token.
  */
 export class SubToken extends Token {
-    /**
-     * Constructs a new SubToken.
-     */
-    constructor(source: SourceFile, start: SourceFile.Position, end: SourceFile.Position) {
-        super(source, start, end);
-    }
-
     /**
      * Pattern this tokens type should match.
      */
@@ -964,13 +635,6 @@ export class SubToken extends Token {
  */
 export class EndSubToken extends Token {
     /**
-     * Constructs a new EndSubToken.
-     */
-    constructor(source: SourceFile, start: SourceFile.Position, end: SourceFile.Position) {
-        super(source, start, end);
-    }
-
-    /**
      * Pattern this tokens type should match.
      */
     static get pattern(): RegExp {
@@ -982,13 +646,6 @@ export class EndSubToken extends Token {
  * Identifier token.
  */
 export class IdentifierToken extends Token {
-    /**
-     * Constructs a new IdentifierToken.
-     */
-    constructor(source: SourceFile, start: SourceFile.Position, end: SourceFile.Position) {
-        super(source, start, end);
-    }
-
     /**
      * Pattern this tokens type should match.
      */
@@ -1010,13 +667,6 @@ export class IdentifierToken extends Token {
  */
 export class NewLineToken extends Token {
     /**
-     * Constructs a new NewLineToken.
-     */
-    constructor(source: SourceFile, start: SourceFile.Position, end: SourceFile.Position) {
-        super(source, start, end);
-    }
-
-    /**
      * Pattern this tokens type should match.
      */
     static get pattern(): RegExp {
@@ -1029,13 +679,6 @@ export class NewLineToken extends Token {
  * Error token.
  */
 export class ErrorToken extends Token {
-    /**
-     * Constructs a new ErrorToken.
-     */
-    constructor(source: SourceFile, start: SourceFile.Position, end: SourceFile.Position) {
-        super(source, start, end);
-    }
-
     /**
      * Pattern this tokens type should match.
      */

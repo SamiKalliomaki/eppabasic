@@ -73,8 +73,9 @@ class Parser {
         while(tokenQueue.length != 0) {
             var node = queue[0];
 
-            queue = queue.concat(node.expand(tokenQueue));
+            var added = node.expand(tokenQueue);
             queue.shift();
+            queue = added.concat(queue);
         }
 
         return tree;

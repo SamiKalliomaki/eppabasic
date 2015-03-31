@@ -59,12 +59,12 @@
         "./src/util/ParseError.ts",
         "./test/DummySuite.ts",
         "./test/compiler/programs/SourceProgramSuite.ts",
-        "./test/compiler/programs/SyntaxTreeProgramSuite.ts",
         "./test/compiler/programs/TokenProgramSuite.ts",
         "./test/compiler/transformers/MultiTransformerSuite.ts",
         "./test/compiler/transformers/SourceToTokenTransformerSuite.ts",
         "./test/compiler/transformers/StringProgram.ts",
         "./test/compiler/transformers/TokenRemoverTransformerSuite.ts",
+        "./test/compiler/transformers/TokenToSyntaxTreeTransformerSuite.ts",
         "./test/compiler/transformers/TransformerSuite.ts"
     ]
 }

@@ -19,11 +19,24 @@ class SyntaxTreeProgram {
      * Constructs a new TokenProgram.
      */
     constructor(files: Set<SyntaxTree>, mainFile: SyntaxTree) {
-        if (!files.has(mainFile))
-            throw new ArgumentError('files must contain mainFile');
+        if (files.has(mainFile))
+            throw new ArgumentError('files must not contain mainFile');
 
         this._files = files;
         this._mainFile = mainFile;
+    }
+
+    /**
+     * Files in this program.
+     */
+    get files(): Set<SyntaxTree> {
+        return this._files;
+    }
+    /**
+     * Main file of the program. Must be one in the files.
+     */
+    get mainFile(): SyntaxTree {
+        return this._mainFile;
     }
 }
 

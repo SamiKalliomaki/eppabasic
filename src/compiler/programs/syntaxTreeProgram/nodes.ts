@@ -50,7 +50,13 @@ export class TokenNode extends Node {
      * @returns List of tokens to be added to the token queue
      */
     expand(queue: tokens.Token[]): Node[] {
-        if(queue.length >= 1 && queue[0] instanceof TokenNode.startTokens[0]) {
+        var tokenClass: typeof tokens.Token;
+
+        (<typeof TokenNode> this.constructor).startTokens.forEach((_tokenClass) => {
+            tokenClass = _tokenClass;
+        });
+
+        if(queue.length >= 1 && queue[0] instanceof tokenClass) {
             this._token = queue[0];
             queue.shift();
             return [];
@@ -523,7 +529,7 @@ SequenceNode.build(InitializerNode, [
 ]);
 
 export class OptionalInitializerNode extends SequenceNode {}
-SequenceNode.build(InitializerNode, [
+SequenceNode.build(OptionalInitializerNode, [
     [],
     [ InitializerNode ]
 ]);
@@ -634,6 +640,7 @@ SequenceNode.build(IfBlockNode, [
 
 SequenceNode.build(BlockNode, [
     [],
+    [ LineEndNode, BlockNode ],
     [ DoBlockNode, BlockNode ],
     [ ForBlockNode, BlockNode ],
     [ IfBlockNode, BlockNode ],
@@ -664,7 +671,8 @@ SequenceNode.build(SubDefinitionBlockNode, [
 
 export class BaseLevelBlockNode extends SequenceNode {}
 SequenceNode.build(BaseLevelBlockNode, [
-    [ FunctionDefinitionBlockNode ],
-    [ SubDefinitionBlockNode ],
-    [ BlockNode ]
+    [],
+    [ FunctionDefinitionBlockNode, BaseLevelBlockNode ],
+    [ SubDefinitionBlockNode, BaseLevelBlockNode ],
+    [ BlockNode, BaseLevelBlockNode ]
 ]);

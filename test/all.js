@@ -5,6 +5,7 @@ define([
     'test/compiler/transformers/MultiTransformerSuite',
     'test/compiler/transformers/SourceToTokenTransformerSuite',
     'test/compiler/transformers/TokenRemoverTransformerSuite',
+    'test/compiler/transformers/TokenToSyntaxTreeTransformerSuite',
     'test/compiler/programs/TokenProgramSuite',
     'test/compiler/programs/SourceProgramSuite'
 ], function() {
