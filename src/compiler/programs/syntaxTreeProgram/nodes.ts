@@ -93,6 +93,7 @@ export class SequenceNode extends Node {
      * Possible sequences that this node can consist of
      */
     static sequences: (typeof Node)[][];
+    static sequenceStartingTokens: Set<typeof tokens.Token>[];
     /*
      * Checks if given sequence should be used. Necessary if two sequences can
      * begin with the same token.
@@ -113,38 +114,17 @@ export class SequenceNode extends Node {
         var Class = <typeof SequenceNode> this.constructor;
 
         var selectedSequence: (typeof Node)[];
-        var i = 0;
-        Class.sequences.forEach((sequence: (typeof Node)[]) => {
-            if(selectedSequence != null)
-                return;
+        for(var i = 0; i < Class.sequences.length; i++) {
+            if(Class.sequenceStartingTokens[i].has(<typeof tokens.Token> queue[0].constructor)
+                && (!(i in Class.checkers) || Class.checkers[i](queue))) {
 
-            var failed: boolean = false;
-            var good: boolean = false;
+                Class.sequences[i].forEach((nodeClass: typeof Node) => {
+                    this._children.push(new nodeClass());
+                });
 
-            sequence.forEach((nodeClass: typeof Node) => {
-                if(failed || good)
-                    return;
-
-                if(nodeClass.startTokens.has(<typeof tokens.Token> queue[0].constructor))
-                    good = true;
-                else if(!nodeClass.canBeEmpty)
-                    failed = true;
-            });
-
-            if(good && (!(i in Class.checkers) || Class.checkers[i](queue))) {
-                selectedSequence = sequence;
+                return this._children;
             }
-
-            i++;
-        });
-
-        if(selectedSequence != null) {
-            selectedSequence.forEach((nodeClass: typeof Node) => {
-                this._children.push(new nodeClass());
-            });
-
-            return this._children;
-        }
+        };
 
         if(Class.canBeEmpty) {
             return [];
@@ -160,25 +140,41 @@ export module SequenceNode {
      */
     export function build(buildNodeClass: typeof SequenceNode, sequences: typeof Node[][], checkers: (typeof SequenceNode.checkers) = {}) {
         buildNodeClass.sequences = sequences;
+        buildNodeClass.sequenceStartingTokens = new Array(sequences.length);
         buildNodeClass.checkers = checkers;
 
         // Add starting tokens
         buildNodeClass.startTokens = new Set();
-        sequences.forEach((sequence: typeof Node[]) => {
-            var allCanBeEmpty: boolean = true;
 
-            sequence.forEach((nodeClass: typeof Node) => {
-                if(!allCanBeEmpty)
-                    return;
+        for(var i = 0; i < sequences.length; i++) {
+            buildNodeClass.sequenceStartingTokens[i] = new Set();
 
-                if(!nodeClass.canBeEmpty)
-                    allCanBeEmpty = false;
-
-                nodeClass.startTokens.forEach((tokenClass: typeof tokens.Token) => {
-                    buildNodeClass.startTokens.add(tokenClass);
+            for(var j = 0; j < sequences[i].length; j++) {
+                sequences[i][j].startTokens.forEach((tokenClass: typeof tokens.Token) => {
+                    buildNodeClass.sequenceStartingTokens[i].add(tokenClass);
                 });
+
+                if(!sequences[i][j].canBeEmpty)
+                    break;
+            }
+        }
+
+        for(var i = 0; i < sequences.length; i++) {
+            for(var j = 0; j < i; j++) {
+                buildNodeClass.sequenceStartingTokens[i].forEach((tokenClass) => {
+                    if(buildNodeClass.sequenceStartingTokens[j].has(tokenClass)
+                        && !(j in checkers)) {
+                        throw Error("Checker must be provided for sequence " + j);
+                    }
+                });
+            }
+        }
+
+        for(var i = 0; i < sequences.length; i++) {
+            buildNodeClass.sequenceStartingTokens[i].forEach((tokenClass) => {
+                buildNodeClass.startTokens.add(tokenClass);
             });
-        });
+        }
 
         // Node can be empty if any of it's possible sequences can be empty
         sequences.forEach((sequence: typeof Node[]) => {
@@ -195,6 +191,27 @@ export module SequenceNode {
             }
         });
     }
+}
+
+/*
+ * Helper function for checkers. Returns first token after variable reference, ie.
+ * skips [ and ] -tokens and everything between them. Returns null if such token is
+ * not available.
+ */
+function getTokenAfterVariableReference(tokenQueue) {
+    var level = 0;
+
+    for(var i = 1; i < tokenQueue.length; i++) {
+        if(tokenQueue[i] instanceof tokens.LeftBracketToken) {
+            level++;
+        } else if(tokenQueue[i] instanceof tokens.RightBracketToken) {
+            level--;
+        } else if(level == 0) {
+            return tokenQueue[i];
+        }
+    }
+
+    return null;
 }
 
 // TokenNodes
@@ -401,6 +418,8 @@ ExpressionNode.startTokens.add(tokens.LeftBracketToken);
 ExpressionNode.startTokens.add(tokens.NotToken);
 ExpressionNode.startTokens.add(tokens.SubstractionToken);
 ExpressionNode.startTokens.add(tokens.IdentifierToken);
+ExpressionNode.startTokens.add(tokens.NumberToken);
+ExpressionNode.startTokens.add(tokens.StringToken);
 
 export class FunctionCallNode extends SequenceNode {}
 FunctionCallNode.startTokens = new Set();
@@ -457,7 +476,7 @@ SequenceNode.build(Expression7Node, [
 ], {
     // It's a function call if the next token after identifier is (
     4: (queue: tokens.Token[]) => {
-        return queue.length >= 2 && queue[1] instanceof tokens.LeftParenthesisToken;
+        return getTokenAfterVariableReference(queue) instanceof tokens.LeftParenthesisToken;
     }
 });
 
@@ -586,7 +605,16 @@ SequenceNode.build(StatementNode, [
     [ FunctionCallNode ],
     [ VariableAssignmentNode ],
     [ BaseFunctionCallNode ]
-]);
+], {
+    // It's a function call if the next token after identifier is (
+    2: (queue: tokens.Token[]) => {
+        return getTokenAfterVariableReference(queue) instanceof tokens.LeftParenthesisToken;
+    },
+    // It's a variable assignment if the next token after identifier is =
+    3: (queue: tokens.Token[]) => {
+        return getTokenAfterVariableReference(queue) instanceof tokens.EqualToken;
+    }
+});
 
 export class BlockNode extends SequenceNode {}
 BlockNode.startTokens = new Set();
