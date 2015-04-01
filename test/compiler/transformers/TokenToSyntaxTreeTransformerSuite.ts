@@ -44,6 +44,32 @@ export class TokenToSyntaxTreeTransformerSuite {
             expect(program.mainFile).not.toBeNull();
             expect(program.files.size).toBe(files.size);
 
+            expect(program.mainFile.root.toString()).toEqual(
+"BaseLevelBlockNode\n\
+|-BlockNode\n\
+| |-StatementNode\n\
+| | |-VariableDefinitionNode\n\
+| | | |-DimTokenNode\n\
+| | | |-IdentifierTokenNode\n\
+| | | |-VariableDefinitionEndingNode\n\
+| | | | |-InitializerNode\n\
+| | | | | |-EqualTokenNode\n\
+| | | | | |-ExpressionNode\n\
+| | | | | | |-Expression1Node\n\
+| | | | | | | |-Expression2Node\n\
+| | | | | | | | |-Expression3Node\n\
+| | | | | | | | | |-Expression4Node\n\
+| | | | | | | | | | |-Expression5Node\n\
+| | | | | | | | | | | |-Expression6Node\n\
+| | | | | | | | | | | | |-Expression7Node\n\
+| | | | | | | | | | | | | |-ConstantNode\n\
+| | | | | | | | | | | | | | |-NumberTokenNode\n\
+| |-LineEndNode\n\
+| | |-EOSTokenNode\n\
+| |-BlockNode\n\
+|-BaseLevelBlockNode"
+            );
+
             done();
         });
     }

@@ -17,6 +17,25 @@ export class Node {
         this._children = [];
     }
 
+    toString(level: number = 0): string {
+        var str = '';
+
+        for(var i = 0; i < level - 1; i++)
+            str += '| ';
+
+        if(level >= 1)
+            str += '|-';
+
+        // Dirty hack to get the class name. Won't work IE<9.
+        str += (<{name: string}><Object> this.constructor).name;
+
+        this._children.forEach((child) => {
+            str += '\n' + child.toString(level + 1);
+        });
+
+        return str;
+    }
+
     /*
      * Expands node
      *
