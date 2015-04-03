@@ -245,4 +245,29 @@ export class TokenToSyntaxTreeTransformerSuite {
             done();
         }).catch((e) => { throw e; });
     }
+
+    ElementFromFunctionCallTest(done: () => void): void {
+        // a = f()[0]
+        var functionCallFile = new TokenFile([
+            new tokens.IdentifierToken(),
+            new tokens.EqualToken(),
+            new tokens.IdentifierToken(),
+            new tokens.LeftParenthesisToken(),
+            new tokens.RightParenthesisToken(),
+            new tokens.LeftBracketToken(),
+            new tokens.NumberToken(),
+            new tokens.RightBracketToken(),
+            new tokens.EOSToken()
+        ]);
+
+        var functionCallProgram = new TokenProgram(new Set(), functionCallFile);
+
+        var transformer = new TokenToSyntaxTreeTranformer();
+        transformer.transform(functionCallProgram).then((program: SyntaxTreeProgram) => {
+            expect(program.mainFile.root.toString()).toEqual(
+""
+            );
+            done();
+        }).catch((e) => { console.error(e); });
+    }
 }
