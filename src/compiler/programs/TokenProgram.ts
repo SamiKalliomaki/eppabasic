@@ -5,7 +5,7 @@ import ArgumentError = require('util/ArgumentError');
 /**
  * Tokenized form of EppaBasic program.
  */
-class TokenProgram {
+class TokenProgram implements Program {
     /**
      * Files in this program.
      */

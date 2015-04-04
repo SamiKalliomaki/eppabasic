@@ -5,7 +5,7 @@ import ArgumentError = require('util/ArgumentError');
 /**
  * Original source form of EppaBasic program.
  */
-class SourceProgram {
+class SourceProgram implements Program {
     /**
      * Files in this program.
      */
