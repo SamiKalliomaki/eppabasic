@@ -14,7 +14,7 @@ module Value {
     /**
      * Value in a register in LinearProgram.
      */
-    class Register extends Value {
+    export class Register extends Value {
         /**
          * Name of the register.
          */
@@ -31,7 +31,7 @@ module Value {
     /**
      * Constant value in LinearProgram.
      */
-    class Constant extends Value {
+    export class Constant extends Value {
 
     }
 }
