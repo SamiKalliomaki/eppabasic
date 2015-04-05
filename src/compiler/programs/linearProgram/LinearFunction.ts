@@ -1,10 +1,16 @@
 import BasicBlock = require('./BasicBlock');
+import Type = require('./Type');
+import Value = require('./Value');
 
 class LinearFunction {
     /**
      * Name of the function.
      */
     private _name: string;
+    /**
+     * Arguments of the function.
+     */
+    private _arguments: Value.Argument[];
     /**
      * Basic blocks in the function.
      */
@@ -18,8 +24,9 @@ class LinearFunction {
      * Converts the function to a string for debug purposes.
      */
     toString(): string {
+        var argsStr = this._arguments.map((arg) => arg.toString()).join(', ');
         var buf: Array<string> = [];
-        buf.push('define ' + this._name + ' {');
+        buf.push('define ' + this._name + '(' + argsStr + ') {');
         buf.push(blockToString(this._entry));
 
         this._blocks.forEach((block: BasicBlock): void => {
