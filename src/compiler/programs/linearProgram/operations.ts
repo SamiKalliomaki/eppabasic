@@ -1,4 +1,4 @@
-import Register = require('./Register');
+import Value = require('./Value');
 
 export class Operation {
     /**
@@ -17,15 +17,15 @@ export class BinaryOperation extends Operation {
     /**
      * Target register for this operation.
      */
-    private _target: Register;
+    private _target: Value;
     /**
      * Left operand.
      */
-    private _left: Register;
+    private _left: Value;
     /**
      * Right operand.
      */
-    private _right: Register;
+    private _right: Value;
 
     /**
      * Converts the operation to a string for debug purposes.
