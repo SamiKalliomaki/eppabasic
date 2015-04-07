@@ -80,7 +80,11 @@
         "unnop-undefined": "Failed to find unary operator '__op__' for '__type__'",
         "lexer-unexpected-text": "Unexpected text: '__text__'",
         "type-undefined": "Undefined type '__type__'",
-        "constant-set": "Constant '__name__' value can't be set"
+        "constant-set": "Constant '__name__' value can't be set",
+        "double-defined-dimensions": "Can't set array dimensions twice. The prefered place to set array dimensions is right after the type name as support for defining array dimensions after variable name will be removed."
+    },
+    "warnings": {
+        "depricated-dimensions": "Setting array dimensions right after variable name is depricated. Array dimensions must be set after type. For example: Dim a[10] As Number becomes Dim a As Number[10]."
     },
     "autocomplete": {
         "type": {

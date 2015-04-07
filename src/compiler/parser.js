@@ -4,6 +4,8 @@
 /// <reference path="nodes.js" />
 
 define(['./framework/compileerror', './nodes', './lexer'], function (CompileError, Nodes, Lexer) {
+    var CompileWarning = CompileError;
+
     function Parser(input, operators, types) {
         /// <param name='input' type='String' />
         /// <param name='operators' type='OperatorContainer' />
@@ -12,6 +14,7 @@ define(['./framework/compileerror', './nodes', './lexer'], function (CompileErro
         this.operators = operators;
         this.types = types;
         this.errors = [];
+        this.warnings = [];
     }
 
     Parser.prototype = {
@@ -135,7 +138,7 @@ define(['./framework/compileerror', './nodes', './lexer'], function (CompileErro
 
         /*
          * Parses a base level statement.
-         * 
+         *
          * A base level statement can contain function definitions.
          */
         parseBaselevelStatement: function parseBaselevelStatement() {
@@ -151,7 +154,7 @@ define(['./framework/compileerror', './nodes', './lexer'], function (CompileErro
 
         /*
          * Parses statement.
-         * 
+         *
          * Statement can also be inside a block, so it can not contain function definitions.
          */
         parseStatement: function parseStatement() {
@@ -426,6 +429,7 @@ define(['./framework/compileerror', './nodes', './lexer'], function (CompileErro
 
             if (this.peek().type === 'lbracket') {
                 dimensions = this.parseDimensions();
+                this.warnings.push(new CompileWarning(line, 'warnings.depricated-dimensions'));
             }
             if (this.peek().type === 'as') {
                 this.advance();
@@ -434,6 +438,11 @@ define(['./framework/compileerror', './nodes', './lexer'], function (CompileErro
                 type = this.types.getTypeByName(typeTok.val);
                 if (!type)
                     this.errors.push(new CompileError(line, 'errors.type-undefined', { type: typeTok.val }));
+                if (this.peek().type === 'lbracket') {
+                    if (dimensions)
+                        this.errors.push(new CompileError(line, 'errors.double-defined-dimensions'));
+                    dimensions = this.parseDimensions();
+                }
             }
             if (this.peek().type === 'eq') {
                 this.advance();
