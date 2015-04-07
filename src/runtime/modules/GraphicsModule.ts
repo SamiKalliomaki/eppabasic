@@ -66,7 +66,7 @@ class GraphicsModule implements Module {
     /**
      * Offset of y coordinate of the next print command from the origin.
      */
-    private _printOffsetY: number;
+    private _printOffsetY: number = 0;
 
     constructor(runtime: Runtime) {
         this._runtime = runtime;
@@ -111,7 +111,7 @@ class GraphicsModule implements Module {
         };
 
         // Setup defaults
-        this._runtime.on('init', (): void => {
+        this._runtime.once('init', (): void => {
             this._renderer = PIXI.autoDetectRenderer(640, 480);
             document.getElementById('canvasHolder').appendChild(this._renderer.view);
             this._stage = new PIXI.Stage(0x000000);
