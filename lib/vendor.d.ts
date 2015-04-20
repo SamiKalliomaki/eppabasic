@@ -11,3 +11,4 @@
 /// <reference path='esrever'/>
 /// <reference path='random'/>
 /// <reference path='PIXI'/>
+/// <reference path='jasmine'/>

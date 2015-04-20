@@ -20,6 +20,7 @@
         "./lib/es6-promise.d.ts",
         "./lib/esrever.d.ts",
         "./lib/i18n.d.ts",
+        "./lib/jasmine.d.ts",
         "./lib/jquery.d.ts",
         "./lib/random.d.ts",
         "./lib/requirejs.d.ts",
@@ -40,6 +41,7 @@
         "./src/runtime/modules/RenderHandlerModule.ts",
         "./src/runtime/modules/StringModule.ts",
         "./src/runtime/modules/TimeModule.ts",
-        "./src/runtime/modules/util.ts"
+        "./src/runtime/modules/util.ts",
+        "./test/dummy.ts"
     ]
 }

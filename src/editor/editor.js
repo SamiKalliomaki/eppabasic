@@ -57,9 +57,11 @@ define(['compiler/toolchain', 'ace/ace', 'i18n', './autocompleter'], function (T
 
             this.ace.getSession().clearAnnotations();
             if (cu.errors.length !== 0) {
-                this.showErrors(cu.errors);
+                this.showErrors(cu.errors, cu.warnings);
                 this.ace.gotoLine(cu.errors[0].line);
             } else {
+                if (cu.warnings.length !== 0)
+                    this.showErrors([], cu.warnings);
                 var compiled = this.toolchain.compile(cu);
                 this.run(compiled);
             }
@@ -83,13 +85,20 @@ define(['compiler/toolchain', 'ace/ace', 'i18n', './autocompleter'], function (T
             var k = line.substring(x1, x2 + 1).toLowerCase();
             this.manual.navigate('/commands/' + k);
         },
-        showErrors: function showError(errors) {
+        showErrors: function showErrors(errors, warnings) {
             var annotations = [];
             errors.forEach(function (e) {
                 annotations.push({
                     row: e.line - 1,
                     text: i18n.t(e.msg, e.data),
                     type: 'error'
+                });
+            });
+            warnings.forEach(function (w) {
+                annotations.push({
+                    row: w.line - 1,
+                    text: i18n.t(w.msg, w.data),
+                    type: 'warning'
                 });
             });
             this.ace.getSession().setAnnotations(annotations);

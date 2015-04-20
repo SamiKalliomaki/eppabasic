@@ -37,7 +37,7 @@
                 showInternalError(e);
             }
 
-            this.sender.emit('parsed', [cu.errors, variablescopelist ? variablescopelist.toArray() : null]);
+            this.sender.emit('parsed', [cu.errors, cu.warnings, variablescopelist ? variablescopelist.toArray() : null]);
         }
     }).call(EppaBasicWorker.prototype);
 });

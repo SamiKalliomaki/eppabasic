@@ -68,6 +68,11 @@ module.exports = function (grunt) {
 
     config.addLessTarget('main', 'static/css/main.less', wwwDir + '/css/editor.css');
 
+    // Tests
+    config.addSyncMultiTarget('static-test', 'static/test', ['**/*'], tmpDir + '/test');
+    config.addSyncMultiTarget('test', 'test', ['**/*', '!**/*.ts'], tmpDir + '/test');
+    config.addTypeScriptTarget('test', ['test/**/*.ts', 'lib/**/*.d.ts'], tmpDir + '/test');
+
     // Setup config
     grunt.initConfig(config.config);
 

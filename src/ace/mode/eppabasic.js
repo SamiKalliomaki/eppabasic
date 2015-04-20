@@ -224,15 +224,15 @@ define(function (require, exports, module) {
         /*this.createWorker = function(session) {
             var worker = new WorkerClient(["ace"], "ace/mode/eppabasic_worker", "EppaBasicWorker");
             worker.attachToDocument(session.getDocument());
-    
+
             worker.on("errors", function(results) {
                 session.setAnnotations(results.data);
             });
-    
+
             worker.on("terminate", function() {
                 session.clearAnnotations();
             });
-    
+
             return worker;
         };*/
     };
@@ -246,14 +246,15 @@ define(function (require, exports, module) {
 
             worker.on('parsed', function (res) {
                 var errors = res.data[0];
-                var variableScopes = res.data[1] && new VariableScopeList(res.data[1]);
+                var warnings = res.data[1];
+                var variableScopes = res.data[2] && new VariableScopeList(res.data[2]);
 
                 if (variableScopes)
                     this.variableScopes = variableScopes;
 
                 session.clearAnnotations();
-                if (errors.length !== 0) {
-                    this.showErrors(session, errors);
+                if (errors.length !== 0 || warnings.length !== 0) {
+                    this.showErrors(session, errors, warnings);
                 }
             }.bind(this));
             worker.on('internalerror', function (res) {
@@ -263,7 +264,7 @@ define(function (require, exports, module) {
             return worker;
         }
 
-        this.showErrors = function showErrors(session, errors) {
+        this.showErrors = function showErrors(session, errors, warnings) {
             var annotations = [];
 
             errors.forEach(function (e) {
@@ -271,6 +272,13 @@ define(function (require, exports, module) {
                     row: e.line - 1,
                     text: i18n.t(e.msg, e.data),
                     type: 'error'
+                })
+            });
+            warnings.forEach(function (w) {
+                annotations.push({
+                    row: w.line - 1,
+                    text: i18n.t(w.msg, w.data),
+                    type: 'warning'
                 })
             });
 

@@ -29,6 +29,7 @@ define(['require', './types', './operators', './compiler', './parser', './typech
                 throw e;
             }
             compilationUnit.errors = parser.errors;
+            compilationUnit.warnings = parser.warnings;
 
             if (parser.errors.length === 0) {
                 compilationUnit.compiler = this.getCompiler(compilationUnit.ast);
@@ -48,6 +49,7 @@ define(['require', './types', './operators', './compiler', './parser', './typech
                     throw e;
                 }
                 Array.prototype.push.apply(compilationUnit.errors, typechecker.errors);
+                Array.prototype.push.apply(compilationUnit.warnings, typechecker.warnings);
             }
             if (compilationUnit.errors.length === 0) {
                 new Atomicchecker(ast, compiler.functions).check();
