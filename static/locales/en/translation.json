@@ -1,0 +1,96 @@
+{
+    "header": {
+        "run": "Run",
+        "new": "New",
+        "load": "Load",
+        "save": "Save",
+        "save-as": "Save as",
+        "share": "Share",
+        "login": "Login",
+        "logout": "logout"
+    },
+    "login": {
+        "username": "Username:",
+        "password": "Password:",
+        "submit": "Login",
+        "register-link": "No account? Register",
+        "forgot-password-link": "Forgotten password?"
+    },
+    "register": {
+        "username": "Username:",
+        "email": "Email:",
+        "password": "Password:",
+        "password-again": "Password again:",
+        "submit": "Register",
+        "already-registered-link": "Already registered? Login"
+    },
+    "password-reset": {
+        "help": "We can send a link to your email that you can use to reset your password. Please enter the email you used to register the account and click submit.",
+        "email": "Email:",
+        "submit": "Submit",
+        "login-link": "Login"
+    },
+    "reset-sent": {
+        "help": "Reset link has been sent to the email if an account was registered with this email."
+    },
+    "file-dialog": {
+        "shared-with-me": "Shared with me",
+        "create-directory": "Create directory",
+        "delete-this-directory": "Delete this directory"
+    },
+    "share-dialog": {
+        "link-help": "You can use the link below to share the code to a friend."
+    },
+    "editor": {
+        "confirm-leave": "Are you sure you want to leave this page? All unsaved changes will be lost.",
+        "confirm-new": "You have unsaved changes. These changes will be destroyed if you create new file. Are you sure you want to create a new file?",
+        "confirm-load": "You have unsaved changes. These changes will be destroyed if you load a file. Are you sure you want to load file?",
+        "confirm-delete": "Are you sure you want to delete the file? This cannot be undone.",
+        "file-opened": "File opened successfully.",
+        "file-saved": "File saved successfully.",
+        "open": "Open",
+        "save": "Save",
+        "enter-directory-name": "Enter name for the new directory.",
+        "confirm-delete-directory": "Are you sure you want to delete this directory and everything inside it? This cannot be undone."
+    },
+    "manual": {
+        "index": "Index",
+        "back": "Back"
+    },
+    "news": {
+        "title": "News",
+        "loading": "Loading news...",
+        "no-news": "There aren't any news right now"
+    },
+    "errors": {
+        "sub-return-expr": "Sub program return can't have a value",
+        "variable-redefinition": "Redefinition of variable '__name__'",
+        "variable-type-or-initial": "Definition of variable '__name__' must have either type or initial value",
+        "variable-undefined": "No variable called '__name__' exists in this scope",
+        "array-dimension-integer": "Array dimensions must be of type 'Integer'",
+        "array-index-integer": "Array indices must be of type 'Integer'",
+        "cast-failed": "Can't cast from type '__from__' to '__to__'",
+        "for-start-end-type": "Loop end and start types must be the same",
+        "for-iterator-step-type": "Loop step and iterator types must be the same",
+        "call-undefined": "Call of an undefined function '__name__'",
+        "function-no-match": "No function matches for a call '__name__(__params__)'",
+        "function-many-match": "Ambiguous function call '__name__(__params__)'\nCandidates are:\n__candidates__",
+        "do-multiple-conditions": "Conditions is allowed only at the begining of the loop or at the end, not at both places",
+        "binop-undefined": "Failed to find operator '__op__' for '__left__' and '__right__'",
+        "unnop-undefined": "Failed to find unary operator '__op__' for '__type__'",
+        "lexer-unexpected-text": "Unexpected text: '__text__'",
+        "type-undefined": "Undefined type '__type__'",
+        "constant-set": "Constant '__name__' value can't be set",
+        "double-defined-dimensions": "Can't set array dimensions twice. The prefered place to set array dimensions is right after the type name as support for defining array dimensions after variable name will be removed."
+    },
+    "warnings": {
+        "depricated-dimensions": "Setting array dimensions right after variable name is depricated. Array dimensions must be set after type. For example: Dim a[10] As Number becomes Dim a As Number[10]."
+    },
+    "autocomplete": {
+        "type": {
+            "function": "Function",
+            "variable": "Variable",
+            "constant": "Constant"
+        }
+    }
+}

@@ -1,17 +1,28 @@
 __pycache__/
 *.py[cod]
 
-eppabasic_backend/database.db
+backend/eppabasic_backend/database.db
 *.sublime-*
 
-node_modules/*
-build/*
-doc/*
-virtenv/*
-tools/settings.ini
-static
+node_modules
+www
+log
+virtenv
+
+settings.ini
 
 *.min.js
 *.min.js.map
 
-/.htaccess
+static/.htaccess
+.tscache/
+*.baseDir.ts
+
+# Visual studio files
+*.csproj
+*.csproj.user
+obj/
+bin/
+web.Debug.config
+web.Release.config
+web.config
