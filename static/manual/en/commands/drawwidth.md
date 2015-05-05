@@ -3,16 +3,16 @@ DrawWidth
 ==========
 
 ```eppabasic
-Sub DrawWidth(paksuus As Integer)
+Sub DrawWidth(width As Integer)
 ```
 
-Määrittää ääriviivakuvioita piirrettäessä käytettäväksi viivan paksuudeksi parametrin `paksuus` arvon.
-Paksuus mitataan pikseleissä.
+Sets the width of line used when drawing lines and outlines of shapes to `width`.
+Width is measured in pixels.
 
 Example
 ----------
 ```eppabasic
-' Piirretään eripaksuisia viivoja
+' Draw lines of different widths
 DrawWidth 1
 DrawLine 50, 50, 200, 50
 

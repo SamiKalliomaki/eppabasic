@@ -7,15 +7,15 @@ Sub DrawScreen()
 ```
 
 Päivittää edellisen kutsun jälkeen piirretyt asiat näytölle.
+Updates thing drawn since the last call on the screen.
 
-Kun komentoa kutsutaan silmukassa,
-se huolehtii siitä,
-että silmukan koodi suoritetaan 60 kertaa sekunnissa.
+When the command is called from a loop,
+remember that the code of the loop is executed 60 times a second.
 
 Example
 ----------
 ```eppabasic
-' Lyhyt animaatio, jossa ympyrä kulkee ruudun halki
+' Short animation, where a circle travels across the screen
 For i = 1 To 640
     ClearScreen
     FillCircle i, 200, 50

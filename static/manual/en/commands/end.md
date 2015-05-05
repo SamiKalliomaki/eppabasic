@@ -6,4 +6,4 @@ End
 Sub End()
 ```
 
-Lopettaa ohjelman suorituksen ja sulkee suoritusikkunan välittömästi.
+Stops the execution of the program and closes the runtime immediately.

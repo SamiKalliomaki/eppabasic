@@ -3,18 +3,20 @@ DrawRect
 ========
 
 ```eppabasic
-Sub DrawRect(x As Integer, y As Integer, leveys As Integer, korkeus As Integer)
+Sub DrawRect(x As Integer, y As Integer, width As Integer, height As Integer)
 ```
 
-Piirtää näytölle suorakulmion, jonka leveys on `leveys` ja korkeus `korkeus`, ääriviivat.
-Suorakulmion vasen yläkulma on koordinaateissa (`x`, `y`).
-Käytettävä väri asetetaan komennolla [DrawColor](manual:drawcolor).
+Draws outline of a rectangle that has width `width` and height `height`.
+The rectangles left top corner is at coordinates (`x`, `y`).
+The color to be used can be set using the command [DrawColor](manual:drawcolor).
 
+<!--- TODO Write this
 [Katso, miten EppaBasicissa koordinaatisto toimii](manual:/coordinates).
+-->
 
 Example
 ----------
 ```eppabasic
-' Piirretään ontto suorakulmio, jonka vasen yläkulma on pisteessä (100, 120) ja koko 300x50
+' Draw a hollow rectangle that has left top corner at (100, 120) and has width 300 and height 50
 DrawRect 100, 120, 300, 50
 ```
