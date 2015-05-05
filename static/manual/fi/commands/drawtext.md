@@ -9,7 +9,7 @@ Sub DrawText(x As Integer, y As Integer, teksti As String, kohdistus As Integer)
 
 Piirtää tekstin `teksti` näytölle koordinaatteihin (`x`, `y`).
 Käytettävä väri asetetaan komennolla [TextColor](manual:textcolor).
-Käytettävä kirjaisin asetetaan komennolla [TextFont](manual:textfont).
+Käytettävä fontti asetetaan komennolla [TextFont](manual:textfont).
 Käytettävä koko asetetaan komennolla [TextSize](manual:textsize).
 
 Jos parametria `kohdistus` ei anneta, käytetään komennolla
