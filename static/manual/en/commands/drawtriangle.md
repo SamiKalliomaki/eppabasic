@@ -10,9 +10,7 @@ Draws outline of a triangle to the screen.
 The vertexes of the triangle are at coordinates (`x1`, `y1`), (`x2`, `y2`) and (`x3`, `y3`).
 The color to be used can be set using the command [DrawColor](manual:drawcolor).
 
-<!--- TODO Write this
 [Katso, miten EppaBasicissa koordinaatisto toimii](manual:/coordinates).
--->
 
 Example
 ----------
