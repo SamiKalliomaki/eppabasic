@@ -10,9 +10,7 @@ Piirtää näytölle täytetyn kolmion.
 Kolmion kärjet ovat koordinaateissa (`x1`, `y1`), (`x2`, `y2`) ja (`x3`, `y3`).
 Käytettävä väri asetetaan komennolla [FillColor](manual:fillcolor).
 
-<!--- TODO Write this
 [Katso, miten EppaBasicissa koordinaatisto toimii](manual:/coordinates).
--->
 
 Esimerkki
 ----------

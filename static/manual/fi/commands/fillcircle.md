@@ -10,9 +10,7 @@ Piirtää näytölle `r`-säteisen täytetyn ympyrän koordinaatteihin (`x`, `y`
 Koordinaatit määrittävät ympyrän keskipisteen.
 Käytettävä väri asetetaan komennolla [FillColor](manual:fillcolor).
 
-<!--- TODO Write this
 [Katso, miten EppaBasicissa koordinaatisto toimii](manual:/coordinates).
--->
 
 Esimerkki
 ----------
