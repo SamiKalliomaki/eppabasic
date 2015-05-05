@@ -4,52 +4,46 @@ Do
 
 ```eppabasic
 Do
-    ' Koodia
+    ' Code
 Loop
 
-Do While {ehto}
-    ' Koodia
+Do While {condition}
+    ' Code
 Loop
 
-Do Until {ehto}
-    ' Koodia
+Do Until {condition}
+    ' Code
 Loop
 
 Do
-    ' Koodia
-Loop While {ehto}
+    ' Code
+Loop While {condition}
 
 Do
-    ' Koodia
-Loop Until {ehto}
+    ' Code
+Loop Until {condition}
 ```
 
-Toistorakenne, jonka avulla voidaan toistaa koodia joko ikuisesti tai ehdon mukaan.
+Repeat structure that allows to repeat code forever or according to a condition.
 
-Merkintä `While` tarkoittaa, että silmukka jatkuu
-niin kauan kuin `{ehto}` pitää paikkansa.
-Merkintä `Until` tarkoittaa, että silmukka jatkuu
-siihen asti kunnes `{ehto}` muuttuu todeksi.
-
-Jos silmukan ehto on alussa,
-ehto tarkastetaan ennen silmukan suoritusta.
-Jos taas ehto on lopussa,
-suoritetaan silmukka aluksi kerran ennen kuin ehto tarkistetaan.
+Word `While` means that the repeation continues
+while the `{condition}` is true.
+Word `Until` means that the repeation continues
+until the `{condition}` becomes true.
+.
+If the condition of the loop is in the beginning,
+condition is checked before every execution of the loop.
+If the condition of the loop is in the end,
+loop is always executed once before condition is checked.
 
 Example
 ---------
 ```eppabasic
-' Tulostaa luvut 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
-For i = 1 To 10
-    Print i
-Next i
-```
-```eppabasic
-' Kysytään käyttäjältä salasanaa toistuvasti, kunnes hän syöttää oikean salasanan "abc"
-Dim salasana As String
+' Continue to ask password from user until he enters the correct password "abc"
+Dim password As String
 Do
-    salasana = InputText("Anna salasana:")
-Loop Until salasana = "abc"
-Message "Tervetuloa!"
+    password = InputText("Input the password:")
+Loop Until password = "abc"
+Message "Welcome!"
 
 ```
