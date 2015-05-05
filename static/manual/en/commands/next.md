@@ -6,4 +6,4 @@ Next
 Next
 ```
 
-`Next` on osa [`For`-toistorakennetta](manual:for).
+`Next` is part of the [`For` loop structure](manual:for).

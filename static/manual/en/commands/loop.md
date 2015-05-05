@@ -6,4 +6,4 @@ Loop
 Loop
 ```
 
-`Loop` on osa [`Do`-toistorakennetta](manual:do).
+`Loop` is part of the [`Do` loop structure](manual:do).

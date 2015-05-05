@@ -6,4 +6,4 @@ To
 To
 ```
 
-`To` on osa [`For`-toistorakennetta](manual:for).
+`To` is part of the [`For` loop structure](manual:for).

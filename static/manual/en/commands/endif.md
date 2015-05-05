@@ -6,4 +6,4 @@ End If
 End If
 ```
 
-`End If` on osa [`If`-ehtorakennetta](manual:if).
+`End If` is part of the [`If` conditional statement](manual:if).

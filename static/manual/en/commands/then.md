@@ -6,4 +6,4 @@ Then
 Then
 ```
 
-`Then` on osa [`If`-ehtorakennetta](manual:if).
+`Then` is part of the [`If` conditional statement](manual:if).

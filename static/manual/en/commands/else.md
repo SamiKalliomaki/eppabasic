@@ -6,4 +6,4 @@ Else
 Else
 ```
 
-`Else` on osa [`If`-ehtorakennetta](manual:if).
+`Else` is part of the [`If` conditional statement](manual:if).

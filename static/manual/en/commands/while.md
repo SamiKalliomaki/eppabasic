@@ -6,4 +6,4 @@ While
 While
 ```
 
-`While` on osa [`Do`-toistorakennetta](manual:do).
+`While` is part of the [`Do` loop structure](manual:do).

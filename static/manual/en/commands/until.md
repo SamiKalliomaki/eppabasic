@@ -6,4 +6,4 @@ Until
 Until
 ```
 
-`Until` on osa [`Do`-toistorakennetta](manual:do).
+`Until` is part of the [`Do` loop structure](manual:do).
