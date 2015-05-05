@@ -6,20 +6,20 @@ Timer
 Function Timer() As Integer
 ```
 
-Palauttaa nykyisen hetken unix-aikaleiman.
-Unix-aikaleima tarkoittaa sekuntien määrää hetkestä 1.1.1970 0:00:00.
-Vuosien varrella kertyneet karkaussekuntit kuitenkin häiritsevät tätä laskua.
+Returns the current unix timestamp.
+Unix timestamp is the number of seconds since 00:00:00 1 January 1970.
+Leap seconds are not counted in this number so the time is not entirely accurate.
 
-Hyödyllinen ohjelman suoritusajan tarkkailemiseen.
+Useful for monitoring time used by the program.
 
 Example
 ---------
 ```eppabasic
-' Mitataan, kauanko käyttäjällä kuluu painaa välilyöntiä
-Print "Paina välilyöntiä"
-Dim alku = Timer()
+' Measure how long does it take for the user to press space
+Print "Press Space"
+Dim start = Timer()
 Do Until KeyHit(ebKeySpace)
     DrawScreen
 Loop
-Print Timer() - alku
+Print Timer() - start
 ```

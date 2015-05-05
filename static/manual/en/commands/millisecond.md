@@ -6,8 +6,8 @@ MilliSecond
 Function MilliSecond() As Integer
 ```
 
-Palauttaa tietokoneen kellon mukaisen millisekuntin.
-Millisekunti on luku väliltä 0..999.
+Returns the current millisecond according to the computers local clock.
+The millisecond is an integer in range 0..999.
 
 Example
 ---------

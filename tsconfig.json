@@ -21,6 +21,7 @@
         "./lib/i18n.d.ts",
         "./lib/jasmine.d.ts",
         "./lib/jquery.d.ts",
+        "./lib/lib.d.ts",
         "./lib/random.d.ts",
         "./lib/requirejs.d.ts",
         "./lib/vendor.d.ts",

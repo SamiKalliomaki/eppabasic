@@ -6,7 +6,7 @@ Year
 Function Year() As Integer
 ```
 
-Palauttaa tietokoneen kellon mukaisen vuoden.
+Returns the current year according to the computers local clock.
 
 Example
 ---------

@@ -6,8 +6,8 @@ Minute
 Function Minute() As Integer
 ```
 
-Palauttaa tietokoneen kellon mukaisen minuutin.
-Minuutti on luku väliltä 0..59.
+Returns the current minute according to the computers local clock.
+The minute is an integer in range 0..59.
 
 Example
 ---------

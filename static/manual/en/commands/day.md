@@ -6,8 +6,8 @@ Day
 Function Day() As Integer
 ```
 
-Palauttaa tietokoneen kellon mukaisen kuukauden päivän.
-Päivä on luku väliltä 1..31.
+Returns the current day of month according to the computers local clock.
+The day is an integer in range 1..31.
 
 Example
 ---------

@@ -6,8 +6,8 @@ Hour
 Function Hour() As Integer
 ```
 
-Palauttaa tietokoneen kellon mukaisen tunnin.
-Tunti on luku väliltä 0..23.
+Returns the current hour according to the computers local clock.
+The hour is an integer in range 0..23.
 
 Example
 ---------

@@ -6,7 +6,8 @@ Time
 Function Time() As Sring
 ```
 
-Palauttaa tietokoneen kellon mukaisen ajan muodossa `hh:mm:ss`.
+Returns the current time according to the computers local clock.
+The time is returned in the following format: `hh:mm:ss`.
 
 Example
 ---------

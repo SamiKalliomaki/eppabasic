@@ -6,8 +6,8 @@ Second
 Function Second() As Integer
 ```
 
-Palauttaa tietokoneen kellon mukaisen sekuntin.
-Sekunti on luku väliltä 0..59.
+Returns the current second according to the computers local clock.
+The second is an integer in range 0..59.
 
 Example
 ---------

@@ -3,16 +3,16 @@ Wait
 ====
 
 ```eppabasic
-Sub Wait(aika As Number)
+Sub Wait(time As Number)
 ```
 
-Pysäyttää ohjelman suorituksen annetuksi `aika` sekuntiksi.
-Aika voi olla desimaaliluku.
+Stops the execution of the program for `time` seconds.
+Time can be a decimal number.
 
 Example
 ---------
 ```eppabasic
-Print "Jatketaan 5 sekunnin kuluttua..."
+Print "Continue after 5 seconds..."
 Wait 5
-Print "No niin!"
+Print "Here we are!"
 ```
