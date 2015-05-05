@@ -1,7 +1,15 @@
 define(['jquery', 'i18n', './notifications', './manual', './editor', './usercontrols', './filedialog', './filecontrols', './codecontrols', './pastecontrols', 'jqueryui'], function ($, i18n, NotificationSystem, Manual, Editor, UserControlsController, FileDialogController, FileControlsController, CodeControlsController, PasteControlsController) {
     $(function () {
+        function getManualLang() {
+            if(i18n.options.lng) {
+                return i18n.options.lng.substr(0, 2);
+            } else {
+                return 'en';
+            }
+        }
+
         var notificationSystem = new NotificationSystem('#notification-box');
-        var manual = new Manual('#manual-container', 'fi');
+        var manual = new Manual('#manual-container', 'en');
         var editor = new Editor('editor', manual);
         var userControlsController = new UserControlsController('#user-controls');
         var fileDialogController = new FileDialogController('#file-dialog-wrapper', notificationSystem);
@@ -22,10 +30,12 @@ define(['jquery', 'i18n', './notifications', './manual', './editor', './usercont
             $('#language-selection').change(function () {
                 i18n.setLng($('#language-selection').val(), function (t) {
                     $('body').i18n();
+                    manual.setLang(getManualLang());
                 });
             });
 
             $('body').i18n();
+            manual.setLang(getManualLang());
         });
 
         $('#editor').resizable({
@@ -77,4 +87,3 @@ define(['jquery', 'i18n', './notifications', './manual', './editor', './usercont
         };
     });
 });
-

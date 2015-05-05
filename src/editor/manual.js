@@ -118,6 +118,14 @@ define(['jquery', 'i18n', 'marked', './framework'], function ($, i18n, marked, F
             this.currentUrl = this.currentUrl || '';
             this.currentUrl = resolveUrl(this.currentUrl, url);
             this.openPage(this.currentUrl, 0);
+        },
+        reload: function reload() {
+            this.openPage(this.history.pop(), this.container.scrollTop());
+            this.scrollHistory.pop();
+        },
+        setLang: function setLang(lang) {
+            this.lang = lang;
+            this.reload();
         }
     };
 
