@@ -11,6 +11,7 @@ Kohdistus tarkoittaa kohtaa, johon komennolle
 [DrawText](manual:drawtext) määritetty koordinaatti viittaa.
 
 Parametrin `kohdistus` merkitykset:
+
 Arvo|Merkitys
 ----|--------
 1|Tasaus vasemmalle

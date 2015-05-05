@@ -11,5 +11,5 @@ Palauttaa merkkijonon `teksti` siten, että alusta jo lopusta on poistettu kaikk
 Esimerkki
 ---------
 ```eppabasic
-Print "*" & Trim("    aybabtu       ") & "*"        ' aybabtu'
+Print "*" & Trim("    aybabtu       ") & "*"  ' *aybabtu*
 ```

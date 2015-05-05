@@ -6,7 +6,7 @@ MouseX
 Function MouseX() As Integer
 ```
 
-Palauttaa kursorin x-koordinaatin.
+Palauttaa hiiren osoittimen x-koordinaatin.
 
 [Katso, miten EppaBasicissa koordinaatisto toimii](manual:/coordinates).
 

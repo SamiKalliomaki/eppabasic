@@ -10,3 +10,9 @@ Function Str(luku As Number) As String
 Muuntaa luvun `luku` tekstiksi.
 
 Palauttaa muunnetun tekstin.
+
+Esimerkki
+---------
+```eppabasic
+Print Str(1.5) ' 1.5
+```

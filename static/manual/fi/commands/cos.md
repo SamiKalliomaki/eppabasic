@@ -12,7 +12,7 @@ Kulma annetaan radiaaneina.
 Esimerkki
 ---------
 ```eppabasic
-Cos(0)      ' 1
-Cos(1)      ' 0.54030231
-Cos(0.4)    ' 0.92106099
+Print Cos(0)      ' 1
+Print Cos(1)      ' 0.54030231
+Print Cos(0.4)    ' 0.92106099
 ```

@@ -34,7 +34,7 @@ siihen asti kunnes `{ehto}` muuttuu todeksi.
 Jos silmukan ehto on alussa,
 ehto tarkastetaan ennen silmukan suoritusta.
 Jos taas ehto on lopussa,
-suoritetaan silmukkan aluksi kerran ennen kuin ehto tarkistetaan.
+suoritetaan silmukka aluksi kerran ennen kuin ehto tarkistetaan.
 
 Esimerkki
 ---------

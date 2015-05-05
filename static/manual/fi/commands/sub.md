@@ -36,5 +36,5 @@ End Sub
 ' Aliohjelmaa voi käyttää näin
 PiirräYmpyrät 5
 ' Tai näin
-PiirräYmpyrät(5))
+PiirräYmpyrät(5)
 ```

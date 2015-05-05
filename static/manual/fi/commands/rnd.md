@@ -7,8 +7,8 @@ I)      Function Rnd() As Number
 II)     Function Rnd(min As Integer, max As Integer) As Integer
 ```
 
-I) Arpoo luvun suljetulta väliltä [0, 1].
-II) Arpoo kokonaisluvun suljetulta välitä [min, max].
+I) Arpoo luvun suljetulta väliltä [0, 1].<br>
+II) Arpoo kokonaisluvun suljetulta välitä [min, max]. Eli toisin sanoen kaikki luvut välillä min - max ovat mahdollisia mukaanlukien välin päätepisteet.
 
 Esimerkki
 ---------

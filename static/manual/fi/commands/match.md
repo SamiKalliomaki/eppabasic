@@ -8,7 +8,7 @@ Function Match(teksti As String, sl As Integer) As Boolean
 
 Palauttaa tiedon, vastaako merkkijono `teksti` säännölistä lauseketta `sl`.
 
-Lisää tietoa säännöllisistä lausekkeista voi lukea [Ohjelmointiputkan oppaasta](http://www.ohjelmointiputka.net/oppaat/opas.php?tunnus=php_16) (Huomaa! Esimerkit käyttävät PHP-ohjelmointikieltä, mutta samat säännöllisen lausekkeen muodostamis -ohjeet pätevät myös EppaBasicissa).
+Lisää tietoa säännöllisistä lausekkeista voi lukea [Ohjelmointiputkan oppaasta](http://www.ohjelmointiputka.net/oppaat/opas.php?tunnus=php_16) (Huomaa! Esimerkit käyttävät PHP-ohjelmointikieltä, mutta samat säännöllisen lausekkeen muodostamisohjeet pätevät myös EppaBasicissa).
 
 Esimerkki
 ---------

@@ -11,11 +11,12 @@ Palauttaa tiedon, onko hiiren näppäin `näppäin` ylhäällä.
 Näppäin|Tunnus
 -------|------
 Vasen|1
-Keskummäinen|2
-Oikea|3
+Oikea|2
+Keskimmäinen|3
 
 Esimerkki
 ---------
+```eppabasic
 Do
     ClearScreen
     If MouseUp(1) Then

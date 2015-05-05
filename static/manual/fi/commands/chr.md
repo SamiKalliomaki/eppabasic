@@ -11,5 +11,5 @@ Palauttaa merkkikoodia `merkkikoodi` vastaavan merkin. Jokaisella kirjaimella on
 Esimerkki
 ---------
 ```eppabasic
-Print Chr(64)      ' A
+Print Chr(65)      ' A
 ```

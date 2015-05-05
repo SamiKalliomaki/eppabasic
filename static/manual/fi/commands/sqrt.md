@@ -12,7 +12,7 @@ Luku ei saa olla negatiivinen
 Esimerkki
 ---------
 ```eppabasic
-Sqrt(4)     ' 2
-Sqrt(7)     ' 2.6457513110645907
-Sqrt(0)     ' 0
+Print Sqrt(4)     ' 2
+Print Sqrt(7)     ' 2.6457513110645907
+Print Sqrt(0)     ' 0
 ```

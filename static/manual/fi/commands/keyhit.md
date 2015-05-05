@@ -8,7 +8,7 @@ Function KeyHit(näppäin As Integer) As Boolean
 
 Palauttaa tiedon, onko näppäintä `näppäin` näppäin painettu funktion viimeisen kutsun jälkeen.
 
-Funktion kutsuminen kahdesti peräkkäin palauttaa toisella kerralla aina arvon Epätosi.
+Funktion kutsuminen kahdesti peräkkäin palauttaa toisella kerralla aina arvon False.
 
 [Lista näppäinkoodeista](manual:keycodes)
 

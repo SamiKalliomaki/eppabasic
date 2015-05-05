@@ -11,7 +11,7 @@ Pyöristää luvun `luku` alaspäin lähimpään kokonaislukuun.
 Esimerkki
 ---------
 ```eppabasic
-Floor(5.8)      ' 5
-Floor(1.01)     ' 1
-Floor(3)        ' 3
+Print Floor(5.8)      ' 5
+Print Floor(1.01)     ' 1
+Print Floor(3)        ' 3
 ```

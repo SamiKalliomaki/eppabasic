@@ -6,7 +6,7 @@ DrawScreen
 Sub DrawScreen()
 ```
 
-Päivittää äskettäin piirretyt asiat näytölle.
+Päivittää edellisen kutsun jälkeen piirretyt asiat näytölle.
 
 Kun komentoa kutsutaan silmukassa,
 se huolehtii siitä,

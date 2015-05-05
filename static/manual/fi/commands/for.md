@@ -16,10 +16,6 @@ Toistorakenne, jonka avulla voi käydä läpi luvut tietyllä välillä.
 Silmukan peräkkäisillä kierroksilla `muuttuja` kasvaa aina `{askel}` verran.
 Jos `{askel}` ei ole määritelty, käytetään askeleen kokona lukua 1.
 
-
-Palauttaa parametrin `luku` itseisarvon eli luvun etäisyydden nollasta.
-Toisin sanoen palauttaa luvun ilman etumerkkiä.
-
 Esimerkki
 ---------
 ```eppabasic

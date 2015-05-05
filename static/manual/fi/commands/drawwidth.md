@@ -6,7 +6,7 @@ DrawWidth
 Sub DrawWidth(paksuus As Integer)
 ```
 
-Määrittä ääriviivakuvioita piirrettäessä käytettäväksi viivan paksuudeksi parametrin `paksuus` arvon.
+Määrittää ääriviivakuvioita piirrettäessä käytettäväksi viivan paksuudeksi parametrin `paksuus` arvon.
 Paksuus mitataan pikseleissä.
 
 Esimerkki

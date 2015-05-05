@@ -13,7 +13,7 @@ Toisin sanoen palauttaa luvun ilman etumerkkiä.
 Esimerkki
 ---------
 ```eppabasic
-Abs(10)     ' 10
-Abs(-10)    ' 10
-Abs(-3.14)  ' 3.14
+Print Abs(10)     ' 10
+Print Abs(-10)    ' 10
+Print Abs(-3.14)  ' 3.14
 ```
