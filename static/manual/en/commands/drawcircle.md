@@ -6,9 +6,9 @@ DrawCircle
 Sub DrawCircle(x As Integer, y As Integer, r As Integer)
 ```
 
-Piirtää näytölle `r`-säteisen ympyrän ääriviivan koordinaatteihin (`x`, `y`).
-Koordinaatit määrittävät ympyrän keskipisteen.
-Käytettävä väri asetetaan komennolla [DrawColor](manual:drawcolor).
+Draws a circle with radius `r` on the screen at the coordinates (`x`, `y`).
+Coordinates define the center of the circle.
+The color to be used can be set using the command [DrawColor](manual:drawcolor).
 
 <!--- TODO Write this
 [Katso, miten EppaBasicissa koordinaatisto toimii](manual:/coordinates).
@@ -17,6 +17,6 @@ Käytettävä väri asetetaan komennolla [DrawColor](manual:drawcolor).
 Example
 ----------
 ```eppabasic
-' Piirretään pisteen (100, 120) ympärille ympyrä, jonka säde on 50
+' Draws a circle with center at (100, 120) and radius of 50 pixels
 DrawCircle 100, 120, 50
 ```

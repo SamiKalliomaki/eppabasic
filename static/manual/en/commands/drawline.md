@@ -6,10 +6,12 @@ DrawLine
 Sub DrawLine(x1 As Integer, y1 As Integer, x2 As Integer, y2 As Integer)
 ```
 
-Piirtää näytölle viivan koordinaateista (x1, y1) koordinaatteihin (x2, y2).
-Käytettävä väri asetetaan komennolla [DrawColor](manual:drawcolor).
+Draws a line from coordinates (x1, y1) to coordinates (x2, y2).
+The color to be used can be set using the command [DrawColor](manual:drawcolor).
 
+<!--- TODO Write this
 [Katso, miten EppaBasicissa koordinaatisto toimii](manual:/coordinates).
+-->
 
 Example
 ----------

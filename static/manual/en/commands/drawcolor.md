@@ -6,14 +6,14 @@ DrawColor
 Sub DrawColor(r As Integer, g As Integer, b As Integer)
 ```
 
-Määrittää värin, jota käytetään viivakuvioiden piirtämiseen.
+Defines color that is used for drawing lines and outlines of shapes.
 
-[Katso, miten värit toimivat EppaBasicissa](manual:../colors).
+[See how colors work in EppaBasic.](manual:../colors).
 
 Example
 ----------
 ```eppabasic
-' Asetetaan piirtoväriksi sininen ja piirretään ontto ympyrä
+' Set the drawing color as blue and draw a hollow circle
 DrawColor 255, 0, 0
 DrawCircle 200, 200, 50
 ```

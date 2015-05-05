@@ -6,14 +6,16 @@ DrawDot
 Sub DrawDot(x As Integer, y As Integer)
 ```
 
-Piirtää näytölle yhden pikselin kokoisen pisteen koordinaatteihin (`x`, `y`).
-Käytettävä väri asetetaan komennolla [DrawColor](manual:drawcolor).
+Draws a single pixel size dot at the coordinates (`x`, `y`).
+The color to be used can be set using the command [DrawColor](manual:drawcolor).
 
+<!--- TODO Write this
 [Katso, miten EppaBasicissa koordinaatisto toimii](manual:/coordinates).
+-->
 
 Example
 ----------
 ```eppabasic
-' Piirretään piste kohtaan (300, 150)
+' Draw a dot at coordinates (300, 150)
 DrawDot 300, 150
 ```
