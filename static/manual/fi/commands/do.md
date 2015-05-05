@@ -39,12 +39,6 @@ suoritetaan silmukka aluksi kerran ennen kuin ehto tarkistetaan.
 Esimerkki
 ---------
 ```eppabasic
-' Tulostaa luvut 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
-For i = 1 To 10
-    Print i
-Next i
-```
-```eppabasic
 ' Kysytään käyttäjältä salasanaa toistuvasti, kunnes hän syöttää oikean salasanan "abc"
 Dim salasana As String
 Do
