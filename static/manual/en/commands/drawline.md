@@ -16,6 +16,6 @@ The color to be used can be set using the command [DrawColor](manual:drawcolor).
 Example
 ----------
 ```eppabasic
-' Piirretään viiva pisteestä (100, 120) pisteeseen (300, 50)
+' Draw a line from coordinates (100, 120) to coordinates (300, 50)
 DrawLine 100, 120, 300, 50
 ```
