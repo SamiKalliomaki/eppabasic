@@ -3,12 +3,12 @@ Abs
 ===
 
 ```eppabasic
-Function Abs(luku As Number) As Number
-Function Abs(luku As Integer) As Integer
+Function Abs(number As Number) As Number
+Function Abs(number As Integer) As Integer
 ```
 
-Palauttaa parametrin `luku` itseisarvon eli luvun etäisyydden nollasta.
-Toisin sanoen palauttaa luvun ilman etumerkkiä.
+Returns the absolute value of the parameter `number` which means the distance of
+the number from zero. In other words, returns the number without the leading sign.
 
 Example
 ---------

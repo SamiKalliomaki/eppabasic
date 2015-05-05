@@ -6,4 +6,4 @@ As
 As
 ```
 
-`As` on osa [`Dim`-rakennetta](manual:dim).
+`As` is part of the [`Dim` structure](manual:dim).

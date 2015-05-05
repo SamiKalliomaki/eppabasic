@@ -3,11 +3,10 @@ Cos
 ===
 
 ```eppabasic
-Function Cos(kulma As Number) As Number
+Function Cos(angle As Number) As Number
 ```
 
-Palauttaa kulmaa `kulma` vastaavan kosinin arvon.
-Kulma annetaan radiaaneina.
+Returns the cosine of the angle. Angle is given in radians.
 
 Example
 ---------

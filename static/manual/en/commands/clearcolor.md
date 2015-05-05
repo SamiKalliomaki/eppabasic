@@ -6,15 +6,15 @@ ClearColor
 Sub ClearColor(r As Integer, g As Integer, b As Integer)
 ```
 
-Määrittää värin, jota käytetään ruudun tyhjentämiseen.
-Ruutu tyhjennetään komennolla [ClearScreen](manual:clearscreen).
+Defines the color that is used for clearing the screen.
+Screen can be cleared using command [ClearScreen](manual:clearscreen).
 
-[Katso, miten värit toimivat EppaBasicissa](manual:../colors).
+[See how colors work in EppaBasic.](manual:../colors).
 
 Example
 ----------
 ```eppabasic
-' Asetetaan ruudun taustaväriksi punainen ja tyhjennetään se
+' Set the clearing color of the screen as red and clear it.
 ClearColor 255, 0, 0
 ClearScreen
 ```

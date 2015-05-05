@@ -6,12 +6,12 @@ ClearScreen
 Sub ClearScreen()
 ```
 
-Tyhjentää näytön täyttämällä sen tyhjennysvärillä.
-Tyhjennysväri asetetaan komennolla [ClearColor](manual:clearcolor).
+Clears the screen by filling it with clearing color.
+Clearing color can be set using the command [ClearColor](manual:clearcolor).
 
 Example
 ----------
 ```eppabasic
-' Tyhjennetään näyttö
+' Clear the screen
 ClearScreen
 ```

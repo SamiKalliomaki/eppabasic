@@ -3,12 +3,13 @@ Asc
 ===
 
 ```eppabasic
-Function Asc(teksti As String) As Integer
+Function Asc(text As String) As Integer
 ```
 
-Palauttaa merkkijonon `teksti` ensimmäistä merkkiä vastaavan merkkikoodin. Jokaisella kirjaimella on oma merkkikoodinsa.
+Returns the ASCII code of the first letter in the string. Every letter has it's
+own ASCII code.
 
-Jos merkkijono on tyhjä, funktio palauttaa arvon 0.
+If the string is empty, function returns 0.
 
 Example
 ---------

@@ -6,7 +6,7 @@ Date
 Function Date() As String
 ```
 
-Palauttaa tietokoneen kellon mukaisen päivämäärän muodossa 'p.k.vvvv'.
+Returns the date according to the clock of the computer in the format 'd.m.yyyy'.
 
 Example
 ---------

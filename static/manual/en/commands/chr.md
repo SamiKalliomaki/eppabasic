@@ -6,7 +6,8 @@ Chr
 Function Chr(merkkikoodi As Integer) As String
 ```
 
-Palauttaa merkkikoodia `merkkikoodi` vastaavan merkin. Jokaisella kirjaimella on oma merkkikoodinsa.
+Returns letter represented by the ASCII code. Every letter has it's own ASCII
+code.
 
 Example
 ---------

@@ -3,10 +3,10 @@ Ceil
 ====
 
 ```eppabasic
-Function Ceil(luku As Number) As Number
+Function Ceil(number As Number) As Number
 ```
 
-Pyöristää luvun `luku` ylöspäin lähimpään kokonaislukuun.
+Rounds the number `number` upwards to nearest whole number.
 
 Example
 ---------
