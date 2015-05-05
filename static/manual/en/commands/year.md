@@ -6,7 +6,7 @@ Year
 Function Year() As Integer
 ```
 
-Returns the current year according to the computers local clock.
+Returns the current year according to the local clock of the computer.
 
 Example
 ---------

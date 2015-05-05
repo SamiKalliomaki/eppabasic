@@ -6,7 +6,7 @@ Date
 Function Date() As String
 ```
 
-Returns the date according to the computers local clock.
+Returns the date according to the local clock of the computer.
 The date is returned in following format: `d.m.yyyy`.
 
 Example
