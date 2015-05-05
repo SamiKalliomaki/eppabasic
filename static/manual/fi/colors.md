@@ -11,7 +11,7 @@ väliltä 0..255.
 
 EppaBasicissa on neljä funktiota,
 joilla voidaan muuttaa eri piirtokomentojen käyttämiä värejä.
-Funktio|Väriä käyetään
+Funktio|Väriä käytetään
 -------|--------------
 [ClearColor](manual:/commands/clearcolor)|Ruudun tyhjentämiseen käytettävä väri
 [DrawColor](manual:/commands/clearcolor)|Viivakuvioiden piirtämiseen käytettävä väri
