@@ -3,32 +3,32 @@ Function
 ========
 
 ```eppabasic
-Function {nimi}({parametrit}) As {tyyppi}
+Function {name}({parameters}) As {return type}
     ' Koodia
 End Function
 ```
 
-Määrittelee oman funktion nimeltä `{nimi}`.
+Defines an user defined function called `{name}`.
 
-Funktion nimi voi muodostua kirjaimista, numeroista sekä alaviivoista.
-Nimen ensimmäinen merkki ei saa olla numero.
+The name of the function can contain letters, numbers and underscores.
+The first character of the name must not be a number.
 
-`{parametrit}` määrittävät funktiolle annettavat parametrit.
-`{parametrit}` on pilkuilla erotettu lista parametrejä.
-Jokainen parametri on muotoa
+`{parameters}` defines parameters that are given to the function.
+`{parameters}` is a comman-separated list of parameters.
+Each parameter is of format
 ```eppabasic
-{nimi} As {tyyppi}
+{name} As {type}
 ```
-Vertaa [muuttujien määrittämiseen](manual:dim).
+Compare to [variable definition](manual:dim).
 
-`{tyyppu}` määrittää funktion paluuarvon tyypin.
-Funktion täytyy palauttaa arvo [Return](manual:return)-rakenteen avulla.
+`{return type}` defines the type of the return value of the function.
+Function must return a value using [Return](manual:return) structure.
 
-Example
+Esimerkki
 ---------
 ```eppabasic
-' Funktio laskee summan 1+2+3+...+n
-Function Summa(n As Number) As Number
+' Function calculates the sum 1+2+3+...+n
+Function Sum(n As Number) As Number
     Dim s = 0
     For i = 1 To n
         s = s + i
@@ -36,6 +36,6 @@ Function Summa(n As Number) As Number
     Return s
 End Function
 
-' Funktiota voidaan käyttää näin
-Print Summa(10)         ' 55
+' Function can be used this way
+Print Sum(10)         ' 55
 ```

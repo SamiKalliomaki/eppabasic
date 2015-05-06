@@ -3,7 +3,7 @@ Function
 ========
 
 ```eppabasic
-Function {nimi}({parametrit}) As {tyyppi}
+Function {nimi}({parametrit}) As {palautustyyppi}
     ' Koodia
 End Function
 ```
@@ -21,7 +21,7 @@ Jokainen parametri on muotoa
 ```
 Vertaa [muuttujien määrittämiseen](manual:dim).
 
-`{tyyppu}` määrittää funktion paluuarvon tyypin.
+`{palautustyyppi}` määrittää funktion paluuarvon tyypin.
 Funktion täytyy palauttaa arvo [Return](manual:return)-rakenteen avulla.
 
 Esimerkki
