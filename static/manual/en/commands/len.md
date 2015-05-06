@@ -3,10 +3,10 @@ Len
 ===
 
 ```eppabasic
-Function Len(teksti As String) As Integer
+Function Len(text As String) As Integer
 ```
 
-Palauttaa merkkijonon `teksti` merkkien määrän
+Returns the number of characters in the string `text`.
 
 Example
 ---------

@@ -3,10 +3,10 @@ Left
 ====
 
 ```eppabasic
-Function Left(teksti As String, pituus As Integer) As String
+Function Left(text As String, length As Integer) As String
 ```
 
-Palauttaa merkkijonon `teksti` ensimmäiset `pituus` merkkiä.
+Returns the first `length` characters from the string `text`.
 
 Example
 ---------

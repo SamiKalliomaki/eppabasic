@@ -3,14 +3,14 @@ InStr
 ===
 
 ```eppabasic
-Function InStr(heinäsuova As String, neula As String) As Integer
-Function InStr(alku As Integer, heinäsuova As String, neula As String) As Integer
+Function InStr(haystack As String, needle As String) As Integer
+Function InStr(offset As Integer, haystack As String, needle As String) As Integer
 ```
 
-Palauttaa ensimmäisen kohdan, jossa merkkijono `neula` esiintyy merkkijonossa `heinäsuova`.
-Jos `alku` on määritelty, etsitään ensimmäistä esiintyvää kohdasta `alku` alkaen, muuten merkkijonon alusta.
+Returns the position of first occurence of `needle` in string `haystack`.
+If `offset` is given, the search is started from the position `offset`, otherwise from the start of the string.
 
-Jos merkkijono `neula` ei esiinny merkkijonossa `heinäsuova`, funktio palauttaa 0.
+If string `needle` doesn't occur in the string `haystack`, function returns 0.
 
 Example
 ---------

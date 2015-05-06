@@ -3,10 +3,10 @@ UCase
 =====
 
 ```eppabasic
-Function UCase(teksti As String) As String
+Function UCase(text As String) As String
 ```
 
-Palauttaa merkkijonon `teksti` muutettuna siten, että kaikki pienet kirjaimet on muutettu isoiksi.
+Returns the string `text` with all lower case letter converted to upper case.
 
 Example
 ---------

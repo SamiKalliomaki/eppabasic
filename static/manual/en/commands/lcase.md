@@ -3,10 +3,10 @@ LCase
 =====
 
 ```eppabasic
-Function LCase(teksti As String) As String
+Function LCase(text As String) As String
 ```
 
-Palauttaa merkkijonon `teksti` muutettuna siten, että kaikki isot kirjaimet on muutettu pieniksi.
+Returns the string `text` with all upper case letter converted to lower case.
 
 Example
 ---------
