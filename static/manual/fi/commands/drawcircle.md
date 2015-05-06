@@ -10,7 +10,7 @@ Piirtää näytölle `r`-säteisen ympyrän ääriviivan koordinaatteihin (`x`, 
 Koordinaatit määrittävät ympyrän keskipisteen.
 Käytettävä väri asetetaan komennolla [DrawColor](manual:drawcolor).
 
-[Katso, miten EppaBasicissa koordinaatisto toimii](manual:/coordinates).
+[Katso, miten koordinaatisto toimii EppaBasicissa](manual:/coordinates).
 
 Esimerkki
 ----------

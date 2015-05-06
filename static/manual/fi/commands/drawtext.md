@@ -16,7 +16,7 @@ Jos parametria `kohdistus` ei anneta, käytetään komennolla
 [TextAlign](manual:textalign) asetettua kohdistusta.
 
 Katso [TextAlign](manual:textalign) saadaksesi lisätietoa tekstin kohdistamisesta.
-[Katso, miten EppaBasicissa koordinaatisto toimii](manual:/coordinates).
+[Katso, miten koordinaatisto toimii EppaBasicissa](manual:/coordinates).
 
 
 Esimerkki

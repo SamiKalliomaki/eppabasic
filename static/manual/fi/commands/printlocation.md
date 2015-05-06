@@ -10,7 +10,7 @@ Asettaa [Print](manual:print)-funktion piirtosijainnin.
 Oletuksena (5, 5).
 
 
-[Katso, miten EppaBasicissa koordinaatisto toimii](manual:/coordinates).
+[Katso, miten koordinaatisto toimii EppaBasicissa](manual:/coordinates).
 
 Esimerkki
 ----------

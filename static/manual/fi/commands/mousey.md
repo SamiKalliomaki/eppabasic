@@ -8,7 +8,7 @@ Function MouseY() As Integer
 
 Palauttaa hiiren osoittimen y-koordinaatin.
 
-[Katso, miten EppaBasicissa koordinaatisto toimii](manual:/coordinates).
+[Katso, miten koordinaatisto toimii EppaBasicissa](manual:/coordinates).
 
 Esimerkki
 ---------

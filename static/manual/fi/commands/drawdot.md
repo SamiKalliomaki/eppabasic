@@ -9,7 +9,7 @@ Sub DrawDot(x As Integer, y As Integer)
 Piirtää näytölle yhden pikselin kokoisen pisteen koordinaatteihin (`x`, `y`).
 Käytettävä väri asetetaan komennolla [DrawColor](manual:drawcolor).
 
-[Katso, miten EppaBasicissa koordinaatisto toimii](manual:/coordinates).
+[Katso, miten koordinaatisto toimii EppaBasicissa](manual:/coordinates).
 
 Esimerkki
 ----------

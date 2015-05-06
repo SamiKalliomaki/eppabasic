@@ -10,7 +10,7 @@ Piirtää näytölle suorakulmion, jonka leveys on `leveys` ja korkeus `korkeus`
 Suorakulmion vasen yläkulma on koordinaateissa (`x`, `y`).
 Käytettävä väri asetetaan komennolla [DrawColor](manual:drawcolor).
 
-[Katso, miten EppaBasicissa koordinaatisto toimii](manual:/coordinates).
+[Katso, miten koordinaatisto toimii EppaBasicissa](manual:/coordinates).
 
 Esimerkki
 ----------

@@ -10,7 +10,7 @@ Asettaa [Print](manual:print)-funktion luomien rivien välin.
 Parametri `väli` kertoo, millä luvulla kirjaisimen koko on kerrottava seuraavan rivin sijaintia laskettaessa.
 Oletuksena 1.2.
 
-[Katso, miten EppaBasicissa koordinaatisto toimii](manual:/coordinates).
+[Katso, miten koordinaatisto toimii EppaBasicissa](manual:/coordinates).
 
 Esimerkki
 ----------
