@@ -6,7 +6,7 @@ DrawRect
 Sub DrawRect(x As Integer, y As Integer, width As Integer, height As Integer)
 ```
 
-Draws outline of a rectangle that has width `width` and height `height`.
+Draws the outline of a rectangle that has width `width` and height `height`.
 The rectangles left top corner is at coordinates (`x`, `y`).
 The color to be used can be set using the command [DrawColor](manual:drawcolor).
 

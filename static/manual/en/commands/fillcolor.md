@@ -6,14 +6,14 @@ FillColor
 Sub FillColor(r As Integer, g As Integer, b As Integer)
 ```
 
-Määrittää värin, jota käytetään täytetyiden kuvioiden piirtämiseen.
+Defines color that is used for drawing filled shapes.
 
-[Katso, miten värit toimivat EppaBasicissa](manual:../colors).
+[See how colors work in EppaBasic.](manual:../colors).
 
 Example
 ----------
 ```eppabasic
-' Asetetaan täyttöväriksi sininen ja piirretään täytetty ympyrä
+' Set the filling color as blue and draw a filled circle
 FillColor 255, 0, 0
 FillCircle 200, 200, 50
 ```
