@@ -3,48 +3,48 @@ If
 ==
 
 ```eppabasic
-If {ehto} Then
-    ' Koodia
+If {condition} Then
+    ' Code
 End If
 
-If {ehto} Then
-    ' Koodia
+If {condition} Then
+    ' Code
 Else
-    ' Koodia
+    ' Code
 End If
 
 If {ehto1} Then
-    ' Koodia
+    ' Code
 Else If {ehto2} Then
-    ' Koodia
+    ' Code
 End If
 
 If {ehto1} Then
-    ' Koodia
+    ' Code
 Else If {ehto2} Then
-    ' Koodia
+    ' Code
 Else
-    ' Koodia
+    ' Code
 End If
 ```
 
-Ehtorakenne, joka suorittaa koodin, mikäli `{ehto}` on tosi.
-Ehtoon voidaan liittää myös `Else`-haara, joka suoritetaan, mikäli ehto on epätosi.
+Control structure that runs code if `{condition}` is true.
+Structure can also contain `Else` branch that is executed if condition is false.
 
-`Else If`-rakenteen avulla voidaan lisätä ehtorakenteeseen useampia ehtoja.
-Tällöin suoritetaan ensimmäistä toteutuvaa ehtoa vastaava koodi.
+`Else If` structure allows to add multiple conditions to the structure.
+In this case, the code corresponding to the first true statement is executed.
 
 Example
 ---------
 ```eppabasic
-' Kysytään käyttäjältä käyttäjänimeä ja vastataan eri tavalla eri henkilöille
-Dim nimi = InputText("Anna nimesi:")
+' Ask username from the user and answer differently depending on the answer
+Dim nimi = InputText("Input your name:")
 If nimi = "Henrik" Then
-    Message "Hei Henrik!"
+    Message "Hi Henrik!"
 Else If nimi = "Sami" Then
-    Message "Hauska tavata Sami!"
+    Message "Nice to meet you Sami!"
 Else
-    Message "Oi, uusi tuttavuus"
+    Message "Oh, a new friend"
 End If
 
 ```
