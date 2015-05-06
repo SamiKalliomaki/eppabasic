@@ -6,7 +6,6 @@ DrawScreen
 Sub DrawScreen()
 ```
 
-Päivittää edellisen kutsun jälkeen piirretyt asiat näytölle.
 Updates thing drawn since the last call on the screen.
 
 When the command is called from a loop,
