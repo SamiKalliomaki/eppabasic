@@ -8,7 +8,7 @@ Sub Randomize(seed As Integer)
 
 Initializes random number generator using given seed.
 Random number generator initialized using the same seed always produces same numbers.
-By default, time based value is used seed.
+By default, time based value is used as seed.
 
 Example
 ---------
