@@ -10,7 +10,7 @@ Draws outline of a rectangle that has width `width` and height `height`.
 The rectangles left top corner is at coordinates (`x`, `y`).
 The color to be used can be set using the command [DrawColor](manual:drawcolor).
 
-[Katso, miten EppaBasicissa koordinaatisto toimii](manual:/coordinates).
+[See how coordinates work in EppaBasic](manual:/coordinates).
 
 Example
 ----------

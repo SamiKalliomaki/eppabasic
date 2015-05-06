@@ -10,7 +10,7 @@ Draws a circle with radius `r` on the screen at the coordinates (`x`, `y`).
 Coordinates define the center of the circle.
 The color to be used can be set using the command [DrawColor](manual:drawcolor).
 
-[Katso, miten EppaBasicissa koordinaatisto toimii](manual:/coordinates).
+[See how coordinates work in EppaBasic](manual:/coordinates).
 
 Example
 ----------

@@ -9,7 +9,7 @@ Sub DrawDot(x As Integer, y As Integer)
 Draws a single pixel size dot at the coordinates (`x`, `y`).
 The color to be used can be set using the command [DrawColor](manual:drawcolor).
 
-[Katso, miten EppaBasicissa koordinaatisto toimii](manual:/coordinates).
+[See how coordinates work in EppaBasic](manual:/coordinates).
 
 Example
 ----------

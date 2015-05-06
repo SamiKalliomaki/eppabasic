@@ -8,7 +8,7 @@ Function MouseX() As Integer
 
 Palauttaa hiiren osoittimen x-koordinaatin.
 
-[Katso, miten EppaBasicissa koordinaatisto toimii](manual:/coordinates).
+[See how coordinates work in EppaBasic](manual:/coordinates).
 
 Example
 ---------

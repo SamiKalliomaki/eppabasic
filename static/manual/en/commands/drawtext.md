@@ -17,7 +17,7 @@ If parameter `align` is not given, the align set using
 
 See [TextAlign](manual:textalign) to get more information about aligning the text.
 
-[Katso, miten EppaBasicissa koordinaatisto toimii](manual:/coordinates).
+[See how coordinates work in EppaBasic](manual:/coordinates).
 
 
 Example
