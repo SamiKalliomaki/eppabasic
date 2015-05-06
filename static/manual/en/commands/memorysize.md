@@ -1,10 +1,10 @@
 <!--advanced-->
 MemorySize
 ==========
-Tämä funktio on vain edistyneille käyttäjille.
+This function is only for advanced users.
 
 ```eppabasic
 Function MemorySize() As Integer
 ```
 
-Palauttaa ohjelmalle varatun kekomuistin koon tavuina.
+Returns the size of the heap reserved for the program in bytes.

@@ -3,16 +3,16 @@ Message
 =======
 
 ```eppabasic
-Sub Message(viesti as String)
+Sub Message(message as String)
 ```
 
-Näyttää käyttäjälle viestin `viesti`.
-Ohjelma odottaa, että käyttäjä painaa OK-näppäintä.
+Shows the user message `message`.
+Program waits for the user to press OK.
 
 Example
 ----------
 ```eppabasic
-' Näytetään käyttäjälle viestejä
-Message "Tervetuloa käyttämään EppaBasicia"
-Message "Ohjelmointi on kivaa"
+' Let's show some messages to the user
+Message "Welcome to use EppaBasic"
+Message "Programming is fun"
 ```

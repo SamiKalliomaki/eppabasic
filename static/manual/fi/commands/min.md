@@ -12,7 +12,7 @@ Palauttaa luvuista `a` ja `b` pienemmän.
 Esimerkki
 ---------
 ```eppabasic
-Min(5, 7)       ' 5
-Min(-2, -3)     ' -3
-Min(4, 4)       ' 4
+Print Min(5, 7)       ' 5
+Print Min(-2, -3)     ' -3
+Print Min(4, 4)       ' 4
 ```

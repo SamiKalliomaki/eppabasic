@@ -3,15 +3,15 @@ Mid
 ===
 
 ```eppabasic
-Function Mid(teksti As String, alku As Integer) As String
-Function Mid(teksti As String, alku As Integer, pituus As Integer) As String
+Function Mid(text As String, offset As Integer) As String
+Function Mid(text As String, offset As Integer, length As Integer) As String
 ```
 
-Erottaa osan merkkijonon keskeltä
+Takes a string from middle of another
 
-Palauttaa merkkijonon `teksti` merkkejä kohdasta `alku` eteenpäin.
-Jos `pituus` on määritelty, palauttaa korkeintaan `pituus` merkkiä, muuten kaikki merkit merkkijonon  `teksti` loppuun asti.
-
+Returns characters from string `text` starting at `offset`.
+If `length` is defined, at most `length` characters are returned. Otherwise, all
+characters until the end of string `text` are returned.
 Example
 ---------
 ```eppabasic

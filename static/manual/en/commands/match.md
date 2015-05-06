@@ -3,20 +3,20 @@ Match
 =====
 
 ```eppabasic
-Function Match(teksti As String, sl As Integer) As Boolean
+Function Match(text As String, regex As String) As Boolean
 ```
 
-Palauttaa tiedon, vastaako merkkijono `teksti` säännölistä lauseketta `sl`.
+Returns whether string `text` matches regular expression `regex`.
 
-Lisää tietoa säännöllisistä lausekkeista voi lukea [Ohjelmointiputkan oppaasta](http://www.ohjelmointiputka.net/oppaat/opas.php?tunnus=php_16) (Huomaa! Esimerkit käyttävät PHP-ohjelmointikieltä, mutta samat säännöllisen lausekkeen muodostamisohjeet pätevät myös EppaBasicissa).
+More information about regular expressions can be found for example here: http://regexone.com/
 
 Example
 ---------
 ```eppabasic
-Dim x = InputText("Anna merkkijono, jonka pituus on 6..8 merkkiä:")
+Dim x = InputText("Input a string that consists of 6 to 8 lower case characters:")
 If Match(x, "[a-z]{6,8}") Then
-    Message "Tervetuloa!"
+    Message "Welcome!"
 Else
-    Message "Häivy pois!"
+    Message "Go away!"
 End If
 ```
