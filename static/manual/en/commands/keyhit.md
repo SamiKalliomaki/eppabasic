@@ -6,9 +6,9 @@ KeyHit
 Function KeyHit(näppäin As Integer) As Boolean
 ```
 
-Returns information if key has been pressed since the last call to the function.
+Returns information whether key has been pressed since the last call to the function.
 
-Calling the function twice returns always False on the second call.
+Calling this function twice always returns False on the second call.
 
 [List of key codes](manual:keycodes)
 

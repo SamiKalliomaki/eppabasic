@@ -1,10 +1,10 @@
 <!--advanced-->
 Poke32
 ======
-Tämä funktio on vain edistyneille käyttäjille.
+This function is only for advanced users.
 
 ```eppabasic
-Sub Poke32(osoite As Integer, arvo As Intger)
+Sub Poke32(address As Integer, value As Intger)
 ```
 
-Kirjoittaa muistiin 32-bittisen kokonaisluvun kohtaan `osoite`.
+Writes `value` as 32-bit integer to memory at address `address`.

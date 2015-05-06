@@ -1,10 +1,10 @@
 <!--advanced-->
 Peek32
 ======
-Tämä funktio on vain edistyneille käyttäjille.
+This function is only for advanced users.
 
 ```eppabasic
-Function Peek32(osoite As Integer) As Integer
+Function Peek32(address As Integer) As Integer
 ```
 
-Lukee muistista 32-bittisen kokonaisluvun kohdasta `osoite`.
+Reads 32-bit integer from memory at address `address`.

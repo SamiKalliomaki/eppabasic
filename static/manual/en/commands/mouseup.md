@@ -3,16 +3,16 @@ MouseUp
 =======
 
 ```eppabasic
-Function MouseUp(näppäin As Integer) As Boolean
+Function MouseUp(button As Integer) As Boolean
 ```
 
-Palauttaa tiedon, onko hiiren näppäin `näppäin` ylhäällä.
+Returns information whether mouse button is not pressed down.
 
-Näppäin|Tunnus
+Button|Number
 -------|------
-Vasen|1
-Oikea|2
-Keskimmäinen|3
+Left|1
+Right|2
+Middle|3
 
 Example
 ---------
@@ -20,13 +20,13 @@ Example
 Do
     ClearScreen
     If MouseUp(1) Then
-        Print "Vasen nappi ylhäällä"
+        Print "Left button up"
     End If
     If MouseUp(2) Then
-        Print "Oikea nappi ylhäällä"
+        Print "Right button up"
     End If
     If MouseUp(3) Then
-        Print "Keskinappi ylhäällä"
+        Print "Middle button up"
     End If
     DrawScreen
 Loop

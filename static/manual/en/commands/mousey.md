@@ -6,7 +6,7 @@ MouseY
 Function MouseY() As Integer
 ```
 
-Palauttaa hiiren osoittimen y-koordinaatin.
+Returns the y coordinate of mouse cursor.
 
 [See how coordinates work in EppaBasic](manual:/coordinates).
 

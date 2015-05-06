@@ -6,7 +6,7 @@ MouseX
 Function MouseX() As Integer
 ```
 
-Palauttaa hiiren osoittimen x-koordinaatin.
+Returns the x coordinate of mouse cursor.
 
 [See how coordinates work in EppaBasic](manual:/coordinates).
 

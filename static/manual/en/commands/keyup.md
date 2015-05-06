@@ -6,7 +6,7 @@ KeyUp
 Function KeyUp(näppäin As Integer) As Boolean
 ```
 
-Returns information if key is not pressed down.
+Returns information whether key is not pressed down.
 
 [List of key codes](manual:keycodes)
 

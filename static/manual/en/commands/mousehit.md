@@ -3,25 +3,25 @@ MouseHit
 ========
 
 ```eppabasic
-Function MouseHit(näppäin As Integer) As Boolean
+Function MouseHit(button As Integer) As Boolean
 ```
 
-Palauttaa tiedon, onko hiiren näppäintä `näppäin` painettu funktion viimeisen kutsun jälkeen.
+Returns information whether mouse button has been pressed since the last call to the function.
 
-Funktion kutsuminen kahdesti peräkkäin palauttaa toisella kerralla aina arvon False.
+Calling this function twice always returns False on the second call.
 
-Näppäin|Tunnus
+Button|Number
 -------|------
-Vasen|1
-Oikea|2
-Keskimmäinen|3
+Left|1
+Right|2
+Middle|3
 
 Example
 ---------
 ```eppabasic
 Do
     If MouseHit(1) Then
-        Print "Painoit nappia"
+        Print "You pressed left mouse button"
     End If
     DrawScreen
 Loop

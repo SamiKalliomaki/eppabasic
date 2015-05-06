@@ -6,7 +6,7 @@ KeyDown
 Function KeyDown(key As Integer) As Boolean
 ```
 
-Returns information if key is pressed down.
+Returns information whether key is pressed down.
 
 [List of key codes](manual:keycodes)
 

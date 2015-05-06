@@ -3,16 +3,16 @@ MouseDown
 =========
 
 ```eppabasic
-Function MouseDown(näppäin As Integer) As Boolean
+Function MouseDown(button As Integer) As Boolean
 ```
 
-Palauttaa tiedon, onko hiiren näppäin `näppäin` painettuna.
+Returns whether mouse button is pressed down.
 
-Näppäin|Tunnus
+Button|Number
 -------|------
-Vasen|1
-Oikea|2
-Keskimmäinen|3
+Left|1
+Right|2
+Middle|3
 
 Example
 ---------
@@ -20,13 +20,13 @@ Example
 Do
     ClearScreen
     If MouseDown(1) Then
-        Print "Vasen nappi alhaalla"
+        Print "Left button down"
     End If
     If MouseDown(2) Then
-        Print "Oikea nappi alhaalla"
+        Print "Right button down"
     End If
     If MouseDown(3) Then
-        Print "Keskinappi alhaalla"
+        Print "Middle button down"
     End If
     DrawScreen
 Loop
