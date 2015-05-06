@@ -3,15 +3,15 @@ InputText
 =========
 
 ```eppabasic
-Function InputText(viesti as String) As String
+Function InputText(message as String) As String
 ```
 
-Näyttää käyttäjälle viestin `viesti` ja pyytää häntä syöttämään tekstiä.
-Palauttaa käyttäjän kirjoittaman tekstin.
+Shows user the message `message` and asks him to input text. Returns
+the text written by the user.
 
 Example
 ----------
 ```eppabasic
-Dim teksti = InputText("Anna tekstiä:")
-Message "Teksti takaperin: " & Reverse(teksti)
+Dim text = InputText("Input text:")
+Message "Text reversed: " & Reverse(text)
 ```

@@ -3,16 +3,16 @@ InputNumber
 ===========
 
 ```eppabasic
-Function InputNumber(viesti as String) As Number
+Function InputNumber(message as String) As Number
 ```
 
-Näyttää käyttäjälle viestin `viesti` ja pyytää häntä syöttämään luvun.
-Jos käyttäjä ei kirjoita lukua, ohjelma kysyy käyttäjältä uudelleen.
-Palauttaa käyttäjän kirjoittaman luvun.
+Shows user the message `message` and asks him to input a number.
+If user doesn't write a number, program asks user again.
+Returns the number written by the user.
 
 Example
 ----------
 ```eppabasic
-Dim luku = InputNumber("Anna luku:")
-Message "Luvun neliöjuuri on " & Sqrt(luku)
+Dim number = InputNumber("Input a number:")
+Message "The square root of the number is " & Sqrt(number)
 ```
