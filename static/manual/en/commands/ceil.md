@@ -6,7 +6,7 @@ Ceil
 Function Ceil(number As Number) As Number
 ```
 
-Rounds the number `number` upwards to nearest whole number.
+Rounds the number `number` upwards to the nearest whole number.
 
 Example
 ---------

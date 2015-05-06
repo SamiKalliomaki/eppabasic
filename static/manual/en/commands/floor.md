@@ -3,10 +3,10 @@ Floor
 =====
 
 ```eppabasic
-Function Floor(luku As Number) As Number
+Function Floor(number As Number) As Number
 ```
 
-Pyöristää luvun `luku` alaspäin lähimpään kokonaislukuun.
+Rounds the number `number` downwards to the nearest whole number.
 
 Example
 ---------
