@@ -6,18 +6,18 @@ KeyHit
 Function KeyHit(näppäin As Integer) As Boolean
 ```
 
-Palauttaa tiedon, onko näppäintä `näppäin` näppäin painettu funktion viimeisen kutsun jälkeen.
+Returns information if key has been pressed since the last call to the function.
 
-Funktion kutsuminen kahdesti peräkkäin palauttaa toisella kerralla aina arvon False.
+Calling the function twice returns always False on the second call.
 
-[Lista näppäinkoodeista](manual:keycodes)
+[List of key codes](manual:keycodes)
 
 Example
 ---------
 ```eppabasic
 Do
     If KeyHit(32) Then
-        Print "Painoit välilyöntiä"
+        Print "You've pressed spacebar"
     End If
     DrawScreen
 Loop

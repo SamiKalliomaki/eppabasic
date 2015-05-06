@@ -3,12 +3,12 @@ KeyDown
 =======
 
 ```eppabasic
-Function KeyDown(näppäin As Integer) As Boolean
+Function KeyDown(key As Integer) As Boolean
 ```
 
-Palauttaa tiedon, onko näppäin `näppäin` painettuna alas.
+Returns information if key is pressed down.
 
-[Lista näppäinkoodeista](manual:keycodes)
+[List of key codes](manual:keycodes)
 
 Example
 ---------
@@ -16,7 +16,7 @@ Example
 Do
     ClearScreen
     If KeyDown(32) Then
-        Print "Painat välilyöntiä"
+        Print "You're pressing spacebar"
     End If
     DrawScreen
 Loop

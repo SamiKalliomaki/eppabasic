@@ -6,9 +6,9 @@ KeyUp
 Function KeyUp(näppäin As Integer) As Boolean
 ```
 
-Palauttaa tiedon, onko näppäin `näppäin` ylhäällä.
+Returns information if key is not pressed down.
 
-[Lista näppäinkoodeista](manual:keycodes)
+[List of key codes](manual:keycodes)
 
 Example
 ---------
@@ -16,7 +16,7 @@ Example
 Do
     ClearScreen
     If KeyUp(32) Then
-        Print "Et paina välilyöntiä"
+        Print "You're not pressing spacebar"
     End If
     DrawScreen
 Loop
