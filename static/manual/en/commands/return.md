@@ -4,9 +4,9 @@ Return
 
 ```eppabasic
 I)      Return
-II)     Return {arvo}
+II)     Return {value}
 ```
 
-I) Poistuu [aliohjelmasta](manual:sub).
+I) Exits [subprogram](manual:sub).
 
-II) Poistuu [funktiosta](manual:function) ja palauttaa arvon.
+II) Exits [function](manual:function) and returns the value.

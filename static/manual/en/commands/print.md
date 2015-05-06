@@ -3,23 +3,23 @@ Print
 =====
 
 ```eppabasic
-Sub Print(teksti As String)
+Sub Print(text As String)
 ```
 
-Piirtää tekstin `teksti` näytölle.
+Draws text `text` on screen.
 
-Ensimmäisellä kutsukerralla funktio tulostaa tekstin kohtaan, joka on määritelty funktiolla [PrintLocation](manual:printlocation) (oletuksena (5, 5)).
-Seuraavilla kutsukerroilla teksti tulostetaan aina edellisen rivin alle.
-Tekstin välitystä voi hallita funktiolla [LineSpacing](manual:linespacing).
+On first call function prints to the location defined using function [PrintLocation](manual:printlocation) (by default (5, 5)).
+On subsequent calls text is printed below previous line.
+Text spacing can be controlled using function [LineSpacing](manual:linespacing).
 
-Käytettävä väri asetetaan komennolla [TextColor](manual:textcolor).
-Käytettävä kirjaisin asetetaan komennolla [TextFont](manual:textfont).
-Käytettävä koko asetetaan komennolla [TextSize](manual:textsize).
+The color to be used can be set using the command [TextColor](manual:textcolor).
+The font to be used can be set using the command [TextFont](manual:textfont).
+The size of the text can be set using the command [TextSize](manual:textsize).
 
 Example
 ----------
 ```eppabasic
-Print "Apina"
-Print "Banaani"
-Print "Cembalo"
+Print "Alfa"
+Print "Bravo"
+Print "Cecilia"
 ```

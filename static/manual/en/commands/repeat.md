@@ -3,10 +3,10 @@ Repeat
 ====
 
 ```eppabasic
-Function Repeat(teksti As String, määrä As Integer) As String
+Function Repeat(text As String, amount As Integer) As String
 ```
 
-Palauttaa merkkijonon, jossa toistuu merkkijono `teksti` `määrä` kertaa peräkkäin.
+Returns a string that repeats string `text` `amount` times.
 
 Example
 ---------

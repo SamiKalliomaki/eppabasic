@@ -6,4 +6,4 @@ Restart
 Sub Restart()
 ```
 
-Lopettaa ohjelman suorituksen ja käynnistää sen uudelleen välittömästi.
+Stops the execution of the problem and restarts it immediately.

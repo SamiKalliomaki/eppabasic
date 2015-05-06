@@ -3,14 +3,14 @@ Replace
 =======
 
 ```eppabasic
-Function Replace(teksti As String, korvattava As String, korvaava As String) As String
+Function Replace(text As String, needle As String, replacement As String) As String
 ```
 
-Palauttaa merkkijonon `teksti` muutettuna siten, että kaikki kohdat, joissa esiintyy merkkijono `korvattava` on korvattu merkkijonolla `korvaava`.
+Returns string `text` changed so that all occurences of needle have been replaced with `replacement`.
 
 Example
 ---------
 ```eppabasic
-Print Replace("aybabtu", "a", "ö")      ' öyböbtu
+Print Replace("aybabtu", "a", "o")      ' oybobtu
 Print Replace("aaaaaaaaa", "aaa", "z")  ' zzz
 ```

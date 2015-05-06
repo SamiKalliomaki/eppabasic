@@ -3,12 +3,12 @@ Randomize
 =========
 
 ```eppabasic
-Sub Randomize(siemen As Integer)
+Sub Randomize(seed As Integer)
 ```
 
-Alustaa satunnaislukugeneraattorin annetulla siemenellä.
-Samalla siemenellä alustettu satunnaislukugeneraattori tuottaa aina samoja lukuja.
-Oletuksena siemenlukuna käytetään kellonaikaan pohjautuvaa arvoa.
+Initializes random number generator using given seed.
+Random number generator initialized using the same seed always produces same numbers.
+By default, time based value is used seed.
 
 Example
 ---------

@@ -3,10 +3,10 @@ Reverse
 =======
 
 ```eppabasic
-Function Reverse(teksti As String) As String
+Function Reverse(text As String) As String
 ```
 
-Palauttaa merkkijonon `teksti` käännettynä toisinpäin.
+Returns the string `text` reversed.
 
 Example
 ---------
