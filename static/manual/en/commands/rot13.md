@@ -3,21 +3,21 @@ Rot13
 =======
 
 ```eppabasic
-Function Rot13(teksti As String) As String
+Function Rot13(text As String) As String
 ```
 
-Palauttaa merkkijonon `teksti` rot13-muunnoksen.
+Returns rot13 transformation of `text`.
 
-Muunnoksessa merkit `a..z` ja `A..Z` muuttuvat seuraavan taulukon mukaisesti:
+The transformation transforms letters `a..z` and `A..Z` according to the following table:
 ```
 abcdefghijklmnopqrstuwvxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ
 nopqrstuvwxyzabcdefghijklm NOPQRSTUVWXYZABCDEFGHIJKLM
 ```
-Toisin sanoen merkit liikkuvat 13 askelta eteenpäin aakkosissa tarvittaessa pyörähtäen ympäri.
-Jos muunnoksen tekee kahdesti, tuloksena on alkuperäinen merkkijono.
+In other words letters transfer 13 steps forward in alphabets rotating back to start if necessary.
+Executing the transformation twice returns the original string.
 
-Rot13-muunnosta voi käyttää yksinkertaisena salausmenetelmänä,
-tosin sen avulla ei kannata salata mitään arvokasta.
+Rot13 can be used as a simple encryption
+though nothing sensitive should be encrypted using it.
 
 Example
 ---------

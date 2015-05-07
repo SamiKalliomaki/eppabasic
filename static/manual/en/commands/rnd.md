@@ -7,16 +7,17 @@ I)      Function Rnd() As Number
 II)     Function Rnd(min As Integer, max As Integer) As Integer
 ```
 
-I) Arpoo luvun suljetulta väliltä [0, 1].<br>
-II) Arpoo kokonaisluvun suljetulta välitä [min, max]. Eli toisin sanoen kaikki luvut välillä min - max ovat mahdollisia mukaanlukien välin päätepisteet.
+I) Returns a random number in the range [0, 1] inclusive.
+
+II) Returns a random integer in the range [`min`, `max`] inclusive. In other words any number between `min` and `max` is possible return value including ending points.
 
 Example
 ---------
 ```eppabasic
-' Tulostetaan 78% todennäköisyydellä "Moikka!" ja 22% todennäköisyydellä "Heippa!"
+' Print "Hi!" on 78% of times and "Hello!" on 22% of times
 If Rnd() <= 0.78 Then
-    Print "Moikka!"
+    Print "Hi!"
 Else
-    Print "Heippa!"
+    Print "Hello!"
 End If
 ```

@@ -3,10 +3,10 @@ Right
 ====
 
 ```eppabasic
-Function Right(teksti As String, pituus As Integer) As String
+Function Right(text As String, length As Integer) As String
 ```
 
-Palauttaa merkkijonon `teksti` viimeiset `pituus` merkkiä.
+Returns last `length` characters of `text`.
 
 Example
 ---------
