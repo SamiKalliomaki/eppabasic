@@ -3,11 +3,10 @@ Tan
 ===
 
 ```eppabasic
-Function Tan(kulma As Number) As Number
+Function Tan(angle As Number) As Number
 ```
 
-Palauttaa kulmaa `kulma` vastaavan tangentin arvon.
-Kulma annetaan radiaaneina.
+Returns the tangent of the angle. Angle is given in radians.
 
 Example
 ---------

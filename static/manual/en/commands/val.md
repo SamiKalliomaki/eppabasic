@@ -3,12 +3,12 @@ Val
 ===
 
 ```eppabasic
-Function Val(teksti As String) As Number
+Function Val(text As String) As Number
 ```
 
-Muuntaa merkkijonon `teksti` luvuksi.
+Casts the string `text` to a number.
 
-Palauttaa muunnetun luvun.
+Returns the casted number.
 
 Example
 ---------

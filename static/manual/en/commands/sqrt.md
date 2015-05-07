@@ -3,11 +3,11 @@ Sqrt
 ====
 
 ```eppabasic
-Function Sqrt(luku As Number) As Number
+Function Sqrt(value As Number) As Number
 ```
 
-Palauttaa luvun `luku` neliöjuuren.
-Luku ei saa olla negatiivinen
+Returns the square root of `value`.
+`value` may not be negative.
 
 Example
 ---------

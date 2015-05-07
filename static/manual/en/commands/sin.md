@@ -6,8 +6,7 @@ Sin
 Function Sin(kulma As Number) As Number
 ```
 
-Palauttaa kulmaa `kulma` vastaavan sinin arvon.
-Kulma annetaan radiaaneina.
+Returns the sine of the angle. Angle is given in radians.
 
 Example
 ---------

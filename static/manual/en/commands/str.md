@@ -3,13 +3,13 @@ Str
 ===
 
 ```eppabasic
-Function Str(luku As Integer) As String
-Function Str(luku As Number) As String
+Function Str(value As Integer) As String
+Function Str(value As Number) As String
 ```
 
-Muuntaa luvun `luku` tekstiksi.
+Casts the number `value` to string.
 
-Palauttaa muunnetun tekstin.
+Returns the casted string.
 
 Example
 ---------

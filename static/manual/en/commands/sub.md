@@ -3,38 +3,40 @@ Sub
 ====
 
 ```eppabasic
-Sub {nimi}({parametrit})
-    ' Koodia
+Sub {name}({parameters})
+    ' Code
 End Sub
 ```
 
-Määrittelee oman aliohjelman nimeltä `{nimi}`.
+Defines an user defined sub program called `{name}`.
 
-Aliohjelman nimi voi muodostua kirjaimista, numeroista sekä alaviivoista.
-Nimen ensimmäinen merkki ei saa olla numero.
+The name of the sub program can contain letters, numbers and underscores.
+The first character of the name must not be a number.
 
-`{parametrit}` määrittävät aliohjelmalle annettavat parametrit.
-`{parametrit}` on pilkuilla erotettu lista parametrejä.
-Jokainen parametri on muotoa
+`{parameters}` defines parameters that are given to the sub program.
+`{parameters}` is a comman-separated list of parameters.
+Each parameter is of format
 ```eppabasic
-{nimi} As {tyyppi}
+{name} As {type}
 ```
-Vertaa [muuttujien määrittämiseen](manual:dim).
+```
+Compare to [variable definition](manual:dim).
 
-Aliohjelman suorituksen voi keskeyttää kutsumalla aliohjelman sisällä [Return](manual:return)-rakennetta.
+Execution of the sub program can be interrupted by calling
+[Return](manual:return) structure in the sub program
 
 Example
 ---------
 ```eppabasic
-' Aliohjelma piirtää n ympyrää riviin
-Sub PiirräYmpyrät(n As Number)
+' Sub program draws n circles in a line
+Sub DrawCircles(n As Number)
     For i = 1 To n
         FillCircle 50*i, 50, 15
     Next i
 End Sub
 
-' Aliohjelmaa voi käyttää näin
-PiirräYmpyrät 5
-' Tai näin
-PiirräYmpyrät(5)
+' Sub programs can be used like this
+DrawCircles 5
+' Or this
+DrawCircles(5)
 ```

@@ -6,14 +6,14 @@ TextColor
 Sub TextColor(r As Integer, g As Integer, b As Integer)
 ```
 
-Määrittää värin, jota käytetään tekstin piirtämiseen.
+Defines the color that is used for drawing text.
 
-[Katso, miten värit toimivat EppaBasicissa](manual:../colors).
+[See how colors work in EppaBasic.](manual:../colors).
 
 Example
 ----------
 ```eppabasic
-' Piirretään teksti "Ohjelmointi on kivaa!" vihreällä
+' Draw a green "Programming is fun!"
 TextColor 0, 255, 0
-DrawText 10, 20, "Ohjelmointi on kivaa!"
+DrawText 10, 20, "Programming is fun!"
 ```

@@ -3,15 +3,15 @@ TextFont
 ========
 
 ```eppabasic
-Sub TextFont(kirjaisin As String)
+Sub TextFont(font As String)
 ```
 
-Määrittää tekstiä piirrettäessä käytettäväksi kirjaisimeksi parametrin `kirjaisin` arvon.
-Huomaa, että kaikkia kirjaisimia ei välttämättä ole kaikissa koneissa asennettuna.
+Sets the font used when drawing text to `font`.
+Note that not all fonts are installed on all computers
 
 Example
 ----------
 ```eppabasic
-' Asetetaan tekstin kirjaisimeksi "Arial"
+' Set font to "Arial"
 TextFont "Arial"
 ```

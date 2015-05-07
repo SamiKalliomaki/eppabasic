@@ -3,32 +3,33 @@ TextAlign
 =========
 
 ```eppabasic
-Sub TextAlign(kohdistus As String)
+Sub TextAlign(align As String)
 ```
 
-Määrittää tekstiä piirrettäessä käytettävän tekstin kohdistuksen.
-Kohdistus tarkoittaa kohtaa, johon komennolle
-[DrawText](manual:drawtext) määritetty koordinaatti viittaa.
+Defines how the text is aligned when drawing text.
+Alignment means the point to which the coordinate
+defined when calling [`DrawText`](manual:drawtext)
+refers to.
 
-Parametrin `kohdistus` merkitykset:
+Different meanings for parameter `align`:
 
-Arvo|Merkitys
+Value|Meaning
 ----|--------
-1|Tasaus vasemmalle
-2|Tasaus oikealle
-3|Tasaus keskelle
+1|Align left
+2|Align right
+3|Align center
 
-Oletuksena teksti tasataan vasemmalle.
+The default is to align left.
 
 Example
 ----------
 ```eppabasic
-' Piirretään teksti "Tekstiä!" käyttämällä erilaisia tasauksia.
+' Draw text "Text!" using different alignments.
 TextSize 30
 TextAlign 1
-DrawText 100, 100, "Tekstiä!"
+DrawText 100, 100, "Text!"
 TextAlign 2
-DrawText 100, 200, "Tekstiä!"
+DrawText 100, 200, "Text!"
 TextAlign 3
-DrawText 100, 300, "Tekstiä!"
+DrawText 100, 300, "Text!"
 ```

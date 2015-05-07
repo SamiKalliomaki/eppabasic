@@ -3,15 +3,14 @@ TextSize
 ========
 
 ```eppabasic
-Sub TextSize(koko As Integer)
+Sub TextSize(size As Integer)
 ```
 
-Määrittää tekstiä piirrettäessä käytettäväksi tekstin kooksi parametrin `koko` arvon.
-Tekstin koko määritellään pikseleinä.
+Sets the font size used when drawing text to `size` pixels.
 
 Example
 ----------
 ```eppabasic
-' Asetetaan tekstin kooksi 24 pikseliä
+' Set text size to 24 pixels
 TextSize 24
 ```

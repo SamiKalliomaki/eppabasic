@@ -3,10 +3,10 @@ Trim
 ====
 
 ```eppabasic
-Function Trim(teksti As String) As String
+Function Trim(text As String) As String
 ```
 
-Palauttaa merkkijonon `teksti` siten, että alusta jo lopusta on poistettu kaikki näkymättömät merkit (välilyönnit, rivinvaihdot yms.).
+Retursn the string `text` with all invisible characters (spaces, line feeds etc.) removed from the begining and end of the original string.
 
 Example
 ---------
