@@ -10,7 +10,7 @@ Function CanvasWidth() As Integer
 Sets the width of the drawing area as `width` or returns the current width of
 the drawing area.
 
-Remember that this function only changes the width of the drawing area and
+Note that this function only changes the width of the drawing area and
 that the drawing area is scaled to fit the window.
 
 Window width can be controlled using the function [WindowWidth](manual:windowheight).

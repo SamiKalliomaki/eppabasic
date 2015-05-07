@@ -10,7 +10,7 @@ Function CanvasHeight() As Integer
 Sets the height of the drawing area as `height` or returns the current height of
 the drawing area.
 
-Remember that this function only changes the height of the drawing area and
+Note that this function only changes the height of the drawing area and
 that the drawing area is scaled to fit the window.
 
 Window height can be controlled using the function [WindowHeight](manual:windowheight).

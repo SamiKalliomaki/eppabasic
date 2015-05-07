@@ -3,12 +3,12 @@ CanvasSize
 ==========
 
 ```eppabasic
-Sub CanvasSize(leveys As Integer, korkeus As Integer)
+Sub CanvasSize(width As Integer, height As Integer)
 ```
 
-Sets the size of the drawing area to `leveys`x`korkeus`.
+Sets the size of the drawing area to `width`x`height`.
 
-Remember that this function only changes the height of the drawing area and
+Note that this function only changes the size of the drawing area and
 that the drawing area is scaled to fit the window.
 
 Window size can be controlled using the function [WindowSize](manual:windowsize).
