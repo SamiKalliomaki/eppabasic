@@ -4,7 +4,7 @@ Function
 
 ```eppabasic
 Function {name}({parameters}) As {return type}
-    ' Koodia
+    ' Code
 End Function
 ```
 
