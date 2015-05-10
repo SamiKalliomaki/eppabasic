@@ -139,6 +139,7 @@ class RenderHandlerModule implements Module {
         var newWidth = width + (window.outerWidth - window.innerWidth);
         var newHeight = height + (window.outerHeight - window.innerHeight);
         window.resizeTo(newWidth, newHeight);
+        this._runtime.emitEvent('resize');
      }
 
      /**
@@ -151,6 +152,7 @@ class RenderHandlerModule implements Module {
          this._foregroundCanvas.height = this._backgroundCanvas.height = height;
 
          this.resizeCanvasHolder();
+         this._runtime.emitEvent('resize');
      }
 
      /**

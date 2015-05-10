@@ -31,7 +31,7 @@ class InputModule implements Module {
         var scale = 1;
 
         // Listeners
-        var resizeListener = (e: Event) => {
+        var resizeListener = () => {
             scale = this._runtime.canvas.width / this._runtime.canvasHolder.offsetWidth;
         };
         var keydownListener = (e: KeyboardEvent) => {
@@ -102,6 +102,8 @@ class InputModule implements Module {
             document.body.addEventListener('mousemove', mouseListener);
             document.body.addEventListener('mouseup', mouseListener);
             document.body.addEventListener('mousedown', mouseListener);
+            resizeListener();
+            this._runtime.on('resize', resizeListener);
         });
         this._runtime.once('destroy', (): void => {
             window.removeEventListener('resize', resizeListener);
@@ -110,6 +112,7 @@ class InputModule implements Module {
             document.body.removeEventListener('mousemove', mouseListener);
             document.body.removeEventListener('mouseup', mouseListener);
             document.body.removeEventListener('mousedown', mouseListener);
+            this._runtime.off('resize', resizeListener);
         });
 
         this._functions.set('Function KeyDown(Integer) As Boolean', (keycode: number): boolean => {
