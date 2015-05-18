@@ -1,6 +1,6 @@
 EppaBasic
 ==========
-EppaBasic is a programming designed for educational use.
+EppaBasic is a programming language designed for educational use.
 
 Contents
 -------
