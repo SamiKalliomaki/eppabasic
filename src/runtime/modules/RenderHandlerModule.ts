@@ -69,6 +69,8 @@ class RenderHandlerModule implements Module {
             this._foregroundCanvas.getContext('2d').drawImage(this._backgroundCanvas, 0, 0);
             // Finally break the execution
             this._runtime.program.breakExec();
+
+            this._runtime.emitEvent('drawscreen');
         };
         this._functions.set('Sub DrawScreen()', drawScreen);
         this._runtime.once('ended', drawScreen);

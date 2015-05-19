@@ -6,7 +6,7 @@ MouseUp
 Function MouseUp(button As Integer) As Boolean
 ```
 
-Returns information whether mouse button is not pressed down.
+Returns information whether mouse button was released last frame.
 
 Button|Number
 -------|------
@@ -18,15 +18,14 @@ Example
 ---------
 ```eppabasic
 Do
-    ClearScreen
     If MouseUp(1) Then
-        Print "Left button up"
+        Print "Left button released"
     End If
     If MouseUp(2) Then
-        Print "Right button up"
+        Print "Right button released"
     End If
     If MouseUp(3) Then
-        Print "Middle button up"
+        Print "Middle button released"
     End If
     DrawScreen
 Loop

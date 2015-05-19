@@ -6,7 +6,8 @@ MouseUp
 Function MouseUp(näppäin As Integer) As Boolean
 ```
 
-Palauttaa tiedon, onko hiiren näppäin `näppäin` ylhäällä.
+Palauttaa tiedon, onko hiiren näppäin `näppäin` nostettu ylös edellisen framen
+aikana.
 
 Näppäin|Tunnus
 -------|------
@@ -18,15 +19,14 @@ Esimerkki
 ---------
 ```eppabasic
 Do
-    ClearScreen
     If MouseUp(1) Then
-        Print "Vasen nappi ylhäällä"
+        Print "Vasen nappi nostettu"
     End If
     If MouseUp(2) Then
-        Print "Oikea nappi ylhäällä"
+        Print "Oikea nappi nostettu"
     End If
     If MouseUp(3) Then
-        Print "Keskinappi ylhäällä"
+        Print "Keskinappi nostettu"
     End If
     DrawScreen
 Loop

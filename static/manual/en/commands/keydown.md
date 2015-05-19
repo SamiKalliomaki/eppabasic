@@ -15,7 +15,7 @@ Example
 ```eppabasic
 Do
     ClearScreen
-    If KeyDown(32) Then
+    If KeyDown(ebKeySpace) Then
         Print "You're pressing spacebar"
     End If
     DrawScreen
