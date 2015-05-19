@@ -35,6 +35,23 @@ class RenderHandlerModule implements Module {
         // RenderHandler state
         var clearColor = '#000';
 
+        // Helper functions
+        var drawScreen = (): void => {
+            this._foregroundCanvas.getContext('2d').drawImage(this._backgroundCanvas, 0, 0);
+            // Finally break the execution
+            this._runtime.program.breakExec();
+
+            this._runtime.emitEvent('drawscreen');
+        };
+        var clearScreen = (): void => {
+            var originalStyle = this._runtime.renderingContext.fillStyle;
+            this._runtime.renderingContext.fillStyle = clearColor;
+            this._runtime.renderingContext.fillRect(0, 0, this._backgroundCanvas.width, this._backgroundCanvas.height);
+            this._runtime.renderingContext.fillStyle = originalStyle;
+
+            this._runtime.emitEvent('clearscreen');
+        }
+
         // Create canvases for double buffering
         this._backgroundCanvas = document.createElement('canvas');
         this._foregroundCanvas = document.createElement('canvas');
@@ -53,7 +70,9 @@ class RenderHandlerModule implements Module {
             // Setup defaults
             this.setWindowSize(640, 480);
             this.setCanvasSize(640, 480);
+            clearScreen();
         });
+
         this._runtime.once('destroy', (): void => {
             window.removeEventListener('resize', resizeEvent);
             this._runtime.canvasHolder.removeChild(this._foregroundCanvas);
@@ -65,26 +84,12 @@ class RenderHandlerModule implements Module {
         // EppaBasic funtions
         this._functions = new Map<string, Function>();
 
-        var drawScreen = (): void => {
-            this._foregroundCanvas.getContext('2d').drawImage(this._backgroundCanvas, 0, 0);
-            // Finally break the execution
-            this._runtime.program.breakExec();
-
-            this._runtime.emitEvent('drawscreen');
-        };
         this._functions.set('Sub DrawScreen()', drawScreen);
         this._runtime.once('ended', drawScreen);
         this._functions.set('Sub ClearColor(Integer,Integer,Integer)', (r: number, g: number, b: number): void => {
             clearColor = util.rgbToStyle(r, g, b);
         });
-        this._functions.set('Sub ClearScreen()', (): void => {
-            var originalStyle = this._runtime.renderingContext.fillStyle;
-            this._runtime.renderingContext.fillStyle = clearColor;
-            this._runtime.renderingContext.fillRect(0, 0, this._backgroundCanvas.width, this._backgroundCanvas.height);
-            this._runtime.renderingContext.fillStyle = originalStyle;
-
-            this._runtime.emitEvent('clearscreen');
-        });
+        this._functions.set('Sub ClearScreen()', clearScreen);
         this._functions.set('Sub SetWindowTitle(String)', (titlePtr: number): void => {
             var title = util.ebstring.fromEB(titlePtr, this._runtime);
             document.title = title;
