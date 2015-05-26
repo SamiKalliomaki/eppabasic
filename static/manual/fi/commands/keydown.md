@@ -15,7 +15,7 @@ Esimerkki
 ```eppabasic
 Do
     ClearScreen
-    If KeyDown(32) Then
+    If KeyDown(ebKeySpace) Then
         Print "Painat välilyöntiä"
     End If
     DrawScreen

@@ -5,6 +5,45 @@ import Runtime = require('../Runtime');
 import util = require('./util');
 
 /**
+ * Class representing input state
+ */
+class InputState {
+    public mouseX: number;
+    public mouseY: number;
+    public keyDown: Array<boolean>;
+    public keyHit: Array<boolean>;
+    public keyUp: Array<boolean>;
+    public mouseDown: Array<boolean>;
+    public mouseHit: Array<boolean>;
+    public mouseUp: Array<boolean>;
+
+    constructor() {
+        this.mouseX = 0;
+        this.mouseY = 0;
+
+        this.keyDown = new Array(256);
+        this.keyHit = new Array(256);
+        this.keyUp = new Array(256);
+
+        // Hopefully mouse never has over 32 buttons
+        this.mouseDown = new Array(32);
+        this.mouseHit = new Array(32);
+        this.mouseUp = new Array(32);
+    }
+
+    public resetHitAndUp() {
+        for(var i = 0; i < this.keyHit.length; i++)
+            this.keyHit[i] = false;
+        for(var i = 0; i < this.keyUp.length; i++)
+            this.keyUp[i] = false;
+        for(var i = 0; i < this.mouseHit.length; i++)
+            this.mouseHit[i] = false;
+        for(var i = 0; i < this.mouseUp.length; i++)
+            this.mouseUp[i] = false;
+    }
+}
+
+/**
  * Mouse and keyboard functions.
  */
 class InputModule implements Module {
@@ -17,83 +56,118 @@ class InputModule implements Module {
      */
     private _functions: Map<string, Function>;
 
+    private _scale = 1;
+    private _currentState: InputState;
+    private _nextState: InputState;
+
     constructor(runtime: Runtime) {
         this._runtime = runtime;
         this._functions = new Map<string, Function>();
-
-        // Input state
-        var keysDown = new Array(256);
-        var keysHit = new Array(256);
-        var mouseButtons = 0;
-        var mouseX = -1;
-        var mouseY = -1;
-        var mouseHit = -1;
-        var scale = 1;
+        this._currentState = new InputState();
+        this._nextState = new InputState();
 
         // Listeners
         var resizeListener = () => {
-            scale = this._runtime.canvas.width / this._runtime.canvasHolder.offsetWidth;
+            this._scale = this._runtime.canvas.width / this._runtime.canvasHolder.offsetWidth;
         };
+
         var keydownListener = (e: KeyboardEvent) => {
             if (inMessageBox)
                 return;
             if (e.keyCode === 122)      // F11 for fullscreen
                 return;
-            if (!keysDown[e.keyCode])
-                keysHit[e.keyCode] = true;
-            keysDown[e.keyCode] = true;
+            if (!this._nextState.keyDown[e.keyCode])
+                this._nextState.keyHit[e.keyCode] = true;
+            this._nextState.keyDown[e.keyCode] = true;
 
             e.preventDefault();
             return false;
         }
+
         var keyupListener = (e: KeyboardEvent) => {
             if (inMessageBox)
                 return;
-            keysDown[e.keyCode] = false;
+            if (this._nextState.keyDown[e.keyCode])
+                this._nextState.keyUp[e.keyCode] = true;
+            this._nextState.keyDown[e.keyCode] = false;
 
             e.preventDefault();
             return false;
         };
+
         var mouseListener = (e: MouseEvent) => {
             if (inMessageBox)
                 return;
-            var boundingRect = this._runtime.canvasHolder.getBoundingClientRect();
-            mouseX = (e.pageX - boundingRect.left) * scale;
-            mouseY = (e.pageY - boundingRect.top) * scale;
 
-            if (!e.buttons) {
-                switch (e.which) {
-                    case 0: break;
-                    case 1: e.buttons = 1; break;
-                    case 2: e.buttons = 4; break;
-                    case 3: e.buttons = 2; break;
+            var boundingRect = this._runtime.canvasHolder.getBoundingClientRect();
+            if(!isNaN(e.pageX) && !isNaN(e.pageY)) {
+                this._nextState.mouseX = (e.pageX - boundingRect.left) * this._scale;
+                this._nextState.mouseY = (e.pageY - boundingRect.top) * this._scale;
+            }
+
+            var button: number;
+
+            // Remap the buttons
+            if(e.button) {
+                switch(e.button) {
+                    case 0:
+                        button = 1;
+                        break;
+                    case 1:
+                        button = 3;
+                        break;
+                    case 2:
+                        button = 2;
+                        break;
+                    case 3:
+                        button = 4;
+                        break;
+                    case 4:
+                        button = 5;
+                        break;
+                    default:
+                        button = e.button + 1;
+                }
+            } else {
+                switch(e.which) {
+                    case 1:
+                        button = 1;
+                        break;
+                    case 2:
+                        button = 3;
+                        break;
+                    case 3:
+                        button = 2;
+                        break;
+                    default:
+                        button = e.which;
                 }
             }
-            mouseButtons = e.buttons;
+
             if (e.type === 'mousedown') {
-                if (e.button === 0) mouseHit |= 1;
-                if (e.button === 1) mouseHit |= 4;
-                if (e.button === 2) mouseHit |= 2;
-                if (!e.button) {
-                    if (e.which === 1) mouseHit |= 1;
-                    if (e.which === 2) mouseHit |= 2;
-                    if (e.which === 3) mouseHit |= 4;
-                }
+                if(!this._nextState.mouseDown[button])
+                    this._nextState.mouseHit[button] = true;
+                this._nextState.mouseDown[button] = true;
             }
             if (e.type === 'mouseup') {
-                if (e.button === 0) mouseButtons &= (~1);
-                if (e.button === 1) mouseButtons &= (~4);
-                if (e.button === 2) mouseButtons &= (~2);
-                if (!e.button) {
-                    if (e.which === 1) mouseButtons &= (~1);
-                    if (e.which === 2) mouseButtons &= (~2);
-                    if (e.which === 3) mouseButtons &= (~4);
-                }
+                if(this._nextState.mouseDown[button])
+                    this._nextState.mouseUp[button] = true;
+                this._nextState.mouseDown[button] = false;
             }
 
             e.preventDefault();
             return false;
         };
+
+        var drawscreenListener = () => {
+            this._currentState = this._nextState;
+            this._nextState.resetHitAndUp();
+        };
+
+        var preventListener = (e: Event) => {
+            e.preventDefault();
+            return false;
+        }
 
         this._runtime.once('init', (): void => {
             window.addEventListener('resize', resizeListener);
@@ -102,8 +176,10 @@ class InputModule implements Module {
             document.body.addEventListener('mousemove', mouseListener);
             document.body.addEventListener('mouseup', mouseListener);
             document.body.addEventListener('mousedown', mouseListener);
+            document.body.addEventListener('contextmenu', preventListener);
             resizeListener();
             this._runtime.on('resize', resizeListener);
+            this._runtime.on('drawscreen', drawscreenListener);
         });
         this._runtime.once('destroy', (): void => {
             window.removeEventListener('resize', resizeListener);
@@ -112,38 +188,34 @@ class InputModule implements Module {
             document.body.removeEventListener('mousemove', mouseListener);
             document.body.removeEventListener('mouseup', mouseListener);
             document.body.removeEventListener('mousedown', mouseListener);
+            document.body.removeEventListener('contextmenu', preventListener);
             this._runtime.off('resize', resizeListener);
+            this._runtime.off('drawscreen', drawscreenListener);
         });
 
         this._functions.set('Function KeyDown(Integer) As Boolean', (keycode: number): boolean => {
-            return keysDown[keycode];
+            return this._currentState.keyDown[keycode];
         });
         this._functions.set('Function KeyUp(Integer) As Boolean', (keycode: number): boolean => {
-            return !keysDown[keycode];
+            return this._currentState.keyUp[keycode];
         });
         this._functions.set('Function KeyHit(Integer) As Boolean', (keycode: number): boolean => {
-            var res = keysHit[keycode];
-            keysHit[keycode] = false;
-            return res;
+            return this._currentState.keyHit[keycode];
         });
         this._functions.set('Function MouseX() As Integer', (): number => {
-            return mouseX;
+            return this._currentState.mouseX;
         });
         this._functions.set('Function MouseY() As Integer', (): number => {
-            return mouseY;
+            return this._currentState.mouseY;
         });
         this._functions.set('Function MouseDown(Integer) As Boolean', (button: number): boolean => {
-            return (mouseButtons & (1 << (button - 1))) !== 0;;
+            return this._currentState.mouseDown[button];
         });
         this._functions.set('Function MouseUp(Integer) As Boolean', (button: number): boolean => {
-            return (mouseButtons & (1 << (button - 1))) === 0;;
+            return this._currentState.mouseUp[button];
         });
         this._functions.set('Function MouseHit(Integer) As Boolean', (button: number): boolean => {
-            if (mouseHit & (1 << (button - 1))) {
-                mouseHit ^= (1 << (button - 1));
-                return true;
-            }
-            return false;
+            return this._currentState.mouseHit[button];
         });
 
         // Message helpers

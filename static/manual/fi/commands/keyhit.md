@@ -6,9 +6,7 @@ KeyHit
 Function KeyHit(näppäin As Integer) As Boolean
 ```
 
-Palauttaa tiedon, onko näppäintä `näppäin` näppäin painettu funktion viimeisen kutsun jälkeen.
-
-Funktion kutsuminen kahdesti peräkkäin palauttaa toisella kerralla aina arvon False.
+Palauttaa tiedon, onko näppäin `näppäin` painettu alas viime framen aikana.
 
 [Lista näppäinkoodeista](manual:keycodes)
 
@@ -16,7 +14,7 @@ Esimerkki
 ---------
 ```eppabasic
 Do
-    If KeyHit(32) Then
+    If KeyHit(ebKeySpace) Then
         Print "Painoit välilyöntiä"
     End If
     DrawScreen

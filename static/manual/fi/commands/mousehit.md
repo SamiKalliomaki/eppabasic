@@ -6,9 +6,8 @@ MouseHit
 Function MouseHit(näppäin As Integer) As Boolean
 ```
 
-Palauttaa tiedon, onko hiiren näppäintä `näppäin` painettu funktion viimeisen kutsun jälkeen.
-
-Funktion kutsuminen kahdesti peräkkäin palauttaa toisella kerralla aina arvon False.
+Palauttaa tiedon, onko hiiren näppäin `näppäin` painettu pohjaan edellisen
+framen aikana.
 
 Näppäin|Tunnus
 -------|------
@@ -21,7 +20,7 @@ Esimerkki
 ```eppabasic
 Do
     If MouseHit(1) Then
-        Print "Painoit nappia"
+        Print "Painoit hiiren vasenta"
     End If
     DrawScreen
 Loop

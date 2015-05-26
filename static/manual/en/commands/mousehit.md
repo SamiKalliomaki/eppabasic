@@ -6,9 +6,7 @@ MouseHit
 Function MouseHit(button As Integer) As Boolean
 ```
 
-Returns information whether mouse button has been pressed since the last call to the function.
-
-Calling this function twice always returns False on the second call.
+Returns information whether mouse button was pressed down last frame.
 
 Button|Number
 -------|------
