@@ -1,3 +1,5 @@
+/// <reference path="../../../lib/vendor" />
+
 import Transformer = require('./transformer');
 import Program = require("../programs/Program");
 import TokenProgram = require("../programs/TokenProgram");
