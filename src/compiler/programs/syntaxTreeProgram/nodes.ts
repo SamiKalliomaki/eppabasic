@@ -144,10 +144,10 @@ export module SequenceNode {
         buildNodeClass.checkers = checkers;
 
         // Add starting tokens
-        buildNodeClass.startTokens = new Set();
+        buildNodeClass.startTokens = new Set<typeof tokens.Token>();
 
         for(var i = 0; i < sequences.length; i++) {
-            buildNodeClass.sequenceStartingTokens[i] = new Set();
+            buildNodeClass.sequenceStartingTokens[i] = new Set<typeof tokens.Token>();
 
             for(var j = 0; j < sequences[i].length; j++) {
                 sequences[i][j].startTokens.forEach((tokenClass: typeof tokens.Token) => {
@@ -216,204 +216,204 @@ function getTokenAfterVariableReference(tokenQueue) {
 
 // TokenNodes
 export class EOSTokenNode extends TokenNode {}
-EOSTokenNode.startTokens = new Set();
+EOSTokenNode.startTokens = new Set<typeof tokens.Token>();
 EOSTokenNode.startTokens.add(tokens.EOSToken);
 
 export class CommentTokenNode extends TokenNode {}
-CommentTokenNode.startTokens = new Set();
+CommentTokenNode.startTokens = new Set<typeof tokens.Token>();
 CommentTokenNode.startTokens.add(tokens.CommentToken);
 
 export class NotEqualTokenNode extends TokenNode {}
-NotEqualTokenNode.startTokens = new Set();
+NotEqualTokenNode.startTokens = new Set<typeof tokens.Token>();
 NotEqualTokenNode.startTokens.add(tokens.NotEqualToken);
 
 export class EqualTokenNode extends TokenNode {}
-EqualTokenNode.startTokens = new Set();
+EqualTokenNode.startTokens = new Set<typeof tokens.Token>();
 EqualTokenNode.startTokens.add(tokens.EqualToken);
 
 export class LessThanTokenNode extends TokenNode {}
-LessThanTokenNode.startTokens = new Set();
+LessThanTokenNode.startTokens = new Set<typeof tokens.Token>();
 LessThanTokenNode.startTokens.add(tokens.LessThanToken);
 
 export class GreaterThanTokenNode extends TokenNode {}
-GreaterThanTokenNode.startTokens = new Set();
+GreaterThanTokenNode.startTokens = new Set<typeof tokens.Token>();
 GreaterThanTokenNode.startTokens.add(tokens.GreaterThanToken);
 
 export class LessOrEqualTokenNode extends TokenNode {}
-LessOrEqualTokenNode.startTokens = new Set();
+LessOrEqualTokenNode.startTokens = new Set<typeof tokens.Token>();
 LessOrEqualTokenNode.startTokens.add(tokens.LessOrEqualToken);
 
 export class GreaterOrEqualTokenNode extends TokenNode {}
-GreaterOrEqualTokenNode.startTokens = new Set();
+GreaterOrEqualTokenNode.startTokens = new Set<typeof tokens.Token>();
 GreaterOrEqualTokenNode.startTokens.add(tokens.GreaterOrEqualToken);
 
 export class AdditionTokenNode extends TokenNode {}
-AdditionTokenNode.startTokens = new Set();
+AdditionTokenNode.startTokens = new Set<typeof tokens.Token>();
 AdditionTokenNode.startTokens.add(tokens.AdditionToken);
 
 export class SubstractionTokenNode extends TokenNode {}
-SubstractionTokenNode.startTokens = new Set();
+SubstractionTokenNode.startTokens = new Set<typeof tokens.Token>();
 SubstractionTokenNode.startTokens.add(tokens.SubstractionToken);
 
 export class MultiplicationTokenNode extends TokenNode {}
-MultiplicationTokenNode.startTokens = new Set();
+MultiplicationTokenNode.startTokens = new Set<typeof tokens.Token>();
 MultiplicationTokenNode.startTokens.add(tokens.MultiplicationToken);
 
 export class DivisionTokenNode extends TokenNode {}
-DivisionTokenNode.startTokens = new Set();
+DivisionTokenNode.startTokens = new Set<typeof tokens.Token>();
 DivisionTokenNode.startTokens.add(tokens.DivisionToken);
 
 export class IntegerDivisionTokenNode extends TokenNode {}
-IntegerDivisionTokenNode.startTokens = new Set();
+IntegerDivisionTokenNode.startTokens = new Set<typeof tokens.Token>();
 IntegerDivisionTokenNode.startTokens.add(tokens.IntegerDivisionToken);
 
 export class PowerTokenNode extends TokenNode {}
-PowerTokenNode.startTokens = new Set();
+PowerTokenNode.startTokens = new Set<typeof tokens.Token>();
 PowerTokenNode.startTokens.add(tokens.PowerToken);
 
 export class ModTokenNode extends TokenNode {}
-ModTokenNode.startTokens = new Set();
+ModTokenNode.startTokens = new Set<typeof tokens.Token>();
 ModTokenNode.startTokens.add(tokens.ModToken);
 
 export class ConcatenationTokenNode extends TokenNode {}
-ConcatenationTokenNode.startTokens = new Set();
+ConcatenationTokenNode.startTokens = new Set<typeof tokens.Token>();
 ConcatenationTokenNode.startTokens.add(tokens.ConcatenationToken);
 
 export class AndTokenNode extends TokenNode {}
-AndTokenNode.startTokens = new Set();
+AndTokenNode.startTokens = new Set<typeof tokens.Token>();
 AndTokenNode.startTokens.add(tokens.AndToken);
 
 export class OrTokenNode extends TokenNode {}
-OrTokenNode.startTokens = new Set();
+OrTokenNode.startTokens = new Set<typeof tokens.Token>();
 OrTokenNode.startTokens.add(tokens.OrToken);
 
 export class XorTokenNode extends TokenNode {}
-XorTokenNode.startTokens = new Set();
+XorTokenNode.startTokens = new Set<typeof tokens.Token>();
 XorTokenNode.startTokens.add(tokens.XorToken);
 
 export class NotTokenNode extends TokenNode {}
-NotTokenNode.startTokens = new Set();
+NotTokenNode.startTokens = new Set<typeof tokens.Token>();
 NotTokenNode.startTokens.add(tokens.NotToken);
 
 export class NumberTokenNode extends TokenNode {}
-NumberTokenNode.startTokens = new Set();
+NumberTokenNode.startTokens = new Set<typeof tokens.Token>();
 NumberTokenNode.startTokens.add(tokens.NumberToken);
 
 export class StringTokenNode extends TokenNode {}
-StringTokenNode.startTokens = new Set();
+StringTokenNode.startTokens = new Set<typeof tokens.Token>();
 StringTokenNode.startTokens.add(tokens.StringToken);
 
 export class CommaTokenNode extends TokenNode {}
-CommaTokenNode.startTokens = new Set();
+CommaTokenNode.startTokens = new Set<typeof tokens.Token>();
 CommaTokenNode.startTokens.add(tokens.CommaToken);
 
 export class LeftParenthesisTokenNode extends TokenNode {}
-LeftParenthesisTokenNode.startTokens = new Set();
+LeftParenthesisTokenNode.startTokens = new Set<typeof tokens.Token>();
 LeftParenthesisTokenNode.startTokens.add(tokens.LeftParenthesisToken);
 
 export class RightParenthesisTokenNode extends TokenNode {}
-RightParenthesisTokenNode.startTokens = new Set();
+RightParenthesisTokenNode.startTokens = new Set<typeof tokens.Token>();
 RightParenthesisTokenNode.startTokens.add(tokens.RightParenthesisToken);
 
 export class LeftBracketTokenNode extends TokenNode {}
-LeftBracketTokenNode.startTokens = new Set();
+LeftBracketTokenNode.startTokens = new Set<typeof tokens.Token>();
 LeftBracketTokenNode.startTokens.add(tokens.LeftBracketToken);
 
 export class RightBracketTokenNode extends TokenNode {}
-RightBracketTokenNode.startTokens = new Set();
+RightBracketTokenNode.startTokens = new Set<typeof tokens.Token>();
 RightBracketTokenNode.startTokens.add(tokens.RightBracketToken);
 
 export class ForTokenNode extends TokenNode {}
-ForTokenNode.startTokens = new Set();
+ForTokenNode.startTokens = new Set<typeof tokens.Token>();
 ForTokenNode.startTokens.add(tokens.ForToken);
 
 export class ToTokenNode extends TokenNode {}
-ToTokenNode.startTokens = new Set();
+ToTokenNode.startTokens = new Set<typeof tokens.Token>();
 ToTokenNode.startTokens.add(tokens.ToToken);
 
 export class StepTokenNode extends TokenNode {}
-StepTokenNode.startTokens = new Set();
+StepTokenNode.startTokens = new Set<typeof tokens.Token>();
 StepTokenNode.startTokens.add(tokens.StepToken);
 
 export class NextTokenNode extends TokenNode {}
-NextTokenNode.startTokens = new Set();
+NextTokenNode.startTokens = new Set<typeof tokens.Token>();
 NextTokenNode.startTokens.add(tokens.NextToken);
 
 export class DoTokenNode extends TokenNode {}
-DoTokenNode.startTokens = new Set();
+DoTokenNode.startTokens = new Set<typeof tokens.Token>();
 DoTokenNode.startTokens.add(tokens.DoToken);
 
 export class LoopTokenNode extends TokenNode {}
-LoopTokenNode.startTokens = new Set();
+LoopTokenNode.startTokens = new Set<typeof tokens.Token>();
 LoopTokenNode.startTokens.add(tokens.LoopToken);
 
 export class WhileTokenNode extends TokenNode {}
-WhileTokenNode.startTokens = new Set();
+WhileTokenNode.startTokens = new Set<typeof tokens.Token>();
 WhileTokenNode.startTokens.add(tokens.WhileToken);
 
 export class UntilTokenNode extends TokenNode {}
-UntilTokenNode.startTokens = new Set();
+UntilTokenNode.startTokens = new Set<typeof tokens.Token>();
 UntilTokenNode.startTokens.add(tokens.UntilToken);
 
 export class IfTokenNode extends TokenNode {}
-IfTokenNode.startTokens = new Set();
+IfTokenNode.startTokens = new Set<typeof tokens.Token>();
 IfTokenNode.startTokens.add(tokens.IfToken);
 
 export class ThenTokenNode extends TokenNode {}
-ThenTokenNode.startTokens = new Set();
+ThenTokenNode.startTokens = new Set<typeof tokens.Token>();
 ThenTokenNode.startTokens.add(tokens.ThenToken);
 
 export class ElseIfTokenNode extends TokenNode {}
-ElseIfTokenNode.startTokens = new Set();
+ElseIfTokenNode.startTokens = new Set<typeof tokens.Token>();
 ElseIfTokenNode.startTokens.add(tokens.ElseIfToken);
 
 export class ElseTokenNode extends TokenNode {}
-ElseTokenNode.startTokens = new Set();
+ElseTokenNode.startTokens = new Set<typeof tokens.Token>();
 ElseTokenNode.startTokens.add(tokens.ElseToken);
 
 export class EndIfTokenNode extends TokenNode {}
-EndIfTokenNode.startTokens = new Set();
+EndIfTokenNode.startTokens = new Set<typeof tokens.Token>();
 EndIfTokenNode.startTokens.add(tokens.EndIfToken);
 
 export class DimTokenNode extends TokenNode {}
-DimTokenNode.startTokens = new Set();
+DimTokenNode.startTokens = new Set<typeof tokens.Token>();
 DimTokenNode.startTokens.add(tokens.DimToken);
 
 export class AsTokenNode extends TokenNode {}
-AsTokenNode.startTokens = new Set();
+AsTokenNode.startTokens = new Set<typeof tokens.Token>();
 AsTokenNode.startTokens.add(tokens.AsToken);
 
 export class FunctionTokenNode extends TokenNode {}
-FunctionTokenNode.startTokens = new Set();
+FunctionTokenNode.startTokens = new Set<typeof tokens.Token>();
 FunctionTokenNode.startTokens.add(tokens.FunctionToken);
 
 export class ReturnTokenNode extends TokenNode {}
-ReturnTokenNode.startTokens = new Set();
+ReturnTokenNode.startTokens = new Set<typeof tokens.Token>();
 ReturnTokenNode.startTokens.add(tokens.ReturnToken);
 
 export class EndFunctionTokenNode extends TokenNode {}
-EndFunctionTokenNode.startTokens = new Set();
+EndFunctionTokenNode.startTokens = new Set<typeof tokens.Token>();
 EndFunctionTokenNode.startTokens.add(tokens.EndFunctionToken);
 
 export class SubTokenNode extends TokenNode {}
-SubTokenNode.startTokens = new Set();
+SubTokenNode.startTokens = new Set<typeof tokens.Token>();
 SubTokenNode.startTokens.add(tokens.SubToken);
 
 export class EndSubTokenNode extends TokenNode {}
-EndSubTokenNode.startTokens = new Set();
+EndSubTokenNode.startTokens = new Set<typeof tokens.Token>();
 EndSubTokenNode.startTokens.add(tokens.EndSubToken);
 
 export class IdentifierTokenNode extends TokenNode {}
-IdentifierTokenNode.startTokens = new Set();
+IdentifierTokenNode.startTokens = new Set<typeof tokens.Token>();
 IdentifierTokenNode.startTokens.add(tokens.IdentifierToken);
 
 export class NewLineTokenNode extends TokenNode {}
-NewLineTokenNode.startTokens = new Set();
+NewLineTokenNode.startTokens = new Set<typeof tokens.Token>();
 NewLineTokenNode.startTokens.add(tokens.NewLineToken);
 
 // Forward declare a few nodes
 export class ExpressionNode extends SequenceNode {}
-ExpressionNode.startTokens = new Set();
+ExpressionNode.startTokens = new Set<typeof tokens.Token>();
 ExpressionNode.startTokens.add(tokens.LeftBracketToken);
 ExpressionNode.startTokens.add(tokens.NotToken);
 ExpressionNode.startTokens.add(tokens.SubstractionToken);
@@ -422,7 +422,7 @@ ExpressionNode.startTokens.add(tokens.NumberToken);
 ExpressionNode.startTokens.add(tokens.StringToken);
 
 export class FunctionCallNode extends SequenceNode {}
-FunctionCallNode.startTokens = new Set();
+FunctionCallNode.startTokens = new Set<typeof tokens.Token>();
 FunctionCallNode.startTokens.add(tokens.IdentifierToken);
 
 // Generic nodes
@@ -533,7 +533,7 @@ SequenceNode.build(ExpressionNode, [
 ]);
 
 export class TypeNode extends SequenceNode {}
-TypeNode.startTokens = new Set();
+TypeNode.startTokens = new Set<typeof tokens.Token>();
 TypeNode.startTokens.add(tokens.IdentifierToken);
 TypeNode.startTokens.add(tokens.LeftParenthesisToken);
 
@@ -617,7 +617,7 @@ SequenceNode.build(StatementNode, [
 });
 
 export class BlockNode extends SequenceNode {}
-BlockNode.startTokens = new Set();
+BlockNode.startTokens = new Set<typeof tokens.Token>();
 BlockNode.startTokens.add(tokens.IdentifierToken);
 BlockNode.startTokens.add(tokens.NewLineToken);
 BlockNode.startTokens.add(tokens.ForToken);
