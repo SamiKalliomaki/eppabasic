@@ -304,7 +304,7 @@ export class NumberToken extends Token {
      * Pattern this tokens type should match.
      */
     static get pattern(): RegExp {
-        return XRegExp('^\\h*?-?\\d*\\.\\d+\\nc');
+        return XRegExp('^\\h*?-?\\d*\\.?\\d+\\b');
     }
 
     /**
@@ -326,7 +326,7 @@ export class StringToken extends Token {
      * Pattern this tokens type should match.
      */
     static get pattern(): RegExp {
-        return XRegExp('^\\h*?"([^"\n]|"")*"\\nc');
+        return XRegExp('^\\h*?"([^"\n]|"")*"');
     }
 
     /**
