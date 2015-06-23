@@ -3,7 +3,7 @@
 /// <reference path="../compiler/types.js" />
 /// <reference path="../compiler/compiler.js" />
 
-define(['ace/ace', 'i18n', './autocompleter'], function (ace, i18n, Autocompleter) {
+define(['ace/ace', 'i18n', './autocompleter', 'compiler/Driver'], function (ace, i18n, Autocompleter, CompilerDriver) {
     function Editor(editorName, manual, notificationSystem) {
         this.manual = manual;
         this.editorName = editorName;
@@ -46,13 +46,16 @@ define(['ace/ace', 'i18n', './autocompleter'], function (ace, i18n, Autocomplete
             trySaveToStorage(localStorage, this);
             trySaveToStorage(sessionStorage, this);
 
-            var messages = [
-                'Compilation is not supported',
-                'Compiler is not implemented',
-                'Hey! Stop hitting that button',
-                'Don\'t press that button'
-            ]
-            this.notificationSystem.notify(messages[Math.floor(Math.random() * messages.length)])
+            // Compile the code
+            var driver = new CompilerDriver();
+
+            driver.compile(this.getCode()).then(function (res) {
+                console.log(res);
+            }, function (err) {
+                console.error(err);
+            });
+
+            // TODO Run compiled code
         },
         run: function run(compiled) {
             this.runtimeReady(function ready() {

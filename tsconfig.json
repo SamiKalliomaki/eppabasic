@@ -25,6 +25,7 @@
         "./lib/requirejs.d.ts",
         "./lib/vendor.d.ts",
         "./lib/xregexp.d.ts",
+        "./src/compiler/Driver.ts",
         "./src/compiler/programs/AsmjsTargetProgram.ts",
         "./src/compiler/programs/AstProgram.ts",
         "./src/compiler/programs/LinearProgram.ts",
