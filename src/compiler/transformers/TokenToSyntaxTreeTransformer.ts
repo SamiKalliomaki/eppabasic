@@ -34,8 +34,8 @@ class TokenToSyntaxTreeTransformer implements Transformer {
      *
      * @returns Promise of transformed program.
      */
-    transform(source: TokenProgram, preserve?: boolean): Promise<Program> {
-        return new Promise<Program>((resolve: (program: Program) => void, reject: (error: any) => void) => {
+    transform(source: TokenProgram, preserve?: boolean): Promise<SyntaxTreeProgram> {
+        return new Promise<SyntaxTreeProgram>((resolve: (program: SyntaxTreeProgram) => void, reject: (error: any) => void) => {
             var files = new Set<SyntaxTree>();
             var mainFile: SyntaxTree = this.transformFile(source.mainFile);
 
@@ -70,14 +70,14 @@ class Parser {
         var tokenQueue = tokenFile.tokens.slice(0);
         var root = new nodes.BaseLevelBlockNode();
         var tree = new SyntaxTree(root);
-        var queue = [ root ];
+        var queue = [root];
 
-        while(tokenQueue.length != 0) {
-            var node = queue[0];
+        while (tokenQueue.length != 0) {
+            var node = queue.pop();
 
             var added = node.expand(tokenQueue);
-            queue.shift();
-            queue = added.concat(queue);
+            for (var i = added.length - 1; i >= 0; i--)
+                queue.push(added[i]);
         }
 
         return tree;
