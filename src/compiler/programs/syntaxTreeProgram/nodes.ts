@@ -506,52 +506,81 @@ SequenceNode.build(Expression7Node, [
     }
 });
 
+export class Expression6ContinuationNode extends SequenceNode {}
+SequenceNode.build(Expression6ContinuationNode, [
+    [ ],
+    [ PowerTokenNode, Expression7Node, Expression6ContinuationNode ]
+]);
+
 export class Expression6Node extends SequenceNode {}
 SequenceNode.build(Expression6Node, [
-    [ Expression7Node ],
-    [ Expression6Node, PowerTokenNode, Expression7Node ]
+    [ Expression7Node, Expression6ContinuationNode ]
+]);
+
+export class Expression5ContinuationNode extends SequenceNode {}
+SequenceNode.build(Expression5ContinuationNode, [
+    [ ],
+    [ MultiplicationTokenNode, Expression6Node, Expression5ContinuationNode ],
+    [ DivisionTokenNode, Expression6Node, Expression5ContinuationNode ],
+    [ IntegerDivisionTokenNode, Expression6Node, Expression5ContinuationNode ],
+    [ ModTokenNode, Expression6Node, Expression5ContinuationNode ]
 ]);
 
 export class Expression5Node extends SequenceNode {}
 SequenceNode.build(Expression5Node, [
-    [ Expression6Node ],
-    [ Expression5Node, MultiplicationTokenNode, Expression6Node ],
-    [ Expression5Node, DivisionTokenNode, Expression6Node ],
-    [ Expression5Node, IntegerDivisionTokenNode, Expression6Node ],
-    [ Expression5Node, ModTokenNode, Expression6Node ],
+    [ Expression6Node, Expression5ContinuationNode ]
 ]);
 
+export class Expression4ContinuationNode extends SequenceNode {}
+SequenceNode.build(Expression4ContinuationNode, [
+    [ ],
+    [ AdditionTokenNode, Expression5Node, Expression4ContinuationNode ],
+    [ SubstractionTokenNode, Expression5Node, Expression4ContinuationNode ]
+]);
 
 export class Expression4Node extends SequenceNode {}
 SequenceNode.build(Expression4Node, [
-    [ Expression5Node ],
-    [ Expression4Node, AdditionTokenNode, Expression5Node ],
-    [ Expression4Node, SubstractionTokenNode, Expression5Node ],
+    [ Expression5Node, Expression4ContinuationNode ]
+]);
+
+export class Expression3ContinuationNode extends SequenceNode {}
+SequenceNode.build(Expression3ContinuationNode, [
+    [ ],
+    [ ConcatenationTokenNode, Expression4Node, Expression3ContinuationNode ]
 ]);
 
 export class Expression3Node extends SequenceNode {}
 SequenceNode.build(Expression3Node, [
-    [ Expression4Node ],
-    [ Expression3Node, ConcatenationTokenNode, Expression4Node ],
+    [ Expression4Node, Expression3ContinuationNode ],
+]);
+
+export class Expression2ContinuationNode extends SequenceNode {}
+SequenceNode.build(Expression2ContinuationNode, [
+    [ ],
+    [ EqualTokenNode, Expression3Node, Expression2ContinuationNode ],
+    [ NotEqualTokenNode, Expression3Node, Expression2ContinuationNode ],
+    [ LessThanTokenNode, Expression3Node, Expression2ContinuationNode ],
+    [ LessOrEqualTokenNode, Expression3Node, Expression2ContinuationNode ],
+    [ GreaterThanTokenNode, Expression3Node, Expression2ContinuationNode ],
+    [ GreaterOrEqualTokenNode, Expression3Node, Expression2ContinuationNode ]
 ]);
 
 export class Expression2Node extends SequenceNode {}
 SequenceNode.build(Expression2Node, [
-    [ Expression3Node ],
-    [ Expression2Node, EqualTokenNode, Expression3Node ],
-    [ Expression2Node, NotEqualTokenNode, Expression3Node ],
-    [ Expression2Node, LessThanTokenNode, Expression3Node ],
-    [ Expression2Node, LessOrEqualTokenNode, Expression3Node ],
-    [ Expression2Node, GreaterThanTokenNode, Expression3Node ],
-    [ Expression2Node, GreaterOrEqualTokenNode, Expression3Node ],
+    [ Expression3Node, Expression2ContinuationNode ]
+]);
+
+export class Expression1ContinuationNode extends SequenceNode {}
+SequenceNode.build(Expression1ContinuationNode, [
+    [ ],
+    [ OrTokenNode, Expression2Node, Expression1ContinuationNode ],
+    [ AndTokenNode, Expression2Node, Expression1ContinuationNode ],
+    [ XorTokenNode, Expression2Node, Expression1ContinuationNode ]
 ]);
 
 export class Expression1Node extends SequenceNode {}
 SequenceNode.build(Expression1Node, [
-    [ Expression2Node ],
-    [ Expression1Node, OrTokenNode, Expression2Node ],
-    [ Expression1Node, AndTokenNode, Expression2Node ],
-    [ Expression1Node, XorTokenNode, Expression2Node ],
+    [ Expression2Node, Expression1ContinuationNode ],
 ]);
 
 SequenceNode.build(ExpressionNode, [
@@ -572,14 +601,19 @@ SequenceNode.build(TypeListContinuationNode, [
 export class TypeListNode extends SequenceNode {}
 SequenceNode.build(TypeListNode, [
     [],
-    [ CommaTokenNode, TypeNode, TypeListContinuationNode ]
+    [ TypeNode, TypeListContinuationNode ]
+]);
+
+export class TypeContinuationNode extends SequenceNode {}
+SequenceNode.build(TypeContinuationNode, [
+    [ ],
+    [ LeftBracketTokenNode, ExpressionNode, RightBracketTokenNode , TypeContinuationNode ],
+    [ LeftParenthesisTokenNode, TypeListNode, RightParenthesisTokenNode, TypeContinuationNode ],
 ]);
 
 SequenceNode.build(TypeNode, [
-    [ IdentifierTokenNode ],
-    [ TypeNode, LeftBracketTokenNode, ExpressionNode, RightBracketTokenNode ],
-    [ TypeNode, LeftParenthesisTokenNode, TypeListNode, RightParenthesisTokenNode ],
-    [ LeftParenthesisTokenNode, TypeListNode, RightParenthesisTokenNode ]
+    [ IdentifierTokenNode, TypeContinuationNode ],
+    [ LeftParenthesisTokenNode, TypeListNode, RightParenthesisTokenNode, TypeContinuationNode ]
 ]);
 
 export class TypeSpecifierNode extends SequenceNode {}
