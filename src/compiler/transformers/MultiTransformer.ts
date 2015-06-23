@@ -37,10 +37,10 @@ class MultiTransformer implements Transformer {
                     return;
                 }
 
-                this._transformers[i].transform(program, preserve)
-                    .then(nextTransformation)
-                    .catch(reject);
+
+                var promise = this._transformers[i].transform(program, preserve);
                 i++;
+                promise.then(nextTransformation, reject);
             };
             nextTransformation(source);
         });
