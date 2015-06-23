@@ -75,13 +75,19 @@ export class TokenNode extends Node {
             tokenClass = _tokenClass;
         });
 
-        if(queue.length >= 1 && queue[0] instanceof tokenClass) {
+        if (queue.length < 1) {
+            throw new ParseError('No input for expanding ' + tokenToString(tokenClass));
+        }
+
+        if(queue[0] instanceof tokenClass) {
             this._token = queue[0];
             queue.shift();
             return [];
         }
 
-        throw new ParseError('Invalid token encountered');
+        throw new ParseError('Invalid token encountered: '
+                            + tokenToString(<typeof tokens.Token> queue[0].constructor)
+                            + ' but expected ' + tokenToString(tokenClass));
     }
 }
 
@@ -130,8 +136,28 @@ export class SequenceNode extends Node {
             return [];
         }
 
-        throw new ParseError('Invalid token encountered');
+        throw new ParseError('Invalid token encountered: '
+                            + tokenToString(<typeof tokens.Token> queue[0].constructor)
+                            + ' but expected one of ' + tokenSetToString(Class.startTokens));
     }
+}
+
+/*
+ * Converts a set of Token types to string for better internal error messages.
+ */
+function tokenSetToString(set: Set<typeof tokens.Token>): string {
+    var buf = [];
+    set.forEach((value) => {
+        buf.push(tokenToString(value));
+    });
+    return '{' + buf.join(', ') + '}';
+}
+
+/**
+ * Converts a single Token type to string for better internal error messages.
+ */
+function tokenToString(token: typeof tokens.Token): string {
+    return (<Function> token).name;
 }
 
 export module SequenceNode {
