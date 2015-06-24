@@ -1,8 +1,8 @@
-export class BaseNode {
+export class Node {
 
 }
 
-export class For extends BaseNode {
+export class For extends Node {
     private _iterator: string;
     private _start: Expression;
     private _stop: Expression;
@@ -10,10 +10,19 @@ export class For extends BaseNode {
 
 }
 
-export class If extends BaseNode {
+export class If extends Node {
     // TODO
 }
 
-export class Expression extends BaseNode {
+export class Expression extends Node {
     // TODO
+}
+
+export class Number extends Node {
+    private _value: number;
+
+    constructor(value: number) {
+        super();
+        this._value = value;
+    }
 }

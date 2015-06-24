@@ -53,6 +53,13 @@ export class Node {
     static getShortest(): tokens.Token[] {
         throw Error('Not implemented');
     }
+
+    /**
+     * Children of this node.
+     */
+    get children(): Node[] {
+        return this._children;
+    }
 }
 
 /*
@@ -88,6 +95,13 @@ export class TokenNode extends Node {
         throw new ParseError('Invalid token encountered: '
                             + tokenToString(<typeof tokens.Token> queue[0].constructor)
                             + ' but expected ' + tokenToString(tokenClass));
+    }
+
+    /**
+     * Token encapsured in this node.
+     */
+    get token(): tokens.Token {
+        return this._token;
     }
 }
 
