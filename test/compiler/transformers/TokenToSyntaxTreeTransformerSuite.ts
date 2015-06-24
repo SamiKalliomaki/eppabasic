@@ -85,7 +85,7 @@ export class TokenToSyntaxTreeTransformerSuite {
             new tokens.EOSToken()
         ]);
 
-        var variableAssignmentProgram = new TokenProgram(new Set(), variableAssignmentFile);
+        var variableAssignmentProgram = new TokenProgram(new Set<TokenFile>(), variableAssignmentFile);
 
         var transformer = new TokenToSyntaxTreeTranformer();
         transformer.transform(variableAssignmentProgram).then((program: SyntaxTreeProgram) => {
@@ -142,7 +142,7 @@ export class TokenToSyntaxTreeTransformerSuite {
             new tokens.EOSToken()
         ]);
 
-        var functionCallProgram = new TokenProgram(new Set(), functionCallFile);
+        var functionCallProgram = new TokenProgram(new Set<TokenFile>(), functionCallFile);
 
         var transformer = new TokenToSyntaxTreeTranformer();
         transformer.transform(functionCallProgram).then((program: SyntaxTreeProgram) => {
@@ -200,7 +200,7 @@ export class TokenToSyntaxTreeTransformerSuite {
             new tokens.EOSToken(),
         ]);
 
-        var baseLevelFunctionCallProgram = new TokenProgram(new Set(), baseLevelFunctionCallFile);
+        var baseLevelFunctionCallProgram = new TokenProgram(new Set<TokenFile>(), baseLevelFunctionCallFile);
 
         var transformer = new TokenToSyntaxTreeTranformer();
         transformer.transform(baseLevelFunctionCallProgram).then((program: SyntaxTreeProgram) => {
@@ -260,7 +260,7 @@ export class TokenToSyntaxTreeTransformerSuite {
             new tokens.EOSToken()
         ]);
 
-        var functionCallProgram = new TokenProgram(new Set(), functionCallFile);
+        var functionCallProgram = new TokenProgram(new Set<TokenFile>(), functionCallFile);
 
         var transformer = new TokenToSyntaxTreeTranformer();
         transformer.transform(functionCallProgram).then((program: SyntaxTreeProgram) => {

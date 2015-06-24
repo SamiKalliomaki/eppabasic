@@ -18,7 +18,7 @@
     "process": "^0.10.1",
     "rjs-build-analysis": "0.0.3",
     "string-format": "^0.5.0",
-    "typescript": "^1.4.1"
+    "typescript": "^1.5.0-beta"
   },
   "private": true
 }

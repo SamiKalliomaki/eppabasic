@@ -66,7 +66,7 @@ class RenderHandlerModule implements Module {
         this._functions = new Map<string, Function>();
 
         var drawScreen = (): void => {
-            this._foregroundCanvas.getContext('2d').drawImage(this._backgroundCanvas, 0, 0);
+            this._runtime.renderingContext.drawImage(this._backgroundCanvas, 0, 0);
             // Finally break the execution
             this._runtime.program.breakExec();
         };

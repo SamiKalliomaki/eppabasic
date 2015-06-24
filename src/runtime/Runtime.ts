@@ -127,7 +127,7 @@ class Runtime extends EventEmitter {
      */
     set canvas(canvas: HTMLCanvasElement) {
         this._canvas = canvas;
-        this._renderingContext = canvas.getContext('2d');
+        this._renderingContext = <CanvasRenderingContext2D> canvas.getContext('2d');
     }
     /**
      * Rendering context to be used when rendering.
