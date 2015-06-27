@@ -75,7 +75,7 @@ export class Node {
  * Syntax tree node consisting of a single token
  */
 export class TokenNode extends Node {
-    private _token: tokens.Token;
+    protected _token: tokens.Token;
 
     /*
      * Expands token node. Tries to consume token of node's type. If that fails, throws a ParseError.
@@ -348,11 +348,24 @@ export class NumberTokenNode extends TokenNode {
     getNodeName() {
         return this.getClassName() + ': ' + (<tokens.NumberToken> this.token).value;
     }
+    /**
+     * Token encapsured in this node.
+     */
+    get token(): tokens.NumberToken {
+        return <tokens.NumberToken> this._token;
+    }
 }
 NumberTokenNode.startTokens = new Set<typeof tokens.Token>();
 NumberTokenNode.startTokens.add(tokens.NumberToken);
 
-export class StringTokenNode extends TokenNode {}
+export class StringTokenNode extends TokenNode {
+    /**
+     * Token encapsured in this node.
+     */
+    get token(): tokens.StringToken {
+        return <tokens.StringToken> this._token;
+    }
+}
 StringTokenNode.startTokens = new Set<typeof tokens.Token>();
 StringTokenNode.startTokens.add(tokens.StringToken);
 

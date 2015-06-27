@@ -45,7 +45,7 @@ class SyntaxTreeToAstTransformer implements Transformer {
                 // TODO: Throw error instead of logging it
                 console.error(new Error('No defined node transformer for ' + sourceType.name));
             else
-            transformResults.set(sourceNode, transform(sourceNode, transformResults));
+                transformResults.set(sourceNode, transform(sourceNode, transformResults));
         });
 
         console.log(file.root.toString());
@@ -87,7 +87,19 @@ class SyntaxTreeToAstTransformer implements Transformer {
             [N.DimTokenNode, dummyTokenTransformer],
             [N.IdentifierTokenNode, dummyTokenTransformer],
             [N.EqualTokenNode, dummyTokenTransformer],
-
+            // Expressions
+            [N.Expression7Node, expression7Transformer],
+            [N.Expression6Node, expression123456Transformer],
+            [N.Expression5Node, expression123456Transformer],
+            [N.Expression4Node, expression123456Transformer],
+            [N.Expression3Node, expression123456Transformer],
+            [N.Expression2Node, expression123456Transformer],
+            [N.Expression1Node, expression123456Transformer],
+            [N.Expression6ContinuationNode, expression6ContinuationTransformer],
+            // Constant nodes
+            [N.NumberTokenNode, numberTokenTransformer],
+            [N.StringTokenNode, stringTokenTransformer],
+            [N.ConstantNode, deferTransformer],
         ]);
 
 
@@ -102,6 +114,99 @@ interface NodeTransformer {
 
 function dummyTokenTransformer(): AstNodes.Node {
     return null;
+}
+function deferTransformer(node: SyntaxTreeNodes.Node, results: Map<SyntaxTreeNodes.Node, AstNodes.Node>): AstNodes.Node {
+    if (node.children.length !== 1)
+        throw new Error('Defering nodes should have exactly 1 child');
+    return results.get(node.children[0]);
+}
+function numberTokenTransformer(node: SyntaxTreeNodes.NumberTokenNode): AstNodes.Number {
+    return new AstNodes.Number(node.token.value);
+}
+function stringTokenTransformer(node: SyntaxTreeNodes.StringTokenNode): AstNodes.String {
+    return new AstNodes.String(node.token.value);
+}
+
+// Expressions
+function expression7Transformer(node: SyntaxTreeNodes.Expression7Node, results: Map<SyntaxTreeNodes.Node, AstNodes.Node>): AstNodes.Node {
+    // Expression in parenthesis
+    if (node.children.length === 3
+        && node.children[0] instanceof SyntaxTreeNodes.LeftParenthesisTokenNode
+        && node.children[1] instanceof SyntaxTreeNodes.ExpressionNode
+        && node.children[2] instanceof SyntaxTreeNodes.RightParenthesisTokenNode) {
+        return results.get(node.children[1]);
+    }
+    // Not expression
+    if (node.children.length === 2
+        && node.children[0] instanceof SyntaxTreeNodes.NotTokenNode
+        && node.children[1] instanceof SyntaxTreeNodes.Expression7Node) {
+        return new AstNodes.Not(results.get(node.children[1]));
+    }
+    // Negation
+    if (node.children.length === 2
+        && node.children[0] instanceof SyntaxTreeNodes.NotTokenNode
+        && node.children[1] instanceof SyntaxTreeNodes.Expression7Node) {
+        return new AstNodes.Negation(results.get(node.children[1]));
+    }
+    // Constant
+    if (node.children.length === 1
+        && node.children[0] instanceof SyntaxTreeNodes.ConstantNode) {
+        return results.get(node.children[0]);
+    }
+    // Function call
+    if (node.children.length === 1
+        && node.children[0] instanceof SyntaxTreeNodes.FunctionCallNode) {
+        return results.get(node.children[0]);
+    }
+    // Variable reference
+    if (node.children.length === 1
+        && node.children[0] instanceof SyntaxTreeNodes.VariableReferenceNode) {
+        return results.get(node.children[0]);
+    }
+
+    throw new Error('Expression7Node\'s children did not match any known combination.');
+}
+function expression6ContinuationTransformer(node: SyntaxTreeNodes.Expression6ContinuationNode, results: Map<SyntaxTreeNodes.Node, AstNodes.Node>): AstNodes.Node {
+    // Empty
+    if (node.children.length===0)
+        return null;
+
+    var right: AstNodes.Expression = null;
+    var continuation: AstNodes.BinaryExpression = null;
+    var type: typeof AstNodes.BinaryExpression = null;
+
+    // Power
+    if (node.children.length === 3
+        && node.children[0] instanceof SyntaxTreeNodes.PowerTokenNode
+        && node.children[1] instanceof SyntaxTreeNodes.Expression7Node
+        && node.children[2] instanceof SyntaxTreeNodes.Expression6ContinuationNode) {
+        right = results.get(node.children[1]);
+        continuation = <AstNodes.BinaryExpression> results.get(node.children[2]);
+        type = AstNodes.Power;
+    }
+
+    if (!type)
+        throw new Error('Expression6ContinuationNode\'s children did not match any known combination.');
+
+    if (continuation) {
+        continuation.left = right;
+        right = continuation;
+    }
+
+    return new type(null, right);
+}
+function expression123456Transformer(node: SyntaxTreeNodes.Expression6Node, results: Map<SyntaxTreeNodes.Node, AstNodes.Node>): AstNodes.Node {
+    if (node.children.length !== 2)
+        throw new Error('ExpressionNode\'s children did not match any known combination.');
+
+    var left = results.get(node.children[0]);
+    var continuation = <AstNodes.BinaryExpression> results.get(node.children[1]);
+
+    if (continuation) {
+        continuation.left = left;
+        return continuation;
+    }
+    return left;
 }
 
 export = SyntaxTreeToAstTransformer;
