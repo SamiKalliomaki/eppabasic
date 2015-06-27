@@ -17,6 +17,15 @@ export class Node {
         this._children = [];
     }
 
+    getClassName() {
+        // Dirty hack to get the class name. Won't work IE<9.
+        return (<{name: string}><Object> this.constructor).name;
+    }
+
+    getNodeName() {
+        return this.getClassName();
+    }
+
     toString(level: number = 0): string {
         var str = '';
 
@@ -26,8 +35,8 @@ export class Node {
         if(level >= 1)
             str += '|-';
 
-        // Dirty hack to get the class name. Won't work IE<9.
-        str += (<{name: string}><Object> this.constructor).name;
+
+        str += this.getNodeName();
 
         this._children.forEach((child) => {
             str += '\n' + child.toString(level + 1);
@@ -335,7 +344,11 @@ export class NotTokenNode extends TokenNode {}
 NotTokenNode.startTokens = new Set<typeof tokens.Token>();
 NotTokenNode.startTokens.add(tokens.NotToken);
 
-export class NumberTokenNode extends TokenNode {}
+export class NumberTokenNode extends TokenNode {
+    getNodeName() {
+        return this.getClassName() + ': ' + (<tokens.NumberToken> this.token).value;
+    }
+}
 NumberTokenNode.startTokens = new Set<typeof tokens.Token>();
 NumberTokenNode.startTokens.add(tokens.NumberToken);
 
