@@ -102,4 +102,18 @@ export class AdditionNode extends BinaryExpressionNode { }
 export class SubstractionNode extends BinaryExpressionNode { }
 export class MultiplicationNode extends BinaryExpressionNode { }
 export class DivisionNode extends BinaryExpressionNode { }
+export class IntegerDivisionNode extends BinaryExpressionNode { }
 export class ModuloNode extends BinaryExpressionNode { }
+
+export class ConcatenationNode extends BinaryExpressionNode { }
+
+export class EqualNode extends BinaryExpressionNode { }
+export class NotEqualNode extends BinaryExpressionNode { }
+export class LessThanNode extends BinaryExpressionNode { }
+export class LessOrEqualNode extends BinaryExpressionNode { }
+export class GreaterThanNode extends BinaryExpressionNode { }
+export class GreaterOrEqualNode extends BinaryExpressionNode { }
+
+export class OrNode extends BinaryExpressionNode { }
+export class AndNode extends BinaryExpressionNode { }
+export class XorNode extends BinaryExpressionNode { }
