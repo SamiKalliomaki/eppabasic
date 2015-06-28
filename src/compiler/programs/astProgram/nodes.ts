@@ -2,23 +2,59 @@ export class Node {
 
 }
 
-export class For extends Node {
-    private _iterator: string;
-    private _start: Expression;
-    private _stop: Expression;
-    private _step: Expression;
+export class IdentifierNode extends Node {
+    private _value: string;
+}
+
+export class VariableReferenceNode extends Node {
+    private _name: IdentifierNode;
+    // Null if this is not an array
+    private _arrayIndex: ExpressionNode[][];
+}
+
+export class StatementNode extends Node {
 
 }
 
-export class If extends Node {
+export class VariableAssignmentNode extends StatementNode {
+    private _variable: VariableReferenceNode;
+}
+
+export class BlockNode extends Node {
+    private _inner: Node[];
+
+    addFront(statement: Node) {
+        this._inner.unshift(statement);
+    }
+
+    constructor() {
+        super();
+
+        this._inner = new Array();
+    }
+}
+
+export class BaseLevelBlockNode extends BlockNode {
+
+}
+
+export class ForNode extends BlockNode {
+    private _iterator: IdentifierNode;
+    private _start: ExpressionNode;
+    private _stop: ExpressionNode;
+    private _step: ExpressionNode;
+
+}
+
+export class IfNode extends Node {
     // TODO
 }
 
-export class Expression extends Node {
+export class ExpressionNode extends Node {
     // TODO
 }
 
-export class Number extends Node {
+export class NumberNode extends Node {
     private _value: number;
 
     constructor(value: number) {
@@ -26,7 +62,7 @@ export class Number extends Node {
         this._value = value;
     }
 }
-export class String extends Node {
+export class StringNode extends Node {
     private _value: string;
 
     constructor(value: string) {
@@ -34,36 +70,36 @@ export class String extends Node {
         this._value = value;
     }
 }
-export class UnaryExpression extends Expression {
-    private _expr: Expression;
+export class UnaryExpressionNode extends ExpressionNode {
+    private _expr: ExpressionNode;
 
-    constructor(expr: Expression) {
+    constructor(expr: ExpressionNode) {
         super();
         this._expr = expr;
     }
 }
-export class Not extends UnaryExpression { }
-export class Negation extends UnaryExpression { }
+export class NotNode extends UnaryExpressionNode { }
+export class NegationNode extends UnaryExpressionNode { }
 
-export class BinaryExpression extends Expression {
-    private _left: Expression;
-    private _right: Expression;
-    constructor(left: Expression, right: Expression) {
+export class BinaryExpressionNode extends ExpressionNode {
+    private _left: ExpressionNode;
+    private _right: ExpressionNode;
+    constructor(left: ExpressionNode, right: ExpressionNode) {
         super();
         this._left = left;
         this._right = right;
     }
 
-    set right(expr: Expression) {
+    set right(expr: ExpressionNode) {
         this._right = expr;
     }
     set left(expr: Expression) {
         this._left = expr;
     }
 }
-export class Power extends BinaryExpression { }
-export class Addtion extends BinaryExpression { }
-export class Substraction extends BinaryExpression { }
-export class Multiplication extends BinaryExpression { }
-export class Division extends BinaryExpression { }
-export class Modulo extends BinaryExpression { }
+export class PowerNode extends BinaryExpressionNode { }
+export class AdditionNode extends BinaryExpressionNode { }
+export class SubstractionNode extends BinaryExpressionNode { }
+export class MultiplicationNode extends BinaryExpressionNode { }
+export class DivisionNode extends BinaryExpressionNode { }
+export class ModuloNode extends BinaryExpressionNode { }

@@ -87,6 +87,11 @@ class SyntaxTreeToAstTransformer implements Transformer {
             [N.DimTokenNode, dummyTokenTransformer],
             [N.IdentifierTokenNode, dummyTokenTransformer],
             [N.EqualTokenNode, dummyTokenTransformer],
+            // Defer nodes
+            [N.StatementNode, deferTransformer],
+            // Block nodes
+            [N.BaseLevelBlockNode, baseLevelBlockTransformer],
+            [N.BlockNode, blockTransformer],
             // Expressions
             [N.Expression7Node, expression7Transformer],
             [N.Expression6Node, expression123456Transformer],
@@ -100,6 +105,8 @@ class SyntaxTreeToAstTransformer implements Transformer {
             [N.NumberTokenNode, numberTokenTransformer],
             [N.StringTokenNode, stringTokenTransformer],
             [N.ConstantNode, deferTransformer],
+            // Statements
+            [N.VariableAssignmentNode, variableAssignmentTransformer],
         ]);
 
 
@@ -120,11 +127,43 @@ function deferTransformer(node: SyntaxTreeNodes.Node, results: Map<SyntaxTreeNod
         throw new Error('Defering nodes should have exactly 1 child');
     return results.get(node.children[0]);
 }
-function numberTokenTransformer(node: SyntaxTreeNodes.NumberTokenNode): AstNodes.Number {
-    return new AstNodes.Number(node.token.value);
+function numberTokenTransformer(node: SyntaxTreeNodes.NumberTokenNode): AstNodes.NumberNode {
+    return new AstNodes.NumberNode(node.token.value);
 }
-function stringTokenTransformer(node: SyntaxTreeNodes.StringTokenNode): AstNodes.String {
-    return new AstNodes.String(node.token.value);
+function stringTokenTransformer(node: SyntaxTreeNodes.StringTokenNode): AstNodes.StringNode {
+    return new AstNodes.StringNode(node.token.value);
+}
+
+function baseLevelBlockTransformer(node: SyntaxTreeNodes.BaseLevelBlockNode, results: Map<SyntaxTreeNodes.Node, AstNodes.Node>)) {
+    if(node.children.length === 0) {
+        return new AstNodes.BaseLevelBlockNode();
+    }
+
+    if (node.children.length !== 2)
+        throw new Error('BaseLevelBlockNode\'s children did not match any known combination.');
+
+    var inner: AstNodes.Node = results.get(node.children[0]);
+    var block: AstNodes.BaseLevelBlockNode = results.get(node.children[1]);
+
+    block.addFront(inner);
+
+    return block;
+}
+
+function blockTransformer(node: SyntaxTreeNodes.BlockNode, results: Map<SyntaxTreeNodes.Node, AstNodes.Node>)) {
+    if(node.children.length === 0) {
+        return new AstNodes.BlockNode();
+    }
+
+    if (node.children.length !== 2)
+        throw new Error('BlockNode\'s children did not match any known combination.');
+
+    var inner: AstNodes.Node = results.get(node.children[0]);
+    var block: AstNodes.BaseLevelBlockNode = results.get(node.children[1]);
+
+    block.addFront(inner);
+
+    return block;
 }
 
 // Expressions
@@ -140,13 +179,13 @@ function expression7Transformer(node: SyntaxTreeNodes.Expression7Node, results: 
     if (node.children.length === 2
         && node.children[0] instanceof SyntaxTreeNodes.NotTokenNode
         && node.children[1] instanceof SyntaxTreeNodes.Expression7Node) {
-        return new AstNodes.Not(results.get(node.children[1]));
+        return new AstNodes.NotNode(results.get(node.children[1]));
     }
     // Negation
     if (node.children.length === 2
         && node.children[0] instanceof SyntaxTreeNodes.NotTokenNode
         && node.children[1] instanceof SyntaxTreeNodes.Expression7Node) {
-        return new AstNodes.Negation(results.get(node.children[1]));
+        return new AstNodes.NegationNode(results.get(node.children[1]));
     }
     // Constant
     if (node.children.length === 1
@@ -171,9 +210,9 @@ function expression6ContinuationTransformer(node: SyntaxTreeNodes.Expression6Con
     if (node.children.length===0)
         return null;
 
-    var right: AstNodes.Expression = null;
-    var continuation: AstNodes.BinaryExpression = null;
-    var type: typeof AstNodes.BinaryExpression = null;
+    var right: AstNodes.ExpressionNode = null;
+    var continuation: AstNodes.BinaryExpressionNode = null;
+    var type: typeof AstNodes.BinaryExpressionNode = null;
 
     // Power
     if (node.children.length === 3
@@ -181,8 +220,8 @@ function expression6ContinuationTransformer(node: SyntaxTreeNodes.Expression6Con
         && node.children[1] instanceof SyntaxTreeNodes.Expression7Node
         && node.children[2] instanceof SyntaxTreeNodes.Expression6ContinuationNode) {
         right = results.get(node.children[1]);
-        continuation = <AstNodes.BinaryExpression> results.get(node.children[2]);
-        type = AstNodes.Power;
+        continuation = <AstNodes.BinaryExpressionNode> results.get(node.children[2]);
+        type = AstNodes.PowerNode;
     }
 
     if (!type)
@@ -200,7 +239,7 @@ function expression123456Transformer(node: SyntaxTreeNodes.Expression6Node, resu
         throw new Error('ExpressionNode\'s children did not match any known combination.');
 
     var left = results.get(node.children[0]);
-    var continuation = <AstNodes.BinaryExpression> results.get(node.children[1]);
+    var continuation = <AstNodes.BinaryExpressionNode> results.get(node.children[1]);
 
     if (continuation) {
         continuation.left = left;

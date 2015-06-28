@@ -346,7 +346,7 @@ NotTokenNode.startTokens.add(tokens.NotToken);
 
 export class NumberTokenNode extends TokenNode {
     getNodeName() {
-        return this.getClassName() + ': ' + (<tokens.NumberToken> this.token).value;
+        return this.getClassName() + ': ' + this.token.value;
     }
     /**
      * Token encapsured in this node.
