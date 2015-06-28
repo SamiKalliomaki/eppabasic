@@ -134,7 +134,7 @@ function stringTokenTransformer(node: SyntaxTreeNodes.StringTokenNode): AstNodes
     return new AstNodes.StringNode(node.token.value);
 }
 
-function baseLevelBlockTransformer(node: SyntaxTreeNodes.BaseLevelBlockNode, results: Map<SyntaxTreeNodes.Node, AstNodes.Node>)) {
+function baseLevelBlockTransformer(node: SyntaxTreeNodes.BaseLevelBlockNode, results: Map<SyntaxTreeNodes.Node, AstNodes.Node>): AstNodes.BaseLevelBlockNode {
     if(node.children.length === 0) {
         return new AstNodes.BaseLevelBlockNode();
     }
@@ -143,14 +143,14 @@ function baseLevelBlockTransformer(node: SyntaxTreeNodes.BaseLevelBlockNode, res
         throw new Error('BaseLevelBlockNode\'s children did not match any known combination.');
 
     var inner: AstNodes.Node = results.get(node.children[0]);
-    var block: AstNodes.BaseLevelBlockNode = results.get(node.children[1]);
+    var block: AstNodes.BaseLevelBlockNode = <AstNodes.BaseLevelBlockNode> results.get(node.children[1]);
 
     block.addFront(inner);
 
     return block;
 }
 
-function blockTransformer(node: SyntaxTreeNodes.BlockNode, results: Map<SyntaxTreeNodes.Node, AstNodes.Node>)) {
+function blockTransformer(node: SyntaxTreeNodes.BlockNode, results: Map<SyntaxTreeNodes.Node, AstNodes.Node>): AstNodes.BlockNode {
     if(node.children.length === 0) {
         return new AstNodes.BlockNode();
     }
@@ -159,11 +159,15 @@ function blockTransformer(node: SyntaxTreeNodes.BlockNode, results: Map<SyntaxTr
         throw new Error('BlockNode\'s children did not match any known combination.');
 
     var inner: AstNodes.Node = results.get(node.children[0]);
-    var block: AstNodes.BaseLevelBlockNode = results.get(node.children[1]);
+    var block: AstNodes.BlockNode = <AstNodes.BlockNode> results.get(node.children[1]);
 
     block.addFront(inner);
 
     return block;
+}
+
+function variableAssignmentTransformer() {
+    return null;        // TODO
 }
 
 // Expressions

@@ -93,7 +93,7 @@ export class BinaryExpressionNode extends ExpressionNode {
     set right(expr: ExpressionNode) {
         this._right = expr;
     }
-    set left(expr: Expression) {
+    set left(expr: ExpressionNode) {
         this._left = expr;
     }
 }
