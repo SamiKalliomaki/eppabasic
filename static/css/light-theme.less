@@ -1,0 +1,153 @@
+@import "colors.less";
+
+.ace-eb-light {
+    background-color: @editor-background;
+    color: @editor-syntax-base;
+
+    .ace_gutter {
+        background-color: @editor-gutter-background;
+        color: @editor-gutter-text;
+        border-right: 1px solid @accent;
+
+        &-cell {
+            &.ace_warning {
+                background-image: none;
+                background: @editor-gutter-warning-background;
+                border-left: none;
+                padding-left: 0;
+                //color: #000;
+            }
+            &.ace_error {
+                background-image: none;
+                background: @editor-gutter-error-background;
+                border-left: none;
+                padding-left: 0;
+                //color: #000;
+            }
+        }
+        &-active-line {}
+    }
+
+    .ace_cursor {
+        border-left: 2px solid @editor-cursor;
+    }
+    .ace_marker-layer {
+        .ace_selection {
+            background-color: @editor-selection;
+        }
+        .ace_step {
+
+        }
+        .ace_bracket {
+            margin: -1px 0 0 -1px;
+            background-color: @editor-bracket-background;
+            border-bottom: 1px solid @editor-bracket-underline;
+        }
+        .ace_active-line {}
+    }
+
+    .ace_invisible {
+        //color:
+    }
+    .ace_keyword {
+        color: @editor-syntax-keyword;
+        &.ace_operator {
+            color: @editor-syntax-operator;
+        }
+    }
+    .ace_constant {
+        color: @editor-syntax-constant;
+        &.ace_language {}
+        &.ace_library {}
+        &.ace_numeric {
+            color: @editor-syntax-numeric;
+        }
+    }
+    .ace_invalid {
+        //color:
+        .ace_deprecated {}
+    }
+    .ace_support {
+        //color
+        &.ace_function {
+            color: @editor-syntax-function;
+        }
+        &.ace_type {
+            color: @editor-syntax-type;
+        }
+    }
+    .ace_function {
+        color: @editor-syntax-user-function;
+    }
+    .ace_string {
+        color: @editor-syntax-string;
+    }
+    .ace_comment {
+        //color:
+        font-style: italic;
+        //padding-bottom:0px;
+    }
+    .ace_variable {
+        //color:
+    }
+    .ace_meta {
+        &.ace_tag {
+            //color:
+        }
+    }
+    .ace_entity {
+        &.ace_other {
+            &.ace_attribute-name {
+                //color:
+            }
+        }
+    }
+    .ace_markup {
+        &.ace_underline {
+            text-decoration: underline;
+        }
+    }
+    .ace_fold-widget {
+        //text-align:center;
+        &:hover {
+            //color:
+        }
+        &.ace_start {}
+        &.ace_end {}
+        &.ace_closed {}
+    }
+}
+/*
+.ace-chaos .ace_cursor.ace_overwrite {
+  border-left: 0px;
+  border-bottom: 1px solid #FFFFFF;
+}
+.ace-chaos .ace_marker-layer .ace_step {
+  background: rgb(198, 219, 174);
+}
+.ace-chaos .ace_marker-layer .ace_bracket {
+  margin: -1px 0 0 -1px;
+  border: 1px solid #FCE94F;
+}
+.ace-chaos .ace_marker-layer .ace_active-line {
+  background: #333;
+}
+.ace-chaos .ace_gutter-active-line {
+  background-color: #222;
+}
+
+.ace-chaos .ace_indent-guide {
+  border-right:1px dotted #333;
+  margin-right:-1px;
+}
+
+.ace-chaos .ace_fold {
+  background: #222;
+  border-radius: 3px;
+  color: #7AF;
+  border: none;
+}
+.ace-chaos .ace_fold:hover {
+  background: #CCC;
+  color: #000;
+}*/

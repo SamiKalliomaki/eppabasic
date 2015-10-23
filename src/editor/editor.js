@@ -12,7 +12,7 @@ define(['compiler/toolchain', 'ace/ace', 'i18n', './autocompleter'], function (T
         // Create ace editor
         this.ace = ace.edit(editorName);
         // Set theme and mode
-        this.ace.setTheme('ace/theme/chaos');
+        this.ace.setTheme('ace/theme/eb-light');
         this.ace.getSession().setMode('ace/mode/eppabasic');
         // Some other settings
         this.ace.setShowPrintMargin(false);

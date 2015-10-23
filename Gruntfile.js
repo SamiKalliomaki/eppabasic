@@ -67,6 +67,7 @@ module.exports = function (grunt) {
     config.addSyncMultiTarget('static', 'static', ['**/*'], wwwDir);
 
     config.addLessTarget('main', 'static/css/main.less', wwwDir + '/css/editor.css');
+    config.addLessTarget('theme-eb-light', 'static/css/light-theme.less', wwwDir + '/css/light-theme.css');
 
     // Tests
     config.addSyncMultiTarget('static-test', 'static/test', ['**/*'], tmpDir + '/test');
@@ -95,8 +96,8 @@ module.exports = function (grunt) {
             .then(function () {
                 config.updateTargets();
             })
-            .run('newer:requirejs')
-            .run('newer:less');
+            .run('newer:less')
+            .run('newer:requirejs');
     });
     grunt.registerTask('develop', function () {
         grunt.task

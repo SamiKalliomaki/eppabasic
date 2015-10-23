@@ -1,3 +1,4 @@
+// Make all elements fit tightly
 *
 {
 	margin: 0;
@@ -5,11 +6,13 @@
 	border: 0;
 }
 
+// The page is full height
 html, body
 {
 	height: 100%;
 }
 
+// Allow special fonts
 @font-face
 {
 	font-family: Batch;
@@ -34,10 +37,11 @@ html, body
 
 input, button, select
 {
-	color: #A8CEDA;
-	background-color: #3C7386;
+	color: @button-text;
+	background-color: @button-background;
 	padding: 5px 10px;
 	border-radius: 3px;
+	border: 1px solid @accent;
 }
 
 input:disabled
