@@ -66,8 +66,8 @@ module.exports = function (grunt) {
     config.addSyncMultiTarget('lib', 'lib', ['**/*', '!**/*.ts'], tmpDir);
     config.addSyncMultiTarget('static', 'static', ['**/*'], wwwDir);
 
-    config.addLessTarget('main', 'static/css/main.less', wwwDir + '/css/editor.css');
     config.addLessTarget('theme-eb-light', 'static/css/light-theme.less', wwwDir + '/css/light-theme.css');
+    config.addLessTarget('theme-eb-dark', 'static/css/dark-theme.less', wwwDir + '/css/dark-theme.css');
 
     // Tests
     config.addSyncMultiTarget('static-test', 'static/test', ['**/*'], tmpDir + '/test');

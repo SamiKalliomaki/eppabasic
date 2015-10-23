@@ -1,4 +1,4 @@
-define(['jquery', 'i18n', './notifications', './manual', './editor', './usercontrols', './filedialog', './filecontrols', './codecontrols', './pastecontrols', 'jqueryui'], function ($, i18n, NotificationSystem, Manual, Editor, UserControlsController, FileDialogController, FileControlsController, CodeControlsController, PasteControlsController) {
+define(['jquery', 'i18n', './notifications', './manual', './editor', './usercontrols', './filedialog', './filecontrols', './codecontrols', './pastecontrols', './themecontrols', 'jqueryui'], function ($, i18n, NotificationSystem, Manual, Editor, UserControlsController, FileDialogController, FileControlsController, CodeControlsController, PasteControlsController, ThemeControlsController) {
     $(function () {
         function getManualLang() {
             if(i18n.options.lng) {
@@ -16,6 +16,7 @@ define(['jquery', 'i18n', './notifications', './manual', './editor', './usercont
         var fileControlsController = new FileControlsController('#file-controls', editor, userControlsController, fileDialogController, notificationSystem);
         var codeControlsController = new CodeControlsController('#code-controls', editor);
         var pasteControlsController = new PasteControlsController('#paste-controls', '#share-dialog-wrapper', editor, notificationSystem);
+        var themeControlsController = new ThemeControlsController('#logo');
 
         manual.openPage('index');
 
