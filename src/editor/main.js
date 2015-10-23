@@ -16,7 +16,7 @@ define(['jquery', 'i18n', './notifications', './manual', './editor', './usercont
         var fileControlsController = new FileControlsController('#file-controls', editor, userControlsController, fileDialogController, notificationSystem);
         var codeControlsController = new CodeControlsController('#code-controls', editor);
         var pasteControlsController = new PasteControlsController('#paste-controls', '#share-dialog-wrapper', editor, notificationSystem);
-        var themeControlsController = new ThemeControlsController('#logo');
+        var themeControlsController = new ThemeControlsController('#logo', editor);
 
         manual.openPage('index');
 

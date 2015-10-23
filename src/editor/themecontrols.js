@@ -1,10 +1,15 @@
 define(['jquery', 'i18n', 'cookies'], function ($, i18n, Cookies) {
-    function ThemeControlsController(randomThemeButton) {
+    function ThemeControlsController(randomThemeButton, editor) {
         this.randomThemeButton = $(randomThemeButton);
+        this.editor = editor;
         this.styleTag = $('<link rel="stylesheet" />');
         $('head').append(this.styleTag);
 
         this.randomThemeButton.on('click', this.setRandomTheme.bind(this));
+
+        this.styleTag.load(function () {
+            editor.ace.resize();
+        })
 
         this.themes = [
                 'dark',
