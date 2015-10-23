@@ -503,7 +503,9 @@ define(['./framework/compileerror', './nodes', './lexer'], function (CompileErro
 
             try {
                 line = this.expect('function').line;
-                name = this.expect('identifier').val;
+                var nameToken = this.expect('identifier');
+                nameToken.identifierType = 'function name';
+                name = nameToken.val;
                 name.identifierType = 'function name';
             } catch (e) {
                 if (e instanceof CompileError) {

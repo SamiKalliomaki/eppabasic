@@ -159,6 +159,9 @@ define(function (require, exports, module) {
                         if (type === 'support.function' && token.identifierType && token.identifierType !== 'function name') {
                             type = null;
                         }
+                        if (!type && token.identifierType === 'function name') {
+                            type = 'function';
+                        }
 
                         if (type === 'support.type' && token.identifierType && token.identifierType !== 'type') {
                             type = null;
