@@ -1,7 +1,3 @@
-```
-This software is under development.
-We are planning to release the first stable version this fall (2014).
-```
 # [EppaBasic](http://eppabasic.fi)
 
 EppaBasic (shorthened EB or eb) is a web-based basic programming language.
@@ -21,7 +17,7 @@ than trying to create some text based programs.
 "How about a c++ library or header with simple drawing commands like ```line (int x1, int y1, int x2, int y2)```
 or ```circle (int x, int y, int r)``` and an easy way for creating windows" someone said.
 "That sounds like a great idea, though wouldn't it just be adding some syntax candy over an existing language.
-What's the idea of that? Whouldn't it just be easier to create a new programming language."
+What's the idea of that? Whouldn't it just bethe easier to create a new programming language."
 
 Obviously the next question was what kind of language it would be.
 As a result of a quick poll we discovered that many of us had begun programming with a basic language.
@@ -51,11 +47,8 @@ In the end of the summer, the runtime was also rewriten and we moved to use requ
 instead of just adding tons of script tags to the page header.
 
 ## The future
-Now, as the summer is over, we have less time to do programming,
-but we are still using all of our leisure time on working on EppaBasic.
-The main consern is to publish the first stable version to the public this fall.
-We are also planning to rewrite the compiler again, this time following the modern
-guide lines in compiler engineering.
+After the summer 2014, the development has been more or less on halt.
+We are still hoping that we, or someone else, would have time to continue the development in the future.
 
 Best regards,  
 EppaBasic development team.
