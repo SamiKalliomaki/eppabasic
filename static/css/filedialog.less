@@ -6,27 +6,27 @@
 #file-dialog-wrapper .main
 {
 	float: left;
-	border-right: 1px solid #495692;
+	border-right: 1px solid @accent;
 }
 
 #file-dialog-wrapper .tools
 {
 	/* http://colinaarts.com/articles/the-magic-of-overflow-hidden/ */
-	overflow: hidden; 
+	overflow: hidden;
 	padding: 5px;
 
-	color: white;
+	color: @dialog-text;
 	list-style-position: inside;
 }
 
 #file-dialog-wrapper .tools a
 {
-	color: white;
+	color: @dialog-text;
 }
 
 #file-dialog-wrapper .header
 {
-	border-bottom: 1px dotted #495692;
+	border-bottom: 1px dotted @accent;
 	padding: 5px;
 }
 
@@ -44,7 +44,7 @@
 
 #file-dialog-wrapper .file-list li, #file-dialog-wrapper .file-list li a
 {
-	color: white;
+	color: @dialog-text;
 }
 
 #file-dialog-wrapper .file-list .delete-link
@@ -72,13 +72,13 @@
 {
 	margin-top: 10px;
 
-	color: white;
+	color: @dialog-text;
 	font-size: 20px;
 }
 
 #file-dialog-wrapper .current-directory, #file-dialog-wrapper .current-directory a
 {
-	color: white;
+	color: @dialog-text;
 }
 
 #file-dialog-wrapper .tools ul
@@ -94,7 +94,7 @@
 #file-dialog-wrapper .footer
 {
 	padding: 5px;
-	border-top: 1px dotted #495692;
+	border-top: 1px dotted @accent;
 }
 
 #file-dialog-wrapper .input-helper

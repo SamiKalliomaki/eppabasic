@@ -1,3 +1,4 @@
+
 #header
 {
 	box-sizing: border-box;
@@ -6,8 +7,8 @@
 	height: 51px;
 	width: 100%;
 
-	background-color: black;
-	border-bottom: 1px solid #495692;
+	background-color: @header-background;
+	border-bottom: 1px solid @accent;
 	padding-left: 160px;
 	vertical-align: middle;
 	line-height: 50px;
@@ -66,16 +67,16 @@
 
 	width: 350px;
 
-	border-left: 1px solid #495692;
-	border-bottom: 1px solid #495692;
-	background-color: black;
+	border-left: 1px solid @accent;
+	border-bottom: 1px solid @accent;
+	background-color: @header-background;
 
 	line-height: normal;
 }
 
 .top-right-box a
 {
-	color: white;
+	color: @header-text;
 	display: block;
 	margin: 2px 0;
 }
@@ -86,7 +87,7 @@
 	-webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;
 	display: inline-block;
-	color: white;
+	color: @header-text;
 	text-align: right;
 
 	width: 40%;
@@ -117,7 +118,7 @@
 
 .top-right-box .error-box
 {
-	color: white;
+	color: @header-text;
 	border: 1px solid #660000;
 	padding: 10px;
 	background-color: #220000;
@@ -132,7 +133,7 @@
 
 .top-right-box p
 {
-	color: white;
+	color: @header-text;
 }
 
 #user-controls
@@ -162,7 +163,7 @@
 
 #user-controls .user-status a
 {
-	color: white;
+	color: @header-text;
 }
 
 #user-controls .login-box
